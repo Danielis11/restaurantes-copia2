@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jalpan de Serra - RestauranteWeb</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        /* Variables CSS Locales para retrocompatibilidad */
+        :root {
+            --primary-color: var(--primary);
+            --primary-dark: var(--color-primary-dark);
+            --secondary-color: var(--restaurant);
+            --text-dark: var(--gray-900);
+            --text-light: var(--gray-600);
+            --background: var(--gray-50);
+            --surface: var(--white);
+            --accent-color: var(--primary-light);
+            --shadow: var(--shadow-sm);
+            --shadow-lg: var(--shadow-lg);
+            --border-radius: var(--radius-xl);
+            --transition: all 0.3s ease;
+        }
+
+        /* Reset y base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--background);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header y navegación */
+        .header {
+            background: var(--background);
+            box-shadow: var(--shadow);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 0;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 0.5rem 0;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        /* Main content */
+        .main {
+            margin-top: 80px;
+        }
+
+        /* Hero Section */
+        .hero-jalpan {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 6rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-jalpan::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-content-jalpan {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-title-jalpan {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-subtitle-jalpan {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0.95;
+        }
+
+        /* Sections */
+        .section {
+            padding: 4rem 0;
+        }
+
+        .section-alt {
+            background-color: var(--surface);
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--text-dark);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 2px;
+        }
+
+        /* Historia Section */
+        .historia-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .historia-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-light);
+        }
+
+        .historia-image {
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .historia-image img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        /* Platillos Grid */
+        .platillos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .platillo-card {
+            background: var(--background);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .platillo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .platillo-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+
+        .platillo-content {
+            padding: 1.5rem;
+        }
+
+        .platillo-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .platillo-description {
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        /* Ingredientes Grid */
+        .ingredientes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .ingrediente-card {
+            background: var(--background);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .ingrediente-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .ingrediente-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .ingrediente-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .ingrediente-description {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        /* Tradiciones Section */
+        .tradiciones-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .tradicion-feature {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .tradicion-icon {
+            font-size: 3rem;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+
+        .tradicion-feature h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .tradicion-feature p {
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, var(--accent-color) 0%, var(--primary-color) 100%);
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+        }
+
+        .cta-title {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta-text {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 12px 24px;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-light {
+            background: white;
+            color: var(--primary-color);
+        }
+
+        .btn-light:hover {
+            background: var(--surface);
+            color: var(--primary-dark);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--text-dark);
+            color: white;
+            padding: 3rem 0 1rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .footer-text,
+        .footer-link {
+            color: #bdc3c7;
+            line-height: 1.6;
+        }
+
+        .footer-link {
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-link:hover {
+            color: var(--primary-color);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #34495e;
+            color: #95a5a6;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+
+            .hero-title-jalpan {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle-jalpan {
+                font-size: 1.1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .historia-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .platillos-grid,
+            .ingredientes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tradiciones-features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header global-nav">
+        <nav class="nav">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <a href="/index.html" class="logo">
+                        <img src="/images/PueblosMágicos.svg.png" alt="Logo Turismo" class="logo-image">
+                        <span>Dirección de Turismo</span>
+                    </a>
+                </div>
+
+                <div class="nav-menu" id="nav-menu">
+                    <a href="/index.html" class="nav-link">Inicio</a>
+                    <a href="/mapa.html" class="nav-link">Mapa</a>
+                    <a href="/index.html#restaurantes" class="nav-link">Restaurantes</a>
+                    <a href="/index.html#bares" class="nav-link">Hospedaje</a>
+                    <a href="/Contactos.html" class="nav-link">Contacto</a>
+                </div>
+
+                <div class="nav-actions">
+                    <a href="/login.html" class="btn btn-login">
+                        <i class="fas fa-user-circle"></i>
+                        <span>Iniciar Sesión</span>
+                    </a>
+                    <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Hero Section -->
+        <section class="hero-jalpan">
+            <div class="container">
+                <div class="hero-content-jalpan">
+                    <h1 class="hero-title-jalpan">Jalpan de Serra</h1>
+                    <p class="hero-subtitle-jalpan">
+                        Descubre la riqueza gastronómica del corazón de la Sierra Gorda queretana,
+                        donde la tradición franciscana se encuentra con los sabores serranos
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Historia Culinaria -->
+        <section id="historia" class="section">
+            <div class="container">
+                <h2 class="section-title">Historia Culinaria</h2>
+                <div class="historia-content">
+                    <div class="historia-text">
+                        <p>
+                            Jalpan de Serra, ubicado en el corazón de la Sierra Gorda queretana,
+                            posee una tradición culinaria que se remonta a la época prehispánica
+                            cuando los grupos chichimecas habitaban estas tierras montañosas.
+                        </p>
+                        <p>
+                            La llegada de los franciscanos en el siglo XVIII, liderados por
+                            Fray Junípero Serra, marcó un punto de inflexión en la gastronomía local,
+                            fusionando las técnicas culinarias europeas con los ingredientes autóctonos de la sierra.
+                        </p>
+                        <p>
+                            Hoy en día, Jalpan de Serra es reconocido como Pueblo Mágico y parte
+                            de la Reserva de la Biosfera Sierra Gorda, manteniendo vivas sus tradiciones
+                            gastronómicas mientras abraza nuevas propuestas culinarias.
+                        </p>
+                    </div>
+                    <div class="historia-image">
+                        <img src="images/Naranjitos-1722.jpg" alt="Historia Culinaria de Jalpan de Serra">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Platillos Tradicionales -->
+        <section id="platillos" class="section section-alt">
+            <div class="container">
+                <h2 class="section-title">Platillos Tradicionales de la Sierra</h2>
+                <div class="platillos-grid">
+                    <div class="platillo-card">
+                        <div class="platillo-image">
+                            <i class="fas fa-fish"></i>
+                        </div>
+                        <div class="platillo-content">
+                            <h3 class="platillo-title">Truchas de la Sierra</h3>
+                            <p class="platillo-description">
+                                Truchas frescas de los ríos serranos, preparadas al horno o a la plancha
+                                con hierbas aromáticas locales y acompañadas de quelites de la región.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="platillo-card">
+                        <div class="platillo-image">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                        <div class="platillo-content">
+                            <h3 class="platillo-title">Quelites Serranos</h3>
+                            <p class="platillo-description">
+                                Verduras silvestres recolectadas en la sierra, como verdolagas, quintoniles
+                                y huauzontles, guisados con técnicas tradicionales franciscanas.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="platillo-card">
+                        <div class="platillo-image">
+                            <i class="fas fa-cookie-bite"></i>
+                        </div>
+                        <div class="platillo-content">
+                            <h3 class="platillo-title">Hongos de Temporal</h3>
+                            <p class="platillo-description">
+                                Hongos silvestres recolectados durante la temporada de lluvias,
+                                preparados en quesadillas o guisados con epazote y chile serrano.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="platillo-card">
+                        <div class="platillo-image">
+                            <i class="fas fa-bread-slice"></i>
+                        </div>
+                        <div class="platillo-content">
+                            <h3 class="platillo-title">Pan Franciscano</h3>
+                            <p class="platillo-description">
+                                Pan tradicional elaborado siguiendo recetas franciscanas del siglo XVIII,
+                                horneado en hornos de barro y endulzado con miel de abeja local.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="platillo-card">
+                        <div class="platillo-image">
+                            <i class="fas fa-coffee"></i>
+                        </div>
+                        <div class="platillo-content">
+                            <h3 class="platillo-title">Café de Olla Serrano</h3>
+                            <p class="platillo-description">
+                                Café cultivado en las laderas de la sierra, preparado en olla de barro
+                                con canela de Ceilán y endulzado con piloncillo artesanal.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="platillo-card">
+                        <div class="platillo-image">
+                            <i class="fas fa-apple-alt"></i>
+                        </div>
+                        <div class="platillo-content">
+                            <h3 class="platillo-title">Dulces de Frutas Serranas</h3>
+                            <p class="platillo-description">
+                                Conservas y dulces elaborados con frutas de la región como guayabas,
+                                tejocotes y capulines, siguiendo recetas ancestrales.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ingredientes Locales -->
+        <section id="ingredientes" class="section">
+            <div class="container">
+                <h2 class="section-title">Ingredientes de la Sierra Gorda</h2>
+                <div class="ingredientes-grid">
+                    <div class="ingrediente-card">
+                        <div class="ingrediente-icon">
+                            <i class="fas fa-leaf"></i>
+                        </div>
+                        <h3 class="ingrediente-title">Quelites Silvestres</h3>
+                        <p class="ingrediente-description">
+                            Verduras que crecen de forma natural en la sierra,
+                            ricas en vitaminas y minerales.
+                        </p>
+                    </div>
+
+                    <div class="ingrediente-card">
+                        <div class="ingrediente-icon">
+                            <i class="fas fa-tint"></i>
+                        </div>
+                        <h3 class="ingrediente-title">Miel de Abeja</h3>
+                        <p class="ingrediente-description">
+                            Miel pura extraída de las colmenas serranas,
+                            con propiedades medicinales únicas.
+                        </p>
+                    </div>
+
+                    <div class="ingrediente-card">
+                        <div class="ingrediente-icon">
+                            <i class="fas fa-mountain"></i>
+                        </div>
+                        <h3 class="ingrediente-title">Hierbas Aromáticas</h3>
+                        <p class="ingrediente-description">
+                            Hierbas como el orégano serrano, tomillo y hierba santa
+                            que crecen en las laderas montañosas.
+                        </p>
+                    </div>
+
+                    <div class="ingrediente-card">
+                        <div class="ingrediente-icon">
+                            <i class="fas fa-fish"></i>
+                        </div>
+                        <h3 class="ingrediente-title">Truchas de Río</h3>
+                        <p class="ingrediente-description">
+                            Peces de agua dulce criados en los ríos cristalinos
+                            de la Sierra Gorda queretana.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tradiciones -->
+        <section id="tradiciones" class="section section-alt">
+            <div class="container">
+                <h2 class="section-title">Tradiciones y Cultura Alimentaria</h2>
+                <div class="tradiciones-features">
+                    <div class="tradicion-feature">
+                        <div class="tradicion-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>Cocina Comunitaria</h3>
+                        <p>
+                            La preparación de alimentos es una actividad comunitaria que
+                            fortalece los lazos sociales y preserva las recetas ancestrales.
+                        </p>
+                    </div>
+
+                    <div class="tradicion-feature">
+                        <div class="tradicion-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <h3>Festivales Gastronómicos</h3>
+                        <p>
+                            Durante las festividades religiosas y cívicas se preparan
+                            platillos especiales que han pasado de generación en generación.
+                        </p>
+                    </div>
+
+                    <div class="tradicion-feature">
+                        <div class="tradicion-icon">
+                            <i class="fas fa-hands"></i>
+                        </div>
+                        <h3>Técnicas Artesanales</h3>
+                        <p>
+                            La elaboración de alimentos sigue métodos tradicionales como
+                            el uso de metates, comales de barro y hornos de adobe.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <div class="container">
+                <h2 class="cta-title">¿Listo para explorar los sabores de Jalpan de Serra?</h2>
+                <p class="cta-text">
+                    Descubre los mejores restaurantes y lugares gastronómicos de nuestro Pueblo Mágico
+                </p>
+                <a href="index.html#restaurantes" class="btn btn-light">
+                    <i class="fas fa-search"></i>
+                    Explorar Restaurantes
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div>
+                    <h3 class="footer-title">
+                        <i class="fas fa-utensils"></i>
+                        RestauranteWeb
+                    </h3>
+                    <p class="footer-text">
+                        Conectamos a Jalpan de Serra con su riqueza gastronómica,
+                        preservando tradiciones y promoviendo nuevas experiencias culinarias.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="footer-title">Enlaces</h4>
+                    <ul style="list-style: none;">
+                        <li><a href="index.html" class="footer-link">Inicio</a></li>
+                        <li><a href="index.html#restaurantes" class="footer-link">Establecimientos</a></li>
+                        <li><a href="#historia" class="footer-link">Historia</a></li>
+                        <li><a href="#platillos" class="footer-link">Platillos Tradicionales</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="footer-title">Contacto</h4>
+                    <p class="footer-text">
+                        <i class="fas fa-envelope"></i>
+                        info@restauranteweb.com
+                    </p>
+                    <p class="footer-text">
+                        <i class="fas fa-phone"></i>
+                        +52 (444) 123-4567
+                    </p>
+                    <p class="footer-text">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Jalpan de Serra, Querétaro
+                    </p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 RestauranteWeb - Jalpan de Serra. Todos los derechos reservados.</p>
+                <div class="footer-developed-by" style="margin-top: 1rem;">
+                    <a href="#" target="_blank" class="btn btn-outline"
+                        style="border-color: rgba(255,255,255,0.2); color: #fff; text-decoration: none; padding: 0.5rem 1rem; border-radius: 9999px; font-size: 0.875rem; display: inline-flex; align-items: center; gap: 0.5rem; background: transparent; border: 1px solid rgba(255,255,255,0.2);">
+                        <i class="fas fa-code"></i> Desarrollado por
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Navegación suave
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Efecto de aparición al hacer scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Aplicar efecto a las tarjetas
+        document.querySelectorAll('.platillo-card, .ingrediente-card, .tradicion-feature').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+
+</html>

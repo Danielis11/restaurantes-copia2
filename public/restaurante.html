@@ -1,0 +1,2384 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Restaurante - Jalpan de Serra</title>
+    <meta name="description" id="page-description" content="Información detallada del restaurante">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="restaurant">
+    <meta property="og:title" id="og-title" content="Restaurante en Jalpan de Serra">
+    <meta property="og:description" id="og-description" content="Descubre este restaurante en Jalpan de Serra, Querétaro. Menú, horarios. y reseñas.">
+    <meta property="og:image" id="og-image" content="/images/PueblosMágicos.svg.png">
+    <meta property="og:url" id="og-url" content="">
+    <meta property="og:locale" content="es_MX">
+    <meta property="og:site_name" content="RestauranteWeb">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" id="tw-title" content="Restaurante en Jalpan de Serra">
+    <meta name="twitter:description" id="tw-description" content="Descubre este restaurante en Jalpan de Serra, Querétaro.">
+    <meta name="twitter:image" id="tw-image" content="/images/PueblosMágicos.svg.png">
+
+    <link rel="icon" type="image/x-icon" href="/icons/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: var(--gray-50);
+            color: var(--gray-800);
+            line-height: 1.6;
+        }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--gray-200);
+            padding: 0 2rem;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gray-600);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 0.4rem 0.8rem;
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+            border: 1px solid var(--gray-200);
+        }
+
+        .back-btn:hover {
+            background: var(--gray-100);
+            color: var(--gray-900);
+        }
+
+        .navbar-brand {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .navbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        /* El CSS de la barra de navegación '.header.global-nav' se movió a style.css para estandarización global */
+
+        /* ===== INFO SUPERPUESTA (esquina superior izquierda del carrusel) ===== */
+        .hero-info {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            z-index: 20;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            color: white;
+            max-width: 420px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-name {
+            font-size: 1.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 0.4rem;
+        }
+
+        .hero-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        .hero-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .status-badge.open {
+            background: rgba(16, 185, 129, 0.25);
+            color: #6ee7b7;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-badge.closed {
+            background: rgba(239, 68, 68, 0.25);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* Botones de Compartir */
+        .share-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .share-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: white;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .share-btn:hover {
+            transform: scale(1.15) translateY(-2px);
+        }
+
+        .share-btn.whatsapp {
+            background: #25D366;
+        }
+
+        .share-btn.facebook {
+            background: #1877F2;
+        }
+
+        .share-btn.copy-link {
+            background: rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .share-btn.copy-link.copied {
+            background: #10b981;
+            border-color: #10b981;
+        }
+
+        /* Botón Guardar en Favoritos — Uiverse.io animated heart */
+        .con-like {
+          --red: rgb(255, 50, 50);
+          position: relative;
+          width: 50px;
+          height: 50px;
+          flex-shrink: 0;
+        }
+
+        .con-like .like {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          opacity: 0;
+          z-index: 20;
+          cursor: pointer;
+        }
+
+        .con-like .checkmark {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .con-like .outline,
+        .con-like .filled {
+          fill: var(--red);
+          position: absolute;
+        }
+
+        .con-like .filled {
+          animation: kfr-filled 0.5s;
+          display: none;
+        }
+
+        .con-like .celebrate {
+          position: absolute;
+          animation: kfr-celebrate 0.5s;
+          animation-fill-mode: forwards;
+          display: none;
+        }
+
+        .con-like .poly {
+          stroke: var(--red);
+          fill: var(--red);
+        }
+
+        .con-like .like:checked ~ .checkmark .filled {
+          display: block;
+        }
+
+        .con-like .like:checked ~ .checkmark .celebrate {
+          display: block;
+        }
+
+        @keyframes kfr-filled {
+          0% {
+            opacity: 0;
+            transform: scale(0);
+          }
+          50% {
+            opacity: 1;
+            transform: scale(1.2);
+          }
+        }
+
+        @keyframes kfr-celebrate {
+          0% {
+            transform: scale(0);
+          }
+          50% {
+            opacity: 0.8;
+          }
+          100% {
+            transform: scale(1.2);
+            opacity: 0;
+            display: none;
+          }
+        }
+
+        /* ===== CARRUSEL DE IMÁGENES ===== */
+        .restaurant-hero {
+            position: relative;
+            height: 420px;
+            overflow: hidden;
+            background: #111;
+            margin-top: 70px;
+        }
+
+        .hero-gallery {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .hero-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            z-index: 2;
+            transition: opacity 0.4s ease;
+        }
+
+        .hero-img-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: blur(24px) brightness(0.4) saturate(1.3);
+            transform: scale(1.1);
+            z-index: 1;
+            transition: opacity 0.4s ease;
+        }
+
+        .hero-placeholder {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
+            font-size: 6rem;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Galería de miniaturas en hero */
+        .hero-thumbnails {
+            position: absolute;
+            bottom: 1rem;
+            right: 2rem;
+            display: flex;
+            gap: 0.4rem;
+            z-index: 20;
+            /* Por encima de todo, clickeables */
+        }
+
+        .hero-thumb {
+            width: 56px;
+            height: 42px;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: var(--transition);
+            opacity: 0.7;
+        }
+
+        .hero-thumb:hover,
+        .hero-thumb.active {
+            border-color: white;
+            opacity: 1;
+        }
+
+        .hero-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* ===== LAYOUT PRINCIPAL ===== */
+        .page-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .main-column,
+        .sidebar-column {
+            min-width: 0;
+        }
+
+        /* ===== SECCIONES DE CONTENIDO ===== */
+        .content-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--gray-100);
+            background: var(--gray-50);
+        }
+
+        .card-header-section h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+
+        .card-header-section h3 i {
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* ===== DESCRIPCIÓN ===== */
+        .description-text {
+            font-size: 1.05rem;
+            color: var(--gray-700);
+            line-height: 1.8;
+        }
+
+        /* ===== HORARIOS ===== */
+        .horarios-grid {
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .horario-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.6rem 0.8rem;
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+        }
+
+        .horario-row:hover {
+            background: var(--gray-50);
+        }
+
+        .horario-row.today {
+            background: rgba(37, 99, 235, 0.06);
+            border: 1px solid rgba(37, 99, 235, 0.15);
+        }
+
+        .horario-dia {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--gray-700);
+            width: 100px;
+        }
+
+        .horario-dia.today-label {
+            color: var(--primary);
+        }
+
+        .horario-horas {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+        }
+
+        .horario-cerrado {
+            font-size: 0.85rem;
+            color: var(--error);
+            font-style: italic;
+        }
+
+        .today-tag {
+            font-size: 0.7rem;
+            background: var(--primary);
+            color: white;
+            padding: 0.15rem 0.5rem;
+            border-radius: 999px;
+            font-weight: 600;
+        }
+
+        /* ===== MENÚ ===== */
+        .menu-category {
+            margin-bottom: 1.5rem;
+        }
+
+        .menu-category:last-child {
+            margin-bottom: 0;
+        }
+
+        .menu-category-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 2px solid var(--primary);
+            display: inline-block;
+        }
+
+        .menu-items-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .menu-item {
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            overflow: hidden;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-item-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background-color: var(--gray-50);
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .menu-item-content {
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .menu-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .menu-item-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--gray-900);
+            line-height: 1.3;
+        }
+
+        .menu-item-price {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.15rem;
+            background: var(--gray-50);
+            padding: 0.3rem 0.6rem;
+            border-radius: 8px;
+            white-space: nowrap;
+        }
+
+        .menu-item-desc {
+            font-size: 0.9rem;
+            color: var(--gray-500);
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        /* ===== GALERÍA ===== */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+        }
+
+        .gallery-item {
+            aspect-ratio: 1;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.08);
+        }
+
+        .gallery-item::after {
+            content: '\f00e';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .gallery-item:hover::after {
+            opacity: 1;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+            margin-bottom: 1.25rem;
+        }
+
+        .sidebar-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--gray-100);
+            background: var(--gray-50);
+        }
+
+        .sidebar-header h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--gray-700);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sidebar-header h4 i {
+            color: var(--primary);
+        }
+
+        .sidebar-body {
+            padding: 1.25rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .contact-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .contact-icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(37, 99, 235, 0.08);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            margin-top: 0.1rem;
+        }
+
+        .contact-label {
+            font-size: 0.75rem;
+            color: var(--gray-400);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .contact-value {
+            font-size: 0.9rem;
+            color: var(--gray-700);
+            font-weight: 500;
+            word-break: break-all;
+        }
+
+        .contact-value a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .contact-value a:hover {
+            text-decoration: underline;
+        }
+
+        /* Redes sociales */
+        .social-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .social-link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: var(--radius-md);
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            border: 1px solid var(--gray-200);
+            color: var(--gray-700);
+        }
+
+        .social-link-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .social-link-btn.facebook {
+            border-color: #1877f2;
+            color: #1877f2;
+        }
+
+        .social-link-btn.instagram {
+            border-color: #e1306c;
+            color: #e1306c;
+        }
+
+        .social-link-btn.twitter {
+            border-color: #1da1f2;
+            color: #1da1f2;
+        }
+
+        .social-link-btn.website {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* ===== PANEL DE EDICIÓN (ADMIN) ===== */
+        .admin-panel {
+            display: none;
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            border: 2px solid var(--primary);
+            overflow: hidden;
+            margin-bottom: 1.25rem;
+        }
+
+        .admin-panel.visible {
+            display: block;
+        }
+
+        .admin-panel-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1rem 1.25rem;
+            color: white;
+        }
+
+        .admin-panel-header h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .admin-panel-body {
+            padding: 1.25rem;
+        }
+
+        .admin-action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--gray-200);
+            background: white;
+            color: var(--gray-700);
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 0.5rem;
+            text-align: left;
+        }
+
+        .admin-action-btn:last-child {
+            margin-bottom: 0;
+        }
+
+        .admin-action-btn:hover {
+            background: var(--gray-50);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .admin-action-btn i {
+            width: 18px;
+            text-align: center;
+            color: var(--primary);
+        }
+
+        /* ===== MODAL DE EDICIÓN ===== */
+        .edit-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-slow);
+        }
+
+        .edit-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .edit-modal {
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(20px) scale(0.97);
+            transition: var(--transition-slow);
+        }
+
+        .edit-modal-overlay.active .edit-modal {
+            transform: translateY(0) scale(1);
+        }
+
+        .edit-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 1;
+        }
+
+        .edit-modal-header h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .modal-close-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: var(--gray-100);
+            color: var(--gray-600);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .modal-close-btn:hover {
+            background: var(--gray-200);
+            color: var(--gray-900);
+        }
+
+        .edit-modal-body {
+            padding: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 0.4rem;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0.65rem 0.9rem;
+            border: 1.5px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            color: var(--gray-800);
+            background: white;
+            transition: var(--transition);
+            font-family: var(--font-family);
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .edit-modal-footer {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+            padding: 1.25rem 1.5rem;
+            border-top: 1px solid var(--gray-200);
+            background: var(--gray-50);
+        }
+
+        /* ===== BOTONES ===== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: var(--radius-md);
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: 1px solid var(--gray-200);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-200);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .btn-danger:hover {
+            background: var(--error);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        /* ===== LIGHTBOX ===== */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.92);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-slow);
+        }
+
+        .lightbox.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .lightbox img {
+            max-width: 90vw;
+            max-height: 85vh;
+            object-fit: contain;
+            border-radius: var(--radius-lg);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .lightbox-close:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        /* ===== UPLOAD ZONE ===== */
+        .upload-zone {
+            border: 2px dashed var(--gray-300);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--gray-50);
+        }
+
+        .upload-zone:hover,
+        .upload-zone.dragover {
+            border-color: var(--primary);
+            background: rgba(37, 99, 235, 0.04);
+        }
+
+        .upload-zone i {
+            font-size: 2rem;
+            color: var(--gray-400);
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-zone p {
+            font-size: 0.9rem;
+            color: var(--gray-500);
+        }
+
+        .upload-zone span {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* ===== LOADING ===== */
+        .page-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            gap: 1rem;
+            color: var(--gray-500);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--gray-200);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ===== ERROR STATE ===== */
+        .error-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            gap: 1rem;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .error-state i {
+            font-size: 3rem;
+            color: var(--error);
+        }
+
+        .error-state h2 {
+            font-size: 1.5rem;
+            color: var(--gray-800);
+        }
+
+        .error-state p {
+            color: var(--gray-500);
+            max-width: 400px;
+        }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-section {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray-400);
+        }
+
+        .empty-section i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        /* ===== GOOGLE REVIEWS ===== */
+        .reviews-summary {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border-radius: var(--radius-lg);
+            margin-bottom: 1.5rem;
+        }
+
+        .reviews-rating-big {
+            text-align: center;
+            min-width: 80px;
+        }
+
+        .reviews-rating-number {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: var(--gray-900);
+            line-height: 1;
+        }
+
+        .reviews-stars {
+            display: flex;
+            gap: 2px;
+            justify-content: center;
+            margin: 0.3rem 0;
+        }
+
+        .reviews-stars i {
+            color: #f59e0b;
+            font-size: 0.9rem;
+        }
+
+        .reviews-stars i.empty {
+            color: var(--gray-300);
+        }
+
+        .reviews-stars i.half {
+            color: #f59e0b;
+        }
+
+        .reviews-total {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+            font-weight: 500;
+        }
+
+        .reviews-breakdown {
+            flex: 1;
+        }
+
+        .reviews-powered {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--gray-500);
+            margin-top: 0.5rem;
+        }
+
+        .reviews-powered img {
+            height: 16px;
+        }
+
+        .review-card {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--gray-100);
+            transition: background 0.2s;
+        }
+
+        .review-card:last-child {
+            border-bottom: none;
+        }
+
+        .review-card:hover {
+            background: var(--gray-50);
+        }
+
+        .review-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .review-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: var(--gray-200);
+            flex-shrink: 0;
+        }
+
+        .review-avatar-placeholder {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .review-author-info {
+            flex: 1;
+        }
+
+        .review-author-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--gray-800);
+        }
+
+        .review-date {
+            font-size: 0.75rem;
+            color: var(--gray-400);
+        }
+
+        .review-stars {
+            display: flex;
+            gap: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-stars i {
+            font-size: 0.75rem;
+            color: #f59e0b;
+        }
+
+        .review-stars i.empty {
+            color: var(--gray-300);
+        }
+
+        .review-text {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+            line-height: 1.6;
+        }
+
+        .review-text.truncated {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .review-read-more {
+            color: var(--primary);
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            background: none;
+            padding: 0;
+            margin-top: 0.3rem;
+        }
+
+        .google-photos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .google-photo-item {
+            aspect-ratio: 1;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .google-photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .google-photo-item:hover img {
+            transform: scale(1.08);
+        }
+
+        .hero-rating-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: rgba(245, 158, 11, 0.9);
+            color: white;
+            padding: 0.25rem 0.6rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-left: 0.5rem;
+        }
+
+        .hero-rating-badge i {
+            font-size: 0.7rem;
+        }
+
+        .no-reviews-msg {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray-400);
+        }
+
+        .no-reviews-msg i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .page-container {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+
+            .hero-info {
+                top: auto;
+                bottom: 1rem;
+                left: 1rem;
+                width: max-content;
+                max-width: calc(100% - 2rem);
+                padding: 0.6rem 0.8rem;
+                background: rgba(0, 0, 0, 0.8);
+                border-radius: 12px;
+            }
+
+            .hero-name {
+                font-size: 1.25rem;
+                margin-bottom: 0.3rem;
+            }
+
+            .hero-meta {
+                flex-direction: row;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 0.6rem;
+                font-size: 0.75rem;
+            }
+
+            .hero-content {
+                padding: 1.5rem;
+            }
+
+            .hero-thumbnails {
+                display: none;
+            }
+
+            .restaurant-hero {
+                height: 280px;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            /* Responsive Menu - 2 columns on mobile */
+            .menu-items-list {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.5rem;
+            }
+
+            .menu-item-img {
+                height: 100px;
+            }
+
+            .menu-item-content {
+                padding: 0.6rem;
+            }
+
+            .menu-item-name {
+                font-size: 0.85rem;
+                margin-bottom: 0.3rem;
+            }
+
+            .menu-item-price {
+                font-size: 0.85rem;
+                padding: 0.2rem 0.4rem;
+            }
+
+            .menu-item-desc {
+                font-size: 0.75rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar {
+                padding: 0 1rem;
+            }
+        }
+
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: 0.75rem;
+            padding: 0;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--gray-50);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .modal-close,
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--gray-400);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover,
+        .close-modal:hover {
+            color: var(--gray-600);
+            background: var(--gray-100);
+        }
+
+        .modal-body {
+            padding: 2rem;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        /* ===== Mini Mapa ===== */
+        .mini-map-card {
+            border-radius: 12px;
+            overflow: hidden;
+            width: 100%;
+            height: 220px;
+            background: var(--gray-100);
+            position: relative;
+        }
+
+        #restaurant-minimap {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <!-- Mapbox GL JS -->
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' rel='stylesheet' />
+    <!-- Script de internacionalización movido al final -->
+</head>
+
+<body>
+
+    <!-- NAVBAR (mismo menú que página de inicio) -->
+    <header class="global-nav">
+        <nav class="nav-container">
+            <a href="/" class="logo">
+                <img src="/images/PueblosMágicos.svg.png" alt="Logo">
+                RestauranteWeb
+            </a>
+            <div class="nav-menu" id="nav-menu">
+                <a href="/" class="nav-link" data-i18n="navbar.inicio">Inicio</a>
+                <a href="/mapa.html" class="nav-link" data-i18n="navbar.mapa">Mapa</a>
+                <a href="/#restaurantes" class="nav-link" data-i18n="navbar.guia">Restaurantes</a>
+                <a href="/#hospedaje" class="nav-link" data-i18n="navbar.hospedaje">Hospedaje</a>
+                <a href="/experiencias.html" class="nav-link" data-i18n="navbar.tours">Experiencias</a>
+                <a href="/Contactos.html" class="nav-link" data-i18n="footer.contacto">Contacto</a>
+            </div>
+            <div class="nav-actions-wrapper" style="display: flex; align-items: center;">
+                <select id="language-selector"
+                    style="margin-right: 15px; padding: 5px; border-radius: 5px; border: 1px solid #ddd; background: white; font-family: var(--font-family);">
+                    <option value="es" data-i18n="lang.switch_es">Español</option>
+                    <option value="en" data-i18n="lang.switch_en">Inglés</option>
+                    <option value="fr" data-i18n="lang.switch_fr">Français</option>
+                </select>
+                <div class="nav-actions" id="navbar-actions" style="display: flex; align-items: center;">
+                    <a href="/login.html" class="btn-login"><i class="fas fa-user-circle"></i> <span
+                            data-i18n="navbar.iniciar_sesion">Iniciar Sesión</span></a>
+                    <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div id="page-content">
+        <!-- Estado de carga -->
+        <div class="page-loading" id="loading-state">
+            <div class="spinner"></div>
+            <p>Cargando información del restaurante...</p>
+        </div>
+
+        <!-- Estado de error -->
+        <div class="error-state" id="error-state" style="display:none;">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h2>Restaurante no encontrado</h2>
+            <p>No pudimos cargar la información de este restaurante. Puede que no exista o haya un error de conexión.
+            </p>
+            <a href="/index.html" class="btn btn-primary">
+                <i class="fas fa-home"></i>
+                Volver al inicio
+            </a>
+        </div>
+
+        <!-- Contenido real (oculto hasta cargar) -->
+        <div id="restaurant-content" style="display:none;">
+            <!-- CARRUSEL DE IMÁGENES + INFO SUPERPUESTA -->
+            <div class="restaurant-hero" id="hero-section">
+                <div class="hero-gallery" id="hero-gallery">
+                    <div class="hero-placeholder" id="hero-placeholder">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                </div>
+
+                <!-- Info superpuesta sobre la imagen, esquina superior izquierda -->
+                <div class="hero-info" id="hero-info">
+                    <div class="hero-badge" id="hero-badge">
+                        <i class="fas fa-utensils"></i>
+                        <span id="hero-tipo">Restaurante</span>
+                    </div>
+                    <div style="display:flex; align-items:center;">
+                        <h1 class="hero-name" id="hero-name">Nombre del Restaurante</h1>
+                        <div id="btn-favorite" class="con-like" title="Guardar en favoritos"
+                            style="display: none; margin-left: 1rem;">
+                            <input class="like" type="checkbox" title="like" id="favorite-checkbox">
+                            <div class="checkmark">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="outline" viewBox="0 0 24 24">
+                                    <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
+                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="filled" viewBox="0 0 24 24">
+                                    <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
+                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="celebrate">
+                                    <polygon class="poly" points="10,10 20,20"></polygon>
+                                    <polygon class="poly" points="10,50 20,50"></polygon>
+                                    <polygon class="poly" points="20,80 30,70"></polygon>
+                                    <polygon class="poly" points="90,10 80,20"></polygon>
+                                    <polygon class="poly" points="90,50 80,50"></polygon>
+                                    <polygon class="poly" points="80,80 70,70"></polygon>
+                                </svg>
+                            </div>
+                        </div>
+                        <button id="btn-add-itinerary" class="btn btn-sm" title="Agregar a Itinerario"
+                            style="display: none; margin-left: 0.5rem; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; border-radius: 50%; width: 40px; height: 40px; align-items: center; justify-content: center; padding: 0;" onclick="abrirModalItinerarios()">
+                            <i class="fas fa-route"></i>
+                        </button>
+                    </div>
+                    <div class="hero-meta">
+                        <div class="hero-meta-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span id="hero-ciudad">Ciudad</span>
+                        </div>
+                        <div class="hero-meta-item">
+                            <i class="fas fa-phone"></i>
+                            <span id="hero-telefono">Teléfono</span>
+                        </div>
+                        <div id="hero-status"></div>
+                        <div class="share-buttons">
+                            <button class="share-btn whatsapp" id="share-whatsapp" title="Compartir en WhatsApp">
+                                <i class="fab fa-whatsapp"></i>
+                            </button>
+                            <button class="share-btn facebook" id="share-facebook" title="Compartir en Facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </button>
+                            <button class="share-btn copy-link" id="share-copy" title="Copiar enlace">
+                                <i class="fas fa-link"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-thumbnails" id="hero-thumbnails"></div>
+            </div>
+
+            <!-- LAYOUT -->
+            <div class="page-container">
+                <!-- COLUMNA PRINCIPAL -->
+                <div class="main-column">
+
+                    <!-- Descripción -->
+                    <div class="content-card">
+                        <div class="card-header-section">
+                            <h3><i class="fas fa-info-circle"></i> <span data-i18n="restaurante.sobre">Sobre el
+                                    establecimiento</span></h3>
+                        </div>
+                        <div class="card-body">
+                            <p class="description-text" id="desc-text">Cargando descripción...</p>
+                        </div>
+                    </div>
+
+                    <!-- Promociones -->
+                    <div class="content-card" id="promotions-card"
+                        style="display:none; border:2px solid #fde68a; background:#fffbeb;">
+                        <div class="card-header-section" style="background:#fef3c7; border-bottom:1px solid #fde68a;">
+                            <h3><i class="fas fa-star" style="color:#d97706;"></i> <span style="color:#b45309;"
+                                    data-i18n="restaurante.promociones">Promociones Especiales</span></h3>
+                        </div>
+                        <div class="card-body" id="promotions-body">
+                        </div>
+                    </div>
+
+                    <!-- Horarios -->
+                    <div class="content-card" id="horarios-card">
+                        <div class="card-header-section">
+                            <h3><i class="fas fa-clock"></i> <span data-i18n="restaurante.horarios">Horarios de
+                                    atención</span></h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="horarios-grid" id="horarios-grid">
+                                <p class="empty-section">Sin horarios registrados</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Menú -->
+                    <div class="content-card" id="menu-card" style="display:none;">
+                        <div class="card-header-section">
+                            <h3><i class="fas fa-book-open"></i> <span data-i18n="restaurante.menu">Menú</span></h3>
+                        </div>
+                        <div class="card-body" id="menu-body">
+                        </div>
+                    </div>
+
+                    <!-- Galería -->
+                    <div class="content-card" id="gallery-card" style="display:none;">
+                        <div class="card-header-section">
+                            <h3><i class="fas fa-images"></i> <span data-i18n="restaurante.galeria">Galería de
+                                    fotos</span></h3>
+                            <span id="gallery-count" style="font-size:0.8rem; color:var(--gray-500);"></span>
+                        </div>
+                        <div class="card-body">
+                            <div class="gallery-grid" id="gallery-grid"></div>
+                        </div>
+                    </div>
+
+                    <!-- Galería de Fotos de Viajeros -->
+                    <div class="content-card" id="card-user-gallery" style="display:none; margin-top: 2rem;">
+                        <div class="card-header-section">
+                            <h3><i class="fas fa-camera-retro" style="color: var(--primary);"></i> <span
+                                    data-i18n="experiencia.galeria_viajeros">Galería de Viajeros</span>
+                            </h3>
+                            <span id="gallery-user-count" style="font-size:0.85rem; color: var(--gray-500);"></span>
+                        </div>
+                        <div class="card-body">
+                            <div id="user-gallery-grid"
+                                style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.5rem;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reseñas de Viajeros -->
+                    <div class="content-card" id="native-reviews-card"
+                        style="margin-top: 2rem; border-color: transparent; box-shadow: none; padding: 0;">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                            <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--gray-900);">Opiniones</h2>
+                            <button id="btn-write-review" class="btn"
+                                style="background: var(--primary); color: white; padding: 0.5rem 1rem; border-radius: 0.75rem; font-weight: 600; font-size: 0.875rem; cursor: pointer; border: none; box-shadow: 0 1px 2px rgba(0,0,0,0.05);"
+                                onclick="handleEscribirOpinion()">
+                                ✍️ Escribir Opinión
+                            </button>
+                        </div>
+
+                        <!-- Summary box injected dynamically by JS -->
+                        <div id="reviews-summary-native"></div>
+
+                        <!-- Formulario de nueva reseña en línea (Oculto por defecto) -->
+                        <div id="review-form-container"
+                            style="display: none; background: white; padding: 1.25rem; border-radius: 1rem; border: 1px solid var(--gray-200); margin-bottom: 1.5rem;">
+                            <form id="write-review-form" onsubmit="submitReview(event)"
+                                style="display: flex; flex-direction: column; gap: 1rem;">
+                                <div>
+                                    <label
+                                        style="display: block; font-size: 0.875rem; font-weight: 500; color: var(--gray-900); margin-bottom: 0.375rem;">Publicando
+                                        como</label>
+                                    <div
+                                        style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 0.75rem; color: var(--gray-900);">
+                                        <i class="fas fa-user" style="color: var(--gray-500); font-size: 0.875rem;"></i>
+                                        <span id="review-author-name"
+                                            style="font-weight: 500; font-size: 0.95rem;">Usuario</span>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label
+                                        style="display: block; font-size: 0.875rem; font-weight: 500; color: var(--gray-900); margin-bottom: 0.375rem;">Calificación</label>
+                                    <div id="star-rating-selector" style="display: flex; gap: 0.125rem;">
+                                        <i class="fas fa-star" data-val="1" onclick="selectStar(1)"
+                                            style="color: var(--gray-300); cursor: pointer; font-size: 1.25rem; transition: transform 0.2s;"></i>
+                                        <i class="fas fa-star" data-val="2" onclick="selectStar(2)"
+                                            style="color: var(--gray-300); cursor: pointer; font-size: 1.25rem; transition: transform 0.2s;"></i>
+                                        <i class="fas fa-star" data-val="3" onclick="selectStar(3)"
+                                            style="color: var(--gray-300); cursor: pointer; font-size: 1.25rem; transition: transform 0.2s;"></i>
+                                        <i class="fas fa-star" data-val="4" onclick="selectStar(4)"
+                                            style="color: var(--gray-300); cursor: pointer; font-size: 1.25rem; transition: transform 0.2s;"></i>
+                                        <i class="fas fa-star" data-val="5" onclick="selectStar(5)"
+                                            style="color: var(--gray-300); cursor: pointer; font-size: 1.25rem; transition: transform 0.2s;"></i>
+                                    </div>
+                                    <input type="hidden" id="review-rating-value" required>
+                                </div>
+
+                                <div>
+                                    <label
+                                        style="display: block; font-size: 0.875rem; font-weight: 500; color: var(--gray-900); margin-bottom: 0.375rem;">Tu
+                                        experiencia</label>
+                                    <textarea id="review-comment" rows="3"
+                                        style="width: 100%; padding: 0.75rem 1rem; border-radius: 0.75rem; border: 1px solid var(--gray-200); background: var(--gray-50); color: var(--gray-900); resize: none; outline: none; transition: border-color 0.2s;"
+                                        placeholder="Cuéntanos qué tal fue tu experiencia en este lugar..."
+                                        onfocus="this.style.borderColor='var(--primary)'"
+                                        onblur="this.style.borderColor='var(--gray-200)'"></textarea>
+                                </div>
+
+                                <div>
+                                    <label
+                                        style="display: block; font-size: 0.875rem; font-weight: 500; color: var(--gray-900); margin-bottom: 0.375rem;">Fotos
+                                        <span
+                                            style="font-weight: 400; color: var(--gray-500);">(opcional)</span></label>
+                                    <div id="review-photo-zone-rest"
+                                        style="border: 1px dashed var(--gray-300); border-radius: 0.75rem; padding: 1rem; text-align: center; cursor: pointer; background: var(--gray-50); transition: all 0.2s;"
+                                        onclick="document.getElementById('review-photo-input-rest').click()">
+                                        <i class="fas fa-cloud-upload-alt"
+                                            style="font-size: 1.25rem; color: var(--gray-400);"></i>
+                                        <p style="margin: 0.375rem 0 0; font-size: 0.8125rem; color: var(--gray-500);">
+                                            Añadir fotos</p>
+                                    </div>
+                                    <input type="file" id="review-photo-input-rest" accept="image/*" multiple
+                                        style="display:none;">
+                                    <div id="review-photo-preview-rest"
+                                        style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:0.75rem;"></div>
+                                </div>
+
+                                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                                    <button type="button" class="btn"
+                                        style="flex: 1; padding: 0.75rem; background: var(--gray-100); color: var(--gray-700); border-radius: 0.75rem; font-weight: 600; cursor: pointer; border: none; transition: background 0.2s;"
+                                        onclick="closeReviewModal()">
+                                        Cancelar
+                                    </button>
+                                    <button type="submit" id="btn-submit-review" class="btn"
+                                        style="flex: 2; padding: 0.75rem; background: var(--primary); color: white; border-radius: 0.75rem; font-weight: 700; cursor: pointer; border: none; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: opacity 0.3s;"
+                                        onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+                                        <i class="fas fa-paper-plane"></i> Enviar Opinión
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div id="native-reviews-container" style="display: flex; flex-direction: column; gap: 1rem;">
+                            <!-- Reviews injected here -->
+                        </div>
+                    </div>
+
+                    <!-- Widgets y Fotos (se cargan dinámicamente) -->
+                    <div class="content-card" id="reviews-widget-card"
+                        style="display:none; max-width: 100%; min-width: 0; overflow: hidden;">
+                        <div class="card-header-section">
+                            <h3><i class="fas fa-star" style="color: #f59e0b;"></i> Opiniones y Fotos</h3>
+                        </div>
+                        <div class="card-body"
+                            style="overflow-x: hidden; max-width: 100%; min-width: 0; padding: 1.5rem 1rem;">
+                            <!-- Google Badge se inyecta aquí -->
+                            <div id="google-badge-container" style="display:none; text-align:center; padding: 1rem 0;">
+                            </div>
+
+                            <div id="widget-separator"
+                                style="margin: 2rem 0; border-top: 1px solid var(--gray-100); display:none;"></div>
+
+                            <!-- Instagram Embeds se inyectan en este grid -->
+                            <div id="instagram-wrapper" style="position: relative; width: 100%; display: none;">
+                                <button type="button" class="carousel-nav-btn prev-btn" id="ig-prev-btn"
+                                    style="position: absolute; left:-10px; top:50%; transform:translateY(-50%); z-index:10; background:white; color:#1e293b; border:1px solid #e2e8f0; border-radius:50%; width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 4px 6px rgba(0,0,0,0.1); display:none;">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+
+                                <div id="instagram-container"
+                                    style="gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 1rem; align-items: start; width: 100%; max-width: 100%; min-width: 0; -webkit-overflow-scrolling: touch; display: flex; scroll-behavior: smooth;">
+                                </div>
+
+                                <button type="button" class="carousel-nav-btn next-btn" id="ig-next-btn"
+                                    style="position: absolute; right:-10px; top:50%; transform:translateY(-50%); z-index:10; background:white; color:#1e293b; border:1px solid #e2e8f0; border-radius:50%; width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 4px 6px rgba(0,0,0,0.1); display:none;">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SIDEBAR -->
+                <div class="sidebar-column">
+
+                    <!-- Panel Admin (solo si hay sesión) -->
+                    <div class="admin-panel" id="admin-panel">
+                        <div class="admin-panel-header">
+                            <h4><i class="fas fa-shield-alt"></i> Panel de Administración</h4>
+                        </div>
+                        <div class="admin-panel-body">
+                            <button class="admin-action-btn" onclick="openEditModal('info')">
+                                <i class="fas fa-edit"></i>
+                                Editar información básica
+                            </button>
+                            <button class="admin-action-btn" onclick="openEditModal('horarios')">
+                                <i class="fas fa-clock"></i>
+                                Editar horarios
+                            </button>
+                            <button class="admin-action-btn" onclick="openEditModal('menu')">
+                                <i class="fas fa-book-open"></i>
+                                Editar menú
+                            </button>
+                            <button class="admin-action-btn" onclick="openEditModal('imagenes')">
+                                <i class="fas fa-images"></i>
+                                Subir / gestionar imágenes
+                            </button>
+                            <button class="admin-action-btn" onclick="openEditModal('redes')">
+                                <i class="fas fa-share-alt"></i>
+                                Editar redes sociales
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Información Adicional -->
+                    <div class="sidebar-card" id="info-adicional-card" style="display:none;">
+                        <div class="sidebar-header">
+                            <h4><i class="fas fa-info-circle"></i> <span
+                                    data-i18n="restaurante.informacion_adicional">Información Adicional</span></h4>
+                        </div>
+                        <div class="sidebar-body" id="info-adicional-body">
+                        </div>
+                    </div>
+
+                    <!-- Contacto -->
+                    <div class="sidebar-card">
+                        <div class="sidebar-header">
+                            <h4><i class="fas fa-address-card"></i> <span
+                                    data-i18n="restaurante.contacto">Contacto</span></h4>
+                        </div>
+                        <div class="sidebar-body" id="contacto-body">
+                        </div>
+                    </div>
+
+                    <!-- Dirección -->
+                    <div class="sidebar-card">
+                        <div class="sidebar-header">
+                            <h4><i class="fas fa-map-marker-alt"></i> <span
+                                    data-i18n="restaurante.direccion">Dirección</span></h4>
+                        </div>
+                        <div class="sidebar-body" id="direccion-body">
+                        </div>
+                    </div>
+
+                    <!-- Mini Mapa -->
+                    <div class="sidebar-card" id="restaurant-map-card" style="display:none;">
+                        <div class="sidebar-header">
+                            <h4><i class="fas fa-map-marked-alt"></i> <span
+                                    data-i18n="restaurante.ubicacion">Ubicación</span></h4>
+                        </div>
+                        <div class="sidebar-body" style="padding: 0;">
+                            <div class="mini-map-card">
+                                <div id="restaurant-minimap"></div>
+                            </div>
+                            <a href="/mapa.html" target="_blank"
+                                style="display:block; padding:0.75rem; text-align:center; color:var(--primary); font-weight:600; font-size:0.9rem; text-decoration:none;">
+                                <i class="fas fa-map-marked-alt"></i> Ver en el Mapa
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Promociones Activas (Sidebar) -->
+                    <div class="sidebar-card" id="sidebar-promotions-card" style="display:none;">
+                        <div class="sidebar-header"
+                            style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-bottom: 1px solid #fde68a;">
+                            <h4 style="color: #b45309;"><i class="fas fa-tags" style="color: #d97706;"></i> <span
+                                    data-i18n="restaurante.promociones">Promociones Activas</span></h4>
+                        </div>
+                        <div class="sidebar-body" id="sidebar-promotions-body" style="padding: 0;">
+                        </div>
+                    </div>
+
+                    <!-- Redes Sociales -->
+                    <div class="sidebar-card" id="redes-card" style="display:none;">
+                        <div class="sidebar-header">
+                            <h4><i class="fas fa-share-alt"></i> <span data-i18n="restaurante.redes_sociales">Redes
+                                    Sociales</span></h4>
+                        </div>
+                        <div class="sidebar-body">
+                            <div class="social-links" id="social-links"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Agregar a Itinerario -->
+    <div id="modal-agregar-itinerario" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 2rem; border-radius: var(--radius-lg); width: 90%; max-width: 400px; box-shadow: var(--shadow-xl);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="font-size: 1.25rem;"><i class="fas fa-route" style="color: #8b5cf6;"></i> Agregar a Itinerario</h3>
+                <button onclick="cerrarModalItinerarios()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--gray-500);"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <div id="itinerarios-loading" style="text-align: center; padding: 2rem; color: var(--gray-500); display: none;">
+                <i class="fas fa-spinner fa-spin fa-2x"></i>
+                <p style="margin-top: 1rem;">Cargando itinerarios...</p>
+            </div>
+
+            <div id="itinerarios-list" style="margin-bottom: 1.5rem; max-height: 250px; overflow-y: auto;">
+                <!-- Lista de itinerarios inyectada por JS -->
+            </div>
+
+            <form id="form-agregar-itinerario" onsubmit="guardarEnItinerario(event)" style="display: none;">
+                <input type="hidden" id="select-itinerario-id">
+                <div style="margin-bottom: 1rem; padding: 0.75rem; background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: var(--radius-md);">
+                    <span style="font-size: 0.85rem; color: var(--gray-500); display: block; margin-bottom: 0.2rem;">Guardando en:</span>
+                    <strong id="select-itinerario-nombre" style="color: var(--primary);"></strong>
+                </div>
+                
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; font-size: 0.9rem;">Fecha de visita</label>
+                    <input type="date" id="itinerario-fecha" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: var(--radius-md);">
+                </div>
+                
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; font-size: 0.9rem;">Hora (Opcional)</label>
+                    <input type="time" id="itinerario-hora" style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: var(--radius-md);">
+                </div>
+                
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; font-size: 0.9rem;">Notas (Opcional)</label>
+                    <input type="text" id="itinerario-notas" placeholder="Ej. Reservar mesa cerca de la ventana" style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: var(--radius-md);">
+                </div>
+
+                <div style="display: flex; gap: 0.5rem;">
+                    <button type="button" class="btn btn-secondary" onclick="volverListaItinerarios()" style="flex: 1;">Volver</button>
+                    <button type="submit" class="btn btn-primary" style="flex: 2; background: #8b5cf6;" id="btn-submit-itinerario">Guardar</button>
+                </div>
+            </form>
+            
+            <div id="itinerarios-empty" style="text-align: center; padding: 1.5rem 0; display: none;">
+                <p style="color: var(--gray-600); margin-bottom: 1rem; font-size: 0.9rem;">No tienes itinerarios creados aún.</p>
+                <a href="/mi-perfil.html" style="color: #8b5cf6; font-weight: 600; text-decoration: none;"><i class="fas fa-plus-circle"></i> Ir a crear uno</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE EDICIÓN -->
+    <div class="edit-modal-overlay" id="edit-modal-overlay">
+        <div class="edit-modal" id="edit-modal">
+            <div class="edit-modal-header">
+                <h3 id="edit-modal-title">Editar información</h3>
+                <button class="modal-close-btn" onclick="closeEditModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="edit-modal-body" id="edit-modal-body">
+            </div>
+            <div class="edit-modal-footer">
+                <button class="btn btn-secondary" onclick="closeEditModal()">Cancelar</button>
+                <button class="btn btn-primary" id="save-btn" onclick="saveChanges()">
+                    <i class="fas fa-save"></i>
+                    Guardar cambios
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LIGHTBOX -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+        <button class="lightbox-close" onclick="closeLightbox()">
+            <i class="fas fa-times"></i>
+        </button>
+        <img id="lightbox-img" src="" alt="">
+    </div>
+
+    <script>
+        (function () {
+            var navMenu = document.getElementById('nav-menu');
+            if (!navMenu) return;
+            var overlay = document.querySelector('.nav-overlay') || (function () {
+                var el = document.createElement('div');
+                el.className = 'nav-overlay';
+                document.body.appendChild(el);
+                return el;
+            })();
+            function closeMenu() {
+                navMenu.classList.remove('active');
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+                var t = document.getElementById('nav-toggle');
+                if (t) { var i = t.querySelector('i'); if (i) i.className = 'fas fa-bars'; t.setAttribute('aria-label', 'Abrir menú'); }
+            }
+            function openMenu() {
+                navMenu.classList.add('active');
+                overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                var t = document.getElementById('nav-toggle');
+                if (t) { var i = t.querySelector('i'); if (i) i.className = 'fas fa-times'; t.setAttribute('aria-label', 'Cerrar menú'); }
+            }
+            document.addEventListener('click', function (e) {
+                if (e.target.closest('#nav-toggle')) {
+                    e.preventDefault();
+                    if (navMenu.classList.contains('active')) closeMenu();
+                    else openMenu();
+                }
+            });
+            navMenu.addEventListener('click', function (e) {
+                if (e.target.classList.contains('nav-link')) setTimeout(closeMenu, 100);
+            });
+            overlay.addEventListener('click', closeMenu);
+        })();
+    </script>
+    <script src="/js/i18n.js"></script>
+    <script src="/js/utils.js"></script>
+    <script src="/js/restaurante.js?v=5"></script>
+    <!-- AUTH MODAL (LOGIN/REGISTER FOR TOURISTS) -->
+    <div class="modal" id="tourist-auth-modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3 id="auth-modal-title">Iniciar Sesión</h3>
+                <button class="close-modal" onclick="closeAuthModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="auth-tabs"
+                    style="display:flex; margin-bottom: 1.5rem; border-bottom: 1px solid var(--gray-200);">
+                    <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')"
+                        style="flex:1; padding:0.5rem; background:none; border:none; border-bottom: 2px solid var(--primary); font-weight:600; cursor:pointer;">Login</button>
+                    <button class="auth-tab" id="tab-register" onclick="switchAuthTab('register')"
+                        style="flex:1; padding:0.5rem; background:none; border:none; border-bottom: 2px solid transparent; font-weight:600; cursor:pointer; color:var(--gray-500);">Registrarse</button>
+                </div>
+
+                <form id="tourist-auth-form" onsubmit="handleTouristAuth(event)">
+                    <div class="form-group" id="group-nombre" style="display: none; margin-bottom: 1rem;">
+                        <label class="form-label required">Nombre Completo</label>
+                        <input type="text" id="tourist-nombre" class="form-input"
+                            style="width:100%; padding:0.75rem; border-radius:0.5rem; border:1px solid #d1d5db;">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label class="form-label required">Correo Electrónico</label>
+                        <input type="email" id="tourist-email" class="form-input" required
+                            style="width:100%; padding:0.75rem; border-radius:0.5rem; border:1px solid #d1d5db;">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label class="form-label required">Contraseña</label>
+                        <input type="password" id="tourist-password" class="form-input" required
+                            style="width:100%; padding:0.75rem; border-radius:0.5rem; border:1px solid #d1d5db;">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;"
+                        id="btn-auth-submit">Entrar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="/" class="logo">
+                        <img src="/images/PueblosMágicos.svg.png" alt="Logo">
+                        RestauranteWeb
+                    </a>
+                    <p>La plataforma líder que conecta a locales y turistas con la mejor oferta gastronómica del
+                        Corazón de la Sierra Gorda.</p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h4 class="footer-title">Navegación</h4>
+                    <ul class="footer-links">
+                        <li><a href="/">Inicio</a></li>
+                        <li><a href="/mapa.html">Mapa</a></li>
+                        <li><a href="/Contactos.html">Contacto</a></li>
+                        <li><a href="/login.html">Panel Admin</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4 class="footer-title">Soporte</h4>
+                    <ul class="footer-links">
+                        <li><a href="/Contactos.html#faq">Preguntas Frecuentes</a></li>
+                        <li><a href="mailto:restaurantesturismo57@gmail.com">Soporte Técnico</a></li>
+                        <li><a href="#">Guía de Uso</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4 class="footer-title">Contacto</h4>
+                    <div class="footer-contact">
+                        <p><i class="fas fa-envelope"></i> restaurantesturismo57@gmail.com</p>
+                        <p><i class="fas fa-phone"></i> +52 (441) 296-0285</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Independencia No. 12, Jalpan de Serra, Qro.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 RestauranteWeb - Jalpan de Serra. Todos los derechos reservados.</p>
+                <div class="footer-meta">
+                    <a href="#">Privacidad</a>
+                    <a href="#">Términos</a>
+                    <a href="#" style="display: flex; align-items: center; gap: 0.5rem; color: white;">
+                        <i class="fas fa-code"></i> Desarrollado por Zac
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Photo Lightbox (viajeros) -->
+    <div id="photo-lightbox"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.92); z-index:2500; align-items:center; justify-content:center; cursor:pointer;"
+        onclick="if(event.target===this) closePhotoLightbox()">
+        <button onclick="closePhotoLightbox()"
+            style="position:absolute; top:20px; right:30px; background:none; border:none; color:white; font-size:2rem; cursor:pointer; z-index:2505;"><i
+                class="fas fa-times"></i></button>
+        <img id="photo-lightbox-img" src="" alt="Foto"
+            style="max-width:90%; max-height:85vh; object-fit:contain; border-radius:4px; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+    </div>
+
+    <!-- Multi-Photo Review JS (modal + inline form) -->
+    <script>
+        // Shared photo files array for both modal and inline forms
+        window._reviewPhotosFiles = [];
+
+        function setupPhotoUpload(inputId, previewId, zoneId) {
+            const input = document.getElementById(inputId);
+            const preview = document.getElementById(previewId);
+            const zone = document.getElementById(zoneId);
+            if (!input || !preview) return;
+
+            input.addEventListener('change', function () {
+                addReviewPhotos(this.files, previewId);
+                this.value = '';
+            });
+
+            if (zone) {
+                zone.addEventListener('dragover', e => { e.preventDefault(); zone.style.borderColor = 'var(--primary)'; zone.style.background = 'rgba(37,99,235,0.05)'; });
+                zone.addEventListener('dragleave', () => { zone.style.borderColor = 'var(--gray-300)'; zone.style.background = ''; });
+                zone.addEventListener('drop', e => {
+                    e.preventDefault();
+                    zone.style.borderColor = 'var(--gray-300)'; zone.style.background = '';
+                    addReviewPhotos(e.dataTransfer.files, previewId);
+                });
+            }
+        }
+
+        function addReviewPhotos(files, previewId) {
+            const maxPhotos = 5;
+            const maxSize = 5 * 1024 * 1024;
+            for (const file of files) {
+                if (window._reviewPhotosFiles.length >= maxPhotos) break;
+                if (!file.type.startsWith('image/')) continue;
+                if (file.size > maxSize) continue;
+                window._reviewPhotosFiles.push(file);
+            }
+            renderPhotoPreview(previewId);
+        }
+
+        function renderPhotoPreview(previewId) {
+            const container = document.getElementById(previewId);
+            if (!container) return;
+            container.innerHTML = window._reviewPhotosFiles.map((file, idx) => {
+                const url = URL.createObjectURL(file);
+                return `
+                    <div style="position:relative; width:70px; height:70px; border-radius:0.4rem; overflow:hidden; border:1px solid var(--gray-200);">
+                        <img src="${url}" alt="Preview" style="width:100%; height:100%; object-fit:cover;">
+                        <button type="button" onclick="removeReviewPhoto(${idx}, '${previewId}')" style="position:absolute; top:2px; right:2px; background:rgba(0,0,0,0.6); color:white; border:none; border-radius:50%; width:20px; height:20px; font-size:10px; cursor:pointer; display:flex; align-items:center; justify-content:center;"><i class="fas fa-times"></i></button>
+                    </div>`;
+            }).join('');
+        }
+
+        function removeReviewPhoto(index, previewId) {
+            window._reviewPhotosFiles.splice(index, 1);
+            renderPhotoPreview(previewId);
+        }
+
+        // Initialize both upload zones
+        document.addEventListener('DOMContentLoaded', () => {
+            setupPhotoUpload('review-photo-input-modal', 'review-photo-preview-modal', 'review-photo-zone-modal');
+            setupPhotoUpload('review-photo-input-rest', 'review-photo-preview-rest', 'review-photo-zone-rest');
+        });
+    </script>
+
+    <!-- Menu Item Lightbox -->
+    <div id="menu-lightbox"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 2000; align-items: center; justify-content: center; flex-direction: column;">
+        <button onclick="closeMenuLightbox()"
+            style="position: absolute; top: 20px; right: 30px; background: none; border: none; color: white; font-size: 2rem; cursor: pointer; padding: 10px; z-index: 2005;"><i
+                class="fas fa-times"></i></button>
+        <div
+            style="position: relative; max-width: 90%; max-height: 80vh; display: flex; align-items: center; justify-content: center;">
+            <button id="menu-lightbox-prev" onclick="prevMenuImage(event)"
+                style="position: absolute; left: -50px; background: rgba(255,255,255,0.2); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s;"><i
+                    class="fas fa-chevron-left"></i></button>
+            <img id="menu-lightbox-img" src=""
+                style="max-width: 100%; max-height: 80vh; object-fit: contain; border-radius: 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+            <button id="menu-lightbox-next" onclick="nextMenuImage(event)"
+                style="position: absolute; right: -50px; background: rgba(255,255,255,0.2); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s;"><i
+                    class="fas fa-chevron-right"></i></button>
+        </div>
+        <div id="menu-lightbox-caption"
+            style="color: white; margin-top: 15px; font-size: 1.2rem; font-weight: 600; text-align: center; padding: 0 20px;">
+        </div>
+    </div>
+
+    <!-- Share Buttons JS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const shareWA = document.getElementById('share-whatsapp');
+            const shareFB = document.getElementById('share-facebook');
+            const shareCopy = document.getElementById('share-copy');
+
+            if (shareWA) {
+                shareWA.addEventListener('click', () => {
+                    const nombre = document.getElementById('hero-name')?.textContent || 'Restaurante';
+                    const url = window.location.href;
+                    const texto = encodeURIComponent(`¡Mira este lugar! ${nombre} en Jalpan de Serra 🍽️\n${url}`);
+                    window.open(`https://wa.me/?text=${texto}`, '_blank');
+                });
+            }
+
+            if (shareFB) {
+                shareFB.addEventListener('click', () => {
+                    const url = encodeURIComponent(window.location.href);
+                    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'width=600,height=400');
+                });
+            }
+
+            if (shareCopy) {
+                shareCopy.addEventListener('click', async () => {
+                    try {
+                        await navigator.clipboard.writeText(window.location.href);
+                        shareCopy.classList.add('copied');
+                        shareCopy.innerHTML = '<i class="fas fa-check"></i>';
+                        setTimeout(() => {
+                            shareCopy.classList.remove('copied');
+                            shareCopy.innerHTML = '<i class="fas fa-link"></i>';
+                        }, 2000);
+                    } catch (err) {
+                        // Fallback for older browsers
+                        const input = document.createElement('input');
+                        input.value = window.location.href;
+                        document.body.appendChild(input);
+                        input.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(input);
+                        shareCopy.classList.add('copied');
+                        shareCopy.innerHTML = '<i class="fas fa-check"></i>';
+                        setTimeout(() => {
+                            shareCopy.classList.remove('copied');
+                            shareCopy.innerHTML = '<i class="fas fa-link"></i>';
+                        }, 2000);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

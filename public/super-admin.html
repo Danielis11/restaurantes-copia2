@@ -1,0 +1,1985 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin - RestauranteWeb</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+    <!-- Mapbox GL JS -->
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' rel='stylesheet' />
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+
+        body {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--gray-50);
+            color: var(--gray-900);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--white);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--white);
+            text-decoration: none;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .crown-icon {
+            color: #fbbf24;
+            font-size: 1.5rem;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .user-role {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--white);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+            padding: 0;
+        }
+
+        .tabs-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            padding: 0 1.5rem;
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 1rem 0;
+            color: var(--gray-500);
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tab-button.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-button:hover:not(.active) {
+            color: var(--gray-700);
+        }
+
+        /* Main Content */
+        .main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Page Headers */
+        .page-header {
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.025em;
+        }
+
+        .page-subtitle {
+            color: var(--gray-500);
+            font-size: 1.125rem;
+            max-width: 800px;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--gray-100);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .stat-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+            border-color: var(--gray-200);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--gray-600);
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.25rem;
+        }
+
+        .stat-icon.primary {
+            background-color: var(--primary);
+        }
+
+        .stat-icon.success {
+            background-color: var(--success);
+        }
+
+        .stat-icon.warning {
+            background-color: var(--warning);
+        }
+
+        .stat-icon.error {
+            background-color: var(--error);
+        }
+
+        .stat-icon.info {
+            background-color: var(--info);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-change {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--gray-600);
+        }
+
+        /* Tables */
+        .table-container {
+            background: var(--white);
+            border-radius: 0.75rem;
+            border: 1px solid var(--gray-200);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .search-input {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            width: 250px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background-color: var(--black);
+            color: var(--white);
+            padding: 0.875rem 1.75rem;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary:hover {
+            background-color: #333;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: var(--white);
+        }
+
+        .btn-success:hover {
+            background-color: #059669;
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+            color: var(--white);
+        }
+
+        .btn-warning:hover {
+            background-color: #d97706;
+        }
+
+        .btn-danger {
+            background-color: var(--error);
+            color: var(--white);
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--gray-600);
+            border: 1px solid var(--gray-300);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--gray-50);
+            color: var(--gray-700);
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .table th {
+            background-color: var(--gray-50);
+            font-weight: 600;
+            color: var(--gray-900);
+            font-size: 0.9rem;
+        }
+
+        .table td {
+            color: var(--gray-700);
+            font-size: 0.9rem;
+        }
+
+        .table tr:hover td {
+            background-color: var(--gray-50);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        /* Status Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .badge-error {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+
+        .badge-primary {
+            background-color: rgba(124, 58, 237, 0.1);
+            color: var(--primary);
+        }
+
+        /* Additional utility classes */
+        .text-gray-500 {
+            color: var(--gray-500);
+        }
+
+        .text-capitalize {
+            text-transform: capitalize;
+        }
+
+        /* Charts */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: var(--white);
+            border-radius: 0.75rem;
+            border: 1px solid var(--gray-200);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+        }
+
+        .chart-container.small {
+            height: 300px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: 0.75rem;
+            padding: 0;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--gray-50);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--gray-400);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            color: var(--gray-600);
+            background: var(--gray-100);
+        }
+
+        .modal-body {
+            padding: 2rem;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid var(--gray-200);
+            background: var(--gray-50);
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        /* Confirmation Modal */
+        .confirmation-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .confirmation-modal.show {
+            display: flex;
+        }
+
+        .confirmation-content {
+            background: var(--white);
+            border-radius: 0.75rem;
+            padding: 0;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .confirmation-header {
+            padding: 2rem 2rem 1rem 2rem;
+            text-align: center;
+        }
+
+        .confirmation-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--white);
+        }
+
+        .confirmation-icon.danger {
+            background-color: var(--error);
+        }
+
+        .confirmation-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .confirmation-message {
+            color: var(--gray-600);
+            line-height: 1.6;
+        }
+
+        .confirmation-body {
+            padding: 0 2rem;
+        }
+
+        .confirmation-details {
+            background: var(--gray-50);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .confirmation-footer {
+            padding: 1.5rem 2rem 2rem 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        /* Form */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-label.required::after {
+            content: ' *';
+            color: var(--error);
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+
+        .form-radio-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .form-radio-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-radio {
+            accent-color: var(--primary);
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray-500);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--gray-200);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            max-width: 400px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid var(--primary);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            gap: 12px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-left-color: var(--success);
+        }
+
+        .notification.error {
+            border-left-color: var(--error);
+        }
+
+        .notification.warning {
+            border-left-color: var(--warning);
+        }
+
+        .notification i {
+            font-size: 18px;
+            color: var(--primary);
+        }
+
+        .notification.success i {
+            color: var(--success);
+        }
+
+        .notification.error i {
+            color: var(--error);
+        }
+
+        .notification.warning i {
+            color: var(--warning);
+        }
+
+        .notification-message {
+            flex: 1;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            color: var(--gray-400);
+        }
+
+        .notification-close:hover {
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                padding: 0 1rem;
+            }
+
+            .main {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .user-section {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .user-info {
+                text-align: center;
+            }
+
+            .table-actions {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .search-input {
+                width: 100%;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 1rem;
+            }
+
+            .modal-body {
+                padding: 1rem;
+            }
+
+            .modal-footer {
+                padding: 1rem;
+                flex-direction: column;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+
+            .action-buttons .btn-sm {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <a href="/super-admin.html" class="logo">
+                <i class="fas fa-crown crown-icon"></i>
+                Super Admin
+            </a>
+
+            <div class="user-section">
+                <div class="user-info">
+                    <div class="user-name" id="user-name">Cargando...</div>
+                    <div class="user-role" id="user-role">super-admin</div>
+                </div>
+                <div class="user-avatar" id="user-avatar">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <button class="logout-btn" id="logout-btn" title="Cerrar sesión">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs">
+        <div class="tabs-container">
+            <button class="tab-button active" data-tab="dashboard">
+                <i class="fas fa-tachometer-alt"></i>
+                Dashboard
+            </button>
+            <button class="tab-button" data-tab="admins">
+                <i class="fas fa-users"></i>
+                Administradores
+            </button>
+            <button class="tab-button" data-tab="restaurants">
+                <i class="fas fa-store"></i>
+                Restaurantes
+            </button>
+            <button class="tab-button" data-tab="guias">
+                <i class="fas fa-user-tie"></i>
+                Guías
+            </button>
+            <button class="tab-button" data-tab="tours">
+                <i class="fas fa-map-marked-alt"></i>
+                Rutas
+            </button>
+            <button class="tab-button" data-tab="reviews">
+                <i class="fas fa-comments"></i>
+                Reseñas
+            </button>
+            <button class="tab-button" data-tab="noticias">
+                <i class="fas fa-newspaper"></i>
+                Noticias
+            </button>
+            <button class="tab-button" data-tab="stats">
+                <i class="fas fa-chart-line"></i>
+                Estadísticas
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="page-header">
+                <h1 class="page-title">Dashboard General</h1>
+                <p class="page-subtitle">Resumen completo del sistema RestauranteWeb</p>
+            </div>
+
+            <!-- Loading State -->
+            <div id="dashboard-loading" class="loading">
+                <div class="spinner"></div>
+                <p>Cargando dashboard...</p>
+            </div>
+
+            <!-- Dashboard Content -->
+            <div id="dashboard-content" style="display: none;">
+                <!-- Stats Grid -->
+                <div class="stats-grid" id="dashboard-stats">
+                    <!-- Stats will be loaded here -->
+                </div>
+
+                <!-- Charts -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Crecimiento del Sistema</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="growthChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Distribución por Tipo</h3>
+                        </div>
+                        <div class="chart-container small">
+                            <canvas id="typeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Administradores Tab -->
+        <div id="admins" class="tab-content">
+            <div class="table-container">
+                <div class="table-header">
+                    <h2 class="table-title">Gestión de Administradores</h2>
+                    <div class="table-actions">
+                        <input type="text" id="admin-search" class="search-input"
+                            placeholder="Buscar administradores...">
+                        <button class="btn btn-outline" onclick="exportAdminsCSVMinimal()">
+                            <i class="fas fa-file-csv"></i> Exportar
+                        </button>
+                        <button class="btn btn-primary" onclick="openCreateAdminModal()">
+                            <i class="fas fa-plus"></i>
+                            Nuevo Admin
+                        </button>
+                    </div>
+                </div>
+
+                <div id="admins-table-container">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Cargando administradores...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Restaurantes Tab -->
+        <div id="restaurants" class="tab-content">
+            <!-- ... restaurante content ... -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h2 class="table-title">Gestión de Restaurantes</h2>
+                    <div class="table-actions">
+                        <input type="text" id="restaurant-search" class="search-input"
+                            placeholder="Buscar restaurantes...">
+                        <select id="restaurant-filter" class="form-select" style="width: auto;">
+                            <option value="">Todos los tipos</option>
+                            <option value="restaurante">Restaurantes</option>
+                            <option value="bar">Bares</option>
+                            <option value="cafeteria">Cafeterías</option>
+                            <option value="comida-rapida">Comida Rápida</option>
+                            <option value="panaderia">Panaderías</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                        <button class="btn btn-outline" onclick="exportRestaurantsCSVMinimal()">
+                            <i class="fas fa-file-csv"></i> Exportar
+                        </button>
+                        <button class="btn btn-success" onclick="openCreateRestaurantModal()">
+                            <i class="fas fa-plus"></i>
+                            Nuevo Restaurante
+                        </button>
+                    </div>
+                </div>
+
+                <div id="restaurants-table-container">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Cargando restaurantes...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Guías Tab -->
+        <div id="guias" class="tab-content">
+            <div class="page-header">
+                <h1 class="page-title">Gestión de Guías</h1>
+                <p class="page-subtitle">Administra y aprueba a los guías turísticos del sistema.</p>
+            </div>
+            <div class="table-container">
+                <div class="table-header">
+                    <h2 class="table-title">Lista de Guías</h2>
+                    <div class="table-actions">
+                        <input type="text" id="guia-search" class="search-input" placeholder="Buscar guía...">
+                        <button class="btn btn-outline" onclick="exportGuiasCSV()">
+                            <i class="fas fa-file-csv"></i> Exportar
+                        </button>
+                        <button class="btn btn-primary" onclick="openGuiaModal()">
+                            <i class="fas fa-plus"></i> Nuevo Guía
+                        </button>
+                    </div>
+                </div>
+                <div id="guias-table-container">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Cargando guías...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rutas Tab -->
+        <div id="tours" class="tab-content">
+            <div class="page-header">
+                <h1 class="page-title">Gestión de Rutas</h1>
+                <p class="page-subtitle">Administra las rutas y experiencias turísticas.</p>
+            </div>
+            <div class="table-container">
+                <div class="table-header">
+                    <h2 class="table-title">Lista de Rutas</h2>
+                    <div class="table-actions">
+                        <input type="text" id="tour-search" class="search-input" placeholder="Buscar ruta...">
+                        <button class="btn btn-outline" onclick="exportToursCSV()">
+                            <i class="fas fa-file-csv"></i> Exportar
+                        </button>
+                        <button class="btn btn-primary" onclick="openTourModal()">
+                            <i class="fas fa-plus"></i> Nueva Ruta
+                        </button>
+                    </div>
+                </div>
+                <div id="tours-table-container">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Cargando rutas...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estadísticas Tab -->
+        <div id="stats" class="tab-content">
+            <div class="page-header">
+                <h1 class="page-title">Estadísticas Avanzadas</h1>
+                <p class="page-subtitle">Análisis detallado del sistema</p>
+            </div>
+
+            <div id="stats-loading" class="loading" style="display:none;">
+                <div class="spinner"></div>
+                <p>Cargando estadísticas avanzadas...</p>
+            </div>
+
+            <div id="stats-content">
+                <!-- Métricas Avanzadas (Generadas por JS) -->
+                <div id="advanced-stats" class="stats-grid" style="margin-bottom: 2rem;"></div>
+
+                <!-- Gráficos Avanzados -->
+                <div class="charts-grid" style="margin-bottom: 2rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem;">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Actividad Mensual</h3>
+                        </div>
+                        <div style="height: 300px; position: relative;">
+                            <canvas id="monthlyActivityChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Distribución Geográfica</h3>
+                        </div>
+                        <div style="height: 300px; position: relative;">
+                            <canvas id="geographicChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Crecimiento Anual</h3>
+                        </div>
+                        <div style="height: 300px; position: relative;">
+                            <canvas id="yearlyGrowthChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Actividad por Hora</h3>
+                        </div>
+                        <div style="height: 300px; position: relative;">
+                            <canvas id="hourlyActivityChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card" style="grid-column: 1 / -1;">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Tendencias de Usuario</h3>
+                        </div>
+                        <div style="height: 300px; position: relative;">
+                            <canvas id="userTrendsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Herramientas de Exportación -->
+                <div class="stats-grid" style="margin-bottom: 2rem;">
+                    <div class="stat-card"
+                        style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; text-align: center;">
+                        <div class="stat-icon"
+                            style="background-color: var(--success); width: 60px; height: 60px; font-size: 2rem;">
+                            <i class="fas fa-file-csv"></i>
+                        </div>
+                        <h3 class="stat-title" style="font-size: 1.1rem; color: var(--gray-900);">Exportar Restaurantes
+                        </h3>
+                        <p style="font-size: 0.85rem; color: var(--gray-600); margin-bottom: 0.5rem;">Descarga la lista
+                            completa de establecimientos con sus métricas.</p>
+                        <button class="btn btn-success" onclick="exportarRestaurantesCSV()">
+                            <i class="fas fa-download"></i> Descargar CSV
+                        </button>
+                    </div>
+
+                    <div class="stat-card"
+                        style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; text-align: center;">
+                        <div class="stat-icon"
+                            style="background-color: var(--info); width: 60px; height: 60px; font-size: 2rem;">
+                            <i class="fas fa-users-cog"></i>
+                        </div>
+                        <h3 class="stat-title" style="font-size: 1.1rem; color: var(--gray-900);">Exportar
+                            Administradores</h3>
+                        <p style="font-size: 0.85rem; color: var(--gray-600); margin-bottom: 0.5rem;">Descarga el
+                            listado de todos los administradores del sistema.</p>
+                        <button class="btn btn-primary" onclick="exportarAdminsCSV()">
+                            <i class="fas fa-download"></i> Descargar CSV
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mapa de Calor (Heatmap) -->
+                <div class="chart-card" style="margin-bottom: 2rem;">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Mapa de Calor de Establecimientos</h3>
+                    </div>
+                    <p style="font-size: 0.9rem; color: var(--gray-600); margin-bottom: 1rem;">
+                        Densidad de restaurantes en Jalpan de Serra. Las zonas más rojas/amarillas indican un mayor
+                        número de restaurantes o mayor número de visitas.
+                    </p>
+                    <div id="map-heatmap"
+                        style="width: 100%; height: 500px; border-radius: 0.5rem; border: 1px solid var(--gray-200); background-color: var(--gray-100);">
+                        <div class="loading" id="heatmap-loading"
+                            style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                            <div class="spinner"></div>
+                            <p>Cargando mapa interactivo...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- REVIEWS TAB -->
+        <div id="reviews" class="tab-content">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Moderación de Reseñas</h1>
+                    <p class="page-subtitle">Aprueba, descarta o destaca las opiniones de los turistas</p>
+                </div>
+                <div class="search-bar">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="search-reviews" class="search-input"
+                        placeholder="Buscar por comentario o restaurante...">
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Establecimiento</th>
+                            <th>Usuario</th>
+                            <th>Rating</th>
+                            <th>Comentario</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reviews-table-body">
+                        <!-- Las reseñas se llenarán aquí mágicamente mediante JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="loading-reviews" class="loading" style="display: none;">
+                <div class="spinner"></div>
+                <p>Cargando reseñas...</p>
+            </div>
+        </div>
+
+        <!-- Noticias Tab -->
+        <div id="noticias" class="tab-content">
+            <div class="table-container">
+                <div class="table-header">
+                    <h2 class="table-title">Gestión de Noticias y Eventos</h2>
+                    <div class="table-actions">
+                        <button class="btn btn-primary" onclick="window.noticiasAdmin.openCreateModal()">
+                            <i class="fas fa-plus"></i>
+                            Nueva Noticia
+                        </button>
+                    </div>
+                </div>
+
+                <div id="noticias-table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Imagen</th>
+                                <th>Título (ES)</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="noticias-table-body">
+                            <!-- Las noticias se cargarán aquí dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Guía Modal -->
+    <div id="guia-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="guia-modal-title">Nuevo Guía</h3>
+                <button class="modal-close" onclick="closeGuiaModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="guia-form">
+                    <input type="hidden" id="guia-id">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="guia-nombre" class="form-label required">Nombre Completo</label>
+                            <input type="text" id="guia-nombre" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="guia-email" class="form-label required">Email</label>
+                            <input type="email" id="guia-email" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="guia-telefono" class="form-label">Teléfono</label>
+                            <input type="tel" id="guia-telefono" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="guia-especialidades" class="form-label">Especialidades (separadas por
+                                coma)</label>
+                            <input type="text" id="guia-especialidades" class="form-input"
+                                placeholder="Cultural, Ecoturismo...">
+                        </div>
+                        <div class="form-group">
+                            <label for="guia-idiomas" class="form-label">Idiomas (separados por coma)</label>
+                            <input type="text" id="guia-idiomas" class="form-input" placeholder="Español, Inglés...">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeGuiaModal()">Cancelar</button>
+                <button type="submit" form="guia-form" class="btn btn-primary">Guardar Guía</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tour Modal -->
+    <div id="tour-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="tour-modal-title">Nueva Ruta</h3>
+                <button class="modal-close" onclick="closeTourModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="tour-form">
+                    <input type="hidden" id="tour-id">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="tour-nombre" class="form-label required">Nombre (ES)</label>
+                            <input type="text" id="tour-nombre" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tour-categoria" class="form-label">Categoría</label>
+                            <select id="tour-categoria" class="form-select" required>
+                                <option value="">Selecciona una categoría</option>
+                                <option value="Espeleismo">Espeleismo</option>
+                                <option value="Senderismo">Senderismo</option>
+                                <option value="Trail Running">Trail Running</option>
+                                <option value="MTB y Gravel">MTB y Gravel</option>
+                                <option value="RZR">RZR</option>
+                                <option value="Transporte Turístico">Transporte Turístico</option>
+                                <option value="Aviturismo">Aviturismo</option>
+                                <option value="Kayak">Kayak</option>
+                                <option value="Turismo Cultural">Turismo Cultural</option>
+                                <option value="Ciclismo de Montaña">Ciclismo de Montaña</option>
+                                <option value="Rutas Bioculturales">Rutas Bioculturales</option>
+                                <option value="Ruta Herbolaria">Ruta Herbolaria</option>
+                                <option value="Ruta del Agua">Ruta del Agua</option>
+                                <option value="Ruta del Pulque">Ruta del Pulque</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label for="tour-descripcion-corta" class="form-label required">Descripción Corta</label>
+                            <textarea id="tour-descripcion-corta" class="form-input" rows="2" required></textarea>
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label for="tour-descripcion" class="form-label required">Descripción Completa</label>
+                            <textarea id="tour-descripcion" class="form-input" rows="4" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="tour-duracion" class="form-label required">Duración (Horas)</label>
+                            <input type="number" id="tour-duracion" class="form-input" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tour-precio" class="form-label">Precio</label>
+                            <input type="number" id="tour-precio" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="tour-dificultad" class="form-label">Dificultad</label>
+                            <select id="tour-dificultad" class="form-select">
+                                <option value="Fácil">Fácil</option>
+                                <option value="Moderado">Moderado</option>
+                                <option value="Difícil">Difícil</option>
+                                <option value="Extremo">Extremo</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="tour-guia" class="form-label">Guía Asignado</label>
+                            <select id="tour-guia" class="form-select">
+                                <option value="">Seleccione un guía...</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeTourModal()">Cancelar</button>
+                <button type="submit" form="tour-form" class="btn btn-primary">Guardar Ruta</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create/Edit Admin Modal -->
+    <div id="admin-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="admin-modal-title">Nuevo Administrador</h3>
+                <button class="modal-close" onclick="closeAdminModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="admin-form">
+                    <input type="hidden" id="admin-id">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="admin-nombre" class="form-label required">Nombre</label>
+                            <input type="text" id="admin-nombre" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="admin-apellido" class="form-label required">Apellido</label>
+                            <input type="text" id="admin-apellido" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="admin-email" class="form-label required">Email</label>
+                            <input type="email" id="admin-email" class="form-input" required>
+                        </div>
+                        <div class="form-group" id="password-group">
+                            <label for="admin-password" class="form-label required">Contraseña</label>
+                            <input type="password" id="admin-password" class="form-input" required minlength="6">
+                        </div>
+                        <div class="form-group">
+                            <label for="admin-telefono" class="form-label required">Teléfono</label>
+                            <input type="tel" id="admin-telefono" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="admin-rol" class="form-label required">Rol</label>
+                            <select id="admin-rol" class="form-select" required>
+                                <option value="admin">Administrador</option>
+                                <option value="super-admin">Super Administrador</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeAdminModal()">Cancelar</button>
+                <button type="submit" form="admin-form" class="btn btn-primary">
+                    <i class="fas fa-save"></i>
+                    Guardar Administrador
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Noticia Modal -->
+    <div id="noticia-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="noticia-modal-title">Nueva Noticia</h3>
+                <button class="modal-close" onclick="window.noticiasAdmin.closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="noticia-form">
+                    <input type="hidden" id="noticia-id">
+                    <div class="form-grid">
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label for="noticia-imagen" class="form-label required">Imagen de la Noticia</label>
+                            <input type="file" id="noticia-imagen" class="form-input" accept="image/*" required>
+                            <img id="noticia-imagen-preview" src="" alt="Vista previa"
+                                style="display: none; max-width: 200px; margin-top: 10px; border-radius: 8px;">
+                            <small class="form-help" id="noticia-imagen-help" style="display: none;">Deje vacío para
+                                conservar la imagen actual</small>
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label for="noticia-titulo-es" class="form-label required">Título (Español)</label>
+                            <input type="text" id="noticia-titulo-es" class="form-input" required>
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label for="noticia-descripcion-es" class="form-label required">Descripción
+                                (Español)</label>
+                            <textarea id="noticia-descripcion-es" class="form-input form-textarea" rows="3"
+                                required></textarea>
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label for="noticia-titulo-en" class="form-label">Título (Inglés) - Opcional</label>
+                            <input type="text" id="noticia-titulo-en" class="form-input">
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label for="noticia-descripcion-en" class="form-label">Descripción (Inglés) -
+                                Opcional</label>
+                            <textarea id="noticia-descripcion-en" class="form-input form-textarea" rows="3"></textarea>
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label for="noticia-titulo-fr" class="form-label">Título (Francés) - Opcional</label>
+                            <input type="text" id="noticia-titulo-fr" class="form-input">
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label for="noticia-descripcion-fr" class="form-label">Descripción (Francés) -
+                                Opcional</label>
+                            <textarea id="noticia-descripcion-fr" class="form-input form-textarea" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="noticia-fecha" class="form-label required">Fecha del Evento/Noticia</label>
+                            <input type="date" id="noticia-fecha" class="form-input" required>
+                        </div>
+                        <div class="form-group checkbox-item" style="grid-column: 1 / -1; margin-top: 1rem;">
+                            <input type="checkbox" id="noticia-activo" checked>
+                            <label for="noticia-activo"
+                                style="cursor: pointer; margin-left: 0.5rem; display: inline-block;">Noticia Activa
+                                (Visible al público)</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline"
+                    onclick="window.noticiasAdmin.closeModal()">Cancelar</button>
+                <button type="submit" form="noticia-form" class="btn btn-primary">
+                    <i class="fas fa-save"></i>
+                    Guardar Noticia
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Restaurant Modal -->
+    <div id="restaurant-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-store" style="color: var(--primary);"></i> Crear Nuevo
+                    Restaurante</h3>
+                <button class="modal-close" onclick="closeRestaurantModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="restaurant-form">
+                    <!-- Administrador Section (hidden for obradores) -->
+                    <div id="admin-wrapper">
+                        <div class="form-group full-width">
+                            <label class="form-label required">Administrador</label>
+                            <div class="form-radio-group">
+                                <div class="form-radio-item">
+                                    <input type="radio" id="admin-existing" name="admin-type" value="existing"
+                                        class="form-radio" checked>
+                                    <label for="admin-existing">Administrador Existente</label>
+                                </div>
+                                <div class="form-radio-item">
+                                    <input type="radio" id="admin-new" name="admin-type" value="new" class="form-radio">
+                                    <label for="admin-new">Crear Nuevo Administrador</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Existing Admin Selection -->
+                        <div id="existing-admin-section" class="form-group full-width">
+                            <label for="restaurant-admin-select" class="form-label required">Seleccionar
+                                Administrador</label>
+                            <select id="restaurant-admin-select" class="form-select" required>
+                                <option value="">Cargando administradores...</option>
+                            </select>
+                        </div>
+
+                        <!-- New Admin Fields -->
+                        <div id="new-admin-section" style="display: none;">
+                            <h4 style="color: var(--primary); margin: 1.5rem 0 1rem; font-size: 1.1rem;">
+                                <i class="fas fa-user-plus"></i> Datos del Nuevo Administrador
+                            </h4>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="new-admin-nombre" class="form-label required">Nombre</label>
+                                    <input type="text" id="new-admin-nombre" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label for="new-admin-apellido" class="form-label required">Apellido</label>
+                                    <input type="text" id="new-admin-apellido" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label for="new-admin-email" class="form-label required">Email</label>
+                                    <input type="email" id="new-admin-email" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label for="new-admin-password" class="form-label required">Contraseña</label>
+                                    <input type="password" id="new-admin-password" class="form-input">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label for="new-admin-telefono" class="form-label required">Teléfono</label>
+                                    <input type="tel" id="new-admin-telefono" class="form-input">
+                                </div>
+                            </div>
+                        </div>
+                    </div> <!-- /admin-wrapper -->
+
+                    <!-- Restaurant Information -->
+                    <h4 style="color: var(--primary); margin: 1.5rem 0 1rem; font-size: 1.1rem;">
+                        <i class="fas fa-store"></i> Información del Restaurante
+                    </h4>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="restaurant-nombre" class="form-label required">Nombre del Restaurante</label>
+                            <input type="text" id="restaurant-nombre" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="restaurant-tipo" class="form-label required">Tipo de Establecimiento</label>
+                            <select id="restaurant-tipo" class="form-select" required
+                                onchange="toggleObradorMode(this.value)">
+                                <option value="">Seleccione un tipo...</option>
+                                <option value="restaurante">Restaurante</option>
+                                <option value="bar">Bar</option>
+                                <option value="cafeteria">Cafetería</option>
+                                <option value="comida-rapida">Comida Rápida</option>
+                                <option value="panaderia">Panadería</option>
+                                <option value="obrador-artesanal">Obrador Artesanal</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="restaurant-descripcion" class="form-label required">Descripción</label>
+                            <textarea id="restaurant-descripcion" class="form-textarea" required
+                                placeholder="Descripción del restaurante..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="restaurant-telefono" class="form-label required">Teléfono</label>
+                            <input type="tel" id="restaurant-telefono" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="restaurant-email" class="form-label required">Email</label>
+                            <input type="email" id="restaurant-email" class="form-input" required>
+                        </div>
+                    </div>
+
+                    <!-- Address Section -->
+                    <h4 style="color: var(--primary); margin: 1.5rem 0 1rem; font-size: 1.1rem;">
+                        <i class="fas fa-map-marker-alt"></i> Dirección
+                    </h4>
+
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label for="restaurant-calle" class="form-label required">Calle y Número</label>
+                            <input type="text" id="restaurant-calle" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="restaurant-ciudad" class="form-label required">Ciudad</label>
+                            <input type="text" id="restaurant-ciudad" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="restaurant-codigo-postal" class="form-label required">Código Postal</label>
+                            <input type="text" id="restaurant-codigo-postal" class="form-input" required>
+                        </div>
+                    </div>
+
+                    <!-- Map Picker for Coordinates -->
+                    <div class="form-group" style="margin-top: 0.5rem;">
+                        <label class="form-label">Ubicación en el Mapa</label>
+                        <p style="font-size: 0.85rem; color: var(--gray-500); margin-bottom: 0.5rem;">Haz clic en el
+                            mapa o arrastra el marcador para establecer la ubicación exacta.</p>
+                        <div id="create-restaurant-map"
+                            style="width: 100%; height: 250px; border-radius: 0.5rem; border: 2px solid var(--gray-200);">
+                        </div>
+                        <input type="hidden" id="restaurant-lat">
+                        <input type="hidden" id="restaurant-lng">
+                    </div>
+
+                    <!-- Social Media Section -->
+                    <h4 style="color: var(--primary); margin: 1.5rem 0 1rem; font-size: 1.1rem;">
+                        <i class="fas fa-share-alt"></i> Redes Sociales (Opcional)
+                    </h4>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="restaurant-facebook" class="form-label">Facebook</label>
+                            <input type="url" id="restaurant-facebook" class="form-input"
+                                placeholder="https://facebook.com/...">
+                        </div>
+                        <div class="form-group">
+                            <label for="restaurant-instagram" class="form-label">Instagram</label>
+                            <input type="text" id="restaurant-instagram" class="form-input" placeholder="@usuario">
+                        </div>
+                        <div class="form-group">
+                            <label for="restaurant-twitter" class="form-label">Twitter</label>
+                            <input type="text" id="restaurant-twitter" class="form-input" placeholder="@usuario">
+                        </div>
+                        <div class="form-group">
+                            <label for="restaurant-website" class="form-label">Sitio Web</label>
+                            <input type="url" id="restaurant-website" class="form-input" placeholder="https://...">
+                        </div>
+                    </div>
+
+                    <!-- Embeds Section -->
+                    <h4 style="color: var(--primary); margin: 1.5rem 0 1rem; font-size: 1.1rem;">
+                        <i class="fas fa-star"></i> Reseñas y Fotos (Opcional)
+                    </h4>
+
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label for="restaurant-google-reviews" class="form-label">Enlace a Reseñas de Google
+                                Maps</label>
+                            <p style="font-size: 0.85rem; color: var(--gray-500); margin-bottom: 0.5rem;">Copia el
+                                enlace de "Compartir" de Google Maps de tu negocio para mostrar el badge oficial.</p>
+                            <input type="url" id="restaurant-google-reviews" class="form-input"
+                                placeholder="https://maps.app.goo.gl/...">
+                        </div>
+                        <div class="form-group full-width">
+                            <label class="form-label">Instagram Embeds (HTML o URLs)</label>
+                            <p style="font-size: 0.85rem; color: var(--gray-500); margin-bottom: 0.5rem;">Pega el enlace
+                                directo de cada foto que quieras mostrar. Se generará un carrusel en la página del
+                                restaurante.</p>
+                            <div id="instagram-inputs-container"
+                                style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                <!-- Se inyectan dinámicamente con JS -->
+                            </div>
+                            <button type="button" class="btn btn-outline"
+                                onclick="addInstagramLink(document.getElementById('instagram-inputs-container'))"
+                                style="font-size: 0.85rem; padding: 0.4rem 0.8rem;">
+                                <i class="fas fa-plus"></i> Añadir Enlace de Instagram
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeRestaurantModal()">Cancelar</button>
+                <button type="submit" form="restaurant-form" class="btn btn-success">
+                    <i class="fas fa-save"></i>
+                    Crear Restaurante
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Restaurant Modal -->
+    <div id="edit-restaurant-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">✏️ Editar Restaurante</h3>
+                <button class="modal-close" onclick="closeEditRestaurantModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-restaurant-form" onsubmit="updateRestaurant(event)">
+                    <input type="hidden" id="edit-restaurant-id">
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="edit-restaurant-nombre" class="form-label required">Nombre</label>
+                            <input type="text" id="edit-restaurant-nombre" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-restaurant-tipo" class="form-label required">Tipo</label>
+                            <select id="edit-restaurant-tipo" class="form-select" required>
+                                <option value="restaurante">Restaurante</option>
+                                <option value="bar">Bar</option>
+                                <option value="cafeteria">Cafetería</option>
+                                <option value="comida-rapida">Comida Rápida</option>
+                                <option value="panaderia">Panadería</option>
+                                <option value="obrador-artesanal">Obrador Artesanal</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="edit-restaurant-descripcion" class="form-label required">Descripción</label>
+                            <textarea id="edit-restaurant-descripcion" class="form-textarea" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-restaurant-telefono" class="form-label">Teléfono</label>
+                            <input type="tel" id="edit-restaurant-telefono" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-restaurant-email" class="form-label">Email</label>
+                            <input type="email" id="edit-restaurant-email" class="form-input">
+                        </div>
+                    </div>
+
+                    <h4 style="color: var(--primary); margin: 1.5rem 0 1rem; font-size: 1.1rem;">
+                        <i class="fas fa-map-marker-alt"></i> Dirección
+                    </h4>
+
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label for="edit-restaurant-calle" class="form-label required">Calle y Número</label>
+                            <input type="text" id="edit-restaurant-calle" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-restaurant-ciudad" class="form-label required">Ciudad</label>
+                            <input type="text" id="edit-restaurant-ciudad" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-restaurant-cp" class="form-label required">Código Postal</label>
+                            <input type="text" id="edit-restaurant-cp" class="form-input" required>
+                        </div>
+                    </div>
+
+                    <!-- Map Picker -->
+                    <div class="form-group" style="margin-top: 0.5rem;">
+                        <label class="form-label">Ubicación en el Mapa</label>
+                        <p style="font-size: 0.85rem; color: var(--gray-500); margin-bottom: 0.5rem;">Haz clic en el
+                            mapa o arrastra el marcador para ajustar la ubicación.</p>
+                        <div id="edit-restaurant-map"
+                            style="width: 100%; height: 250px; border-radius: 0.5rem; border: 2px solid var(--gray-200);">
+                        </div>
+                        <input type="hidden" id="edit-restaurant-lat">
+                        <input type="hidden" id="edit-restaurant-lng">
+                    </div>
+
+                    <h4 style="color: var(--primary); margin: 1.5rem 0 1rem; font-size: 1.1rem;">
+                        <i class="fas fa-share-alt"></i> Redes Sociales (Opcional)
+                    </h4>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="edit-restaurant-facebook" class="form-label">Facebook</label>
+                            <input type="url" id="edit-restaurant-facebook" class="form-input"
+                                placeholder="https://facebook.com/...">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-restaurant-instagram" class="form-label">Instagram</label>
+                            <input type="text" id="edit-restaurant-instagram" class="form-input" placeholder="@usuario">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-restaurant-twitter" class="form-label">Twitter</label>
+                            <input type="text" id="edit-restaurant-twitter" class="form-input" placeholder="@usuario">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-restaurant-website" class="form-label">Sitio Web</label>
+                            <input type="url" id="edit-restaurant-website" class="form-input" placeholder="https://...">
+                        </div>
+                    </div>
+
+                    <!-- Embeds Section -->
+                    <h4 style="color: var(--primary); margin: 1.5rem 0 1rem; font-size: 1.1rem;">
+                        <i class="fas fa-star"></i> Reseñas y Fotos (Opcional)
+                    </h4>
+
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label for="edit-restaurant-google-reviews" class="form-label">Enlace a Reseñas de Google
+                                Maps</label>
+                            <p style="font-size: 0.85rem; color: var(--gray-500); margin-bottom: 0.5rem;">Copia el
+                                enlace de "Compartir" de Google Maps de tu negocio para mostrar el badge oficial.</p>
+                            <input type="url" id="edit-restaurant-google-reviews" class="form-input"
+                                placeholder="https://maps.app.goo.gl/...">
+                        </div>
+                        <div class="form-group full-width">
+                            <label class="form-label">Instagram Embeds (HTML o URLs)</label>
+                            <p style="font-size: 0.85rem; color: var(--gray-500); margin-bottom: 0.5rem;">Pega el enlace
+                                directo de cada foto que quieras mostrar. Se generará un carrusel en la página del
+                                restaurante.</p>
+                            <div id="edit-instagram-inputs-container"
+                                style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                <!-- Se inyectan dinámicamente con JS -->
+                            </div>
+                            <button type="button" class="btn btn-outline"
+                                onclick="addInstagramLink(document.getElementById('edit-instagram-inputs-container'))"
+                                style="font-size: 0.85rem; padding: 0.4rem 0.8rem;">
+                                <i class="fas fa-plus"></i> Añadir Enlace de Instagram
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeEditRestaurantModal()">Cancelar</button>
+                <button type="submit" form="edit-restaurant-form" class="btn btn-primary">
+                    <i class="fas fa-save"></i>
+                    Guardar Cambios
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Modal -->
+    <div id="admin-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="admin-modal-title">Nuevo Administrador</h3>
+                <button class="modal-close" onclick="closeAdminModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="admin-form">
+                    <input type="hidden" id="admin-id">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="admin-nombre" class="form-label required">Nombre</label>
+                            <input type="text" id="admin-nombre" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="admin-apellido" class="form-label required">Apellido</label>
+                            <input type="text" id="admin-apellido" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="admin-email" class="form-label required">Email</label>
+                            <input type="email" id="admin-email" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="admin-telefono" class="form-label">Teléfono</label>
+                            <input type="tel" id="admin-telefono" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="admin-rol" class="form-label required">Rol</label>
+                            <select id="admin-rol" class="form-select" required>
+                                <option value="admin">Administrador Regular</option>
+                                <option value="super-admin">Super Administrador</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="password-group">
+                            <label for="admin-password" class="form-label required">Contraseña</label>
+                            <div style="position:relative;">
+                                <input type="text" id="admin-password" class="form-input" style="padding-right:2.5rem;">
+                                <button type="button" onclick="const pw=document.getElementById('admin-password');pw.type=pw.type==='password'?'text':'password';this.innerHTML=pw.type==='password'?'<i class=\'fas fa-eye\'></i>':'<i class=\'fas fa-eye-slash\'></i>';" style="position:absolute;right:0.5rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--gray-500);font-size:1rem;" title="Mostrar/Ocultar contraseña"><i class="fas fa-eye-slash"></i></button>
+                            </div>
+                            <small class="text-gray-500" id="password-hint">Mínimo 6 caracteres</small>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeAdminModal()">Cancelar</button>
+                <button type="submit" form="admin-form" class="btn btn-primary">Guardar Administrador</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmation-modal" class="confirmation-modal">
+        <div class="confirmation-content">
+            <div class="confirmation-header">
+                <div class="confirmation-icon danger">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3 class="confirmation-title" id="confirmation-title">Confirmar Eliminación</h3>
+                <p class="confirmation-message" id="confirmation-message">Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="confirmation-body">
+                <div class="confirmation-details" id="confirmation-details">
+                    <!-- Details will be populated here -->
+                </div>
+            </div>
+            <div class="confirmation-footer">
+                <button type="button" class="btn btn-outline" onclick="closeConfirmationModal()">
+                    <i class="fas fa-times"></i>
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-danger" id="confirm-delete-btn">
+                    <i class="fas fa-trash"></i>
+                    Sí, Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom JS (Unique source of truth) -->
+    <script src="js/Super Admin.js?v=9"></script>
+    <script src="js/AdminNoticias.js"></script>
+</body>
+
+</html>

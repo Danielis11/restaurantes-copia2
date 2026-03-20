@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de Guía - Jalpan de Serra</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/icons/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <!-- Script de internacionalización -->
+    <script src="/js/i18n.js" defer></script>
+</head>
+
+<body>
+    <header class="global-nav">
+        <nav class="nav-container">
+            <a href="/" class="logo">
+                <img src="/images/PueblosMágicos.svg.png" alt="Logo"
+                    style="width: 40px; height: 40px; object-fit: contain;">
+                RestauranteWeb
+            </a>
+            <div class="nav-menu" id="nav-menu">
+                <a href="/" class="nav-link" data-i18n="navbar.inicio">Inicio</a>
+                <a href="/mapa.html" class="nav-link" data-i18n="navbar.mapa">Mapa</a>
+                <a href="/#restaurantes" class="nav-link" data-i18n="navbar.guia">Restaurantes</a>
+                <a href="/#hospedaje" class="nav-link" data-i18n="navbar.hospedaje">Hospedaje</a>
+                <a href="/experiencias.html" class="nav-link active" data-i18n="navbar.tours">Experiencias</a>
+                <a href="/Contactos.html" class="nav-link" data-i18n="footer.contacto">Contacto</a>
+            </div>
+            <div class="nav-actions-wrapper" style="display: flex; align-items: center;">
+                <select id="language-selector"
+                    style="margin-right: 15px; padding: 5px; border-radius: 5px; border: 1px solid #ddd; background: white; font-family: var(--font-family);">
+                    <option value="es" data-i18n="lang.switch_es">Español</option>
+                    <option value="en" data-i18n="lang.switch_en">Inglés</option>
+                    <option value="fr" data-i18n="lang.switch_fr">Français</option>
+                </select>
+                <div class="nav-actions" id="navbar-actions" style="display: flex; align-items: center;">
+                    <a href="/login.html" class="btn-login"><i class="fas fa-user-circle"></i> <span
+                            data-i18n="navbar.iniciar_sesion">Iniciar Sesión</span></a>
+                    <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <style>
+        .profile-container {
+            max-width: 1000px;
+            margin: 6rem auto 3rem auto;
+            padding: 0 1.5rem;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .profile-container {
+                grid-template-columns: 1fr;
+                margin-top: 5rem;
+                padding: 0 1rem;
+            }
+
+            .main-content {
+                padding: 1.5rem;
+            }
+
+            .widget {
+                padding: 1.5rem;
+            }
+
+            .sidebar {
+                order: -1;
+            }
+        }
+
+        /* Contenido Principal */
+        .main-content {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--gray-100);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--gray-900);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--gray-100);
+        }
+
+        .bio-text {
+            color: var(--gray-600);
+            line-height: 1.8;
+            font-size: 1.05rem;
+            white-space: pre-wrap;
+            margin-bottom: 2rem;
+        }
+
+        /* Sidebar del Guía */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .widget {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--gray-100);
+            text-align: center;
+        }
+
+        .guide-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin: 0 auto 1.5rem auto;
+            display: block;
+        }
+
+        .guide-name {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .guide-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .tag {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .contact-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            text-decoration: none;
+            margin-bottom: 0.75rem;
+        }
+
+        .btn-whatsapp {
+            background-color: #25D366;
+            color: white;
+        }
+
+        .btn-whatsapp:hover {
+            background-color: #1c9e4c;
+            transform: translateY(-2px);
+        }
+
+        .btn-email {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-email:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+    </style>
+
+    <div class="profile-container" id="profile-container">
+        <!-- Cargando animacion... -->
+        <div style="grid-column: 1 / -1; text-align: center; padding: 4rem;">
+            <div class="loader" style="margin: 0 auto;">
+                <div class="bar1"></div>
+                <div class="bar2"></div>
+                <div class="bar3"></div>
+                <div class="bar4"></div>
+                <div class="bar5"></div>
+                <div class="bar6"></div>
+                <div class="bar7"></div>
+                <div class="bar8"></div>
+                <div class="bar9"></div>
+                <div class="bar10"></div>
+                <div class="bar11"></div>
+                <div class="bar12"></div>
+            </div>
+            <p style="margin-top: 1rem; color: var(--gray-500);">Cargando perfil del guía...</p>
+        </div>
+    </div>
+
+    <!-- Review Section (Misma UI modular) -->
+    <section class="section" style="background: var(--gray-50); padding: 4rem 1.5rem;" id="reviews-section"
+        style="display: none;">
+        <div style="max-width: 1000px; margin: 0 auto;">
+            <h2 class="section-title"><i class="fas fa-comments"></i> Opiniones de Turistas</h2>
+            <div id="reviews-container"></div>
+
+            <div
+                style="margin-top: 2rem; background: white; padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); border: 1px solid var(--gray-200);">
+                <h3 style="margin-bottom: 1rem; color: var(--gray-800);">Deja tu reseña</h3>
+                <p id="login-prompt" style="color: var(--gray-600);"><a href="/login.html"
+                        style="color: var(--primary); font-weight: 600;">Inicia sesión</a> para dejar un comentario y
+                    calificar.</p>
+                <form id="review-form" style="display: none;">
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Calificación</label>
+                        <div class="star-rating" id="star-rating"
+                            style="font-size: 1.5rem; color: #cbd5e1; cursor: pointer;">
+                            <i class="fas fa-star" data-rating="1"></i>
+                            <i class="fas fa-star" data-rating="2"></i>
+                            <i class="fas fa-star" data-rating="3"></i>
+                            <i class="fas fa-star" data-rating="4"></i>
+                            <i class="fas fa-star" data-rating="5"></i>
+                        </div>
+                        <input type="hidden" id="rating-value" value="0" required>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Tu Experiencia</label>
+                        <textarea id="review-comment" rows="4"
+                            style="width: 100%; border: 1px solid var(--gray-300); border-radius: 0.5rem; padding: 0.75rem; font-family: inherit; resize: vertical;"
+                            placeholder="¿Cómo fue tu recorrido con este guía?" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem;"><i
+                            class="fas fa-paper-plane"></i> Publicar Reseña</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <p>&copy; 2025 Jalpan de Serra - Gobierno Municipal. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+    <script src="/js/guia.js"></script>
+</body>
+
+</html>

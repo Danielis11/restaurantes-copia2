@@ -1,0 +1,2151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RestauranteWeb - Descubre Jalpan a través de la comida</title>
+    <meta name="description" content="Descubre restaurantes, bares y cafeterías únicos que ofrece Jalpan de Serra. Explora menús, horarios y la rica gastronomía serrana.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/icons/favicon.ico">
+    
+    <!-- Estilos -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Estilos coherentes del sistema -->
+    <style>
+        /* ===== VARIABLES DEL SISTEMA ===== */
+        :root {
+            /* Colores principales */
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #3b82f6;
+            
+            /* Colores neutros */
+            --white: #ffffff;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            
+            /* Colores de estado */
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            
+            /* Colores de tipo */
+            --restaurant: #f59e0b;
+            --bar: #8b5cf6;
+            --cafe: #06b6d4;
+            
+            /* Tipografía del sistema */
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            
+            /* Espaciado consistente */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-2xl: 3rem;
+            --spacing-3xl: 4rem;
+            
+            /* Bordes */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            
+            /* Sombras */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            
+            /* Transiciones */
+            --transition: all 0.2s ease-in-out;
+            --transition-slow: all 0.3s ease-in-out;
+        }
+
+        /* ===== BASE RESET ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            line-height: 1.6;
+            color: var(--gray-800);
+            background-color: var(--white);
+        }
+
+        /* ===== NOTIFICACIONES EN TIEMPO REAL ===== */
+        .realtime-notifications {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            z-index: 1500;
+            max-width: 350px;
+        }
+
+        .notification {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-sm);
+            box-shadow: var(--shadow-xl);
+            border-left: 4px solid var(--success);
+            animation: slideInRight 0.3s ease-out;
+            opacity: 0.95;
+        }
+
+        .notification.update {
+            border-left-color: var(--warning);
+        }
+
+        .notification strong {
+            display: block;
+            margin-bottom: var(--spacing-xs);
+            color: var(--gray-900);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .notification p {
+            color: var(--gray-600);
+            font-size: 0.85rem;
+            margin: 0;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 0.95;
+            }
+        }
+
+        /* ===== INDICADOR DE CONEXIÓN ===== */
+        .connection-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-left: var(--spacing-sm);
+        }
+
+        .connection-indicator.connected {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .connection-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 2s infinite;
+        }
+
+        .connection-indicator.connected .connection-dot {
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* ===== ANIMACIONES PARA ELEMENTOS NUEVOS ===== */
+        .restaurant-card.new-item {
+            animation: newItemAppear 0.6s ease-out;
+            border: 2px solid var(--success);
+        }
+
+        .restaurant-card.updated-item {
+            animation: updatedItemPulse 0.8s ease-out;
+            border: 2px solid var(--warning);
+        }
+
+        @keyframes newItemAppear {
+            0% {
+                transform: translateY(20px) scale(0.95);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes updatedItemPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        /* ===== ESTADÍSTICAS CON ANIMACIÓN ===== */
+        .stat-number {
+            transition: var(--transition-slow);
+        }
+
+        .stat-number.updating {
+            color: var(--primary);
+            transform: scale(1.1);
+        }
+
+        /* ===== GALERÍA SIMPLE ===== */
+        .card-image {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+            background: var(--gray-100);
+        }
+        
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform var(--transition-slow);
+        }
+        
+        .card-image:hover img {
+            transform: scale(1.05);
+        }
+        
+        .card-image-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 3rem;
+        }
+        
+        .card-image-count {
+            position: absolute;
+            top: var(--spacing-sm);
+            right: var(--spacing-sm);
+            background: rgba(0, 0, 0, 0.7);
+            color: var(--white);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-xl);
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* ===== GALERÍA EN MODAL ===== */
+        .simple-gallery {
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .gallery-main-simple {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            margin-bottom: var(--spacing-lg);
+            background: var(--gray-100);
+        }
+        
+        .gallery-main-simple img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .gallery-nav-simple {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            color: var(--white);
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color var(--transition);
+        }
+        
+        .gallery-nav-simple:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+        
+        .gallery-nav-simple.prev {
+            left: var(--spacing-sm);
+        }
+        
+        .gallery-nav-simple.next {
+            right: var(--spacing-sm);
+        }
+        
+        .gallery-counter-simple {
+            position: absolute;
+            bottom: var(--spacing-sm);
+            right: var(--spacing-sm);
+            background: rgba(0, 0, 0, 0.7);
+            color: var(--white);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-lg);
+            font-size: 0.85rem;
+        }
+        
+        .gallery-thumbnails-simple {
+            display: flex;
+            gap: var(--spacing-sm);
+            overflow-x: auto;
+            padding: var(--spacing-sm) 0;
+        }
+        
+        .gallery-thumbnail-simple {
+            flex-shrink: 0;
+            width: 70px;
+            height: 50px;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border-color var(--transition);
+        }
+        
+        .gallery-thumbnail-simple:hover {
+            border-color: var(--gray-300);
+        }
+        
+        .gallery-thumbnail-simple.active {
+            border-color: var(--primary);
+        }
+        
+        .gallery-thumbnail-simple img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* ===== SECCIONES MEJORADAS ===== */
+        .section {
+            padding: var(--spacing-3xl) 0;
+        }
+        
+        .section-alt {
+            background-color: var(--gray-50);
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: var(--spacing-2xl);
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--spacing-lg);
+            line-height: 1.2;
+        }
+        
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: var(--gray-600);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .jalpan-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-xl);
+            margin-bottom: var(--spacing-2xl);
+        }
+        
+        .feature-card {
+            background: var(--white);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            text-align: center;
+            transition: var(--transition-slow);
+            border: 1px solid var(--gray-200);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary-light);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .feature-description {
+            color: var(--gray-600);
+            line-height: 1.6;
+        }
+        
+        /* ===== BANNER CTA ===== */
+        .cta-banner {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--spacing-2xl);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--white);
+            padding: var(--spacing-2xl);
+            border-radius: var(--radius-xl);
+            align-items: center;
+        }
+        
+        .cta-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-lg);
+            line-height: 1.3;
+        }
+        
+        .cta-text {
+            font-size: 1.1rem;
+            margin-bottom: var(--spacing-xl);
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        .visual-placeholder {
+            background: rgba(255, 255, 255, 0.1);
+            height: 150px;
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        /* ===== ESTADÍSTICAS DE LA CIUDAD ===== */
+        .stats-section {
+            background: linear-gradient(135deg, var(--gray-800) 0%, var(--gray-900) 100%);
+            color: var(--white);
+            padding: var(--spacing-3xl) 0;
+        }
+        
+        .text-white {
+            color: var(--white) !important;
+        }
+        
+        .city-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-xl);
+        }
+        
+        .city-stat {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+            background: rgba(255, 255, 255, 0.1);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-xl);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .stat-icon {
+            font-size: 2.5rem;
+            color: var(--warning);
+        }
+        
+        .stat-content {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        /* ===== FOOTER MEJORADO ===== */
+        .footer-social {
+            display: flex;
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+        }
+        
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            color: var(--white);
+            border-radius: 50%;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .social-link:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: var(--spacing-xl);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: var(--spacing-xl);
+        }
+        
+        .footer-bottom-links {
+            display: flex;
+            gap: var(--spacing-xl);
+        }
+        
+        .footer-bottom-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+        
+        .footer-bottom-links a:hover {
+            color: var(--white);
+        }
+        
+        /* ===== MODAL DE IMAGEN (LIGHTBOX) ===== */
+        .image-lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-slow);
+        }
+
+        .image-lightbox.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .lightbox-content {
+            position: relative;
+            max-width: 90vw;
+            max-height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lightbox-image {
+            max-width: 90vw;
+            max-height: 85vh;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: -50px;
+            right: 0;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .lightbox-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .lightbox-nav:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .lightbox-nav.prev {
+            left: -80px;
+        }
+
+        .lightbox-nav.next {
+            right: -80px;
+        }
+
+        .lightbox-counter {
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--white);
+            font-size: 0.9rem;
+            background: rgba(0, 0, 0, 0.5);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-lg);
+        }
+
+        .lightbox-title {
+            position: absolute;
+            bottom: -50px;
+            right: 0;
+            color: var(--white);
+            font-size: 0.9rem;
+            max-width: 300px;
+            text-align: right;
+        }
+
+        /* Indicador visual para imágenes clickeables SOLO en modal */
+        .simple-gallery .clickable-image {
+            cursor: pointer;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .simple-gallery .clickable-image::after {
+            content: '\f065'; /* Font Awesome expand icon */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: var(--spacing-sm);
+            left: var(--spacing-sm);
+            background: rgba(0, 0, 0, 0.7);
+            color: var(--white);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .simple-gallery .clickable-image:hover::after {
+            opacity: 1;
+        }
+
+        .simple-gallery .clickable-image:hover {
+            transform: scale(1.02);
+        }
+
+        /* Las imágenes de las tarjetas NO son clickeables directamente */
+        .restaurant-card {
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .restaurant-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .jalpan-features {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-lg);
+            }
+            
+            .cta-banner {
+                grid-template-columns: 1fr;
+                text-align: center;
+                padding: var(--spacing-xl);
+            }
+            
+            .city-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--spacing-lg);
+            }
+            
+            .city-stat {
+                padding: var(--spacing-lg);
+            }
+            
+            .footer-bottom {
+                flex-direction: column;
+                gap: var(--spacing-lg);
+                text-align: center;
+            }
+            
+            .footer-bottom-links {
+                gap: var(--spacing-lg);
+            }
+            
+            .gallery-main-simple {
+                height: 200px;
+            }
+            
+            .gallery-thumbnails-simple {
+                gap: var(--spacing-xs);
+            }
+            
+            .gallery-thumbnail-simple {
+                width: 50px;
+                height: 35px;
+            }
+
+            /* Lightbox responsive */
+            .lightbox-nav.prev {
+                left: -60px;
+            }
+
+            .lightbox-nav.next {
+                right: -60px;
+            }
+
+            .lightbox-close {
+                top: -40px;
+                right: -10px;
+            }
+
+            .lightbox-counter,
+            .lightbox-title {
+                bottom: -40px;
+                font-size: 0.8rem;
+            }
+
+            .lightbox-title {
+                max-width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <h1 class="logo">
+                        <i class="fas fa-utensils"></i>
+                        RestauranteWeb
+                    </h1>
+                </div>
+                
+                <div class="nav-menu" id="nav-menu">
+                    <a href="#inicio" class="nav-link active">Inicio</a>
+                    <a href="#sobre-jalpan" class="nav-link">Jalpan de Serra</a>
+                    <a href="#restaurantes" class="nav-link">Restaurantes</a>
+                    <a href="#bares" class="nav-link">Bares</a>
+                    <a href="#cafeterias" class="nav-link">Cafeterías</a>
+                    <a href="Contactos.html" class="nav-link">Contacto</a>
+                </div>
+                
+                <div class="nav-actions">
+                    <a href="admin.html" class="btn btn-admin">
+                        <i class="fas fa-user-shield"></i>
+                        Panel Admin
+                    </a>
+                    <!-- Indicador de conexión WebSocket -->
+                    <div class="connection-indicator" id="connection-indicator">
+                        <div class="connection-dot"></div>
+                        <span id="connection-status">Conectando...</span>
+                    </div>
+                    <button class="nav-toggle" id="nav-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Hero Section -->
+        <section id="inicio" class="hero">
+            <div class="hero-container">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        Descubre Jalpan a<span class="highlight"> través de la comida</span>
+                    </h1>
+                    <p class="hero-subtitle">
+                        Descubre restaurantes, bares y cafeterías únicos que ofrece Jalpan de Serra. 
+                        Explora menús, horarios y la rica gastronomía serrana.
+                    </p>
+                    <div class="hero-search">
+                        <div class="search-box">
+                            <input 
+                                type="text" 
+                                id="search-input" 
+                                placeholder="Buscar restaurantes, bares o cafeterías..."
+                                class="search-input"
+                            >
+                            <button class="search-btn" id="search-btn">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <span class="stat-number" id="total-count">0</span>
+                            <span class="stat-label">Establecimientos</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number" id="restaurant-count">0</span>
+                            <span class="stat-label">Restaurantes</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number" id="bar-count">0</span>
+                            <span class="stat-label">Bares</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number" id="cafe-count">0</span>
+                            <span class="stat-label">Cafeterías</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Nueva Sección: Sobre Jalpan de Serra -->
+        <section id="sobre-jalpan" class="section section-alt">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Descubre Jalpan de Serra</h2>
+                    <p class="section-subtitle">
+                        Un pueblo mágico en la Sierra Gorda queretana con una gastronomía única que combina 
+                        tradiciones serranas, sabores ancestrales y la hospitalidad característica de la región
+                    </p>
+                </div>
+                
+                <div class="jalpan-features">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-mountain"></i>
+                        </div>
+                        <h3 class="feature-title">Gastronomía Serrana</h3>
+                        <p class="feature-description">
+                            La cocina de Jalpan se caracteriza por sus sabores únicos de la sierra, 
+                            con ingredientes frescos de la región y técnicas culinarias tradicionales.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-leaf"></i>
+                        </div>
+                        <h3 class="feature-title">Ingredientes Locales</h3>
+                        <p class="feature-description">
+                            Productos de la Sierra Gorda como quelites, hongos silvestres, miel de abeja, 
+                            trucha y una gran variedad de hierbas aromáticas de la región.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-church"></i>
+                        </div>
+                        <h3 class="feature-title">Tradición Franciscana</h3>
+                        <p class="feature-description">
+                            La herencia de las misiones franciscanas se refleja en platillos tradicionales 
+                            que han pasado de generación en generación por más de 250 años.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="cta-banner">
+                    <div class="cta-content">
+                        <h3 class="cta-title">¿Quieres conocer más sobre nuestra gastronomía serrana?</h3>
+                        <p class="cta-text">
+                            Explora la historia, tradiciones y lugares gastronómicos más emblemáticos de Jalpan de Serra
+                        </p>
+                        <a href="jalpan-de-serra.html" class="btn btn-light">
+                            <i class="fas fa-book-open"></i>
+                            Conocer más sobre Jalpan
+                        </a>
+                    </div>
+                    <div class="cta-visual">
+                        <div class="visual-placeholder">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Nueva Sección: Estadísticas de la Ciudad -->
+        <section class="stats-section">
+            <div class="container">
+                <h2 class="section-title text-white">Jalpan de Serra en números</h2>
+                <div class="city-stats">
+                    <div class="city-stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <div class="stat-content">
+                            <span class="stat-number">25+</span>
+                            <span class="stat-label">Restaurantes Locales</span>
+                        </div>
+                    </div>
+
+                    <div class="city-stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <div class="stat-content">
+                            <span class="stat-number">Pueblo</span>
+                            <span class="stat-label">Mágico de México</span>
+                        </div>
+                    </div>
+
+                    <div class="city-stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-tree"></i>
+                        </div>
+                        <div class="stat-content">
+                            <span class="stat-number">UNESCO</span>
+                            <span class="stat-label">Sierra Gorda</span>
+                        </div>
+                    </div>
+
+                    <div class="city-stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="stat-content">
+                            <span class="stat-number">250+</span>
+                            <span class="stat-label">Años de Tradición</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Filters Section -->
+        <section class="filters">
+            <div class="container">
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-type="todos">
+                        <i class="fas fa-th-large"></i>
+                        Todos
+                    </button>
+                    <button class="filter-tab" data-type="restaurante">
+                        <i class="fas fa-utensils"></i>
+                        Restaurantes
+                    </button>
+                    <button class="filter-tab" data-type="bar">
+                        <i class="fas fa-cocktail"></i>
+                        Bares
+                    </button>
+                    <button class="filter-tab" data-type="cafeteria">
+                        <i class="fas fa-coffee"></i>
+                        Cafeterías
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section id="restaurantes" class="results">
+            <div class="container">
+                <div class="results-header">
+                    <h2 class="results-title">Establecimientos Disponibles</h2>
+                    <div class="results-info">
+                        <span id="results-count">Cargando...</span>
+                    </div>
+                </div>
+                
+                <!-- Loading -->
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Cargando establecimientos...</p>
+                </div>
+                
+                <!-- Results Grid -->
+                <div class="results-grid" id="results-grid">
+                    <!-- Los resultados se cargarán dinámicamente aquí -->
+                </div>
+                
+                <!-- Empty State -->
+                <div class="empty-state" id="empty-state" style="display: none;">
+                    <div class="empty-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>No se encontraron resultados</h3>
+                    <p>Intenta con otros términos de búsqueda o filtros</p>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="pagination" id="pagination" style="display: none;">
+                    <button class="btn btn-outline" id="prev-btn">
+                        <i class="fas fa-chevron-left"></i>
+                        Anterior
+                    </button>
+                    <span class="pagination-info" id="pagination-info">
+                        Página 1 de 1
+                    </span>
+                    <button class="btn btn-outline" id="next-btn">
+                        Siguiente
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3 class="footer-title">
+                        <i class="fas fa-utensils"></i>
+                        RestauranteWeb
+                    </h3>
+                    <p class="footer-text">
+                        La plataforma que conecta a las personas con los mejores 
+                        restaurantes, bares y cafeterías de Jalpan de Serra.
+                    </p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link" aria-label="Facebook">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 class="footer-subtitle">Navegación</h4>
+                    <ul class="footer-links">
+                        <li><a href="#inicio">Inicio</a></li>
+                        <li><a href="#restaurantes">Establecimientos</a></li>
+                        <li><a href="jalpan-de-serra.html">Sobre Jalpan</a></li>
+                        <li><a href="admin.html">Panel Admin</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4 class="footer-subtitle">Gastronomía Serrana</h4>
+                    <ul class="footer-links">
+                        <li><a href="jalpan-de-serra.html#platillos">Platillos Tradicionales</a></li>
+                        <li><a href="jalpan-de-serra.html#ingredientes">Ingredientes Locales</a></li>
+                        <li><a href="jalpan-de-serra.html#historia">Historia Culinaria</a></li>
+                        <li><a href="jalpan-de-serra.html#tradiciones">Tradiciones</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 class="footer-subtitle">Contacto</h4>
+                    <div class="footer-contact">
+                        <p>
+                            <i class="fas fa-envelope"></i>
+                            info@restauranteweb.com
+                        </p>
+                        <p>
+                            <i class="fas fa-phone"></i>
+                            +52 (444) 123-4567
+                        </p>
+                        <p>
+                            <i class="fas fa-map-marker-alt"></i>
+                            Jalpan de Serra, Querétaro
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 RestauranteWeb - Jalpan de Serra. Todos los derechos reservados.</p>
+                <div class="footer-bottom-links">
+                    <a href="#">Términos de Servicio</a>
+                    <a href="#">Política de Privacidad</a>
+                    <a href="#">Ayuda</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal para detalles de restaurante -->
+    <div class="modal" id="restaurant-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Detalles del Restaurante</h3>
+                <button class="modal-close" id="modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Contenido dinámico -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de imagen (Lightbox) -->
+    <div class="image-lightbox" id="image-lightbox">
+        <div class="lightbox-content">
+            <button class="lightbox-close" id="lightbox-close">
+                <i class="fas fa-times"></i>
+            </button>
+            <button class="lightbox-nav prev" id="lightbox-prev" style="display: none;">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <img class="lightbox-image" id="lightbox-image" alt="">
+            <button class="lightbox-nav next" id="lightbox-next" style="display: none;">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            <div class="lightbox-counter" id="lightbox-counter" style="display: none;">
+                1 / 1
+            </div>
+            <div class="lightbox-title" id="lightbox-title"></div>
+        </div>
+    </div>
+
+    <!-- Notificaciones en tiempo real -->
+    <div class="realtime-notifications" id="realtime-notifications"></div>
+
+    <!-- Scripts -->
+    <script src="/js/utils.js"></script>
+    <script>
+        // ===== CLASE PRINCIPAL DE LA APLICACIÓN =====
+        class RestauranteWebApp {
+            constructor() {
+                this.ws = null;
+                this.currentFilter = 'todos';
+                this.currentPage = 1;
+                this.searchTerm = '';
+                this.establishments = [];
+                this.isLoading = false;
+                
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.connectWebSocket();
+                this.loadEstablishments();
+                this.loadStats();
+            }
+
+            // ===== WEBSOCKET =====
+            connectWebSocket() {
+                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                const wsUrl = `${protocol}//${window.location.host}`;
+                
+                try {
+                    this.ws = new WebSocket(wsUrl);
+                    
+                    this.ws.onopen = () => {
+                        console.log('✅ WebSocket conectado');
+                        this.updateConnectionStatus(true);
+                        
+                        // Suscribirse a actualizaciones
+                        this.ws.send(JSON.stringify({ type: 'subscribe' }));
+                    };
+
+                    this.ws.onmessage = (event) => {
+                        try {
+                            const data = JSON.parse(event.data);
+                            this.handleWebSocketMessage(data);
+                        } catch (error) {
+                            console.error('Error procesando mensaje WebSocket:', error);
+                        }
+                    };
+
+                    this.ws.onclose = () => {
+                        console.log('❌ WebSocket desconectado');
+                        this.updateConnectionStatus(false);
+                        
+                        // Reconectar después de 3 segundos
+                        setTimeout(() => this.connectWebSocket(), 3000);
+                    };
+
+                    this.ws.onerror = (error) => {
+                        console.error('Error WebSocket:', error);
+                        this.updateConnectionStatus(false);
+                    };
+
+                } catch (error) {
+                    console.error('Error conectando WebSocket:', error);
+                    this.updateConnectionStatus(false);
+                }
+            }
+
+            handleWebSocketMessage(data) {
+                switch (data.type) {
+                    case 'new_restaurant':
+                        this.handleNewEstablishment(data);
+                        break;
+                    case 'updated_restaurant':
+                        this.handleUpdatedEstablishment(data);
+                        break;
+                    case 'stats_update':
+                        this.updateStats(data.data);
+                        break;
+                    case 'connection':
+                    case 'subscribed':
+                        console.log('📡', data.message);
+                        break;
+                }
+            }
+
+            handleNewEstablishment(data) {
+                const establishment = data.data;
+                this.showNotification(
+                    `🆕 Nuevo ${establishment.tipo}`, 
+                    `${establishment.nombre} en ${establishment.ciudad}`,
+                    'new'
+                );
+                
+                // Recargar si estamos en la primera página y no hay filtros específicos
+                if (this.currentPage === 1 && (this.currentFilter === 'todos' || this.currentFilter === establishment.tipo)) {
+                    this.loadEstablishments(false); // Sin mostrar loading
+                }
+                
+                this.loadStats();
+            }
+
+            handleUpdatedEstablishment(data) {
+                const establishment = data.data;
+                this.showNotification(
+                    `📝 Establecimiento actualizado`, 
+                    `${establishment.nombre} ha sido modificado`,
+                    'update'
+                );
+                
+                // Marcar el elemento como actualizado si está visible
+                const card = document.querySelector(`[data-establishment-id="${establishment.id}"]`);
+                if (card) {
+                    card.classList.add('updated-item');
+                    setTimeout(() => {
+                        card.classList.remove('updated-item');
+                    }, 2000);
+                }
+            }
+
+            updateConnectionStatus(connected) {
+                const indicator = document.getElementById('connection-indicator');
+                const status = document.getElementById('connection-status');
+                
+                if (connected) {
+                    indicator.classList.add('connected');
+                    status.textContent = 'En línea';
+                } else {
+                    indicator.classList.remove('connected');
+                    status.textContent = 'Desconectado';
+                }
+            }
+
+            showNotification(title, message, type = 'new') {
+                const container = document.getElementById('realtime-notifications');
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.innerHTML = `
+                    <strong>${title}</strong>
+                    <p>${message}</p>
+                `;
+
+                container.appendChild(notification);
+
+                // Auto-remover después de 5 segundos
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 5000);
+
+                // Limitar a máximo 3 notificaciones
+                const notifications = container.children;
+                if (notifications.length > 3) {
+                    notifications[0].remove();
+                }
+            }
+
+            // ===== EVENT LISTENERS =====
+            setupEventListeners() {
+                // Búsqueda
+                const searchInput = document.getElementById('search-input');
+                const searchBtn = document.getElementById('search-btn');
+                
+                searchInput.addEventListener('input', this.debounce(() => {
+                    this.searchTerm = searchInput.value;
+                    this.currentPage = 1;
+                    this.loadEstablishments();
+                }, 500));
+
+                searchBtn.addEventListener('click', () => {
+                    this.searchTerm = searchInput.value;
+                    this.currentPage = 1;
+                    this.loadEstablishments();
+                });
+
+                searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.searchTerm = searchInput.value;
+                        this.currentPage = 1;
+                        this.loadEstablishments();
+                    }
+                });
+
+                // Filtros de tipo
+                document.querySelectorAll('.filter-tab').forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        // Remover clase active de todos
+                        document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                        
+                        // Agregar clase active al clickeado
+                        tab.classList.add('active');
+                        
+                        // Actualizar filtro
+                        this.currentFilter = tab.dataset.type;
+                        this.currentPage = 1;
+                        this.loadEstablishments();
+                    });
+                });
+
+                // Paginación
+                document.getElementById('prev-btn').addEventListener('click', () => {
+                    if (this.currentPage > 1) {
+                        this.currentPage--;
+                        this.loadEstablishments();
+                        this.scrollToResults();
+                    }
+                });
+
+                document.getElementById('next-btn').addEventListener('click', () => {
+                    this.currentPage++;
+                    this.loadEstablishments();
+                    this.scrollToResults();
+                });
+
+                // Modal
+                document.getElementById('modal-close').addEventListener('click', () => {
+                    this.closeModal();
+                });
+
+                document.getElementById('restaurant-modal').addEventListener('click', (e) => {
+                    if (e.target === e.currentTarget) {
+                        this.closeModal();
+                    }
+                });
+
+                // Lightbox
+                document.getElementById('lightbox-close').addEventListener('click', () => {
+                    this.closeLightbox();
+                });
+
+                document.getElementById('image-lightbox').addEventListener('click', (e) => {
+                    if (e.target === e.currentTarget) {
+                        this.closeLightbox();
+                    }
+                });
+
+                document.getElementById('lightbox-prev').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.lightboxPrev();
+                });
+
+                document.getElementById('lightbox-next').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.lightboxNext();
+                });
+
+                // Keyboard navigation para lightbox
+                document.addEventListener('keydown', (e) => {
+                    if (!document.getElementById('image-lightbox').classList.contains('active')) return;
+                    
+                    switch(e.key) {
+                        case 'Escape':
+                            this.closeLightbox();
+                            break;
+                        case 'ArrowLeft':
+                            this.lightboxPrev();
+                            break;
+                        case 'ArrowRight':
+                            this.lightboxNext();
+                            break;
+                    }
+                });
+
+                // Keep-alive WebSocket
+                setInterval(() => {
+                    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+                        this.ws.send(JSON.stringify({ type: 'ping' }));
+                    }
+                }, 30000);
+            }
+
+            scrollToResults() {
+                document.getElementById('restaurantes').scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+
+            // ===== CARGA DE DATOS =====
+            async loadEstablishments(showLoading = true) {
+                if (this.isLoading) return;
+                this.isLoading = true;
+
+                if (showLoading) {
+                    document.getElementById('loading').style.display = 'block';
+                    document.getElementById('results-grid').style.display = 'none';
+                    document.getElementById('empty-state').style.display = 'none';
+                    document.getElementById('pagination').style.display = 'none';
+                }
+
+                try {
+                    const params = new URLSearchParams({
+                        pagina: this.currentPage,
+                        limite: 12,
+                        ...(this.currentFilter !== 'todos' && { tipo: this.currentFilter }),
+                        ...(this.searchTerm && { buscar: this.searchTerm }),
+                        ordenar: 'fechaCreacion',
+                        direccion: 'desc'
+                    });
+
+                    const response = await fetch(`/api/restaurants?${params}`);
+                    const data = await response.json();
+
+                    if (data.success) {
+                        this.establishments = data.data.restaurantes;
+                        this.renderEstablishments();
+                        this.updatePagination(data.data.pagination);
+                        this.updateResultsInfo(data.data.pagination);
+                        
+                        if (data.data.estadisticas) {
+                            this.updateStats(data.data.estadisticas);
+                        }
+                    } else {
+                        throw new Error(data.message);
+                    }
+                } catch (error) {
+                    console.error('Error cargando establecimientos:', error);
+                    this.showEmptyState();
+                } finally {
+                    document.getElementById('loading').style.display = 'none';
+                    this.isLoading = false;
+                }
+            }
+
+            async loadStats() {
+                try {
+                    const response = await fetch('/api/restaurants/stats');
+                    const data = await response.json();
+
+                    if (data.success) {
+                        this.updateStats(data.data.general);
+                    }
+                } catch (error) {
+                    console.error('Error cargando estadísticas:', error);
+                }
+            }
+
+            // ===== RENDERIZADO =====
+            renderEstablishments() {
+                const grid = document.getElementById('results-grid');
+                
+                if (this.establishments.length === 0) {
+                    this.showEmptyState();
+                    return;
+                }
+
+                grid.innerHTML = this.establishments.map(establishment => 
+                    this.createEstablishmentCard(establishment)
+                ).join('');
+
+                grid.style.display = 'grid';
+                document.getElementById('empty-state').style.display = 'none';
+
+                // Agregar event listeners a las cards completas
+                grid.querySelectorAll('.restaurant-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        const id = card.dataset.establishmentId;
+                        this.showEstablishmentDetails(id);
+                    });
+                });
+            }
+
+            // ===== MÉTODO CORREGIDO PARA CREAR TARJETAS =====
+            createEstablishmentCard(establishment) {
+                const typeIcon = this.getTypeIcon(establishment.tipo);
+                const fechaCreacion = new Date(establishment.fechaCreacion).toLocaleDateString('es-ES');
+                
+                // ✅ MANEJAR IMÁGENES REALES DEL SERVIDOR
+                let images = [];
+                let imageCount = 0;
+                let mainImageUrl = null;
+                
+                if (establishment.imagenes && establishment.imagenes.length > 0) {
+                    // Si hay imágenes reales subidas, usarlas
+                    images = establishment.imagenes.map(img => img.url); // Extraer solo las URLs
+                    imageCount = establishment.imagenes.length;
+                    mainImageUrl = establishment.imagenes[0].url; // Primera imagen como principal
+                } else {
+                    // Si no hay imágenes, usar placeholders
+                    images = this.getDemoImages(establishment.tipo);
+                    imageCount = images.length;
+                    mainImageUrl = images[0];
+                }
+                
+                return `
+                    <div class="restaurant-card" data-establishment-id="${establishment.id}">
+                        <div class="card-image">
+                            ${mainImageUrl ? 
+                                `<img src="${mainImageUrl}" alt="${establishment.nombre}" loading="lazy" 
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                 <div class="card-image-placeholder" style="display: none;">
+                                     <i class="${typeIcon}"></i>
+                                 </div>
+                                 ${imageCount > 1 ? `<div class="card-image-count"><i class="fas fa-images"></i> ${imageCount}</div>` : ''}` :
+                                `<div class="card-image-placeholder">
+                                    <i class="${typeIcon}"></i>
+                                 </div>`
+                            }
+                        </div>
+                        <div class="card-content">
+                            <div class="card-header">
+                                <div>
+                                    <h3 class="card-title">${establishment.nombre}</h3>
+                                    <span class="card-type ${establishment.tipo}">
+                                        <i class="${typeIcon}"></i>
+                                        ${establishment.tipo.charAt(0).toUpperCase() + establishment.tipo.slice(1)}
+                                    </span>
+                                </div>
+                            </div>
+                            <p class="card-description">${establishment.descripcion}</p>
+                            <div class="card-info">
+                                <div class="info-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>${establishment.direccion?.ciudad || 'Ciudad no especificada'}</span>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-phone"></i>
+                                    <span>${establishment.telefono}</span>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-envelope"></i>
+                                    <span>${establishment.email}</span>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span>Registrado: ${fechaCreacion}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            getDemoImages(tipo) {
+                // Imágenes de demostración más simples
+                const images = {
+                    restaurante: [
+                        'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=300&fit=crop',
+                        'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&h=300&fit=crop',
+                        'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=400&h=300&fit=crop'
+                    ],
+                    bar: [
+                        'https://images.unsplash.com/photo-1569949381669-ecf31ae8e613?w=400&h=300&fit=crop',
+                        'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop',
+                        'https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=400&h=300&fit=crop'
+                    ],
+                    cafeteria: [
+                        'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=400&h=300&fit=crop',
+                        'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&h=300&fit=crop',
+                        'https://images.unsplash.com/photo-1559925393-8be0ec4767c8?w=400&h=300&fit=crop'
+                    ]
+                };
+                
+                return images[tipo] || images.restaurante;
+            }
+
+            getTypeIcon(tipo) {
+                const icons = {
+                    'restaurante': 'fas fa-utensils',
+                    'bar': 'fas fa-cocktail',
+                    'cafeteria': 'fas fa-coffee'
+                };
+                return icons[tipo] || 'fas fa-store';
+            }
+
+            showEmptyState() {
+                document.getElementById('results-grid').style.display = 'none';
+                document.getElementById('empty-state').style.display = 'block';
+                document.getElementById('pagination').style.display = 'none';
+            }
+
+            updatePagination(pagination) {
+                const paginationElement = document.getElementById('pagination');
+                const prevBtn = document.getElementById('prev-btn');
+                const nextBtn = document.getElementById('next-btn');
+                const paginationInfo = document.getElementById('pagination-info');
+
+                if (pagination.totalPaginas <= 1) {
+                    paginationElement.style.display = 'none';
+                    return;
+                }
+
+                paginationElement.style.display = 'flex';
+                paginationInfo.textContent = `Página ${pagination.pagina} de ${pagination.totalPaginas}`;
+                
+                prevBtn.disabled = !pagination.hasPrev;
+                nextBtn.disabled = !pagination.hasNext;
+                
+                if (pagination.hasPrev) {
+                    prevBtn.classList.remove('disabled');
+                } else {
+                    prevBtn.classList.add('disabled');
+                }
+                
+                if (pagination.hasNext) {
+                    nextBtn.classList.remove('disabled');
+                } else {
+                    nextBtn.classList.add('disabled');
+                }
+            }
+
+            updateResultsInfo(pagination) {
+                const resultsCount = document.getElementById('results-count');
+                const total = pagination.total;
+                const start = (pagination.pagina - 1) * pagination.limite + 1;
+                const end = Math.min(pagination.pagina * pagination.limite, total);
+                
+                if (total === 0) {
+                    resultsCount.textContent = 'No hay resultados';
+                } else if (total === 1) {
+                    resultsCount.textContent = '1 establecimiento encontrado';
+                } else {
+                    resultsCount.textContent = `Mostrando ${start}-${end} de ${total} establecimientos`;
+                }
+            }
+
+            updateStats(stats) {
+                const elements = {
+                    'total-count': stats.totalRestaurantes || 0,
+                    'restaurant-count': stats.tipoRestaurante || 0,
+                    'bar-count': stats.tipoBares || 0,
+                    'cafe-count': stats.tipoCafeterias || 0
+                };
+
+                Object.entries(elements).forEach(([id, value]) => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        // Animación de actualización
+                        element.classList.add('updating');
+                        setTimeout(() => {
+                            element.textContent = value;
+                            element.classList.remove('updating');
+                        }, 150);
+                    }
+                });
+            }
+
+            // ===== MODAL CON GALERÍA SIMPLE =====
+            async showEstablishmentDetails(id) {
+                try {
+                    const response = await fetch(`/api/restaurants/${id}`);
+                    const data = await response.json();
+
+                    if (data.success) {
+                        this.renderModal(data.data.restaurant);
+                        this.openModal();
+                    } else {
+                        throw new Error(data.message);
+                    }
+                } catch (error) {
+                    console.error('Error cargando detalles:', error);
+                    alert('Error al cargar los detalles del establecimiento');
+                }
+            }
+
+            // ===== MÉTODO CORREGIDO PARA EL MODAL =====
+            renderModal(establishment) {
+                const modalTitle = document.getElementById('modal-title');
+                const modalBody = document.getElementById('modal-body');
+
+                modalTitle.textContent = establishment.nombre;
+
+                // ✅ MANEJAR IMÁGENES REALES PARA LA GALERÍA
+                let images = [];
+                
+                if (establishment.imagenes && establishment.imagenes.length > 0) {
+                    // Usar imágenes reales del servidor
+                    images = establishment.imagenes.map(img => img.url);
+                } else {
+                    // Fallback a imágenes demo
+                    images = this.getDemoImages(establishment.tipo);
+                }
+
+                modalBody.innerHTML = `
+                    <div class="restaurant-details">
+                        ${this.renderSimpleGallery(images, establishment.nombre)}
+                        
+                        <div class="detail-header">
+                            <h2>${establishment.nombre}</h2>
+                            <span class="card-type ${establishment.tipo}">
+                                <i class="${this.getTypeIcon(establishment.tipo)}"></i>
+                                ${establishment.tipo.charAt(0).toUpperCase() + establishment.tipo.slice(1)}
+                            </span>
+                        </div>
+
+                        <div class="detail-section">
+                            <h4><i class="fas fa-info-circle"></i> Descripción</h4>
+                            <p>${establishment.descripcion}</p>
+                        </div>
+
+                        <div class="detail-section">
+                            <h4><i class="fas fa-map-marker-alt"></i> Ubicación</h4>
+                            <p>${establishment.direccion?.calle || 'Calle no especificada'}, ${establishment.direccion?.ciudad || 'Ciudad no especificada'}, CP: ${establishment.direccion?.codigoPostal || 'N/A'}</p>
+                        </div>
+
+                        <div class="detail-section">
+                            <h4><i class="fas fa-phone"></i> Contacto</h4>
+                            <p>Teléfono: ${establishment.telefono}</p>
+                            <p>Email: ${establishment.email}</p>
+                        </div>
+
+                        ${establishment.horarios ? this.renderHorarios(establishment.horarios) : ''}
+                        ${establishment.menu && establishment.menu.length > 0 ? this.renderMenu(establishment.menu) : ''}
+                        ${establishment.redes ? this.renderRedesSociales(establishment.redes) : ''}
+                        
+                        <div class="detail-section">
+                            <h4><i class="fas fa-user"></i> Administrador</h4>
+                            <p>${establishment.admin ? `${establishment.admin.nombre} ${establishment.admin.apellido}` : 'No disponible'}</p>
+                        </div>
+                    </div>
+                `;
+
+                // Inicializar galería simple
+                if (images && images.length > 1) {
+                    this.initSimpleGallery(images);
+                }
+
+                // Agregar event listeners para lightbox en galería
+                this.initGalleryLightbox();
+            }
+
+            // ===== MÉTODO CORREGIDO PARA LA GALERÍA SIMPLE =====
+            renderSimpleGallery(images, altText) {
+                if (!images || images.length === 0) {
+                    return `
+                        <div class="simple-gallery">
+                            <div class="gallery-main-simple">
+                                <div class="card-image-placeholder">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                const mainImage = images[0];
+                const thumbnails = images.length > 1 ? images.map((imgUrl, index) => 
+                    `<div class="gallery-thumbnail-simple ${index === 0 ? 'active' : ''}" data-index="${index}">
+                        <img src="${imgUrl}" alt="${altText} - Imagen ${index + 1}" loading="lazy" 
+                             class="clickable-image" data-lightbox-gallery data-image-index="${index}"
+                             onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yMCAyMEMxOC44OTU0IDIwIDE4IDE5LjEwNDYgMTggMThDMTggMTYuODk1NCAxOC44OTU0IDE2IDIwIDE2QzIxLjEwNDYgMTYgMjIgMTYuODk1NCAyMiAxOEMyMiAxOS4xMDQ2IDIxLjEwNDYgMjAgMjAgMjBaIiBmaWxsPSIjOUM5Qzk3Ii8+CjxwYXRoIGQ9Ik0yNCAyNEgyNFYyNkgyNFYyNFoiIGZpbGw9IiM5QzlDOTciLz4KPC9zdmc+';">
+                     </div>`
+                ).join('') : '';
+
+                return `
+                    <div class="simple-gallery" data-gallery-images='${JSON.stringify(images)}' data-gallery-title="${altText}">
+                        <div class="gallery-main-simple">
+                            <img src="${mainImage}" alt="${altText}" id="simple-main-image" loading="lazy" 
+                                 class="clickable-image" data-lightbox-main data-image-index="0"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="card-image-placeholder" style="display: none;">
+                                <i class="fas fa-image"></i>
+                            </div>
+                            ${images.length > 1 ? `
+                                <button class="gallery-nav-simple prev" id="simple-prev">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <button class="gallery-nav-simple next" id="simple-next">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                                <div class="gallery-counter-simple">
+                                    <span id="simple-current">1</span> / ${images.length}
+                                </div>
+                            ` : ''}
+                        </div>
+                        ${images.length > 1 ? `
+                            <div class="gallery-thumbnails-simple">
+                                ${thumbnails}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+
+            initSimpleGallery(images) {
+                let currentIndex = 0;
+                const mainImage = document.getElementById('simple-main-image');
+                const prevBtn = document.getElementById('simple-prev');
+                const nextBtn = document.getElementById('simple-next');
+                const counter = document.getElementById('simple-current');
+                const thumbnails = document.querySelectorAll('.gallery-thumbnail-simple');
+
+                if (!mainImage || !prevBtn || !nextBtn) return;
+
+                const updateGallery = (index) => {
+                    currentIndex = index;
+                    mainImage.src = images[index];
+                    if (counter) counter.textContent = index + 1;
+                    
+                    // Actualizar thumbnails activos
+                    thumbnails.forEach((thumb, i) => {
+                        thumb.classList.toggle('active', i === index);
+                    });
+                };
+
+                // Navegación con botones
+                prevBtn.addEventListener('click', () => {
+                    const newIndex = currentIndex > 0 ? currentIndex - 1 : images.length - 1;
+                    updateGallery(newIndex);
+                });
+
+                nextBtn.addEventListener('click', () => {
+                    const newIndex = currentIndex < images.length - 1 ? currentIndex + 1 : 0;
+                    updateGallery(newIndex);
+                });
+
+                // Navegación con thumbnails
+                thumbnails.forEach((thumb, index) => {
+                    thumb.addEventListener('click', () => {
+                        updateGallery(index);
+                    });
+                });
+            }
+
+            renderHorarios(horarios) {
+                const dias = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'];
+                const diasNombres = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+                
+                let horariosHtml = '<div class="detail-section"><h4><i class="fas fa-clock"></i> Horarios</h4><div class="horarios-list">';
+                
+                dias.forEach((dia, index) => {
+                    const horario = horarios[dia];
+                    const horarioTexto = horario && horario.apertura && horario.cierre 
+                        ? `${horario.apertura} - ${horario.cierre}`
+                        : 'Cerrado';
+                    
+                    horariosHtml += `
+                        <div class="horario-item">
+                            <span class="dia">${diasNombres[index]}</span>
+                            <span class="horario">${horarioTexto}</span>
+                        </div>
+                    `;
+                });
+                
+                horariosHtml += '</div></div>';
+                return horariosHtml;
+            }
+
+            renderMenu(menu) {
+                let menuHtml = '<div class="detail-section"><h4><i class="fas fa-utensils"></i> Menú</h4>';
+                
+                menu.forEach(categoria => {
+                    menuHtml += `
+                        <div class="menu-categoria">
+                            <h5>${categoria.categoria}</h5>
+                            <div class="menu-items">
+                    `;
+                    
+                    categoria.items.forEach(item => {
+                        menuHtml += `
+                            <div class="menu-item">
+                                <div class="item-info">
+                                    <span class="item-nombre">${item.nombre}</span>
+                                    ${item.descripcion ? `<span class="item-descripcion">${item.descripcion}</span>` : ''}
+                                </div>
+                                <span class="item-precio">${item.precio}</span>
+                            </div>
+                        `;
+                    });
+                    
+                    menuHtml += '</div></div>';
+                });
+                
+                menuHtml += '</div>';
+                return menuHtml;
+            }
+
+            renderRedesSociales(redes) {
+                let redesHtml = '<div class="detail-section"><h4><i class="fas fa-share-alt"></i> Redes Sociales</h4><div class="redes-sociales">';
+                
+                if (redes.facebook) {
+                    redesHtml += `<a href="${redes.facebook}" target="_blank"><i class="fab fa-facebook"></i> Facebook</a>`;
+                }
+                if (redes.instagram) {
+                    redesHtml += `<a href="${redes.instagram}" target="_blank"><i class="fab fa-instagram"></i> Instagram</a>`;
+                }
+                if (redes.twitter) {
+                    redesHtml += `<a href="${redes.twitter}" target="_blank"><i class="fab fa-twitter"></i> Twitter</a>`;
+                }
+                if (redes.website) {
+                    redesHtml += `<a href="${redes.website}" target="_blank"><i class="fas fa-globe"></i> Sitio Web</a>`;
+                }
+                
+                redesHtml += '</div></div>';
+                return redesHtml;
+            }
+
+            openModal() {
+                document.getElementById('restaurant-modal').classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            closeModal() {
+                document.getElementById('restaurant-modal').classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            // ===== LIGHTBOX FUNCTIONALITY =====
+            openLightbox(images, currentIndex = 0, title = '') {
+                const lightbox = document.getElementById('image-lightbox');
+                const lightboxImage = document.getElementById('lightbox-image');
+                const lightboxTitle = document.getElementById('lightbox-title');
+                const lightboxCounter = document.getElementById('lightbox-counter');
+                const lightboxPrev = document.getElementById('lightbox-prev');
+                const lightboxNext = document.getElementById('lightbox-next');
+
+                // Configurar datos globales del lightbox
+                this.lightboxData = {
+                    images: images,
+                    currentIndex: currentIndex,
+                    title: title
+                };
+
+                // Mostrar imagen actual
+                this.updateLightboxImage();
+
+                // Mostrar/ocultar controles si hay múltiples imágenes
+                if (images.length > 1) {
+                    lightboxPrev.style.display = 'flex';
+                    lightboxNext.style.display = 'flex';
+                    lightboxCounter.style.display = 'block';
+                } else {
+                    lightboxPrev.style.display = 'none';
+                    lightboxNext.style.display = 'none';
+                    lightboxCounter.style.display = 'none';
+                }
+
+                // Mostrar título
+                lightboxTitle.textContent = title;
+
+                // Mostrar lightbox
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            updateLightboxImage() {
+                const lightboxImage = document.getElementById('lightbox-image');
+                const lightboxCounter = document.getElementById('lightbox-counter');
+                
+                if (!this.lightboxData) return;
+
+                const { images, currentIndex, title } = this.lightboxData;
+                
+                lightboxImage.src = images[currentIndex];
+                lightboxImage.alt = `${title} - Imagen ${currentIndex + 1}`;
+                
+                if (images.length > 1) {
+                    lightboxCounter.textContent = `${currentIndex + 1} / ${images.length}`;
+                }
+            }
+
+            closeLightbox() {
+                const lightbox = document.getElementById('image-lightbox');
+                lightbox.classList.remove('active');
+                document.body.style.overflow = '';
+                this.lightboxData = null;
+            }
+
+            lightboxPrev() {
+                if (!this.lightboxData) return;
+                
+                const { images } = this.lightboxData;
+                this.lightboxData.currentIndex = this.lightboxData.currentIndex > 0 
+                    ? this.lightboxData.currentIndex - 1 
+                    : images.length - 1;
+                
+                this.updateLightboxImage();
+            }
+
+            lightboxNext() {
+                if (!this.lightboxData) return;
+                
+                const { images } = this.lightboxData;
+                this.lightboxData.currentIndex = this.lightboxData.currentIndex < images.length - 1 
+                    ? this.lightboxData.currentIndex + 1 
+                    : 0;
+                
+                this.updateLightboxImage();
+            }
+
+            initGalleryLightbox() {
+                // Event listeners para imágenes en la galería del modal
+                const galleryContainer = document.querySelector('.simple-gallery');
+                if (!galleryContainer) return;
+
+                const images = JSON.parse(galleryContainer.dataset.galleryImages || '[]');
+                const title = galleryContainer.dataset.galleryTitle || '';
+
+                // Imagen principal
+                const mainImage = galleryContainer.querySelector('[data-lightbox-main]');
+                if (mainImage) {
+                    mainImage.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const imageIndex = parseInt(mainImage.dataset.imageIndex);
+                        this.openLightbox(images, imageIndex, title);
+                    });
+                }
+
+                // Thumbnails
+                const thumbnails = galleryContainer.querySelectorAll('[data-lightbox-gallery]');
+                thumbnails.forEach(thumbnail => {
+                    thumbnail.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const imageIndex = parseInt(thumbnail.dataset.imageIndex);
+                        this.openLightbox(images, imageIndex, title);
+                    });
+                });
+            }
+
+            // ===== UTILIDADES =====
+            debounce(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            }
+        }
+
+        // ===== INICIALIZACIÓN =====
+        let app;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            app = new RestauranteWebApp();
+            console.log('🍽️ RestauranteWeb iniciado con tiempo real y galería simple');
+        });
+
+        // ===== NAVEGACIÓN MÓVIL =====
+        document.addEventListener('DOMContentLoaded', () => {
+            const navToggle = document.getElementById('nav-toggle');
+            const navMenu = document.getElementById('nav-menu');
+            
+            if (navToggle && navMenu) {
+                navToggle.addEventListener('click', () => {
+                    navMenu.classList.toggle('active');
+                });
+                
+                // Cerrar menú al hacer click en un enlace
+                navMenu.querySelectorAll('.nav-link').forEach(link => {
+                    link.addEventListener('click', () => {
+                        navMenu.classList.remove('active');
+                    });
+                });
+            }
+        });
+
+        // ===== NAVEGACIÓN SUAVE =====
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

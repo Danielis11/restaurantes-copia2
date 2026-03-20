@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+/restaurante-web/node_modules/
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Database / API Dumps (Testing data)
+*.json
+!package.json
+!package-lock.json
+
+# Logs
+*.log
+log2.txt
+out.txt
+doctor.txt
+
+# OS/Editor
+.DS_Store
+.vscode/
+.idea/
+.cursor/
+
+# Temporary / Debug
+check_db*.js
+check_rhinos.js
+clean_*.js
+create_test_admin.js
+reactivate-admin.js
+test-*.js
+testAPI.js
+testDB.js
+verificarDatos.js
+debugServer.js
+
+# Uploads
+public/uploads/
+uploads/

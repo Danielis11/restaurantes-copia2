@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estadísticas - RestauranteWeb</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--gray-50);
+            color: var(--gray-900);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background-color: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--gray-600);
+            border: 1px solid var(--gray-300);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--gray-50);
+            border-color: var(--gray-400);
+        }
+
+        /* Main Content */
+        .main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: var(--gray-600);
+            font-size: 1.1rem;
+        }
+
+        /* Stats Overview */
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            border: 1px solid var(--gray-200);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s;
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--gray-600);
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.25rem;
+        }
+
+        .stat-icon.primary {
+            background-color: var(--primary);
+        }
+
+        .stat-icon.success {
+            background-color: var(--success);
+        }
+
+        .stat-icon.warning {
+            background-color: var(--warning);
+        }
+
+        .stat-icon.error {
+            background-color: var(--error);
+        }
+
+        .stat-icon.info {
+            background-color: var(--info);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-change {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--gray-600);
+        }
+
+        .stat-change.positive {
+            color: var(--success);
+        }
+
+        .stat-change.negative {
+            color: var(--error);
+        }
+
+        /* Charts Section */
+        .charts-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: var(--white);
+            border-radius: 0.75rem;
+            border: 1px solid var(--gray-200);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+        }
+
+        .chart-container.small {
+            height: 300px;
+        }
+
+        /* Restaurant Info Card */
+        .restaurant-info {
+            background: var(--white);
+            border-radius: 0.75rem;
+            border: 1px solid var(--gray-200);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .restaurant-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .restaurant-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 0.75rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .restaurant-details h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+
+        .restaurant-type {
+            color: var(--gray-500);
+            text-transform: capitalize;
+            font-size: 0.9rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--gray-50);
+            border-radius: 0.5rem;
+        }
+
+        .info-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 0.5rem;
+            background: var(--primary);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .info-content {
+            flex: 1;
+        }
+
+        .info-label {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+        }
+
+        .info-value {
+            font-weight: 500;
+            color: var(--gray-900);
+            font-size: 0.9rem;
+        }
+
+        /* Data Table */
+        .data-section {
+            background: var(--white);
+            border-radius: 0.75rem;
+            border: 1px solid var(--gray-200);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .data-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .data-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .data-content {
+            padding: 1.5rem;
+        }
+
+        .menu-categories {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .category-item {
+            padding: 1rem;
+            background: var(--gray-50);
+            border-radius: 0.5rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .category-name {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .category-stats {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: var(--gray-600);
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray-500);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--gray-200);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            max-width: 400px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid var(--primary);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            gap: 12px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-left-color: var(--success);
+        }
+
+        .notification.error {
+            border-left-color: var(--error);
+        }
+
+        .notification.warning {
+            border-left-color: var(--warning);
+        }
+
+        .notification i {
+            font-size: 18px;
+            color: var(--primary);
+        }
+
+        .notification.success i {
+            color: var(--success);
+        }
+
+        .notification.error i {
+            color: var(--error);
+        }
+
+        .notification.warning i {
+            color: var(--warning);
+        }
+
+        .notification-message {
+            flex: 1;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            color: var(--gray-400);
+        }
+
+        .notification-close:hover {
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                padding: 0.5rem 1rem;
+                height: auto;
+                min-height: 70px;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            .logo {
+                font-size: 1rem;
+            }
+
+            .nav-actions {
+                gap: 0.5rem;
+            }
+
+            .btn {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.8rem;
+            }
+
+            .main {
+                padding: 1rem;
+            }
+
+            .stats-overview {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <a href="/admin.html" class="logo">
+                <i class="fas fa-utensils"></i>
+                RestauranteWeb
+            </a>
+
+            <div class="nav-actions">
+                <button class="btn btn-primary" onclick="refreshStats()">
+                    <i class="fas fa-sync-alt"></i>
+                    Actualizar
+                </button>
+                <a href="/admin.html" class="btn btn-outline">
+                    <i class="fas fa-arrow-left"></i>
+                    Volver al Panel
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Estadísticas</h1>
+            <p class="page-subtitle">Análisis y métricas de tu establecimiento</p>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading-state" class="loading">
+            <div class="spinner"></div>
+            <p>Cargando estadísticas...</p>
+        </div>
+
+        <!-- Content (Hidden initially) -->
+        <div id="content" style="display: none;">
+            <!-- Stats Overview -->
+            <div class="stats-overview">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Categorías del Menú</div>
+                        <div class="stat-icon primary">
+                            <i class="fas fa-list"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="total-categories">0</div>
+                    <div class="stat-change">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Categorías disponibles</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Productos en Menú</div>
+                        <div class="stat-icon success">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="total-items">0</div>
+                    <div class="stat-change">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Items totales</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Precio Promedio</div>
+                        <div class="stat-icon warning">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="average-price">$0</div>
+                    <div class="stat-change">
+                        <i class="fas fa-calculator"></i>
+                        <span>Por producto</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Completitud del Perfil</div>
+                        <div class="stat-icon info">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="profile-completion">0%</div>
+                    <div class="stat-change" id="completion-status">
+                        <i class="fas fa-check"></i>
+                        <span>Completado</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Vistas del Perfil</div>
+                        <div class="stat-icon" style="color: var(--primary); background: rgba(37,99,235,0.1);">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="profile-views">0</div>
+                    <div class="stat-change">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Visitas totales</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Clics al Mapa</div>
+                        <div class="stat-icon" style="color: var(--success); background: rgba(16,185,129,0.1);">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="map-clicks">0</div>
+                    <div class="stat-change">
+                        <i class="fas fa-location-arrow"></i>
+                        <span>Intenciones de viaje</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Clics de WhatsApp</div>
+                        <div class="stat-icon" style="color: #25D366; background: rgba(37,211,102,0.1);">
+                            <i class="fab fa-whatsapp"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="whatsapp-clicks">0</div>
+                    <div class="stat-change">
+                        <i class="fas fa-comment"></i>
+                        <span>Contactos directos</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Restaurant Info -->
+            <div class="restaurant-info">
+                <div class="restaurant-header">
+                    <div class="restaurant-avatar" id="restaurant-avatar">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <div class="restaurant-details">
+                        <h3 id="restaurant-name">Mi Restaurante</h3>
+                        <p class="restaurant-type" id="restaurant-type">restaurante</p>
+                    </div>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Ciudad</div>
+                            <div class="info-value" id="restaurant-city">-</div>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Teléfono</div>
+                            <div class="info-value" id="restaurant-phone">-</div>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-calendar"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Días Abierto</div>
+                            <div class="info-value" id="days-open">0/7</div>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Activo desde</div>
+                            <div class="info-value" id="restaurant-since">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Analytics Section -->
+            <div class="charts-section" style="grid-template-columns: 1fr 1fr; margin-bottom: 2rem;">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Evolución de Visitas Mensuales</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="viewsEvolutionChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Evolución de Calificación Promedio</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="ratingEvolutionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-section">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Distribución de Precios por Categoría</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="pricesChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Productos por Categoría</h3>
+                    </div>
+                    <div class="chart-container small">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Menu Categories Data -->
+            <div class="data-section">
+                <div class="data-header">
+                    <h3 class="data-title">Análisis del Menú</h3>
+                </div>
+                <div class="data-content">
+                    <div class="menu-categories" id="menu-analysis">
+                        <!-- Categories will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const API_BASE = window.location.origin + '/api';
+        let currentRestaurant = null;
+        let analyticsData = null;
+        let charts = {};
+
+        // Funciones de notificación
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+
+            const icon = type === 'success' ? 'fa-check-circle' :
+                type === 'error' ? 'fa-exclamation-circle' :
+                    type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle';
+
+            notification.innerHTML = `
+                <i class="fas ${icon}"></i>
+                <span class="notification-message">${message}</span>
+                <button class="notification-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => notification.classList.add('show'), 100);
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 5000);
+
+            notification.querySelector('.notification-close').onclick = () => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            };
+        }
+
+        // Verificar autenticación
+        async function checkAuth() {
+            const token = localStorage.getItem('authToken');
+
+            if (!token) {
+                showNotification('No has iniciado sesión', 'error');
+                setTimeout(() => {
+                    window.location.href = '/login.html';
+                }, 2000);
+                return false;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/profile`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json().catch(() => ({}));
+                if (response.ok) return true;
+                const isAccountInactive = data.code === 'ACCOUNT_INACTIVE' || (data.message && data.message.includes('inactiva'));
+                localStorage.removeItem('authToken');
+                showNotification(isAccountInactive ? 'Tu cuenta está desactivada. Contacta al super administrador para reactivarla.' : 'Sesión expirada, redirigiendo...', 'warning');
+                setTimeout(() => { window.location.href = '/login.html'; }, isAccountInactive ? 3000 : 2000);
+                return false;
+            } catch (error) {
+                console.error('Error verificando auth:', error);
+                localStorage.removeItem('authToken');
+                showNotification('Sesión expirada, redirigiendo...', 'warning');
+                setTimeout(() => { window.location.href = '/login.html'; }, 2000);
+                return false;
+            }
+        }
+
+        // Cargar estadísticas del restaurante
+        async function loadRestaurantStats() {
+            const token = localStorage.getItem('authToken');
+
+            try {
+                // 1. Cargar datos básicos del restaurante
+                const response = await fetch(`${API_BASE}/admin/my-restaurant`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        showNotification('No tienes un restaurante registrado aún', 'warning');
+                        setTimeout(() => { window.location.href = '/admin.html'; }, 3000);
+                        return;
+                    }
+                    const errData = await response.json().catch(() => ({}));
+                    console.error('Error respuesta my-restaurant:', response.status, errData);
+                    throw new Error('Error al cargar datos del restaurante');
+                }
+
+                const result = await response.json();
+                currentRestaurant = result.data;
+                updateStatsUI();
+
+                // 2. Cargar analíticas (independiente, no bloquea la página)
+                try {
+                    const analyticsResponse = await fetch(`${API_BASE}/admin/my-restaurant/analytics`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (analyticsResponse.ok) {
+                        const resultAnalytics = await analyticsResponse.json();
+                        analyticsData = resultAnalytics.data;
+                    } else {
+                        const errText = await analyticsResponse.text();
+                        console.warn('Analytics endpoint respondió con error:', analyticsResponse.status, errText);
+                    }
+                } catch (analyticsError) {
+                    console.warn('Error cargando analíticas (no crítico):', analyticsError);
+                }
+
+                createCharts();
+
+            } catch (error) {
+                console.error('Error loading restaurant stats:', error);
+                showNotification('Error al cargar estadísticas del restaurante', 'error');
+            } finally {
+                // Ocultar loading
+                document.getElementById('loading-state').style.display = 'none';
+                document.getElementById('content').style.display = 'block';
+            }
+        }
+
+        // Actualizar UI con estadísticas
+        function updateStatsUI() {
+            if (!currentRestaurant) return;
+
+            // Información básica del restaurante
+            const restaurantName = document.getElementById('restaurant-name');
+            const restaurantType = document.getElementById('restaurant-type');
+            const restaurantAvatar = document.getElementById('restaurant-avatar');
+            const restaurantCity = document.getElementById('restaurant-city');
+            const restaurantPhone = document.getElementById('restaurant-phone');
+            const restaurantSince = document.getElementById('restaurant-since');
+
+            if (restaurantName) {
+                restaurantName.textContent = currentRestaurant.nombre || 'Mi Restaurante';
+            }
+
+            if (restaurantType) {
+                restaurantType.textContent = currentRestaurant.tipo || 'restaurante';
+            }
+
+            if (restaurantAvatar) {
+                const initials = currentRestaurant.nombre ?
+                    currentRestaurant.nombre.substring(0, 2).toUpperCase() : 'MR';
+                restaurantAvatar.textContent = initials;
+            }
+
+            if (restaurantCity && currentRestaurant.direccion) {
+                restaurantCity.textContent = currentRestaurant.direccion.ciudad || '-';
+            }
+
+            if (restaurantPhone) {
+                restaurantPhone.textContent = currentRestaurant.telefono || '-';
+            }
+
+            if (restaurantSince && currentRestaurant.fechaCreacion) {
+                const date = new Date(currentRestaurant.fechaCreacion);
+                restaurantSince.textContent = date.toLocaleDateString('es-ES', {
+                    year: 'numeric',
+                    month: 'short'
+                });
+            }
+
+            // Estadísticas del menú
+            const menu = currentRestaurant.menu || [];
+            let totalCategories = menu.length;
+            let totalItems = 0;
+            let totalPrice = 0;
+            let itemCount = 0;
+
+            menu.forEach(category => {
+                if (category.items && Array.isArray(category.items)) {
+                    totalItems += category.items.length;
+                    category.items.forEach(item => {
+                        if (item.precio && typeof item.precio === 'number') {
+                            totalPrice += item.precio;
+                            itemCount++;
+                        }
+                    });
+                }
+            });
+
+            const averagePrice = itemCount > 0 ? totalPrice / itemCount : 0;
+
+            // Actualizar tarjetas de estadísticas
+            document.getElementById('total-categories').textContent = totalCategories;
+            document.getElementById('total-items').textContent = totalItems;
+            document.getElementById('average-price').textContent = `$${averagePrice.toFixed(0)}`;
+
+            // Nuevas estadísticas avanzadas
+            if (document.getElementById('profile-views')) {
+                document.getElementById('profile-views').textContent = currentRestaurant.estadisticas?.vistasPerfil || 0;
+            }
+            if (document.getElementById('map-clicks')) {
+                document.getElementById('map-clicks').textContent = currentRestaurant.estadisticas?.clicsMapa || 0;
+            }
+            if (document.getElementById('whatsapp-clicks')) {
+                document.getElementById('whatsapp-clicks').textContent = currentRestaurant.estadisticas?.clicsWhatsapp || 0;
+            }
+
+            // Calcular completitud del perfil
+            const profileCompletion = calculateProfileCompletion();
+            document.getElementById('profile-completion').textContent = `${profileCompletion}%`;
+
+            const completionStatus = document.getElementById('completion-status');
+            if (profileCompletion >= 80) {
+                completionStatus.innerHTML = '<i class="fas fa-check"></i><span>Excelente</span>';
+                completionStatus.className = 'stat-change positive';
+            } else if (profileCompletion >= 50) {
+                completionStatus.innerHTML = '<i class="fas fa-exclamation"></i><span>Mejorable</span>';
+                completionStatus.className = 'stat-change';
+            } else {
+                completionStatus.innerHTML = '<i class="fas fa-times"></i><span>Incompleto</span>';
+                completionStatus.className = 'stat-change negative';
+            }
+
+            // Calcular días abierto
+            const daysOpen = calculateOpenDays();
+            document.getElementById('days-open').textContent = `${daysOpen}/7`;
+
+            // Análisis del menú
+            updateMenuAnalysis();
+        }
+
+        // Calcular completitud del perfil
+        function calculateProfileCompletion() {
+            if (!currentRestaurant) return 0;
+
+            let completed = 0;
+            let total = 10;
+
+            // Campos básicos (4 puntos)
+            if (currentRestaurant.nombre) completed++;
+            if (currentRestaurant.descripcion) completed++;
+            if (currentRestaurant.telefono) completed++;
+            if (currentRestaurant.email) completed++;
+
+            // Dirección (2 puntos)
+            if (currentRestaurant.direccion?.calle) completed++;
+            if (currentRestaurant.direccion?.ciudad) completed++;
+
+            // Horarios (1 punto)
+            if (currentRestaurant.horarios && Object.keys(currentRestaurant.horarios).length > 0) completed++;
+
+            // Menú (2 puntos)
+            if (currentRestaurant.menu && currentRestaurant.menu.length > 0) completed++;
+            if (currentRestaurant.menu && currentRestaurant.menu.some(cat => cat.items && cat.items.length > 0)) completed++;
+
+            // Redes sociales (1 punto)
+            if (currentRestaurant.redes && Object.values(currentRestaurant.redes).some(red => red)) completed++;
+
+            return Math.round((completed / total) * 100);
+        }
+
+        // Calcular días abierto
+        function calculateOpenDays() {
+            if (!currentRestaurant?.horarios) return 0;
+
+            const horarios = currentRestaurant.horarios;
+            let daysOpen = 0;
+
+            Object.keys(horarios).forEach(day => {
+                if (horarios[day]?.apertura && horarios[day]?.cierre) {
+                    daysOpen++;
+                }
+            });
+
+            return daysOpen;
+        }
+
+        // Actualizar análisis del menú
+        function updateMenuAnalysis() {
+            const container = document.getElementById('menu-analysis');
+            if (!container || !currentRestaurant?.menu) return;
+
+            container.innerHTML = '';
+
+            currentRestaurant.menu.forEach(category => {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'category-item';
+
+                const items = category.items || [];
+                const totalItems = items.length;
+                const prices = items.map(item => item.precio).filter(price => typeof price === 'number');
+                const avgPrice = prices.length > 0 ? prices.reduce((a, b) => a + b, 0) / prices.length : 0;
+                const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
+                const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
+
+                categoryDiv.innerHTML = `
+                    <div class="category-header">
+                        <h4 class="category-name">${category.categoria}</h4>
+                    </div>
+                    <div class="category-stats">
+                        <span><i class="fas fa-utensils"></i> ${totalItems} productos</span>
+                        <span><i class="fas fa-dollar-sign"></i> Promedio: $${avgPrice.toFixed(0)}</span>
+                        <span><i class="fas fa-arrow-down"></i> Min: $${minPrice}</span>
+                        <span><i class="fas fa-arrow-up"></i> Max: $${maxPrice}</span>
+                    </div>
+                `;
+
+                container.appendChild(categoryDiv);
+            });
+        }
+
+        // Crear gráficos
+        function createCharts() {
+            if (!currentRestaurant?.menu) return;
+
+            createPricesChart();
+            createCategoryChart();
+            if (analyticsData) {
+                createViewsEvolutionChart();
+                createRatingEvolutionChart();
+            }
+        }
+
+        // Gráfico de precios por categoría
+        function createPricesChart() {
+            const ctx = document.getElementById('pricesChart');
+            if (!ctx) return;
+
+            const menu = currentRestaurant.menu || [];
+            const categories = [];
+            const avgPrices = [];
+            const minPrices = [];
+            const maxPrices = [];
+
+            menu.forEach(category => {
+                const items = category.items || [];
+                const prices = items.map(item => item.precio).filter(price => typeof price === 'number');
+
+                if (prices.length > 0) {
+                    categories.push(category.categoria);
+                    avgPrices.push(Math.round(prices.reduce((a, b) => a + b, 0) / prices.length));
+                    minPrices.push(Math.min(...prices));
+                    maxPrices.push(Math.max(...prices));
+                }
+            });
+
+            if (charts.pricesChart) {
+                charts.pricesChart.destroy();
+            }
+
+            charts.pricesChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: categories,
+                    datasets: [{
+                        label: 'Precio Promedio',
+                        data: avgPrices,
+                        backgroundColor: 'rgba(37, 99, 235, 0.8)',
+                        borderColor: 'rgba(37, 99, 235, 1)',
+                        borderWidth: 1
+                    }, {
+                        label: 'Precio Mínimo',
+                        data: minPrices,
+                        backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                        borderColor: 'rgba(16, 185, 129, 1)',
+                        borderWidth: 1
+                    }, {
+                        label: 'Precio Máximo',
+                        data: maxPrices,
+                        backgroundColor: 'rgba(245, 158, 11, 0.8)',
+                        borderColor: 'rgba(245, 158, 11, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function (value) {
+                                    return '$' + value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Gráfico de productos por categoría
+        function createCategoryChart() {
+            const ctx = document.getElementById('categoryChart');
+            if (!ctx) return;
+
+            const menu = currentRestaurant.menu || [];
+            const categories = [];
+            const itemCounts = [];
+            const colors = [
+                '#2563eb', '#16a34a', '#dc2626', '#ca8a04', '#9333ea',
+                '#c2410c', '#0891b2', '#be123c', '#4338ca', '#059669'
+            ];
+
+            menu.forEach((category, index) => {
+                const itemCount = category.items ? category.items.length : 0;
+                if (itemCount > 0) {
+                    categories.push(category.categoria);
+                    itemCounts.push(itemCount);
+                }
+            });
+
+            if (charts.categoryChart) {
+                charts.categoryChart.destroy();
+            }
+
+            charts.categoryChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: categories,
+                    datasets: [{
+                        data: itemCounts,
+                        backgroundColor: colors.slice(0, categories.length),
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createViewsEvolutionChart() {
+            const ctx = document.getElementById('viewsEvolutionChart');
+            if (!ctx || !analyticsData.historicoMensual) return;
+
+            const historico = analyticsData.historicoMensual;
+            const labels = historico.map(h => h.fecha);
+            const dataVistas = historico.map(h => h.vistas);
+            const dataWhatsapp = historico.map(h => h.clicsWhatsapp);
+            const dataMap = historico.map(h => h.clicsMapa);
+
+            if (charts.viewsEvolutionChart) charts.viewsEvolutionChart.destroy();
+
+            charts.viewsEvolutionChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels.length > 0 ? labels : ['Sin datos'],
+                    datasets: [
+                        {
+                            label: 'Vistas del perfil',
+                            data: dataVistas.length > 0 ? dataVistas : [0],
+                            backgroundColor: 'rgba(37, 99, 235, 0.7)',
+                            borderColor: 'rgba(37, 99, 235, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Clics de WhatsApp',
+                            data: dataWhatsapp.length > 0 ? dataWhatsapp : [0],
+                            backgroundColor: 'rgba(37, 211, 102, 0.7)',
+                            borderColor: 'rgba(37, 211, 102, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Clics al Mapa',
+                            data: dataMap.length > 0 ? dataMap : [0],
+                            backgroundColor: 'rgba(245, 158, 11, 0.7)',
+                            borderColor: 'rgba(245, 158, 11, 1)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top' } },
+                    scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+                }
+            });
+        }
+
+        function createRatingEvolutionChart() {
+            const ctx = document.getElementById('ratingEvolutionChart');
+            if (!ctx || !analyticsData.evolucionCalificacion) return;
+
+            const historico = analyticsData.evolucionCalificacion;
+            const labels = historico.map(h => h.mes);
+            const dataPromedio = historico.map(h => h.promedio);
+
+            if (charts.ratingEvolutionChart) charts.ratingEvolutionChart.destroy();
+
+            charts.ratingEvolutionChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels.length > 0 ? labels : ['Sin datos'],
+                    datasets: [{
+                        label: 'Calificación Promedio',
+                        data: dataPromedio.length > 0 ? dataPromedio : [0],
+                        borderColor: 'rgba(239, 68, 68, 1)',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top' } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 5,
+                            ticks: { stepSize: 1 }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Refrescar estadísticas
+        async function refreshStats() {
+            showNotification('Actualizando estadísticas...', 'info');
+
+            // Destruir gráficos existentes
+            Object.values(charts).forEach(chart => {
+                if (chart) chart.destroy();
+            });
+            charts = {};
+
+            await loadRestaurantStats();
+            showNotification('Estadísticas actualizadas correctamente', 'success');
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', async function () {
+            const isAuthenticated = await checkAuth();
+            if (isAuthenticated) {
+                await loadRestaurantStats();
+            }
+        });
+    </script>
+</body>
+
+</html>

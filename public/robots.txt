@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /super-admin.html
+Disallow: /manage-restaurant.html
+Disallow: /manage-images.html
+Disallow: /estadisticas.html
+Disallow: /admin-turismo.html
+Disallow: /mi-perfil.html
+
+Sitemap: https://restauranteweb.com/sitemap.xml

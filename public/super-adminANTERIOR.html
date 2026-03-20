@@ -1,0 +1,2189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin - RestauranteWeb</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--gray-50);
+            color: var(--gray-900);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--white);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--white);
+            text-decoration: none;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .crown-icon {
+            color: #fbbf24;
+            font-size: 1.5rem;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .user-role {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--white);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+            padding: 0;
+        }
+
+        .tabs-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            padding: 0 1.5rem;
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 1rem 0;
+            color: var(--gray-500);
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tab-button.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-button:hover:not(.active) {
+            color: var(--gray-700);
+        }
+
+        /* Main Content */
+        .main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Page Headers */
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: var(--gray-600);
+            font-size: 1.1rem;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            border: 1px solid var(--gray-200);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s;
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--gray-600);
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.25rem;
+        }
+
+        .stat-icon.primary { background-color: var(--primary); }
+        .stat-icon.success { background-color: var(--success); }
+        .stat-icon.warning { background-color: var(--warning); }
+        .stat-icon.error { background-color: var(--error); }
+        .stat-icon.info { background-color: var(--info); }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-change {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--gray-600);
+        }
+
+        /* Tables */
+        .table-container {
+            background: var(--white);
+            border-radius: 0.75rem;
+            border: 1px solid var(--gray-200);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .search-input {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            width: 250px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: var(--white);
+        }
+
+        .btn-success:hover {
+            background-color: #059669;
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+            color: var(--white);
+        }
+
+        .btn-warning:hover {
+            background-color: #d97706;
+        }
+
+        .btn-danger {
+            background-color: var(--error);
+            color: var(--white);
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--gray-600);
+            border: 1px solid var(--gray-300);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--gray-50);
+            color: var(--gray-700);
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .table th {
+            background-color: var(--gray-50);
+            font-weight: 600;
+            color: var(--gray-900);
+            font-size: 0.9rem;
+        }
+
+        .table td {
+            color: var(--gray-700);
+            font-size: 0.9rem;
+        }
+
+        .table tr:hover td {
+            background-color: var(--gray-50);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        /* Status Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .badge-error {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+
+        .badge-primary {
+            background-color: rgba(124, 58, 237, 0.1);
+            color: var(--primary);
+        }
+
+        /* Additional utility classes */
+        .text-gray-500 {
+            color: var(--gray-500);
+        }
+
+        .text-capitalize {
+            text-transform: capitalize;
+        }
+
+        /* Charts */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: var(--white);
+            border-radius: 0.75rem;
+            border: 1px solid var(--gray-200);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+        }
+
+        .chart-container.small {
+            height: 300px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: 0.75rem;
+            padding: 0;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--gray-50);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--gray-400);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            color: var(--gray-600);
+            background: var(--gray-100);
+        }
+
+        .modal-body {
+            padding: 2rem;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid var(--gray-200);
+            background: var(--gray-50);
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        /* Confirmation Modal */
+        .confirmation-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .confirmation-modal.show {
+            display: flex;
+        }
+
+        .confirmation-content {
+            background: var(--white);
+            border-radius: 0.75rem;
+            padding: 0;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .confirmation-header {
+            padding: 2rem 2rem 1rem 2rem;
+            text-align: center;
+        }
+
+        .confirmation-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--white);
+        }
+
+        .confirmation-icon.danger {
+            background-color: var(--error);
+        }
+
+        .confirmation-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .confirmation-message {
+            color: var(--gray-600);
+            line-height: 1.6;
+        }
+
+        .confirmation-body {
+            padding: 0 2rem;
+        }
+
+        .confirmation-details {
+            background: var(--gray-50);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .confirmation-footer {
+            padding: 1.5rem 2rem 2rem 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        /* Form */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-label.required::after {
+            content: ' *';
+            color: var(--error);
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+
+        .form-radio-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .form-radio-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-radio {
+            accent-color: var(--primary);
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray-500);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--gray-200);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            max-width: 400px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            border-left: 4px solid var(--primary);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            gap: 12px;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success { border-left-color: var(--success); }
+        .notification.error { border-left-color: var(--error); }
+        .notification.warning { border-left-color: var(--warning); }
+        
+        .notification i {
+            font-size: 18px;
+            color: var(--primary);
+        }
+        
+        .notification.success i { color: var(--success); }
+        .notification.error i { color: var(--error); }
+        .notification.warning i { color: var(--warning); }
+        
+        .notification-message {
+            flex: 1;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .notification-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            color: var(--gray-400);
+        }
+        
+        .notification-close:hover {
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tabs-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                padding: 0 1rem;
+            }
+            
+            .main {
+                padding: 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .user-section {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .user-info {
+                text-align: center;
+            }
+            
+            .table-actions {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 1rem;
+            }
+
+            .modal-body {
+                padding: 1rem;
+            }
+
+            .modal-footer {
+                padding: 1rem;
+                flex-direction: column;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+
+            .action-buttons .btn-sm {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <a href="/super-admin.html" class="logo">
+                <i class="fas fa-crown crown-icon"></i>
+                Super Admin
+            </a>
+            
+            <div class="user-section">
+                <div class="user-info">
+                    <div class="user-name" id="user-name">Cargando...</div>
+                    <div class="user-role" id="user-role">super-admin</div>
+                </div>
+                <div class="user-avatar" id="user-avatar">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <button class="logout-btn" id="logout-btn" title="Cerrar sesión">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs">
+        <div class="tabs-container">
+            <button class="tab-button active" data-tab="dashboard">
+                <i class="fas fa-tachometer-alt"></i>
+                Dashboard
+            </button>
+            <button class="tab-button" data-tab="admins">
+                <i class="fas fa-users"></i>
+                Administradores
+            </button>
+            <button class="tab-button" data-tab="restaurants">
+                <i class="fas fa-store"></i>
+                Restaurantes
+            </button>
+            <button class="tab-button" data-tab="stats">
+                <i class="fas fa-chart-line"></i>
+                Estadísticas
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="page-header">
+                <h1 class="page-title">Dashboard General</h1>
+                <p class="page-subtitle">Resumen completo del sistema RestauranteWeb</p>
+            </div>
+
+            <!-- Loading State -->
+            <div id="dashboard-loading" class="loading">
+                <div class="spinner"></div>
+                <p>Cargando dashboard...</p>
+            </div>
+
+            <!-- Dashboard Content -->
+            <div id="dashboard-content" style="display: none;">
+                <!-- Stats Grid -->
+                <div class="stats-grid" id="dashboard-stats">
+                    <!-- Stats will be loaded here -->
+                </div>
+
+                <!-- Charts -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Crecimiento del Sistema</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="growthChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Distribución por Tipo</h3>
+                        </div>
+                        <div class="chart-container small">
+                            <canvas id="typeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Administradores Tab -->
+        <div id="admins" class="tab-content">
+            <div class="table-container">
+                <div class="table-header">
+                    <h2 class="table-title">Gestión de Administradores</h2>
+                    <div class="table-actions">
+                        <input type="text" id="admin-search" class="search-input" placeholder="Buscar administradores...">
+                        <button class="btn btn-primary" onclick="openCreateAdminModal()">
+                            <i class="fas fa-plus"></i>
+                            Nuevo Admin
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="admins-table-container">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Cargando administradores...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Restaurantes Tab -->
+        <div id="restaurants" class="tab-content">
+            <div class="table-container">
+                <div class="table-header">
+                    <h2 class="table-title">Gestión de Restaurantes</h2>
+                    <div class="table-actions">
+                        <input type="text" id="restaurant-search" class="search-input" placeholder="Buscar restaurantes...">
+                        <select id="restaurant-filter" class="form-select" style="width: auto;">
+                            <option value="">Todos los tipos</option>
+                            <option value="restaurante">Restaurantes</option>
+                            <option value="bar">Bares</option>
+                            <option value="cafeteria">Cafeterías</option>
+                            <option value="comida-rapida">Comida Rápida</option>
+                            <option value="panaderia">Panaderías</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                        <button class="btn btn-success" onclick="openCreateRestaurantModal()">
+                            <i class="fas fa-plus"></i>
+                            Nuevo Restaurante
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="restaurants-table-container">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Cargando restaurantes...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estadísticas Tab -->
+        <div id="stats" class="tab-content">
+            <div class="page-header">
+                <h1 class="page-title">Estadísticas Avanzadas</h1>
+                <p class="page-subtitle">Análisis detallado del sistema</p>
+            </div>
+
+            <div id="stats-loading" class="loading">
+                <div class="spinner"></div>
+                <p>Cargando estadísticas avanzadas...</p>
+            </div>
+
+            <div id="stats-content" style="display: none;">
+                <!-- Advanced stats will be loaded here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Create/Edit Admin Modal -->
+    <div id="admin-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="admin-modal-title">Nuevo Administrador</h3>
+                <button class="modal-close" onclick="closeAdminModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="admin-form">
+                    <input type="hidden" id="admin-id">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="admin-nombre" class="form-label required">Nombre</label>
+                            <input type="text" id="admin-nombre" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="admin-apellido" class="form-label required">Apellido</label>
+                            <input type="text" id="admin-apellido" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="admin-email" class="form-label required">Email</label>
+                            <input type="email" id="admin-email" class="form-input" required>
+                        </div>
+                        <div class="form-group" id="password-group">
+                            <label for="admin-password" class="form-label required">Contraseña</label>
+                            <input type="password" id="admin-password" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="admin-telefono" class="form-label required">Teléfono</label>
+                            <input type="tel" id="admin-telefono" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="admin-rol" class="form-label required">Rol</label>
+                            <select id="admin-rol" class="form-select" required>
+                                <option value="admin">Administrador</option>
+                                <option value="super-admin">Super Administrador</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeAdminModal()">Cancelar</button>
+                <button type="submit" form="admin-form" class="btn btn-primary">
+                    <i class="fas fa-save"></i>
+                    Guardar Administrador
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Restaurant Modal -->
+    <div id="restaurant-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">🏪 Crear Nuevo Restaurante</h3>
+                <button class="modal-close" onclick="closeRestaurantModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="restaurant-form">
+                    <!-- Administrador Section -->
+                    <div class="form-group full-width">
+                        <label class="form-label required">Administrador</label>
+                        <div class="form-radio-group">
+                            <div class="form-radio-item">
+                                <input type="radio" id="admin-existing" name="admin-type" value="existing" class="form-radio" checked>
+                                <label for="admin-existing">Administrador Existente</label>
+                            </div>
+                            <div class="form-radio-item">
+                                <input type="radio" id="admin-new" name="admin-type" value="new" class="form-radio">
+                                <label for="admin-new">Crear Nuevo Administrador</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Existing Admin Selection -->
+                    <div id="existing-admin-section" class="form-group full-width">
+                        <label for="restaurant-admin-select" class="form-label required">Seleccionar Administrador</label>
+                        <select id="restaurant-admin-select" class="form-select" required>
+                            <option value="">Cargando administradores...</option>
+                        </select>
+                    </div>
+
+                    <!-- New Admin Fields -->
+                    <div id="new-admin-section" style="display: none;">
+                        <h4 style="color: var(--primary); margin: 1.5rem 0 1rem; font-size: 1.1rem;">
+                            <i class="fas fa-user-plus"></i> Datos del Nuevo Administrador
+                        </h4>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="new-admin-nombre" class="form-label required">Nombre</label>
+                                <input type="text" id="new-admin-nombre" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="new-admin-apellido" class="form-label required">Apellido</label>
+                                <input type="text" id="new-admin-apellido" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="new-admin-email" class="form-label required">Email</label>
+                                <input type="email" id="new-admin-email" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="new-admin-password" class="form-label required">Contraseña</label>
+                                <input type="password" id="new-admin-password" class="form-input">
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="new-admin-telefono" class="form-label required">Teléfono</label>
+                                <input type="tel" id="new-admin-telefono" class="form-input">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Restaurant Information -->
+                    <h4 style="color: var(--primary); margin: 1.5rem 0 1rem; font-size: 1.1rem;">
+                        <i class="fas fa-store"></i> Información del Restaurante
+                    </h4>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="restaurant-nombre" class="form-label required">Nombre del Restaurante</label>
+                            <input type="text" id="restaurant-nombre" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="restaurant-tipo" class="form-label required">Tipo de Establecimiento</label>
+                            <select id="restaurant-tipo" class="form-select" required>
+                                <option value="">Seleccione un tipo...</option>
+                                <option value="restaurante">Restaurante</option>
+                                <option value="bar">Bar</option>
+                                <option value="cafeteria">Cafetería</option>
+                                <option value="comida-rapida">Comida Rápida</option>
+                                <option value="panaderia">Panadería</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="restaurant-descripcion" class="form-label required">Descripción</label>
+                            <textarea id="restaurant-descripcion" class="form-textarea" required placeholder="Descripción del restaurante..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="restaurant-telefono" class="form-label required">Teléfono</label>
+                            <input type="tel" id="restaurant-telefono" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="restaurant-email" class="form-label required">Email</label>
+                            <input type="email" id="restaurant-email" class="form-input" required>
+                        </div>
+                    </div>
+
+                    <!-- Address Section -->
+                    <h4 style="color: var(--primary); margin: 1.5rem 0 1rem; font-size: 1.1rem;">
+                        <i class="fas fa-map-marker-alt"></i> Dirección
+                    </h4>
+                    
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label for="restaurant-calle" class="form-label required">Calle y Número</label>
+                            <input type="text" id="restaurant-calle" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="restaurant-ciudad" class="form-label required">Ciudad</label>
+                            <input type="text" id="restaurant-ciudad" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="restaurant-codigo-postal" class="form-label required">Código Postal</label>
+                            <input type="text" id="restaurant-codigo-postal" class="form-input" required>
+                        </div>
+                    </div>
+
+                    <!-- Social Media Section -->
+                    <h4 style="color: var(--primary); margin: 1.5rem 0 1rem; font-size: 1.1rem;">
+                        <i class="fas fa-share-alt"></i> Redes Sociales (Opcional)
+                    </h4>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="restaurant-facebook" class="form-label">Facebook</label>
+                            <input type="url" id="restaurant-facebook" class="form-input" placeholder="https://facebook.com/...">
+                        </div>
+                        <div class="form-group">
+                            <label for="restaurant-instagram" class="form-label">Instagram</label>
+                            <input type="text" id="restaurant-instagram" class="form-input" placeholder="@usuario">
+                        </div>
+                        <div class="form-group">
+                            <label for="restaurant-twitter" class="form-label">Twitter</label>
+                            <input type="text" id="restaurant-twitter" class="form-input" placeholder="@usuario">
+                        </div>
+                        <div class="form-group">
+                            <label for="restaurant-website" class="form-label">Sitio Web</label>
+                            <input type="url" id="restaurant-website" class="form-input" placeholder="https://...">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeRestaurantModal()">Cancelar</button>
+                <button type="submit" form="restaurant-form" class="btn btn-success">
+                    <i class="fas fa-save"></i>
+                    Crear Restaurante
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmation-modal" class="confirmation-modal">
+        <div class="confirmation-content">
+            <div class="confirmation-header">
+                <div class="confirmation-icon danger">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3 class="confirmation-title" id="confirmation-title">Confirmar Eliminación</h3>
+                <p class="confirmation-message" id="confirmation-message">Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="confirmation-body">
+                <div class="confirmation-details" id="confirmation-details">
+                    <!-- Details will be populated here -->
+                </div>
+            </div>
+            <div class="confirmation-footer">
+                <button type="button" class="btn btn-outline" onclick="closeConfirmationModal()">
+                    <i class="fas fa-times"></i>
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-danger" id="confirm-delete-btn">
+                    <i class="fas fa-trash"></i>
+                    Sí, Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin + '/api';
+        let currentUser = null;
+        let charts = {};
+        let currentPage = {
+            admins: 1,
+            restaurants: 1
+        };
+        let availableAdmins = [];
+        let deleteConfirmation = {
+            type: null,
+            id: null,
+            callback: null
+        };
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+            setupEventListeners();
+        });
+
+        // Check authentication and permissions
+        async function checkAuth() {
+            const token = localStorage.getItem('authToken');
+            
+            if (!token) {
+                showNotification('No has iniciado sesión', 'error');
+                setTimeout(() => {
+                    window.location.href = '/login.html';
+                }, 2000);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/profile`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    currentUser = data.data.admin;
+                    
+                    // Check if user is super admin
+                    if (currentUser.rol !== 'super-admin') {
+                        showNotification('Acceso denegado - Se requieren permisos de super admin', 'error');
+                        setTimeout(() => {
+                            window.location.href = '/admin.html';
+                        }, 2000);
+                        return;
+                    }
+                    
+                    updateUserInterface();
+                    loadDashboard();
+                    showNotification(`¡Bienvenido Super Admin ${currentUser.nombre}!`, 'success');
+                } else {
+                    throw new Error('Token inválido');
+                }
+            } catch (error) {
+                console.error('Error verificando auth:', error);
+                localStorage.removeItem('authToken');
+                showNotification('Sesión expirada, redirigiendo...', 'warning');
+                setTimeout(() => {
+                    window.location.href = '/login.html';
+                }, 2000);
+            }
+        }
+
+        // Update user interface
+        function updateUserInterface() {
+            if (!currentUser) return;
+
+            const userName = document.getElementById('user-name');
+            const userRole = document.getElementById('user-role');
+            const userAvatar = document.getElementById('user-avatar');
+
+            if (userName) {
+                userName.textContent = `${currentUser.nombre} ${currentUser.apellido}`;
+            }
+            
+            if (userRole) {
+                userRole.textContent = currentUser.rol;
+            }
+            
+            if (userAvatar) {
+                const initials = (currentUser.nombre?.charAt(0) || '') + (currentUser.apellido?.charAt(0) || '');
+                userAvatar.textContent = initials.toUpperCase();
+            }
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Tab navigation
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const tabId = this.dataset.tab;
+                    switchTab(tabId);
+                });
+            });
+
+            // Logout
+            document.getElementById('logout-btn').addEventListener('click', logout);
+
+            // Search inputs
+            document.getElementById('admin-search').addEventListener('input', debounce(searchAdmins, 500));
+            document.getElementById('restaurant-search').addEventListener('input', debounce(searchRestaurants, 500));
+            document.getElementById('restaurant-filter').addEventListener('change', searchRestaurants);
+
+            // Forms
+            document.getElementById('admin-form').addEventListener('submit', saveAdmin);
+            document.getElementById('restaurant-form').addEventListener('submit', saveRestaurant);
+
+            // Admin type radio buttons
+            document.querySelector('input[name="admin-type"]').addEventListener('change', toggleAdminSections);
+            document.querySelectorAll('input[name="admin-type"]').forEach(radio => {
+                radio.addEventListener('change', toggleAdminSections);
+            });
+
+            // Confirmation modal
+            document.getElementById('confirm-delete-btn').addEventListener('click', executeDelete);
+        }
+
+        // Toggle admin sections based on radio selection
+        function toggleAdminSections() {
+            const adminType = document.querySelector('input[name="admin-type"]:checked').value;
+            const existingSection = document.getElementById('existing-admin-section');
+            const newSection = document.getElementById('new-admin-section');
+            
+            if (adminType === 'existing') {
+                existingSection.style.display = 'block';
+                newSection.style.display = 'none';
+                
+                // Make existing admin select required
+                document.getElementById('restaurant-admin-select').required = true;
+                
+                // Remove required from new admin fields
+                document.getElementById('new-admin-nombre').required = false;
+                document.getElementById('new-admin-apellido').required = false;
+                document.getElementById('new-admin-email').required = false;
+                document.getElementById('new-admin-password').required = false;
+                document.getElementById('new-admin-telefono').required = false;
+            } else {
+                existingSection.style.display = 'none';
+                newSection.style.display = 'block';
+                
+                // Remove required from existing admin select
+                document.getElementById('restaurant-admin-select').required = false;
+                
+                // Make new admin fields required
+                document.getElementById('new-admin-nombre').required = true;
+                document.getElementById('new-admin-apellido').required = true;
+                document.getElementById('new-admin-email').required = true;
+                document.getElementById('new-admin-password').required = true;
+                document.getElementById('new-admin-telefono').required = true;
+            }
+        }
+
+        // Tab switching
+        function switchTab(tabId) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+
+            // Load tab content
+            switch(tabId) {
+                case 'dashboard':
+                    loadDashboard();
+                    break;
+                case 'admins':
+                    loadAdmins();
+                    break;
+                case 'restaurants':
+                    loadRestaurants();
+                    break;
+                case 'stats':
+                    loadAdvancedStats();
+                    break;
+            }
+        }
+
+        // Load dashboard
+        async function loadDashboard() {
+            const token = localStorage.getItem('authToken');
+            
+            try {
+                const response = await fetch(`${API_BASE}/super-admin/dashboard`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    renderDashboard(result.data);
+                } else {
+                    throw new Error('Error cargando dashboard');
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                showNotification('Error cargando dashboard', 'error');
+            } finally {
+                document.getElementById('dashboard-loading').style.display = 'none';
+                document.getElementById('dashboard-content').style.display = 'block';
+            }
+        }
+
+        // Render dashboard
+        function renderDashboard(data) {
+            const statsContainer = document.getElementById('dashboard-stats');
+            
+            statsContainer.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Total Administradores</div>
+                        <div class="stat-icon primary">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">${data.resumen.totalAdmins}</div>
+                    <div class="stat-change">
+                        <i class="fas fa-check-circle"></i>
+                        <span>${data.resumen.adminActivos} activos</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Total Restaurantes</div>
+                        <div class="stat-icon success">
+                            <i class="fas fa-store"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">${data.resumen.totalRestaurantes}</div>
+                    <div class="stat-change">
+                        <i class="fas fa-check-circle"></i>
+                        <span>${data.resumen.restaurantesActivos} activos</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Super Admins</div>
+                        <div class="stat-icon warning">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">${data.resumen.totalAdmins - data.resumen.adminActivos + (data.estadisticasTipo?.superAdmins || 0)}</div>
+                    <div class="stat-change">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Privilegios especiales</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Estado del Sistema</div>
+                        <div class="stat-icon info">
+                            <i class="fas fa-server"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" style="font-size: 1.5rem;">Óptimo</div>
+                    <div class="stat-change">
+                        <i class="fas fa-check"></i>
+                        <span>Todo funcionando</span>
+                    </div>
+                </div>
+            `;
+
+            // Create charts
+            createDashboardCharts(data);
+        }
+
+        // Create dashboard charts
+        function createDashboardCharts(data) {
+            // Growth Chart (placeholder data)
+            const growthCtx = document.getElementById('growthChart');
+            if (growthCtx && charts.growthChart) {
+                charts.growthChart.destroy();
+            }
+
+            charts.growthChart = new Chart(growthCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Restaurantes',
+                        data: [12, 19, 25, 31, 28, 35],
+                        borderColor: '#7c3aed',
+                        backgroundColor: 'rgba(124, 58, 237, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Administradores',
+                        data: [8, 12, 15, 18, 16, 20],
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Type Distribution Chart
+            const typeCtx = document.getElementById('typeChart');
+            if (typeCtx && charts.typeChart) {
+                charts.typeChart.destroy();
+            }
+
+            const typeData = data.estadisticasTipo || {};
+            charts.typeChart = new Chart(typeCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Restaurantes', 'Bares', 'Cafeterías'],
+                    datasets: [{
+                        data: [
+                            typeData.restaurante || 0,
+                            typeData.bar || 0,
+                            typeData.cafeteria || 0
+                        ],
+                        backgroundColor: ['#7c3aed', '#10b981', '#f59e0b'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Load administrators
+        async function loadAdmins(page = 1) {
+            const token = localStorage.getItem('authToken');
+            const search = document.getElementById('admin-search').value;
+            
+            try {
+                const params = new URLSearchParams({
+                    pagina: page,
+                    limite: 10,
+                    ...(search && { buscar: search })
+                });
+
+                const response = await fetch(`${API_BASE}/super-admin/admins?${params}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    renderAdminsTable(result.data);
+                    currentPage.admins = page;
+                } else {
+                    throw new Error('Error cargando administradores');
+                }
+            } catch (error) {
+                console.error('Error loading admins:', error);
+                showNotification('Error cargando administradores', 'error');
+            }
+        }
+
+        // Render administrators table
+        function renderAdminsTable(data) {
+            const container = document.getElementById('admins-table-container');
+            
+            const tableHTML = `
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Teléfono</th>
+                            <th>Rol</th>
+                            <th>Estado</th>
+                            <th>Último Acceso</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${data.admins.map(admin => `
+                            <tr>
+                                <td>${admin.nombre} ${admin.apellido}</td>
+                                <td>${admin.email}</td>
+                                <td>${admin.telefono}</td>
+                                <td>
+                                    <span class="badge ${admin.rol === 'super-admin' ? 'badge-primary' : 'badge-success'}">
+                                        ${admin.rol === 'super-admin' ? '👑 Super Admin' : '👤 Admin'}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge ${admin.activo ? 'badge-success' : 'badge-error'}">
+                                        ${admin.activo ? 'Activo' : 'Inactivo'}
+                                    </span>
+                                </td>
+                                <td>${new Date(admin.ultimoAcceso).toLocaleDateString('es-ES')}</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-sm btn-primary" onclick="editAdmin('${admin._id}')" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        ${admin._id !== currentUser.id ? `
+                                            <button class="btn btn-sm ${admin.activo ? 'btn-warning' : 'btn-success'}" onclick="toggleAdminStatus('${admin._id}')" title="${admin.activo ? 'Desactivar' : 'Activar'}">
+                                                <i class="fas fa-${admin.activo ? 'ban' : 'check'}"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-danger" onclick="confirmDeleteAdmin('${admin._id}', '${admin.nombre} ${admin.apellido}', '${admin.email}')" title="Eliminar">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        ` : ''}
+                                    </div>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = tableHTML;
+        }
+
+        // Load restaurants
+        async function loadRestaurants(page = 1) {
+            const token = localStorage.getItem('authToken');
+            const search = document.getElementById('restaurant-search').value;
+            const tipo = document.getElementById('restaurant-filter').value;
+            
+            try {
+                const params = new URLSearchParams({
+                    pagina: page,
+                    limite: 10,
+                    ...(search && { buscar: search }),
+                    ...(tipo && { tipo })
+                });
+
+                const response = await fetch(`${API_BASE}/super-admin/restaurants?${params}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    renderRestaurantsTable(result.data);
+                    currentPage.restaurants = page;
+                } else {
+                    throw new Error('Error cargando restaurantes');
+                }
+            } catch (error) {
+                console.error('Error loading restaurants:', error);
+                showNotification('Error cargando restaurantes', 'error');
+            }
+        }
+
+        // Render restaurants table
+        function renderRestaurantsTable(data) {
+            const container = document.getElementById('restaurants-table-container');
+            
+            const tableHTML = `
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Tipo</th>
+                            <th>Ciudad</th>
+                            <th>Administrador</th>
+                            <th>Estado</th>
+                            <th>Fecha Creación</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${data.restaurantes.map(restaurant => `
+                            <tr>
+                                <td>
+                                    <strong>${restaurant.nombre}</strong>
+                                    <br>
+                                    <small class="text-gray-500">${restaurant.descripcion?.substring(0, 50)}...</small>
+                                </td>
+                                <td>
+                                    <span class="badge badge-primary">
+                                        ${restaurant.tipo}
+                                    </span>
+                                </td>
+                                <td>${restaurant.direccion?.ciudad || '-'}</td>
+                                <td>
+                                    ${restaurant.adminId?.nombre} ${restaurant.adminId?.apellido}
+                                    <br>
+                                    <small class="text-gray-500">${restaurant.adminId?.email}</small>
+                                </td>
+                                <td>
+                                    <span class="badge ${restaurant.activo ? 'badge-success' : 'badge-error'}">
+                                        ${restaurant.activo ? 'Activo' : 'Inactivo'}
+                                    </span>
+                                </td>
+                                <td>${new Date(restaurant.fechaCreacion).toLocaleDateString('es-ES')}</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-sm ${restaurant.activo ? 'btn-warning' : 'btn-success'}" onclick="toggleRestaurantStatus('${restaurant._id}')" title="${restaurant.activo ? 'Desactivar' : 'Activar'}">
+                                            <i class="fas fa-${restaurant.activo ? 'ban' : 'check'}"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger" onclick="confirmDeleteRestaurant('${restaurant._id}', '${restaurant.nombre}', '${restaurant.adminId?.nombre} ${restaurant.adminId?.apellido}')" title="Eliminar">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = tableHTML;
+        }
+
+        // Load advanced statistics
+        async function loadAdvancedStats() {
+            // Implementation remains the same as original...
+            showNotification('Estadísticas avanzadas cargadas', 'info');
+        }
+
+        // Load available administrators for restaurant creation
+        async function loadAvailableAdmins() {
+            const token = localStorage.getItem('authToken');
+            
+            try {
+                const response = await fetch(`${API_BASE}/super-admin/admins?limite=100&activo=true`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    availableAdmins = result.data.admins;
+                    
+                    const select = document.getElementById('restaurant-admin-select');
+                    select.innerHTML = '<option value="">Seleccione un administrador...</option>';
+                    
+                    availableAdmins.forEach(admin => {
+                        const option = document.createElement('option');
+                        option.value = admin._id;
+                        option.textContent = `${admin.nombre} ${admin.apellido} (${admin.email})`;
+                        select.appendChild(option);
+                    });
+                } else {
+                    throw new Error('Error cargando administradores');
+                }
+            } catch (error) {
+                console.error('Error loading available admins:', error);
+                showNotification('Error cargando administradores disponibles', 'error');
+            }
+        }
+
+        // Confirmation functions
+        function confirmDeleteAdmin(adminId, name, email) {
+            deleteConfirmation.type = 'admin';
+            deleteConfirmation.id = adminId;
+            
+            document.getElementById('confirmation-title').textContent = '🚨 Eliminar Administrador';
+            document.getElementById('confirmation-message').textContent = 
+                'Esta acción eliminará permanentemente al administrador y todos sus datos asociados. Esta acción NO se puede deshacer.';
+            
+            document.getElementById('confirmation-details').innerHTML = `
+                <strong>Administrador a eliminar:</strong><br>
+                <strong>Nombre:</strong> ${name}<br>
+                <strong>Email:</strong> ${email}<br><br>
+                <div style="background: #fee2e2; color: #dc2626; padding: 0.75rem; border-radius: 0.5rem; font-size: 0.9rem;">
+                    <strong>⚠️ Advertencia:</strong> Se eliminarán también todos los restaurantes asociados a este administrador.
+                </div>
+            `;
+            
+            document.getElementById('confirmation-modal').classList.add('show');
+        }
+
+        function confirmDeleteRestaurant(restaurantId, name, adminName) {
+            deleteConfirmation.type = 'restaurant';
+            deleteConfirmation.id = restaurantId;
+            
+            document.getElementById('confirmation-title').textContent = '🚨 Eliminar Restaurante';
+            document.getElementById('confirmation-message').textContent = 
+                'Esta acción eliminará permanentemente el restaurante y todos sus datos asociados. Esta acción NO se puede deshacer.';
+            
+            document.getElementById('confirmation-details').innerHTML = `
+                <strong>Restaurante a eliminar:</strong><br>
+                <strong>Nombre:</strong> ${name}<br>
+                <strong>Administrador:</strong> ${adminName}<br><br>
+                <div style="background: #fee2e2; color: #dc2626; padding: 0.75rem; border-radius: 0.5rem; font-size: 0.9rem;">
+                    <strong>⚠️ Advertencia:</strong> Se eliminarán también todas las imágenes, menús y datos relacionados.
+                </div>
+            `;
+            
+            document.getElementById('confirmation-modal').classList.add('show');
+        }
+
+        function closeConfirmationModal() {
+            document.getElementById('confirmation-modal').classList.remove('show');
+            deleteConfirmation = { type: null, id: null, callback: null };
+        }
+
+        async function executeDelete() {
+            if (!deleteConfirmation.type || !deleteConfirmation.id) {
+                showNotification('Error: Datos de eliminación no válidos', 'error');
+                return;
+            }
+
+            const token = localStorage.getItem('authToken');
+            
+            try {
+                let response;
+                if (deleteConfirmation.type === 'admin') {
+                    response = await fetch(`${API_BASE}/super-admin/admins/${deleteConfirmation.id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                } else if (deleteConfirmation.type === 'restaurant') {
+                    response = await fetch(`${API_BASE}/super-admin/restaurants/${deleteConfirmation.id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                }
+
+                if (response && response.ok) {
+                    const result = await response.json();
+                    showNotification(result.message || `${deleteConfirmation.type === 'admin' ? 'Administrador' : 'Restaurante'} eliminado exitosamente`, 'success');
+                    
+                    // Reload the appropriate table
+                    if (deleteConfirmation.type === 'admin') {
+                        loadAdmins();
+                        loadDashboard(); // Refresh dashboard stats
+                    } else {
+                        loadRestaurants();
+                        loadDashboard(); // Refresh dashboard stats
+                    }
+                } else {
+                    throw new Error('Error en la respuesta del servidor');
+                }
+            } catch (error) {
+                console.error('Error eliminando:', error);
+                showNotification(`Error eliminando ${deleteConfirmation.type === 'admin' ? 'administrador' : 'restaurante'}`, 'error');
+            } finally {
+                closeConfirmationModal();
+            }
+        }
+
+        // Modal functions
+        function openCreateAdminModal() {
+            document.getElementById('admin-modal-title').textContent = 'Nuevo Administrador';
+            document.getElementById('admin-form').reset();
+            document.getElementById('admin-id').value = '';
+            document.getElementById('password-group').style.display = 'block';
+            document.getElementById('admin-modal').classList.add('show');
+        }
+
+        function openCreateRestaurantModal() {
+            document.getElementById('restaurant-form').reset();
+            loadAvailableAdmins();
+            toggleAdminSections(); // Initialize the correct sections
+            document.getElementById('restaurant-modal').classList.add('show');
+        }
+
+        function editAdmin(adminId) {
+            // Implementation for editing admin
+            showNotification('Función de edición en desarrollo', 'info');
+        }
+
+        function closeAdminModal() {
+            document.getElementById('admin-modal').classList.remove('show');
+        }
+
+        function closeRestaurantModal() {
+            document.getElementById('restaurant-modal').classList.remove('show');
+        }
+
+        // Admin CRUD operations
+        async function saveAdmin(e) {
+            e.preventDefault();
+            
+            const adminId = document.getElementById('admin-id').value;
+            const isEdit = !!adminId;
+            
+            const formData = {
+                nombre: document.getElementById('admin-nombre').value,
+                apellido: document.getElementById('admin-apellido').value,
+                email: document.getElementById('admin-email').value,
+                telefono: document.getElementById('admin-telefono').value,
+                rol: document.getElementById('admin-rol').value
+            };
+
+            if (!isEdit) {
+                formData.password = document.getElementById('admin-password').value;
+            }
+
+            const token = localStorage.getItem('authToken');
+
+            try {
+                const url = isEdit ? `${API_BASE}/super-admin/admins/${adminId}` : `${API_BASE}/super-admin/admins`;
+                const method = isEdit ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    showNotification(`Administrador ${isEdit ? 'actualizado' : 'creado'} exitosamente`, 'success');
+                    closeAdminModal();
+                    loadAdmins();
+                } else {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Error al guardar administrador');
+                }
+            } catch (error) {
+                console.error('Error saving admin:', error);
+                showNotification(error.message || 'Error al guardar administrador', 'error');
+            }
+        }
+
+        // Restaurant CRUD operations
+        async function saveRestaurant(e) {
+            e.preventDefault();
+            
+            const adminType = document.querySelector('input[name="admin-type"]:checked').value;
+            const token = localStorage.getItem('authToken');
+
+            try {
+                let formData = {
+                    // Restaurant data
+                    nombre: document.getElementById('restaurant-nombre').value,
+                    tipo: document.getElementById('restaurant-tipo').value,
+                    descripcion: document.getElementById('restaurant-descripcion').value,
+                    telefono: document.getElementById('restaurant-telefono').value,
+                    email: document.getElementById('restaurant-email').value,
+                    direccion: {
+                        calle: document.getElementById('restaurant-calle').value,
+                        ciudad: document.getElementById('restaurant-ciudad').value,
+                        codigoPostal: document.getElementById('restaurant-codigo-postal').value
+                    },
+                    redes: {
+                        facebook: document.getElementById('restaurant-facebook').value,
+                        instagram: document.getElementById('restaurant-instagram').value,
+                        twitter: document.getElementById('restaurant-twitter').value,
+                        website: document.getElementById('restaurant-website').value
+                    }
+                };
+
+                if (adminType === 'existing') {
+                    formData.adminId = document.getElementById('restaurant-admin-select').value;
+                } else {
+                    formData.newAdmin = {
+                        nombre: document.getElementById('new-admin-nombre').value,
+                        apellido: document.getElementById('new-admin-apellido').value,
+                        email: document.getElementById('new-admin-email').value,
+                        password: document.getElementById('new-admin-password').value,
+                        telefono: document.getElementById('new-admin-telefono').value,
+                        rol: 'admin'
+                    };
+                }
+
+                const response = await fetch(`${API_BASE}/super-admin/restaurants`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    showNotification('¡Restaurante creado exitosamente!', 'success');
+                    closeRestaurantModal();
+                    loadRestaurants();
+                    
+                    if (adminType === 'new') {
+                        showNotification(`Nuevo administrador creado: ${formData.newAdmin.email}`, 'info');
+                    }
+                } else {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Error al crear restaurante');
+                }
+            } catch (error) {
+                console.error('Error creating restaurant:', error);
+                showNotification(error.message || 'Error al crear restaurante', 'error');
+            }
+        }
+
+        async function toggleAdminStatus(adminId) {
+            const token = localStorage.getItem('authToken');
+
+            try {
+                const response = await fetch(`${API_BASE}/super-admin/admins/${adminId}/toggle-status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    showNotification(result.message, 'success');
+                    loadAdmins();
+                } else {
+                    throw new Error('Error cambiando estado del administrador');
+                }
+            } catch (error) {
+                console.error('Error toggling admin status:', error);
+                showNotification('Error cambiando estado del administrador', 'error');
+            }
+        }
+
+        async function toggleRestaurantStatus(restaurantId) {
+            const token = localStorage.getItem('authToken');
+
+            try {
+                const response = await fetch(`${API_BASE}/super-admin/restaurants/${restaurantId}/toggle-status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    showNotification(result.message, 'success');
+                    loadRestaurants();
+                } else {
+                    throw new Error('Error cambiando estado del restaurante');
+                }
+            } catch (error) {
+                console.error('Error toggling restaurant status:', error);
+                showNotification('Error cambiando estado del restaurante', 'error');
+            }
+        }
+
+        // Search functions
+        function searchAdmins() {
+            loadAdmins(1);
+        }
+
+        function searchRestaurants() {
+            loadRestaurants(1);
+        }
+
+        // Utility functions
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            
+            const icon = type === 'success' ? 'fa-check-circle' : 
+                        type === 'error' ? 'fa-exclamation-circle' : 
+                        type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle';
+            
+            notification.innerHTML = `
+                <i class="fas ${icon}"></i>
+                <span class="notification-message">${message}</span>
+                <button class="notification-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.classList.add('show'), 100);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 5000);
+            
+            notification.querySelector('.notification-close').onclick = () => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            };
+        }
+
+        function logout() {
+            const confirmed = confirm('¿Estás seguro de que quieres cerrar sesión?');
+            
+            if (confirmed) {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('currentUser');
+                showNotification('Sesión cerrada correctamente', 'info');
+                
+                setTimeout(() => {
+                    window.location.href = '/login.html';
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>

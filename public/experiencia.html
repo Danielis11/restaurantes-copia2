@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Experiencia - Jalpan de Serra</title>
+    <meta name="description" id="page-description" content="Información detallada de la experiencia">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" id="og-title" content="Experiencia en Jalpan de Serra">
+    <meta property="og:description" id="og-description" content="Vive esta increíble experiencia en la Sierra Gorda de Querétaro.">
+    <meta property="og:image" id="og-image" content="/images/PueblosMágicos.svg.png">
+    <meta property="og:url" id="og-url" content="">
+    <meta property="og:locale" content="es_MX">
+    <meta property="og:site_name" content="RestauranteWeb">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" id="tw-title" content="Experiencia en Jalpan de Serra">
+    <meta name="twitter:description" id="tw-description" content="Vive esta increíble experiencia en la Sierra Gorda de Querétaro.">
+    <meta name="twitter:image" id="tw-image" content="/images/PueblosMágicos.svg.png">
+
+    <link rel="icon" type="image/x-icon" href="/icons/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        
+
+        body {
+            background: var(--gray-50);
+            color: var(--gray-800);
+            line-height: 1.6;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* ===== CAROUSEL ===== */
+        .detail-hero {
+            position: relative;
+            width: 100%;
+            height: 420px;
+            overflow: hidden;
+            background: #111;
+            margin-top: 70px;
+        }
+
+        .tour-carousel-item {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+        }
+
+        .tour-carousel-item.active {
+            display: block;
+        }
+
+        .tour-carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            z-index: 2;
+            position: relative;
+            cursor: pointer;
+        }
+
+
+
+        .tour-nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.4);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.2s;
+            font-size: 1.1rem;
+            backdrop-filter: blur(4px);
+        }
+
+        .tour-nav-btn:hover {
+            background: rgba(0, 0, 0, 0.7);
+            transform: translateY(-50%) scale(1.05);
+        }
+
+        .tour-nav-btn.prev {
+            left: 15px;
+        }
+
+        .tour-nav-btn.next {
+            right: 15px;
+        }
+
+        .tour-indicator {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 10;
+        }
+
+        /* ===== INFO SUPERPUESTA ===== */
+        .hero-info {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            z-index: 20;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(12px);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            color: white;
+            max-width: 420px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.2rem 0.6rem;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-name {
+            font-size: 1.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 0.4rem;
+        }
+
+        .hero-price {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #10b981;
+            /* Verde esmeralda para el precio */
+            margin-top: 0.5rem;
+        }
+
+        .detail-badges {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .detail-badge {
+            padding: 0.2rem 0.6rem;
+            border-radius: var(--radius-md);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-cat {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .badge-diff {
+            color: white;
+        }
+
+        .badge-diff.easy {
+            background: rgba(16, 185, 129, 0.9);
+        }
+
+        .badge-diff.moderate {
+            background: rgba(245, 158, 11, 0.9);
+        }
+
+        .badge-diff.hard {
+            background: rgba(239, 68, 68, 0.9);
+        }
+
+        .badge-diff.extreme {
+            background: rgba(127, 29, 29, 0.9);
+        }
+
+        /* ===== SUB-CABAÑA CAROUSEL ===== */
+        .sub-cabana-carousel-wrapper {
+          position: relative;
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
+          border-radius: 12px;
+          overflow: hidden;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+          background: #fff;
+          margin-top: 15px;
+        }
+
+        .sub-cabana-carousel-wrapper *,
+        .sub-cabana-carousel-wrapper *::before,
+        .sub-cabana-carousel-wrapper *::after {
+          box-sizing: border-box;
+        }
+
+        .sub-cabana-carousel {
+          display: flex;
+          overflow-x: auto;
+          scroll-snap-type: x mandatory;
+          scroll-behavior: smooth;
+          -ms-overflow-style: none; /* Internet Explorer y Edge */
+          scrollbar-width: none; /* Firefox */
+        }
+
+        .sub-cabana-carousel::-webkit-scrollbar {
+          display: none;
+        }
+
+        .sub-cabana-slide {
+          flex: 0 0 100%;
+          min-width: 0;
+          width: 100%;
+          max-width: 100%;
+          scroll-snap-align: start;
+          display: flex;
+          flex-direction: column;
+        }
+
+        @media (min-width: 768px) {
+          .sub-cabana-slide {
+            flex-direction: row; 
+            min-height: 350px;
+          }
+        }
+
+        .sub-cabana-img {
+          width: 100%;
+          height: 250px;
+          object-fit: cover;
+        }
+
+        @media (min-width: 768px) {
+          .sub-cabana-img {
+            width: 50%;
+            height: auto;
+          }
+        }
+
+        .sub-cabana-info {
+          padding: 30px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          flex: 1;
+        }
+
+        .sub-cabana-info h4 {
+          font-size: 1.6rem;
+          color: #1a1a2e;
+          margin-bottom: 12px;
+          font-weight: 700;
+        }
+
+        .sub-cabana-info p {
+          color: #555;
+          font-size: 1.05rem;
+          line-height: 1.6;
+          margin-bottom: 25px;
+          flex-grow: 1;
+        }
+
+        .sub-cabana-stats {
+          display: flex;
+          gap: 20px;
+          font-size: 1rem;
+          color: #444;
+          margin-top: auto;
+          padding-top: 15px;
+          border-top: 1px solid #eee;
+          flex-wrap: wrap;
+        }
+
+        .sub-cabana-stats span {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-weight: 500;
+        }
+
+        .sub-cabana-stats i {
+          color: #4CAF50;
+        }
+
+        .sub-cabana-nav {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          background: rgba(255, 255, 255, 0.4);
+          backdrop-filter: blur(4px);
+          -webkit-backdrop-filter: blur(4px);
+          border: 1px solid rgba(255,255,255,0.5);
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          cursor: pointer;
+          font-size: 14px;
+          color: var(--gray-700);
+          z-index: 10;
+          transition: all 0.3s ease;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          opacity: 0.7;
+        }
+
+        .sub-cabana-nav:hover {
+          background: rgba(255, 255, 255, 0.95);
+          opacity: 1;
+          transform: translateY(-50%) scale(1.1);
+          color: var(--primary);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        .sub-cabana-nav.prev { left: 10px; }
+        .sub-cabana-nav.next { right: 10px; }
+
+        .sub-cabana-indicators {
+          position: absolute;
+          bottom: 15px;
+          left: 50%;
+          transform: translateX(-50%);
+          display: flex;
+          gap: 10px;
+          z-index: 10;
+        }
+
+        .sub-cabana-indicators .indicator {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          background: #ccc;
+          cursor: pointer;
+          transition: all 0.3s;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .sub-cabana-indicators .indicator.active {
+          background: #4CAF50;
+          transform: scale(1.2);
+        }
+
+        @media (max-width: 767px) {
+          .sub-cabana-nav {
+            display: none; 
+          }
+          .sub-cabana-info {
+            padding: 20px 20px 45px 20px;
+          }
+          .sub-cabana-info h4 {
+            font-size: 1.3rem;
+          }
+          .sub-cabana-info p {
+            font-size: 0.95rem;
+          }
+          .sub-cabana-img {
+            height: 200px;
+          }
+          .sub-cabana-indicators {
+            bottom: 10px;
+          }
+        }
+
+        /* ===== LAYOUT PRINCIPAL ===== */
+        .page-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        @media (max-width: 768px) {
+            .page-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .content-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header-section {
+            display: flex;
+            align-items: center;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--gray-100);
+            background: var(--gray-50);
+        }
+
+        .card-header-section h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+
+        .card-header-section h3 i {
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .description-text {
+            font-size: 1.05rem;
+            color: var(--gray-700);
+            line-height: 1.8;
+        }
+
+        .detail-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .detail-meta-item {
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .detail-meta-item i {
+            color: var(--primary);
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .detail-meta-item .meta-label {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .detail-meta-item .meta-value {
+            font-weight: 600;
+            color: var(--gray-800);
+            font-size: 0.9rem;
+        }
+
+        .detail-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .detail-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            padding: 0.2rem 0;
+            color: var(--gray-700);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .detail-list.includes-new li::before {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: var(--success);
+            font-size: 0.85rem;
+            margin-top: 0.1rem;
+        }
+
+        .detail-list.excludes-new li::before {
+            content: '\f00d';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: var(--error);
+            font-size: 0.85rem;
+            margin-top: 0.1rem;
+        }
+
+        .detail-list.bring li::before {
+            content: '\f5bf';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: var(--warning);
+            font-size: 0.85rem;
+            margin-top: 0.1rem;
+        }
+
+        /* Dual List Container (Incluye / No Incluye) */
+        .dual-list-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 640px) {
+            .dual-list-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .list-column {
+            padding: 1.25rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid transparent;
+        }
+
+        .bg-success-light {
+            background: rgba(16, 185, 129, 0.05);
+            border-color: rgba(16, 185, 129, 0.1);
+        }
+
+        .bg-error-light {
+            background: rgba(239, 68, 68, 0.05);
+            border-color: rgba(239, 68, 68, 0.1);
+        }
+
+        .list-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .text-success {
+            color: var(--success);
+        }
+
+        .text-error {
+            color: var(--error);
+        }
+
+        /* Useful Info Grid */
+        .useful-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 640px) {
+            .useful-info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .info-block h5 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 0.4rem;
+        }
+
+        .text-xs {
+            font-size: 0.9rem;
+        }
+
+        .text-muted {
+            color: var(--gray-600);
+            line-height: 1.6;
+        }
+
+
+        /* ===== LIGHTBOX ===== */
+        .lightbox-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .lightbox-overlay.active {
+            display: flex;
+        }
+
+        .lightbox-overlay img {
+            max-width: 90%;
+            max-height: 80vh;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            object-fit: contain;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2.5rem;
+            cursor: pointer;
+        }
+
+        /* Loading & Error */
+        .page-loading,
+        .error-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--gray-200);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+    <!-- Script de internacionalización -->
+    <script src="/js/i18n.js" defer></script>
+</head>
+
+<body>
+
+    <!-- NAVBAR (mismo menú que página de inicio) -->
+    <header class="global-nav">
+        <nav class="nav-container">
+            <a href="/" class="logo">
+                <img src="/images/PueblosMágicos.svg.png" alt="Logo">
+                RestauranteWeb
+            </a>
+            <div class="nav-menu" id="nav-menu">
+                <a href="/" class="nav-link" data-i18n="navbar.inicio">Inicio</a>
+                <a href="/mapa.html" class="nav-link" data-i18n="navbar.mapa">Mapa</a>
+                <a href="/#restaurantes" class="nav-link" data-i18n="navbar.guia">Restaurantes</a>
+                <a href="/#hospedaje" class="nav-link" data-i18n="navbar.hospedaje">Hospedaje</a>
+                <a href="/experiencias.html" class="nav-link" data-i18n="navbar.tours">Experiencias</a>
+                <a href="/Contactos.html" class="nav-link" data-i18n="footer.contacto">Contacto</a>
+            </div>
+            <div class="nav-actions-wrapper" style="display: flex; align-items: center;">
+                <select id="language-selector"
+                    style="margin-right: 15px; padding: 5px; border-radius: 5px; border: 1px solid #ddd; background: white; font-family: var(--font-family);">
+                    <option value="es" data-i18n="lang.switch_es">Español</option>
+                    <option value="en" data-i18n="lang.switch_en">Inglés</option>
+                    <option value="fr" data-i18n="lang.switch_fr">Français</option>
+                </select>
+                <div class="nav-actions" id="navbar-actions" style="display: flex; align-items: center;">
+                    <a href="/login.html" class="btn-login"><i class="fas fa-user-circle"></i> <span
+                            data-i18n="navbar.iniciar_sesion">Iniciar Sesión</span></a>
+                    <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main id="page-content">
+        <!-- Estado de carga -->
+        <div class="page-loading" id="loading-state">
+            <div class="spinner"></div>
+            <p data-i18n="experiencia_detalle.cargando">Cargando información de la experiencia...</p>
+        </div>
+
+        <!-- Estado de error -->
+        <div class="error-state" id="error-state" style="display:none;">
+            <i class="fas fa-exclamation-triangle"
+                style="font-size: 3rem; color: var(--error); margin-bottom: 1rem;"></i>
+            <h2 data-i18n="experiencia_detalle.no_encontrada">Experiencia no encontrada</h2>
+            <p style="color: var(--gray-500); margin-bottom: 1.5rem;"
+                data-i18n="experiencia_detalle.no_encontrada_desc">No pudimos cargar la información de esta
+                experiencia. Puede que no exista o haya un error de conexión.</p>
+            <a href="/experiencias.html" class="btn btn-primary"
+                style="padding: 0.6rem 1.2rem; background: var(--primary); color: white; border-radius: 0.5rem; text-decoration: none; font-weight: 600;">
+                <i class="fas fa-arrow-left"></i> <span data-i18n="experiencia_detalle.volver">Volver a
+                    Experiencias</span>
+            </a>
+        </div>
+
+        <!-- Contenido real (oculto hasta cargar) -->
+        <div id="tour-content" style="display:none;">
+            <!-- CARRUSEL DE IMÁGENES -->
+            <div class="detail-hero" id="hero-section">
+                <div id="hero-carousel-items">
+                    <!-- Images injected here -->
+                </div>
+
+                <div id="hero-nav-buttons">
+                    <!-- Nav buttons injected here -->
+                </div>
+
+                <div id="hero-indicator"></div>
+
+                <!-- Info superpuesta -->
+                <div class="hero-info" id="hero-info">
+                    <div class="hero-badge">
+                        <i class="fas fa-map-marked-alt"></i>
+                        <span id="hero-tipo">Experiencia</span>
+                    </div>
+                    <div style="display:flex; align-items:center;">
+                        <h1 class="hero-name" id="hero-name">Nombre de la Experiencia</h1>
+                        <div id="btn-toggle-like" class="con-like" title="Guardar en favoritos"
+                            style="display: none; margin-left: 1rem;">
+                            <input class="like" type="checkbox" title="like" id="favorite-checkbox">
+                            <div class="checkmark">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="outline" viewBox="0 0 24 24">
+                                    <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
+                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="filled" viewBox="0 0 24 24">
+                                    <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
+                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="celebrate">
+                                    <polygon class="poly" points="10,10 20,20"></polygon>
+                                    <polygon class="poly" points="10,50 20,50"></polygon>
+                                    <polygon class="poly" points="20,80 30,70"></polygon>
+                                    <polygon class="poly" points="90,10 80,20"></polygon>
+                                    <polygon class="poly" points="90,50 80,50"></polygon>
+                                    <polygon class="poly" points="80,80 70,70"></polygon>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hero-price" id="hero-price">$0 MXN</div>
+
+                    <div class="detail-badges" id="hero-badges">
+                        <!-- Badges injected here -->
+                    </div>
+                    <div class="share-buttons" style="margin-top: 0.75rem;">
+                        <button class="share-btn whatsapp" id="share-whatsapp" title="Compartir en WhatsApp">
+                            <i class="fab fa-whatsapp"></i>
+                        </button>
+                        <button class="share-btn facebook" id="share-facebook" title="Compartir en Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </button>
+                        <button class="share-btn copy-link" id="share-copy" title="Copiar enlace">
+                            <i class="fas fa-link"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- El Botón de Favoritos se movió junto al título -->
+            </div>
+
+            <!-- LAYOUT -->
+            <div class="page-container">
+                <!-- COLUMNA PRINCIPAL -->
+                <div class="main-column">
+
+                    <!-- Descripción -->
+                    <div class="content-card">
+                        <div class="card-header-section">
+                            <h3><i class="fas fa-info-circle"></i> <span data-i18n="experiencia_detalle.sobre">Sobre la
+                                    experiencia</span></h3>
+                        </div>
+                        <div class="card-body">
+                            <p class="description-text" id="desc-text">Cargando descripción...</p>
+                        </div>
+                    </div>
+
+                    <!-- Detalles Rápidos -->
+                    <div class="content-card">
+                        <div class="card-header-section">
+                            <h3><i class="fas fa-list-ul"></i> <span
+                                    data-i18n="experiencia_detalle.general">Detalles</span></h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="details-grid" id="details-grid">
+                                <!-- Details injected here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rutas / Opciones Carousel -->
+                    <div class="content-card" id="card-rutas" style="display:none;">
+                        <div class="card-header-section">
+                            <h3><i class="fas fa-route" style="color: var(--primary);"></i> <span
+                                    data-i18n="experiencia.rutas">Rutas Disponibles</span></h3>
+                        </div>
+                        <div class="card-body">
+                            <!-- Contenedor Principal del Carrusel -->
+                            <div class="sub-cabana-carousel-wrapper">
+                                
+                                <!-- Botón Anterior -->
+                                <button class="sub-cabana-nav prev" onclick="scrollSubCabana(-1)">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                
+                                <!-- Contenedor Scrolleable -->
+                                <div class="sub-cabana-carousel" id="subCabanaCarousel">
+                                    <!-- Rutas dinámicas inyectadas por JS -->
+                                </div>
+
+                                <!-- Botón Siguiente -->
+                                <button class="sub-cabana-nav next" onclick="scrollSubCabana(1)">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                                
+                                <!-- Paginación (Puntos) -->
+                                <div class="sub-cabana-indicators" id="subCabanaIndicators">
+                                    <!-- Indicadores inyectados por JS -->
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Disponibilidad -->
+                    <div class="content-card" id="card-availability" style="display:none;">
+                        <div class="card-header-section">
+                            <h3><i class="fas fa-calendar-check" style="color: var(--primary);"></i> <span
+                                    data-i18n="experiencia.disponibilidad">Disponibilidad</span></h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="availability-info"
+                                style="margin-bottom: 1rem; color: var(--gray-600); font-size: 0.9rem;">
+                            </div>
+                            <div id="week-calendar" class="week-calendar"
+                                style="display:grid; grid-template-columns: repeat(7, 1fr); gap:0.25rem;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Incluye & No Incluye (Dual Card) -->
+                    <div class="content-card" id="card-inclusions" style="display: none;">
+                        <div class="card-header-section">
+                            <h3><i class="fas fa-check-double" style="color: var(--primary);"></i> <span
+                                    data-i18n="experiencia.que_incluido">¿Qué está incluido?</span>
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="dual-list-container">
+                                <div class="list-column bg-success-light">
+                                    <h4 class="list-title text-success"><i class="fas fa-check-circle"></i> <span
+                                            data-i18n="experiencia.incluye">Incluye</span></h4>
+                                    <ul class="detail-list includes-new" id="list-includes"></ul>
+                                </div>
+                                <div class="list-column bg-error-light">
+                                    <h4 class="list-title text-error"><i class="fas fa-times-circle"></i> <span
+                                            data-i18n="experiencia.no_incluye">No incluye</span>
+                                    </h4>
+                                    <ul class="detail-list excludes-new" id="list-excludes"></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Información Útil & Qué traer -->
+                    <div class="content-card" id="card-useful-info">
+                        <div class="card-header-section">
+                            <h3><i class="fas fa-info-circle" style="color: var(--primary);"></i> <span
+                                    data-i18n="experiencia.info_util">Información Útil</span></h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="useful-info-grid">
+                                <div class="info-block" id="block-bring">
+                                    <h5><i class="fas fa-backpack" style="color: var(--warning);"></i> <span
+                                            data-i18n="experiencia.que_traer">¿Qué Traer?</span></h5>
+                                    <ul class="detail-list bring" id="list-bring" style="margin-top:0.5rem;"></ul>
+                                </div>
+                                <div class="info-block" id="block-requisitos">
+                                    <h5><i class="fas fa-clipboard-list" style="color: var(--primary);"></i> <span
+                                            data-i18n="experiencia.requisitos">Requisitos</span>
+                                    </h5>
+                                    <ul class="detail-list" id="list-requisitos" style="margin-top:0.5rem;"></ul>
+                                </div>
+                                <div class="info-block">
+                                    <h5><i class="fas fa-compass" style="color: var(--primary);"></i> <span
+                                            data-i18n="experiencia.itinerario_basico">Itinerario Básico</span>
+                                    </h5>
+                                    <p class="text-xs text-muted" id="itinerario-desc"
+                                        data-i18n="experiencia.itinerario_desc">Salida desde
+                                        el punto de encuentro, traslado al sitio,
+                                        desarrollo de la actividad, tiempo libre para fotos y retorno al origen.</p>
+                                </div>
+                                <div class="info-block">
+                                    <h5><i class="fas fa-map-marker-alt" style="color: var(--primary);"></i> <span
+                                            data-i18n="experiencia.punto_encuentro">Punto de
+                                            Encuentro</span></h5>
+                                    <p class="text-xs text-muted" id="punto-encuentro-desc"
+                                        data-i18n="experiencia.punto_encuentro_desc">Jardín
+                                        Principal de Jalpan de Serra (frente a la
+                                        Misión). Se recomienda llegar 15 minutos antes.</p>
+                                </div>
+                                <div class="info-block">
+                                    <h5><i class="fas fa-shield-alt" style="color: var(--primary);"></i> <span
+                                            data-i18n="experiencia.politicas">Políticas de
+                                            Cancelación</span></h5>
+                                    <p class="text-xs text-muted" id="politicas-desc"
+                                        data-i18n="experiencia.politicas_desc">Reembolso
+                                        completo si cancelas con 24 horas de
+                                        anticipación. No hay reembolsos por no presentarse (No-show).</p>
+                                </div>
+                                <div class="info-block">
+                                    <h5><i class="fas fa-heartbeat" style="color: var(--primary);"></i> <span
+                                            data-i18n="experiencia.restricciones">Restricciones</span>
+                                    </h5>
+                                    <p class="text-xs text-muted" id="restricciones-desc"
+                                        data-i18n="experiencia.restricciones_desc">No
+                                        recomendado para personas con problemas cardíacos,
+                                        mujeres embarazadas o movilidad reducida extrema (dependiendo de la
+                                        experiencia).</p>
+                                </div>
+                            </div>
+
+
+                            <!-- Galería de Fotos de Viajeros -->
+                            <div class="content-card" id="card-user-gallery" style="display:none;">
+                                <div class="card-header-section">
+                                    <h3><i class="fas fa-camera-retro" style="color: var(--primary);"></i> <span
+                                            data-i18n="experiencia.galeria_viajeros">Galería de Viajeros</span>
+                                    </h3>
+                                    <span id="gallery-user-count"
+                                        style="font-size:0.85rem; color: var(--gray-500);"></span>
+                                </div>
+                                <div class="card-body">
+                                    <div id="user-gallery-grid"
+                                        style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.5rem;">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Contenedor Reseñas -->
+                            <div class="content-card" id="card-reviews">
+                                <div class="card-header-section"
+                                    style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                                    <h3><i class="fas fa-star" style="color: var(--warning);"></i> <span
+                                            data-i18n="restaurante.resenas">Reseñas de Viajeros</span></h3>
+                                    <button id="btn-write-review" class="btn"
+                                        style="background: var(--primary); color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 600; font-size: 0.9rem; cursor: pointer; border: none;"><i
+                                            class="fas fa-pen"></i> <span
+                                            data-i18n="restaurante.escribir_resena">Escribir
+                                            Reseña</span></button>
+                                </div>
+                                <div class="card-body">
+                                    <div class="reviews-summary" id="reviews-summary"
+                                        style="margin-bottom: 1.5rem; text-align: center; border-bottom: 1px solid var(--gray-200); padding-bottom: 1rem;">
+                                        <!-- Summary injected here -->
+                                        <p style="color: var(--gray-500);" data-i18n="experiencia_detalle.sin_resenas">
+                                            Aún no
+                                            hay reseñas. ¡Sé el primero en opinar!</p>
+                                    </div>
+
+                                    <!-- Formulario de nueva reseña (Oculto por defecto) -->
+                                    <div id="review-form-container"
+                                        style="display: none; background: var(--gray-50); padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                                        <h4 style="margin-bottom: 1rem;" data-i18n="experiencia_detalle.tu_opinion">Tu
+                                            opinión
+                                        </h4>
+                                        <form id="form-nueva-resena">
+                                            <div style="margin-bottom: 1rem;">
+                                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;"
+                                                    data-i18n="experiencia_detalle.calificacion">Calificación</label>
+                                                <select id="review-rating" class="form-control" required
+                                                    style="width: 100%; padding: 0.8rem; border-radius: 0.5rem; border: 1px solid var(--gray-300);">
+                                                    <option value="5" data-i18n="experiencia_detalle.excelente">⭐⭐⭐⭐⭐ -
+                                                        Excelente</option>
+                                                    <option value="4" data-i18n="experiencia_detalle.muy_bueno">⭐⭐⭐⭐ -
+                                                        Muy Bueno
+                                                    </option>
+                                                    <option value="3" data-i18n="experiencia_detalle.bueno">⭐⭐⭐ - Bueno
+                                                    </option>
+                                                    <option value="2" data-i18n="experiencia_detalle.regular">⭐⭐ -
+                                                        Regular
+                                                    </option>
+                                                    <option value="1" data-i18n="experiencia_detalle.malo">⭐ - Malo
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div style="margin-bottom: 1rem;">
+                                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;"
+                                                    data-i18n="experiencia_detalle.comentario">Comentario</label>
+                                                <textarea id="review-comment" class="form-control" rows="4" required
+                                                    style="width: 100%; padding: 0.8rem; border-radius: 0.5rem; border: 1px solid var(--gray-300); resize: vertical;"></textarea>
+                                            </div>
+                                            <!-- Zona de subida de fotos -->
+                                            <div style="margin-bottom: 1rem;">
+                                                <label
+                                                    style="display: block; margin-bottom: 0.5rem; font-weight: 600;"><span
+                                                        data-i18n="experiencia_detalle.fotos">Fotos</span>
+                                                    <span style="font-weight:400; color: var(--gray-500);"
+                                                        data-i18n="experiencia_detalle.opcional_max">(opcional, máx.
+                                                        5)</span></label>
+                                                <div id="review-photo-zone"
+                                                    style="border: 2px dashed var(--gray-300); border-radius: 0.5rem; padding: 1.2rem; text-align: center; cursor: pointer; transition: all 0.2s;"
+                                                    onclick="document.getElementById('review-photo-input').click()">
+                                                    <i class="fas fa-cloud-upload-alt"
+                                                        style="font-size: 1.5rem; color: var(--gray-400);"></i>
+                                                    <p
+                                                        style="margin: 0.5rem 0 0; font-size: 0.85rem; color: var(--gray-500);">
+                                                        <span data-i18n="experiencia_detalle.arrastra_fotos">Arrastra
+                                                            fotos aquí
+                                                            o</span> <span
+                                                            style="color: var(--primary); font-weight: 600;"
+                                                            data-i18n="experiencia_detalle.haz_clic">haz clic</span>
+                                                    </p>
+                                                    <p style="font-size: 0.75rem; color: var(--gray-400); margin-top: 0.25rem;"
+                                                        data-i18n="experiencia_detalle.restricciones_peso">
+                                                        JPG, PNG, WebP · Máx. 5MB c/u</p>
+                                                </div>
+                                                <input type="file" id="review-photo-input" accept="image/*" multiple
+                                                    style="display:none;">
+                                                <div id="review-photo-preview"
+                                                    style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:0.75rem;">
+                                                </div>
+                                            </div>
+                                            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                                                <button type="button" id="btn-cancel-review" class="btn"
+                                                    style="padding: 0.6rem 1.2rem; background: var(--gray-200); border-radius: 0.5rem; cursor: pointer; border: none;"
+                                                    data-i18n="experiencia_detalle.cancelar">Cancelar</button>
+                                                <button type="submit" class="btn"
+                                                    style="padding: 0.6rem 1.2rem; background: var(--primary); color: white; border-radius: 0.5rem; font-weight: 600; cursor: pointer; border: none;"
+                                                    data-i18n="experiencia_detalle.enviar_resena">Enviar
+                                                    Reseña</button>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    <div class="reviews-list" id="reviews-list"
+                                        style="display: flex; flex-direction: column; gap: 1rem;">
+                                        <!-- Reviews injected here -->
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div> <!-- This closes the .main-column div -->
+                </div> <!-- This closes the .page-container div -->
+
+                <!-- SIDEBAR -->
+                <div class="sidebar-column">
+
+                    <!-- Reservar / WhatsApp CTA -->
+                    <div class="content-card" id="card-meeting-map"
+                        style="padding: 1.5rem; margin-bottom: 1.5rem; display:none;">
+                        <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem;"><i class="fas fa-map-marked-alt"
+                                style="color: var(--primary);"></i> Punto de Encuentro</h3>
+                        <p id="meeting-address"
+                            style="font-size:0.85rem; color:var(--gray-600); margin-bottom:0.75rem;"></p>
+                        <div id="meeting-map-container"
+                            style="width:100%; height:220px; border-radius:0.5rem; overflow:hidden; border:1px solid var(--gray-200);">
+                        </div>
+                        <a id="meeting-map-link" href="#" target="_blank"
+                            style="display:inline-block; margin-top:0.6rem; font-size:0.85rem; color:var(--primary); font-weight:600; text-decoration:none;">
+                            <i class="fas fa-directions" style="margin-right:0.3rem;"></i> Abrir en Google Maps
+                        </a>
+                    </div>
+
+                    <!-- Reservar / WhatsApp CTA -->
+                    <div class="content-card"
+                        style="padding: 1.5rem; text-align: center; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white;">
+                        <h3 style="margin-bottom: 0.5rem; font-size: 1.2rem;"><i class="fas fa-calendar-check"></i>
+                            <span data-i18n="experiencia_detalle.te_interesa">¿Te interesa?</span>
+                        </h3>
+                        <p style="font-size: 0.9rem; margin-bottom: 1.2rem; opacity: 0.9;"
+                            data-i18n="experiencia_detalle.reserva_rapida">Reserva esta experiencia de forma
+                            rápida y
+                            sencilla.</p>
+                        <a id="sidebar-whatsapp-btn" href="#" target="_blank" class="btn"
+                            style="width:100%; background:#25D366; color:white; text-decoration:none; padding:0.8rem 1.2rem; border-radius:0.5rem; font-weight:700; display:flex; align-items:center; justify-content:center; gap:0.5rem; font-size:1rem; border:none; margin-bottom:0.75rem; transition: background 0.2s;"
+                            onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25D366'">
+                            <i class="fab fa-whatsapp" style="font-size:1.3rem;"></i> <span
+                                data-i18n="experiencia_detalle.reservar_whatsapp">Reservar por WhatsApp</span>
+                        </a>
+                        <a href="/Contactos.html" class="btn"
+                            style="width:100%; background:rgba(255,255,255,0.15); color:white; text-decoration:none; padding:0.6rem 1.2rem; border-radius:0.5rem; font-weight:600; display:inline-block; border:1px solid rgba(255,255,255,0.3); font-size:0.9rem; transition: background 0.2s;"
+                            onmouseover="this.style.background='rgba(255,255,255,0.25)'"
+                            onmouseout="this.style.background='rgba(255,255,255,0.15)'">
+                            <i class="fas fa-envelope" style="margin-right:0.3rem;"></i> <span
+                                data-i18n="experiencia_detalle.contactar_correo">Contactar por Correo</span>
+                        </a>
+                    </div>
+
+                    <!-- FAQ Acordeón -->
+                    <div class="content-card" id="card-faq">
+                        <div class="card-header-section">
+                            <h3><i class="fas fa-question-circle" style="color: var(--primary);"></i> <span
+                                    data-i18n="experiencia_detalle.preguntas_frecuentes">Preguntas
+                                    Frecuentes</span></h3>
+                        </div>
+                        <div class="card-body" id="faq-list" style="display: flex; flex-direction: column; gap: 0;">
+                            <!-- FAQ items injected here -->
+                        </div>
+                    </div>
+
+                    <!-- Guías de la Experiencia -->
+                    <div class="content-card" id="card-guides" style="display:none;">
+                        <div class="card-header-section">
+                            <h3><i class="fas fa-users" style="color: var(--primary);"></i> <span id="guides-title"
+                                    data-i18n="experiencia.guias">Guías de la
+                                    Experiencia</span>
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="guides-container" style="display: grid; grid-template-columns: 1fr; gap: 1rem;">
+                                <!-- Guides will be injected here via JS -->
+                            </div>
+                            <div id="no-guides-message"
+                                style="display:none; text-align:center; padding:1.5rem 1rem; color:var(--gray-500);">
+                                <i class="fas fa-user-slash"
+                                    style="font-size:1.5rem; margin-bottom:0.5rem; color:var(--gray-300);"></i>
+                                <p style="font-size:0.9rem;">No hay guías asignados por el momento.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Recomendaciones Cruzadas -->
+                <div id="cross-recommendations" style="display:none; margin-top:2.5rem;">
+                    <h2
+                        style="font-size:1.4rem; font-weight:700; color:var(--gray-800); margin-bottom:1.2rem; text-align:center;">
+                        <i class="fas fa-compass" style="color: var(--primary); margin-right: 0.4rem;"></i> Te
+                        podría
+                        interesar
+                    </h2>
+                    <div id="recommendations-grid"
+                        style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 320px)); gap:1.2rem; justify-content:center;">
+                    </div>
+                </div>
+
+            </div>
+    </main>
+
+    <!-- LIGHTBOX -->
+    <div class="lightbox-overlay" id="tour-lightbox">
+        <button class="lightbox-close" onclick="closeTourLightbox()">&times;</button>
+        <img id="tour-lightbox-img" src="" alt="Zoom Tour">
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="/" class="logo">
+                        <img src="/images/PueblosMágicos.svg.png" alt="Logo">
+                        RestauranteWeb
+                    </a>
+                    <p>La plataforma líder que conecta a locales y turistas con la mejor oferta gastronómica del Corazón
+                        de la Sierra Gorda.</p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h4 class="footer-title">Navegación</h4>
+                    <ul class="footer-links">
+                        <li><a href="/">Inicio</a></li>
+                        <li><a href="/mapa.html">Mapa</a></li>
+                        <li><a href="/Contactos.html">Contacto</a></li>
+                        <li><a href="/login.html">Panel Admin</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4 class="footer-title">Soporte</h4>
+                    <ul class="footer-links">
+                        <li><a href="/Contactos.html#faq">Preguntas Frecuentes</a></li>
+                        <li><a href="mailto:restaurantesturismo57@gmail.com">Soporte Técnico</a></li>
+                        <li><a href="#">Guía de Uso</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4 class="footer-title">Contacto</h4>
+                    <div class="footer-contact">
+                        <p><i class="fas fa-envelope"></i> restaurantesturismo57@gmail.com</p>
+                        <p><i class="fas fa-phone"></i> +52 (441) 296-0285</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Independencia No. 12, Jalpan de Serra, Qro.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 RestauranteWeb - Jalpan de Serra. Todos los derechos reservados.</p>
+                <div class="footer-meta">
+                    <a href="#">Privacidad</a>
+                    <a href="#">Términos</a>
+                    <a href="#" style="display: flex; align-items: center; gap: 0.5rem; color: white;">
+                        <i class="fas fa-code"></i> Desarrollado por Zac
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Botón flotante de WhatsApp -->
+    <a id="floating-whatsapp" href="#" target="_blank"
+        style="position:fixed; bottom:1.5rem; right:1.5rem; width:60px; height:60px; background:#25D366; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 15px rgba(37,211,102,0.4); z-index:999; text-decoration:none; transition: transform 0.3s, box-shadow 0.3s;"
+        onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 6px 20px rgba(37,211,102,0.5)'"
+        onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 15px rgba(37,211,102,0.4)'">
+        <i class="fab fa-whatsapp" style="color:white; font-size:2rem;"></i>
+    </a>
+    <style>
+        @keyframes whatsapp-pulse {
+            0% {
+                box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 4px 25px rgba(37, 211, 102, 0.6), 0 0 0 8px rgba(37, 211, 102, 0.15);
+            }
+
+            100% {
+                box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            }
+        }
+
+        #floating-whatsapp {
+            animation: whatsapp-pulse 2s infinite;
+        }
+
+        #floating-whatsapp:hover {
+            animation: none;
+        }
+
+        @media (max-width: 768px) {
+            #floating-whatsapp {
+                bottom: 1rem;
+                right: 1rem;
+                width: 55px;
+                height: 55px;
+            }
+
+            #floating-whatsapp i {
+                font-size: 1.7rem;
+            }
+        }
+    </style>
+
+    <!-- Lightbox para fotos de viajeros -->
+    <div id="photo-lightbox"
+        style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.85); align-items:center; justify-content:center; cursor:pointer;"
+        onclick="closePhotoLightbox()">
+        <button onclick="closePhotoLightbox()"
+            style="position:absolute; top:1rem; right:1rem; background:none; border:none; color:white; font-size:2rem; cursor:pointer; z-index:10;"><i
+                class="fas fa-times"></i></button>
+        <img id="photo-lightbox-img" src="" alt="Foto de viajero"
+            style="max-width:90%; max-height:90vh; border-radius:0.5rem; object-fit:contain; box-shadow:0 0 40px rgba(0,0,0,0.5);"
+            onclick="event.stopPropagation()">
+    </div>
+
+    <script src="/js/main.js"></script>
+    <script src="/js/utils.js"></script>
+    <script src="/js/experiencia.js"></script>
+
+    <!-- Share Buttons JS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const shareWA = document.getElementById('share-whatsapp');
+            const shareFB = document.getElementById('share-facebook');
+            const shareCopy = document.getElementById('share-copy');
+
+            if (shareWA) {
+                shareWA.addEventListener('click', () => {
+                    const nombre = document.getElementById('hero-name')?.textContent || 'Experiencia';
+                    const url = window.location.href;
+                    const texto = encodeURIComponent(`¡Mira esta experiencia! ${nombre} en Jalpan de Serra 🏔️\n${url}`);
+                    window.open(`https://wa.me/?text=${texto}`, '_blank');
+                });
+            }
+
+            if (shareFB) {
+                shareFB.addEventListener('click', () => {
+                    const url = encodeURIComponent(window.location.href);
+                    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'width=600,height=400');
+                });
+            }
+
+            if (shareCopy) {
+                shareCopy.addEventListener('click', async () => {
+                    try {
+                        await navigator.clipboard.writeText(window.location.href);
+                        shareCopy.classList.add('copied');
+                        shareCopy.innerHTML = '<i class="fas fa-check"></i>';
+                        setTimeout(() => {
+                            shareCopy.classList.remove('copied');
+                            shareCopy.innerHTML = '<i class="fas fa-link"></i>';
+                        }, 2000);
+                    } catch (err) {
+                        const input = document.createElement('input');
+                        input.value = window.location.href;
+                        document.body.appendChild(input);
+                        input.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(input);
+                        shareCopy.classList.add('copied');
+                        shareCopy.innerHTML = '<i class="fas fa-check"></i>';
+                        setTimeout(() => {
+                            shareCopy.classList.remove('copied');
+                            shareCopy.innerHTML = '<i class="fas fa-link"></i>';
+                        }, 2000);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

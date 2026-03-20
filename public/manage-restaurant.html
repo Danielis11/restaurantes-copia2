@@ -1,0 +1,2055 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionar Mi Restaurante - RestauranteWeb</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Mapbox GL JS -->
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' rel='stylesheet' />
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--gray-50);
+            color: var(--gray-900);
+        }
+
+        /* Header igual que admin.html */
+        .header {
+            background-color: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-link {
+            color: var(--gray-600);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+            background-color: var(--gray-100);
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--gray-900);
+            font-size: 0.9rem;
+        }
+
+        .user-role {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+            text-transform: capitalize;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--gray-500);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            color: var(--error);
+            background-color: var(--gray-100);
+        }
+
+        /* Main Content */
+        .main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: var(--gray-600);
+            font-size: 1.1rem;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--gray-500);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--gray-200);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Restaurant Info Cards */
+        .restaurant-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .info-card {
+            background: var(--white);
+            border-radius: 0.75rem;
+            border: 1px solid var(--gray-200);
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-card h3 {
+            color: var(--gray-900);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-card p {
+            color: var(--gray-600);
+            line-height: 1.6;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--gray-700);
+            display: inline-block;
+            min-width: 80px;
+        }
+
+        /* Edit Sections */
+        .edit-sections {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+        }
+
+        .edit-card {
+            background: var(--white);
+            border-radius: 0.75rem;
+            border: 1px solid var(--gray-200);
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .edit-card h4 {
+            color: var(--gray-900);
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            resize: vertical;
+            min-height: 100px;
+            transition: border-color 0.2s;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background-color: var(--gray-200);
+            color: var(--gray-700);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--gray-300);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: var(--white);
+        }
+
+        .btn-success:hover {
+            background-color: #059669;
+        }
+
+        /* Schedule Grid */
+        .schedule-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .day-schedule {
+            display: grid;
+            grid-template-columns: 100px 80px 1fr 1fr;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .day-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .day-checkbox input[type="checkbox"] {
+            transform: scale(1.2);
+        }
+
+        .day-label {
+            font-weight: 600;
+            color: var(--gray-700);
+            font-size: 0.9rem;
+        }
+
+        /* Menu Editor */
+        .menu-category {
+            border: 2px solid var(--gray-200);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: stretch;
+            gap: 1.5rem;
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--gray-200);
+            margin-bottom: 1.5rem;
+        }
+
+        .menu-item-image-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            width: 160px;
+            flex-shrink: 0;
+        }
+
+        .menu-item-image {
+            width: 100%;
+            height: 160px;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            border: 2px dashed var(--gray-300);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gray-50);
+        }
+
+        .menu-item-details {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            justify-content: space-between;
+            min-width: 0;
+        }
+
+        .menu-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+            gap: 0.5rem;
+        }
+
+        .btn-small {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .btn-danger {
+            background-color: var(--error);
+            color: var(--white);
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+
+        .btn-add {
+            background-color: var(--success);
+            color: var(--white);
+        }
+
+        .btn-add:hover {
+            background-color: #059669;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            max-width: 400px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid var(--primary);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            gap: 12px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-left-color: var(--success);
+        }
+
+        .notification.error {
+            border-left-color: var(--error);
+        }
+
+        .notification.warning {
+            border-left-color: var(--warning);
+        }
+
+        .notification i {
+            font-size: 18px;
+            color: var(--primary);
+        }
+
+        .notification.success i {
+            color: var(--success);
+        }
+
+        .notification.error i {
+            color: var(--error);
+        }
+
+        .notification.warning i {
+            color: var(--warning);
+        }
+
+        .notification-message {
+            flex: 1;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            color: var(--gray-400);
+        }
+
+        .notification-close:hover {
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav {
+                padding: 0.5rem 1rem;
+                height: auto;
+                min-height: 70px;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            .logo span {
+                display: none;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .user-section {
+                gap: 0.5rem;
+            }
+
+            .user-info {
+                display: none;
+            }
+
+            .main {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+            }
+
+            .restaurant-info {
+                grid-template-columns: 1fr;
+            }
+
+            .edit-sections {
+                grid-template-columns: 1fr;
+            }
+
+            .day-schedule {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+
+            .day-checkbox {
+                justify-self: start;
+            }
+
+            .menu-item {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .menu-item-image-container {
+                width: 100%;
+                max-width: 200px;
+                margin: 0 auto;
+            }
+
+            .menu-item-details {
+                width: 100%;
+            }
+
+            .menu-item-header {
+                align-items: flex-start;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <a href="/admin.html" class="logo"
+                style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+                <img src="/images/PueblosMágicos.svg.png" alt="Logo Turismo"
+                    style="width: 32px; height: 32px; object-fit: contain;">
+                <span>Turismo Admin</span>
+            </a>
+
+            <div class="nav-links">
+                <a href="/admin.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    Dashboard
+                </a>
+                <a href="/manage-restaurant.html" class="nav-link" style="color: var(--primary);">
+                    <i class="fas fa-store"></i>
+                    Mi Restaurante
+                </a>
+            </div>
+
+            <div class="user-section">
+                <div class="user-info">
+                    <div class="user-name" id="user-name">Cargando...</div>
+                    <div class="user-role" id="user-role">admin</div>
+                </div>
+                <div class="user-avatar" id="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <button class="logout-btn" id="logout-btn" title="Cerrar sesión">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Loading State -->
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Cargando información de tu establecimiento...</p>
+        </div>
+
+        <!-- Main Content -->
+        <div id="main-content" style="display: none;">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">Gestionar Mi Restaurante</h1>
+                <p class="page-subtitle">Edita la información de tu establecimiento</p>
+            </div>
+
+            <!-- Restaurant Info -->
+            <div class="restaurant-info">
+                <div class="info-card">
+                    <h3><i class="fas fa-info-circle"></i> Información Básica</h3>
+                    <p><span class="info-label">Nombre:</span> <span id="info-name">-</span></p>
+                    <p><span class="info-label">Tipo:</span> <span id="info-type">-</span></p>
+                    <p><span class="info-label">Especialidad:</span> <span id="info-food-type">-</span></p>
+                    <p><span class="info-label">Teléfono:</span> <span id="info-phone">-</span></p>
+                    <p><span class="info-label">Email:</span> <span id="info-email">-</span></p>
+                    <p><span class="info-label">Precio Prom.:</span> <span id="info-price">-</span></p>
+                    <p><span class="info-label">Opciones Pago:</span> <span id="info-payments">-</span></p>
+                    <p><span class="info-label">Descripción:</span></p>
+                    <p id="info-description">-</p>
+                </div>
+
+                <div class="info-card">
+                    <h3><i class="fas fa-map-marker-alt"></i> Ubicación y Contacto</h3>
+                    <p><span class="info-label">Dirección:</span> <span id="info-address">-</span></p>
+                    <p><span class="info-label">Ciudad:</span> <span id="info-city">-</span></p>
+                    <p><span class="info-label">Código Postal:</span> <span id="info-zip">-</span></p>
+                    <p><span class="info-label">Facebook:</span> <span id="info-facebook">-</span></p>
+                    <p><span class="info-label">Instagram:</span> <span id="info-instagram">-</span></p>
+                    <p><span class="info-label">Website:</span> <span id="info-website">-</span></p>
+                </div>
+            </div>
+
+            <!-- Edit Sections -->
+            <div class="edit-sections">
+                <!-- Basic Info -->
+                <div class="edit-card">
+                    <h4><i class="fas fa-edit"></i> Información Básica</h4>
+                    <div id="basic-alert"></div>
+                    <form id="basic-form">
+                        <div class="form-group">
+                            <label class="form-label" for="edit-name">Nombre del Establecimiento</label>
+                            <input type="text" id="edit-name" name="nombre" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="edit-food-type">Especialidad (Tipo de Comida)</label>
+                            <input type="text" id="edit-food-type" name="tipoComida" class="form-input"
+                                placeholder="Ej. Mexicana, Mariscos">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="edit-phone">Teléfono</label>
+                            <input type="tel" id="edit-phone" name="telefono" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="edit-whatsapp">WhatsApp para Pedidos (Opcional)</label>
+                            <input type="tel" id="edit-whatsapp" name="whatsappPedidos" class="form-input"
+                                placeholder="Ej. 5214421234567">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="edit-email">Email</label>
+                            <input type="email" id="edit-email" name="email" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="edit-price">Precio Promedio ($ MXN)</label>
+                            <input type="number" id="edit-price" name="precioPromedio" class="form-input" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Opciones de Pago</label>
+                            <div style="display:flex; gap:1rem;">
+                                <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
+                                    <input type="checkbox" id="edit-pay-cash" name="pagoEfectivo"> Efectivo
+                                </label>
+                                <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
+                                    <input type="checkbox" id="edit-pay-card" name="pagoTarjeta"> Tarjeta
+                                </label>
+                                <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
+                                    <input type="checkbox" id="edit-pay-transfer" name="pagoTransferencia">
+                                    Transferencia
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="edit-description">Descripción</label>
+                            <textarea id="edit-description" name="descripcion" class="form-textarea"
+                                required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            Guardar Información Básica
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Address -->
+                <div class="edit-card">
+                    <h4><i class="fas fa-map-marker-alt"></i> Dirección</h4>
+                    <div id="address-alert"></div>
+                    <form id="address-form">
+                        <div class="form-group">
+                            <label class="form-label" for="edit-street">Calle y Número</label>
+                            <input type="text" id="edit-street" name="calle" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="edit-city">Ciudad</label>
+                            <input type="text" id="edit-city" name="ciudad" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="edit-zip">Código Postal</label>
+                            <input type="text" id="edit-zip" name="codigoPostal" class="form-input" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Ubicación en el Mapa</label>
+                            <p style="font-size: 0.85rem; color: var(--gray-600); margin-bottom: 0.5rem;">Haz clic en el
+                                mapa o arrastra el marcador para establecer la ubicación exacta.</p>
+                            <div id="admin-map"
+                                style="width: 100%; height: 300px; border-radius: 0.5rem; border: 2px solid var(--gray-200);">
+                            </div>
+                            <input type="hidden" id="edit-lat" name="lat">
+                            <input type="hidden" id="edit-lng" name="lng">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            Guardar Dirección
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Social Media -->
+                <div class="edit-card">
+                    <h4><i class="fas fa-share-alt"></i> Redes Sociales</h4>
+                    <div id="social-alert"></div>
+                    <form id="social-form">
+                        <div class="form-group">
+                            <label class="form-label" for="edit-facebook">Facebook URL</label>
+                            <input type="url" id="edit-facebook" name="facebook" class="form-input"
+                                placeholder="https://facebook.com/tu-negocio">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="edit-instagram">Instagram</label>
+                            <input type="text" id="edit-instagram" name="instagram" class="form-input"
+                                placeholder="@tu-negocio">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="edit-website">Website URL</label>
+                            <input type="url" id="edit-website" name="website" class="form-input"
+                                placeholder="https://tu-sitio-web.com">
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            Guardar Redes Sociales
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Schedule -->
+                <div class="edit-card">
+                    <h4><i class="fas fa-clock"></i> Horarios</h4>
+                    <div id="schedule-alert"></div>
+                    <form id="schedule-form">
+                        <div class="schedule-grid">
+                            <div class="day-schedule">
+                                <span class="day-label">Lunes</span>
+                                <div class="day-checkbox">
+                                    <input type="checkbox" id="lunes_abierto" name="lunes_abierto"
+                                        onchange="toggleDayInputs('lunes')">
+                                    <label for="lunes_abierto">Abierto</label>
+                                </div>
+                                <input type="time" name="lunes_apertura" class="form-input" id="lunes_apertura">
+                                <input type="time" name="lunes_cierre" class="form-input" id="lunes_cierre">
+                            </div>
+                            <div class="day-schedule">
+                                <span class="day-label">Martes</span>
+                                <div class="day-checkbox">
+                                    <input type="checkbox" id="martes_abierto" name="martes_abierto"
+                                        onchange="toggleDayInputs('martes')">
+                                    <label for="martes_abierto">Abierto</label>
+                                </div>
+                                <input type="time" name="martes_apertura" class="form-input" id="martes_apertura">
+                                <input type="time" name="martes_cierre" class="form-input" id="martes_cierre">
+                            </div>
+                            <div class="day-schedule">
+                                <span class="day-label">Miércoles</span>
+                                <div class="day-checkbox">
+                                    <input type="checkbox" id="miercoles_abierto" name="miercoles_abierto"
+                                        onchange="toggleDayInputs('miercoles')">
+                                    <label for="miercoles_abierto">Abierto</label>
+                                </div>
+                                <input type="time" name="miercoles_apertura" class="form-input" id="miercoles_apertura">
+                                <input type="time" name="miercoles_cierre" class="form-input" id="miercoles_cierre">
+                            </div>
+                            <div class="day-schedule">
+                                <span class="day-label">Jueves</span>
+                                <div class="day-checkbox">
+                                    <input type="checkbox" id="jueves_abierto" name="jueves_abierto"
+                                        onchange="toggleDayInputs('jueves')">
+                                    <label for="jueves_abierto">Abierto</label>
+                                </div>
+                                <input type="time" name="jueves_apertura" class="form-input" id="jueves_apertura">
+                                <input type="time" name="jueves_cierre" class="form-input" id="jueves_cierre">
+                            </div>
+                            <div class="day-schedule">
+                                <span class="day-label">Viernes</span>
+                                <div class="day-checkbox">
+                                    <input type="checkbox" id="viernes_abierto" name="viernes_abierto"
+                                        onchange="toggleDayInputs('viernes')">
+                                    <label for="viernes_abierto">Abierto</label>
+                                </div>
+                                <input type="time" name="viernes_apertura" class="form-input" id="viernes_apertura">
+                                <input type="time" name="viernes_cierre" class="form-input" id="viernes_cierre">
+                            </div>
+                            <div class="day-schedule">
+                                <span class="day-label">Sábado</span>
+                                <div class="day-checkbox">
+                                    <input type="checkbox" id="sabado_abierto" name="sabado_abierto"
+                                        onchange="toggleDayInputs('sabado')">
+                                    <label for="sabado_abierto">Abierto</label>
+                                </div>
+                                <input type="time" name="sabado_apertura" class="form-input" id="sabado_apertura">
+                                <input type="time" name="sabado_cierre" class="form-input" id="sabado_cierre">
+                            </div>
+                            <div class="day-schedule">
+                                <span class="day-label">Domingo</span>
+                                <div class="day-checkbox">
+                                    <input type="checkbox" id="domingo_abierto" name="domingo_abierto"
+                                        onchange="toggleDayInputs('domingo')">
+                                    <label for="domingo_abierto">Abierto</label>
+                                </div>
+                                <input type="time" name="domingo_apertura" class="form-input" id="domingo_apertura">
+                                <input type="time" name="domingo_cierre" class="form-input" id="domingo_cierre">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">
+                            <i class="fas fa-save"></i>
+                            Guardar Horarios
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Menu -->
+                <div class="edit-card" style="grid-column: 1 / -1;">
+                    <h4><i class="fas fa-utensils"></i> Menú</h4>
+                    <div id="menu-alert"></div>
+                    <div id="menu-editor">
+                        <!-- El menú se cargará dinámicamente aquí -->
+                    </div>
+                    <div style="margin-top: 1rem; display: flex; gap: 1rem;">
+                        <button onclick="addMenuCategory()" class="btn btn-add">
+                            <i class="fas fa-plus"></i>
+                            Agregar Categoría
+                        </button>
+                        <button onclick="saveMenu()" class="btn btn-success">
+                            <i class="fas fa-save"></i>
+                            Guardar Menú Completo
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Amenities / Servicios -->
+                <div class="edit-card">
+                    <h4><i class="fas fa-concierge-bell"></i> Servicios y Amenidades</h4>
+                    <div id="amenities-alert"></div>
+                    <form id="amenities-form">
+                        <div class="form-group">
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+                                    <input type="checkbox" id="srv-pet"> Pet Friendly
+                                </label>
+                                <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+                                    <input type="checkbox" id="srv-parking"> Estacionamiento
+                                </label>
+                                <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+                                    <input type="checkbox" id="srv-music"> Música en Vivo
+                                </label>
+                                <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+                                    <input type="checkbox" id="srv-vegan"> Opciones Veganas
+                                </label>
+                                <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+                                    <input type="checkbox" id="srv-kids"> Área Infantil
+                                </label>
+                                <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+                                    <input type="checkbox" id="srv-wifi"> Wi-Fi Gratis
+                                </label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">
+                            <i class="fas fa-save"></i>
+                            Guardar Servicios
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Promociones -->
+                <div class="edit-card">
+                    <h4><i class="fas fa-tag"></i> Promociones Activas</h4>
+                    <div id="promotions-alert"></div>
+                    <div id="promotions-container">
+                        <!-- Dynamic list of promotions -->
+                    </div>
+                    <button type="button" onclick="addPromotion()" class="btn btn-add btn-small"
+                        style="margin-top: 1rem;">
+                        <i class="fas fa-plus"></i> Agregar Promoción
+                    </button>
+                    <button type="button" onclick="savePromotions()" class="btn btn-primary" style="margin-top: 1rem;">
+                        <i class="fas fa-save"></i> Guardar Todas
+                    </button>
+                </div>
+
+                <!-- Respond to Reviews -->
+                <div class="edit-card" style="grid-column: 1 / -1;">
+                    <h4><i class="fas fa-comments"></i> Reseñas de Clientes</h4>
+                    <div id="reviews-alert"></div>
+                    <div id="reviews-container"
+                        style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+                        <p style="color: var(--gray-500); text-align: center;">Cargando reseñas...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu Item Lightbox -->
+        <div id="menu-lightbox"
+            style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 2000; align-items: center; justify-content: center; flex-direction: column;">
+            <button onclick="closeMenuLightbox()"
+                style="position: absolute; top: 20px; right: 30px; background: none; border: none; color: white; font-size: 2rem; cursor: pointer; padding: 10px; z-index: 2005;"><i
+                    class="fas fa-times"></i></button>
+            <div
+                style="position: relative; max-width: 90%; max-height: 80vh; display: flex; align-items: center; justify-content: center;">
+                <button id="menu-lightbox-prev" onclick="prevMenuImage(event)"
+                    style="position: absolute; left: -50px; background: rgba(255,255,255,0.2); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s;"><i
+                        class="fas fa-chevron-left"></i></button>
+                <img id="menu-lightbox-img" src=""
+                    style="max-width: 100%; max-height: 80vh; object-fit: contain; border-radius: 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                <button id="menu-lightbox-next" onclick="nextMenuImage(event)"
+                    style="position: absolute; right: -50px; background: rgba(255,255,255,0.2); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s;"><i
+                        class="fas fa-chevron-right"></i></button>
+            </div>
+            <div id="menu-lightbox-caption"
+                style="color: white; margin-top: 15px; font-size: 1.2rem; font-weight: 600; text-align: center; padding: 0 20px;">
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Variables globales
+        const API_BASE = window.location.origin + '/api';
+        let currentUser = null;
+        let restaurantData = null;
+        let menuData = [];
+        let map;
+        let marker;
+
+        // Configura aquí tu token de Mapbox
+        mapboxgl.accessToken = 'YOUR_MAPBOX_ACCESS_TOKEN'; // Usa el token del usuario o uno de prueba si es necesario. Ajusta.
+
+        // Funciones de notificación (igual que admin.html)
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+
+            const icon = type === 'success' ? 'fa-check-circle' :
+                type === 'error' ? 'fa-exclamation-circle' :
+                    type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle';
+
+            notification.innerHTML = `
+                <i class="fas ${icon}"></i>
+                <span class="notification-message">${message}</span>
+                <button class="notification-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => notification.classList.add('show'), 100);
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 5000);
+
+            notification.querySelector('.notification-close').onclick = () => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            };
+        }
+
+        // Verificar autenticación
+        async function checkAuth() {
+            const token = localStorage.getItem('authToken');
+
+            if (!token) {
+                showNotification('No has iniciado sesión', 'error');
+                setTimeout(() => {
+                    window.location.href = '/login.html';
+                }, 2000);
+                return false;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/profile`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json().catch(() => ({}));
+                if (response.ok) {
+                    currentUser = data.data.admin;
+                    updateUserInterface();
+                    return true;
+                }
+                const isAccountInactive = data.code === 'ACCOUNT_INACTIVE' || (data.message && data.message.includes('inactiva'));
+                localStorage.removeItem('authToken');
+                showNotification(isAccountInactive ? 'Tu cuenta está desactivada. Contacta al super administrador para reactivarla.' : 'Sesión expirada, redirigiendo...', 'warning');
+                setTimeout(() => { window.location.href = '/login.html'; }, isAccountInactive ? 3000 : 2000);
+                return false;
+            } catch (error) {
+                console.error('Error verificando auth:', error);
+                localStorage.removeItem('authToken');
+                showNotification('Sesión expirada, redirigiendo...', 'warning');
+                setTimeout(() => { window.location.href = '/login.html'; }, 2000);
+                return false;
+            }
+        }
+
+        // Actualizar interfaz de usuario
+        function updateUserInterface() {
+            if (!currentUser) return;
+
+            const userName = document.getElementById('user-name');
+            const userRole = document.getElementById('user-role');
+            const userAvatar = document.getElementById('user-avatar');
+
+            if (userName) {
+                userName.textContent = `${currentUser.nombre} ${currentUser.apellido}`;
+            }
+
+            if (userRole) {
+                userRole.textContent = currentUser.rol;
+            }
+
+            if (userAvatar) {
+                const initials = (currentUser.nombre?.charAt(0) || '') + (currentUser.apellido?.charAt(0) || '');
+                userAvatar.textContent = initials.toUpperCase();
+            }
+        }
+
+        // Cargar datos del restaurante
+        async function loadRestaurantData() {
+            const token = localStorage.getItem('authToken');
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/my-restaurant`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Error al cargar datos del restaurante');
+                }
+
+                const result = await response.json();
+                restaurantData = result.data;
+
+                displayRestaurantData(restaurantData);
+                populateEditForms(restaurantData);
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error al cargar los datos del restaurante', 'error');
+                document.getElementById('loading').innerHTML =
+                    '<p style="color: var(--error);">Error al cargar los datos. <button onclick="loadRestaurantData()" class="btn btn-primary">Reintentar</button></p>';
+            }
+        }
+
+        // Mostrar datos del restaurante
+        function displayRestaurantData(data) {
+            document.getElementById('info-name').textContent = data.nombre;
+            document.getElementById('info-type').textContent =
+                data.tipo.charAt(0).toUpperCase() + data.tipo.slice(1);
+
+            document.getElementById('info-food-type').textContent = data.tipoComida || 'No especificada';
+            document.getElementById('info-price').textContent = data.precioPromedio ? `$${data.precioPromedio} MXN` : 'No especificado';
+
+            let paymentsText = 'No especificadas';
+            if (data.opcionesPago) {
+                const arr = [];
+                if (data.opcionesPago.efectivo !== false) arr.push('Efectivo');
+                if (data.opcionesPago.tarjeta) arr.push('Tarjeta');
+                if (data.opcionesPago.transferencia) arr.push('Transferencia');
+                if (arr.length > 0) paymentsText = arr.join(', ');
+            }
+            document.getElementById('info-payments').textContent = paymentsText;
+
+            document.getElementById('info-phone').textContent = data.telefono;
+            document.getElementById('info-email').textContent = data.email;
+            document.getElementById('info-description').textContent = data.descripcion?.es || data.descripcion || '-';
+
+            document.getElementById('info-address').textContent = data.direccion.calle;
+            document.getElementById('info-city').textContent = data.direccion.ciudad;
+            document.getElementById('info-zip').textContent = data.direccion.codigoPostal;
+
+            document.getElementById('info-facebook').textContent =
+                data.redes.facebook || 'No configurado';
+            document.getElementById('info-instagram').textContent =
+                data.redes.instagram || 'No configurado';
+            document.getElementById('info-website').textContent =
+                data.redes.website || 'No configurado';
+        }
+
+        // Poblar formularios de edición
+        function populateEditForms(data) {
+            // Información básica
+            document.getElementById('edit-name').value = data.nombre;
+            document.getElementById('edit-food-type').value = data.tipoComida || '';
+            document.getElementById('edit-phone').value = data.telefono;
+            document.getElementById('edit-whatsapp').value = data.whatsappPedidos || '';
+            document.getElementById('edit-email').value = data.email;
+            document.getElementById('edit-price').value = data.precioPromedio || '';
+
+            if (data.opcionesPago) {
+                document.getElementById('edit-pay-cash').checked = data.opcionesPago.efectivo !== false;
+                document.getElementById('edit-pay-card').checked = !!data.opcionesPago.tarjeta;
+                document.getElementById('edit-pay-transfer').checked = !!data.opcionesPago.transferencia;
+            } else {
+                document.getElementById('edit-pay-cash').checked = true;
+                document.getElementById('edit-pay-card').checked = false;
+                document.getElementById('edit-pay-transfer').checked = false;
+            }
+
+            document.getElementById('edit-description').value = typeof data.descripcion === 'object' && data.descripcion !== null ? (data.descripcion.es || '') : (data.descripcion || '');
+
+            // Dirección
+            document.getElementById('edit-street').value = data.direccion.calle;
+            document.getElementById('edit-city').value = data.direccion.ciudad;
+            document.getElementById('edit-zip').value = data.direccion.codigoPostal;
+
+            if (data.direccion.coordenadas) {
+                document.getElementById('edit-lat').value = data.direccion.coordenadas.lat;
+                document.getElementById('edit-lng').value = data.direccion.coordenadas.lng;
+            } else {
+                document.getElementById('edit-lat').value = '';
+                document.getElementById('edit-lng').value = '';
+            }
+
+            // Init Map after setting values
+            initMap(data.direccion.coordenadas);
+
+            // Redes sociales
+            document.getElementById('edit-facebook').value = data.redes.facebook || '';
+            document.getElementById('edit-instagram').value = data.redes.instagram || '';
+            document.getElementById('edit-website').value = data.redes.website || '';
+
+            // Horarios
+            Object.keys(data.horarios).forEach(dia => {
+                const apertura = document.querySelector(`input[name="${dia}_apertura"]`);
+                const cierre = document.querySelector(`input[name="${dia}_cierre"]`);
+                const checkbox = document.getElementById(`${dia}_abierto`);
+
+                if (apertura && cierre && checkbox) {
+                    const horario = data.horarios[dia];
+                    const isOpen = horario.apertura && horario.cierre;
+
+                    checkbox.checked = isOpen;
+                    apertura.value = horario.apertura || '';
+                    cierre.value = horario.cierre || '';
+
+                    // Aplicar estado de los inputs
+                    toggleDayInputs(dia);
+                }
+            });
+
+            // Menú
+            menuData = data.menu || [];
+            renderMenuEditor();
+
+            // Servicios (Amenities)
+            if (data.servicios) {
+                document.getElementById('srv-pet').checked = !!data.servicios.petFriendly;
+                document.getElementById('srv-parking').checked = !!data.servicios.estacionamiento;
+                document.getElementById('srv-music').checked = !!data.servicios.musicaEnVivo;
+                document.getElementById('srv-vegan').checked = !!data.servicios.opcionesVeganas;
+                document.getElementById('srv-kids').checked = !!data.servicios.areaInfantil;
+                document.getElementById('srv-wifi').checked = !!data.servicios.wifiGratis;
+            } else {
+                ['pet', 'parking', 'music', 'vegan', 'kids', 'wifi'].forEach(srv => document.getElementById(`srv-${srv}`).checked = false);
+            }
+
+            // Promociones
+            window.promotionsData = data.promociones || [];
+            renderPromotions();
+
+            // Cargar Reseñas
+            loadReviews();
+        }
+
+        // Función para inicializar el mapa
+        function initMap(coords) {
+            // Default Jalpan de Serra coordinates
+            const defaultLng = -99.4752;
+            const defaultLat = 21.2185;
+
+            const initialLng = coords && coords.lng ? coords.lng : defaultLng;
+            const initialLat = coords && coords.lat ? coords.lat : defaultLat;
+
+            // Set inputs if they were empty
+            if (!document.getElementById('edit-lat').value) {
+                document.getElementById('edit-lat').value = initialLat;
+                document.getElementById('edit-lng').value = initialLng;
+            }
+
+            if (map) {
+                map.setCenter([initialLng, initialLat]);
+                marker.setLngLat([initialLng, initialLat]);
+                return;
+            }
+
+            map = new mapboxgl.Map({
+                container: 'admin-map',
+                style: 'mapbox://styles/mapbox/streets-v11',
+                center: [initialLng, initialLat],
+                zoom: 14
+            });
+
+            marker = new mapboxgl.Marker({ draggable: true })
+                .setLngLat([initialLng, initialLat])
+                .addTo(map);
+
+            function onDragEnd() {
+                const lngLat = marker.getLngLat();
+                document.getElementById('edit-lng').value = lngLat.lng;
+                document.getElementById('edit-lat').value = lngLat.lat;
+            }
+
+            marker.on('dragend', onDragEnd);
+
+            map.on('click', (e) => {
+                marker.setLngLat(e.lngLat);
+                onDragEnd();
+            });
+
+            // Arreglar problema de renderizado cuando está en una pestaña/contenedor oculto al cargar
+            setTimeout(() => {
+                map.resize();
+            }, 500);
+        }
+
+        // Función para controlar el estado de los campos de horario
+        function toggleDayInputs(day) {
+            const checkbox = document.getElementById(`${day}_abierto`);
+            const aperturaInput = document.getElementById(`${day}_apertura`);
+            const cierreInput = document.getElementById(`${day}_cierre`);
+
+            if (checkbox.checked) {
+                aperturaInput.disabled = false;
+                cierreInput.disabled = false;
+                aperturaInput.required = true;
+                cierreInput.required = true;
+                aperturaInput.style.opacity = '1';
+                cierreInput.style.opacity = '1';
+            } else {
+                aperturaInput.disabled = true;
+                cierreInput.disabled = true;
+                aperturaInput.required = false;
+                cierreInput.required = false;
+                aperturaInput.value = '';
+                cierreInput.value = '';
+                aperturaInput.style.opacity = '0.5';
+                cierreInput.style.opacity = '0.5';
+            }
+        }
+
+        // Track which categories are expanded
+        let expandedCategories = new Set([0]);
+
+        function toggleCategory(catIndex) {
+            if (expandedCategories.has(catIndex)) {
+                expandedCategories.delete(catIndex);
+            } else {
+                expandedCategories.add(catIndex);
+            }
+            renderMenuEditor();
+        }
+
+        // Renderizar editor de menú
+        function renderMenuEditor() {
+            const menuEditor = document.getElementById('menu-editor');
+            menuEditor.innerHTML = '';
+
+            if (menuData.length === 0) {
+                menuEditor.innerHTML = '<p style="text-align:center; color:var(--gray-500); padding:2rem;">No hay categorías aún. Haz clic en "Agregar Categoría" para comenzar.</p>';
+                return;
+            }
+
+            menuData.forEach((categoria, catIndex) => {
+                const isExpanded = expandedCategories.has(catIndex);
+                const itemCount = (categoria.items || []).length;
+
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'menu-category';
+                categoryDiv.style.marginBottom = '0.75rem';
+                categoryDiv.style.border = '1px solid var(--gray-200)';
+                categoryDiv.style.borderRadius = '0.75rem';
+                categoryDiv.style.overflow = 'hidden';
+                categoryDiv.style.transition = 'box-shadow 0.2s';
+                if (isExpanded) categoryDiv.style.boxShadow = '0 2px 12px rgba(0,0,0,0.08)';
+
+                categoryDiv.innerHTML = `
+                    <div onclick="toggleCategory(${catIndex})" 
+                         style="display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1.25rem; background: ${isExpanded ? 'var(--primary)' : 'var(--gray-50)'}; cursor: pointer; transition: all 0.2s; user-select: none;"
+                         onmouseover="if(!${isExpanded}) this.style.background='var(--gray-100)'"
+                         onmouseout="if(!${isExpanded}) this.style.background='var(--gray-50)'">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <i class="fas fa-chevron-${isExpanded ? 'down' : 'right'}" style="font-size: 0.8rem; color: ${isExpanded ? 'white' : 'var(--gray-500)'}; transition: transform 0.2s;"></i>
+                            <span style="font-weight: 700; font-size: 1.05rem; color: ${isExpanded ? 'white' : 'var(--gray-800)'};">${categoria.categoria?.es || categoria.categoria}</span>
+                            <span style="background: ${isExpanded ? 'rgba(255,255,255,0.25)' : 'var(--gray-200)'}; color: ${isExpanded ? 'white' : 'var(--gray-600)'}; padding: 0.15rem 0.6rem; border-radius: 50px; font-size: 0.78rem; font-weight: 600;">${itemCount} ${itemCount === 1 ? 'item' : 'items'}</span>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; align-items: center;" onclick="event.stopPropagation()">
+                            <button onclick="event.stopPropagation(); removeCategory(${catIndex})" class="btn btn-small" style="background: ${isExpanded ? 'rgba(255,255,255,0.2)' : 'var(--gray-200)'}; color: ${isExpanded ? 'white' : 'var(--gray-600)'}; border: none; padding: 0.35rem 0.6rem; font-size: 0.8rem;" title="Eliminar">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="cat-body-${catIndex}" style="display: ${isExpanded ? 'block' : 'none'}; padding: 1rem 1.25rem; background: white;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                            <label style="font-weight: 600; color: var(--gray-600); font-size:0.85rem; white-space:nowrap;">Nombre:</label>
+                            <input type="text" value="${categoria.categoria?.es || categoria.categoria}" onchange="updateCategoryName(${catIndex}, this.value)" 
+                                   class="form-input" style="flex: 1;">
+                        </div>
+                        <div id="items-${catIndex}"></div>
+                        <button onclick="addMenuItem(${catIndex})" class="btn btn-add btn-small" style="margin-top: 0.5rem;">
+                            <i class="fas fa-plus"></i> Agregar Platillo
+                        </button>
+                    </div>
+                `;
+                menuEditor.appendChild(categoryDiv);
+
+                // Renderizar items
+                const itemsContainer = document.getElementById(`items-${catIndex}`);
+                categoria.items.forEach((item, itemIndex) => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'menu-item';
+
+                    const imgUrl = item.imagen ? item.imagen.url : 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><rect width="120" height="120" fill="%23f3f4f6"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="32">🍽️</text></svg>';
+                    const hasValidImage = !!item.imagen;
+
+                    const uploadControl = (categoria._id && item._id)
+                        ? `<label class="btn btn-small" style="background:var(--gray-100); color:var(--text-dark); border:1px solid var(--gray-300); cursor:pointer; width:100%; text-align:center; padding:0.5rem; font-size:0.85rem; font-weight:600; margin-top:0.5rem; transition: background 0.2s;">
+                               <i class="fas fa-camera" style="margin-right: 0.3rem;"></i> Cambiar Foto
+                               <input type="file" accept="image/*" style="display:none;" onchange="uploadMenuItemImage(this, '${categoria._id}', '${item._id}', ${catIndex}, ${itemIndex})">
+                           </label>`
+                        : `<div style="font-size: 0.8rem; color: var(--warning); text-align:center; padding:0.5rem; background:rgba(245,158,11,0.1); border-radius:0.4rem; margin-top:0.5rem;">Guarda el menú primero para subir foto</div>`;
+
+                    itemDiv.innerHTML = `
+                        <div class="menu-item-image-container">
+                            <div class="menu-item-image" style="${hasValidImage ? 'cursor:pointer; transition: transform 0.2s;' : ''}" ${hasValidImage ? `onclick="openMenuLightbox(${catIndex}, ${itemIndex})" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'"` : ''}>
+                                <img src="${imgUrl}" alt="Platillo" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                            ${uploadControl}
+                        </div>
+                        <div class="menu-item-details">
+                            <div>
+                                <div class="menu-item-header">
+                                    <input type="text" value="${item.nombre?.es || item.nombre || ''}" placeholder="Nombre del platillo..." class="form-input" style="font-weight: 700; font-size: 1.15rem; flex: 1; min-width: 0;"
+                                           onchange="updateMenuItem(${catIndex}, ${itemIndex}, 'nombre', this.value)">
+                                    <button onclick="removeMenuItem(${catIndex}, ${itemIndex})" class="btn btn-danger btn-small" title="Eliminar platillo" style="flex-shrink: 0;">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                                </div>
+                                <textarea placeholder="Descripción del platillo (ingredientes, preparación, tamaño...)" class="form-input" style="resize: vertical; min-height: 80px; font-size: 0.95rem; width: 100%;"
+                                       onchange="updateMenuItem(${catIndex}, ${itemIndex}, 'descripcion', this.value)">${item.descripcion?.es || item.descripcion || ''}</textarea>
+                                <label style="display:flex; align-items:center; gap:0.5rem; margin-top:0.5rem; cursor:pointer; font-size:0.9rem; color:var(--gray-700);">
+                                    <input type="checkbox" ${item.esEspecialidad ? 'checked' : ''} onchange="updateMenuItem(${catIndex}, ${itemIndex}, 'esEspecialidad', this.checked)"> 
+                                    <i class="fas fa-star" style="color:var(--warning);"></i> Marcar como Platillo Especial (Chef's Special)
+                                </label>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                                <span style="font-weight: 600; color:var(--gray-600); font-size: 1.1rem; white-space: nowrap;">Precio ($):</span>
+                                <input type="number" value="${item.precio}" placeholder="0.00" min="0" step="0.01" class="form-input" style="width: 140px; font-weight: 700; color:var(--success); font-size: 1.1rem; flex-shrink: 0;"
+                                       onchange="updateMenuItem(${catIndex}, ${itemIndex}, 'precio', parseFloat(this.value))">
+                            </div>
+                        </div>
+                    `;
+                    itemsContainer.appendChild(itemDiv);
+                });
+            });
+        }
+
+        // Funciones del menú
+        function addMenuCategory() {
+            menuData.push({
+                categoria: 'Nueva Categoría',
+                items: []
+            });
+            // Auto-expand the new category
+            expandedCategories.add(menuData.length - 1);
+            renderMenuEditor();
+        }
+
+        function removeCategory(catIndex) {
+            if (confirm('¿Estás seguro de eliminar esta categoría?')) {
+                menuData.splice(catIndex, 1);
+                renderMenuEditor();
+            }
+        }
+
+        function addMenuItem(catIndex) {
+            menuData[catIndex].items.push({
+                nombre: '',
+                descripcion: '',
+                precio: 0
+            });
+            renderMenuEditor();
+        }
+
+        function removeMenuItem(catIndex, itemIndex) {
+            if (confirm('¿Eliminar este platillo?')) {
+                menuData[catIndex].items.splice(itemIndex, 1);
+                renderMenuEditor();
+            }
+        }
+
+        function updateCategoryName(catIndex, newName) {
+            menuData[catIndex].categoria = newName;
+        }
+
+        function updateMenuItem(catIndex, itemIndex, field, value) {
+            menuData[catIndex].items[itemIndex][field] = value;
+        }
+
+        async function uploadMenuItemImage(input, categoryId, itemId, catIndex, itemIndex) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const token = localStorage.getItem('authToken');
+            const formData = new FormData();
+            formData.append('image', file);
+
+            try {
+                showAlert('menu-alert', 'Subiendo imagen del platillo...', 'info');
+
+                const response = await fetch(`${API_BASE}/restaurants/menu/${categoryId}/item/${itemId}/image`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert('menu-alert', 'Imagen subida exitosamente', 'success');
+                    // Actualizar el estado local con la nueva imagen de forma reactiva
+                    menuData[catIndex].items[itemIndex].imagen = result.data.imagen;
+                    renderMenuEditor();
+                    showNotification('Imagen actualizada', 'success');
+                } else {
+                    showAlert('menu-alert', result.message || 'Error al subir imagen', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('menu-alert', 'Error de conexión al subir imagen', 'error');
+            }
+        }
+
+        // Guardar menú
+        async function saveMenu() {
+            const token = localStorage.getItem('authToken');
+
+            try {
+                showAlert('menu-alert', 'Guardando menú...', 'info');
+
+                const response = await fetch(`${API_BASE}/admin/my-restaurant/menu`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ menu: menuData })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert('menu-alert', 'Menú actualizado exitosamente', 'success');
+                    loadRestaurantData(); // Recargar datos
+                    showNotification('Menú actualizado exitosamente', 'success');
+                } else {
+                    showAlert('menu-alert', result.message || 'Error al actualizar menú', 'error');
+                }
+            } catch (error) {
+                showAlert('menu-alert', 'Error de conexión', 'error');
+                showNotification('Error de conexión', 'error');
+            }
+        }
+
+        // Manejadores de formularios
+        function setupFormHandlers() {
+            // Información básica
+            document.getElementById('basic-form').addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                const formData = new FormData(this);
+                const data = Object.fromEntries(formData);
+
+                data.opcionesPago = {
+                    efectivo: formData.has('pagoEfectivo'),
+                    tarjeta: formData.has('pagoTarjeta'),
+                    transferencia: formData.has('pagoTransferencia')
+                };
+
+                delete data.pagoEfectivo;
+                delete data.pagoTarjeta;
+                delete data.pagoTransferencia;
+
+                if (data.precioPromedio) data.precioPromedio = Number(data.precioPromedio);
+
+                // IMPORTANTE: Asegurarnos de que descripcion sea un objeto para evitar CastError de Mongoose
+                if (typeof data.descripcion === 'string') {
+                    data.descripcion = { es: data.descripcion };
+                }
+
+                await submitForm('basic-info', data, 'basic-alert', 'Información básica actualizada');
+            });
+
+            // Dirección
+            document.getElementById('address-form').addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                const formData = new FormData(this);
+                const direccion = {
+                    calle: formData.get('calle'),
+                    ciudad: formData.get('ciudad'),
+                    codigoPostal: formData.get('codigoPostal')
+                };
+
+                const lat = formData.get('lat');
+                const lng = formData.get('lng');
+                if (lat && lng) {
+                    direccion.lat = lat;
+                    direccion.lng = lng;
+                }
+
+                await submitForm('address', { direccion }, 'address-alert', 'Dirección actualizada');
+            });
+
+            // Redes sociales
+            document.getElementById('social-form').addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                const formData = new FormData(this);
+                const redes = {
+                    facebook: formData.get('facebook'),
+                    instagram: formData.get('instagram'),
+                    website: formData.get('website')
+                };
+
+                await submitForm('social-media', { redes }, 'social-alert', 'Redes sociales actualizadas');
+            });
+
+            // Horarios
+            document.getElementById('schedule-form').addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                const formData = new FormData(this);
+                const horarios = {};
+
+                ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'].forEach(dia => {
+                    const isOpen = formData.get(`${dia}_abierto`) === 'on';
+
+                    if (isOpen) {
+                        horarios[dia] = {
+                            abierto: true,
+                            apertura: formData.get(`${dia}_apertura`),
+                            cierre: formData.get(`${dia}_cierre`)
+                        };
+                    } else {
+                        horarios[dia] = {
+                            abierto: false,
+                            apertura: '',
+                            cierre: ''
+                        };
+                    }
+                });
+
+                await submitForm('schedule', { horarios }, 'schedule-alert', 'Horarios actualizados');
+            });
+
+            // Servicios/Amenities
+            const amenitiesForm = document.getElementById('amenities-form');
+            if (amenitiesForm) {
+                amenitiesForm.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+                    const servicios = {
+                        petFriendly: document.getElementById('srv-pet').checked,
+                        estacionamiento: document.getElementById('srv-parking').checked,
+                        musicaEnVivo: document.getElementById('srv-music').checked,
+                        opcionesVeganas: document.getElementById('srv-vegan').checked,
+                        areaInfantil: document.getElementById('srv-kids').checked,
+                        wifiGratis: document.getElementById('srv-wifi').checked
+                    };
+                    await submitForm('amenities', { servicios }, 'amenities-alert', 'Servicios actualizados correctamente');
+                });
+            }
+
+        }
+
+        // ===== FUNCIONES DE PROMOCIONES =====
+        // Deep extract a string from nested bilingual objects like {es: {es: {es: "text"}}}
+        function deepGetStr(val) {
+            if (!val) return '';
+            if (typeof val === 'string') return val;
+            // Recursively unwrap .es or .en
+            let current = val;
+            for (let i = 0; i < 10 && typeof current === 'object' && current !== null; i++) {
+                current = current.es || current.en || '';
+            }
+            return typeof current === 'string' ? current : '';
+        }
+
+        function renderPromotions() {
+            const container = document.getElementById('promotions-container');
+            container.innerHTML = '';
+            if (!window.promotionsData || window.promotionsData.length === 0) {
+                container.innerHTML = '<p style="color:var(--gray-500); text-align:center; padding: 1rem 0;">No tienes promociones configuradas.</p>';
+                return;
+            }
+
+            // Clean up nested objects in promotionsData before rendering
+            window.promotionsData.forEach((promo, idx) => {
+                if (typeof promo.titulo === 'object') window.promotionsData[idx].titulo = deepGetStr(promo.titulo);
+                if (typeof promo.descripcion === 'object') window.promotionsData[idx].descripcion = deepGetStr(promo.descripcion);
+            });
+
+            window.promotionsData.forEach((promo, index) => {
+                const div = document.createElement('div');
+                div.style.cssText = 'border: 1px solid var(--gray-200); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem; position: relative;';
+
+                const tituloVal = typeof promo.titulo === 'string' ? promo.titulo : deepGetStr(promo.titulo);
+                const descVal = typeof promo.descripcion === 'string' ? promo.descripcion : deepGetStr(promo.descripcion);
+
+                div.innerHTML = `
+                    <button type="button" onclick="removePromotion(${index})" class="btn btn-danger btn-small" style="position:absolute; top:10px; right:10px;" title="Eliminar"><i class="fas fa-trash"></i></button>
+                    <div class="form-group" style="margin-right:40px;">
+                        <label class="form-label">Título de la Promoción</label>
+                        <input type="text" class="form-input" value="${tituloVal}" onchange="updatePromotion(${index}, 'titulo', this.value)" placeholder="Ej. 2x1 en Margaritas">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Descripción</label>
+                        <textarea class="form-input" onchange="updatePromotion(${index}, 'descripcion', this.value)" placeholder="Detalles, términos y condiciones...">${descVal}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Imagen de la Promoción</label>
+                        ${promo.imagen ? '<div style="margin-bottom:0.5rem;"><img src="' + promo.imagen + '" alt="Promoción" style="max-height:120px; border-radius:0.5rem; object-fit:cover;"><button type="button" onclick="updatePromotion(' + index + ', \'imagen\', \'\'); renderPromotions();" class="btn btn-danger btn-small" style="margin-left:0.5rem; vertical-align:top;" title="Quitar imagen"><i class="fas fa-times"></i></button></div>' : ''}
+                        <input type="file" accept="image/*" onchange="uploadPromoImage(${index}, this)" style="font-size:0.85rem;">
+                    </div>
+                    <div style="display:flex; gap:1rem; align-items:center;">
+                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+                            <input type="checkbox" ${promo.activa !== false ? 'checked' : ''} onchange="updatePromotion(${index}, 'activa', this.checked)"> Promoción Activa
+                        </label>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function addPromotion() {
+            if (!window.promotionsData) window.promotionsData = [];
+            window.promotionsData.push({
+                titulo: '',
+                descripcion: '',
+                imagen: '',
+                activa: true
+            });
+            renderPromotions();
+        }
+
+        function removePromotion(index) {
+            if (confirm('¿Eliminar esta promoción?')) {
+                window.promotionsData.splice(index, 1);
+                renderPromotions();
+            }
+        }
+
+        function updatePromotion(index, field, value) {
+            window.promotionsData[index][field] = value;
+        }
+
+        async function uploadPromoImage(index, input) {
+            if (!input.files || !input.files[0]) return;
+            const token = localStorage.getItem('authToken');
+            const formData = new FormData();
+            formData.append('imagen', input.files[0]);
+
+            try {
+                showAlert('promotions-alert', 'Subiendo imagen...', 'info');
+                const response = await fetch(`${API_BASE}/admin/my-restaurant/promotions/upload-image`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+                const result = await response.json();
+                if (result.success) {
+                    window.promotionsData[index].imagen = result.imageUrl;
+                    showAlert('promotions-alert', 'Imagen subida correctamente', 'success');
+                    renderPromotions();
+                } else {
+                    showAlert('promotions-alert', result.message || 'Error subiendo imagen', 'error');
+                }
+            } catch (err) {
+                console.error('Error subiendo imagen:', err);
+                showAlert('promotions-alert', 'Error de conexión al subir imagen', 'error');
+            }
+        }
+
+        async function savePromotions() {
+            const token = localStorage.getItem('authToken');
+            try {
+                showAlert('promotions-alert', 'Guardando...', 'info');
+                const response = await fetch(`${API_BASE}/admin/my-restaurant/promotions`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ promociones: window.promotionsData })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showAlert('promotions-alert', 'Promociones actualizadas', 'success');
+                    showNotification('Promociones actualizadas', 'success');
+                    window.promotionsData = result.data.promociones || [];
+                    renderPromotions();
+                } else throw result;
+            } catch (err) {
+                showAlert('promotions-alert', err.message || 'Error al guardar promociones', 'error');
+            }
+        }
+
+        // ===== FUNCIONES DE RESEÑAS =====
+        async function loadReviews() {
+            const token = localStorage.getItem('authToken');
+            const container = document.getElementById('reviews-container');
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/my-restaurant/reviews`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const result = await response.json();
+                if (result.success) {
+                    renderReviews(result.data);
+                } else throw result;
+            } catch (err) {
+                container.innerHTML = '<p style="color:var(--error); text-align:center;">Error al cargar reseñas.</p>';
+            }
+        }
+
+        function renderReviews(reviews) {
+            const container = document.getElementById('reviews-container');
+            container.innerHTML = '';
+            if (reviews.length === 0) {
+                container.innerHTML = '<p style="color:var(--gray-500); text-align:center;">No hay reseñas de clientes.</p>';
+                return;
+            }
+
+            reviews.forEach(review => {
+                const user = review.userId ? `${review.userId.nombre || ''} ${review.userId.apellido || ''}`.trim() : 'Usuario Anónimo';
+                const date = new Date(review.fechaCreacion).toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' });
+                const replyDate = review.fechaRespuesta ? new Date(review.fechaRespuesta).toLocaleDateString('es-MX') : null;
+
+                const starsHtml = Array(5).fill(0).map((_, i) => `<i class="fas fa-star" style="color: ${i < review.rating ? '#fbbf24' : '#e5e7eb'};"></i>`).join('');
+
+                const div = document.createElement('div');
+                div.style.border = '1px solid var(--gray-200)';
+                div.style.padding = '1rem';
+                div.style.borderRadius = '0.5rem';
+                div.style.backgroundColor = '#f9fafb';
+
+                div.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 0.5rem;">
+                        <div>
+                            <strong style="color:var(--text-dark);">${user}</strong>
+                            <div style="font-size:0.85rem; color:var(--gray-500); margin-top:0.2rem;">${date}</div>
+                        </div>
+                        <div>${starsHtml}</div>
+                    </div>
+                    <p style="color:var(--text-gray); margin-bottom: 1rem;">"${review.comentario}"</p>
+                    <div style="border-top: 1px dashed var(--gray-300); padding-top: 1rem;">
+                        ${review.respuestaAdmin ? `
+                            <div style="background:white; padding:0.8rem; border-left:4px solid var(--primary); border-radius:4px;">
+                                <strong style="font-size:0.85rem; color:var(--primary);">Tu Respuesta (${replyDate}):</strong>
+                                <p style="font-size:0.9rem; color:var(--text-gray); margin-top:0.3rem;">${review.respuestaAdmin}</p>
+                            </div>
+                        ` : `
+                            <div id="reply-form-${review._id}" style="display:flex; gap:0.5rem;">
+                                <input type="text" id="reply-input-${review._id}" class="form-input" style="flex:1;" placeholder="Escribe una respuesta pública...">
+                                <button onclick="submitReviewReply('${review._id}')" class="btn btn-primary btn-small">Responder</button>
+                            </div>
+                        `}
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        async function submitReviewReply(reviewId) {
+            const input = document.getElementById(`reply-input-${reviewId}`);
+            const respuesta = input.value.trim();
+            if (!respuesta) return alert('La respuesta no puede estar vacía');
+
+            const token = localStorage.getItem('authToken');
+            try {
+                input.disabled = true;
+                const response = await fetch(`${API_BASE}/admin/my-restaurant/reviews/${reviewId}/reply`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ respuesta })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showNotification('Respuesta guardada', 'success');
+                    loadReviews();
+                } else {
+                    input.disabled = false;
+                    throw result;
+                }
+            } catch (err) {
+                alert(err.message || 'Error al guardar respuesta');
+                input.disabled = false;
+            }
+        }
+
+        // Función genérica para enviar formularios
+        async function submitForm(endpoint, data, alertId, successMessage) {
+            const token = localStorage.getItem('authToken');
+
+            try {
+                showAlert(alertId, 'Guardando...', 'info');
+
+                const response = await fetch(`${API_BASE}/admin/my-restaurant/${endpoint}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert(alertId, successMessage, 'success');
+                    showNotification(successMessage, 'success');
+                    loadRestaurantData(); // Recargar datos
+                } else {
+                    showAlert(alertId, result.message || 'Error al actualizar', 'error');
+                }
+            } catch (error) {
+                showAlert(alertId, 'Error de conexión', 'error');
+                showNotification('Error de conexión', 'error');
+            }
+        }
+
+        // Función para mostrar alertas en formularios
+        function showAlert(containerId, message, type) {
+            const container = document.getElementById(containerId);
+            const className = type === 'success' ? 'notification success' :
+                type === 'error' ? 'notification error' : 'notification';
+
+            container.innerHTML = `<div class="${className}" style="position: static; transform: none; margin-bottom: 1rem;">${message}</div>`;
+
+            if (type !== 'info') {
+                setTimeout(() => {
+                    container.innerHTML = '';
+                }, 5000);
+            }
+        }
+
+        // Logout
+        function logout() {
+            const confirmed = confirm('¿Estás seguro de que quieres cerrar sesión?');
+
+            if (confirmed) {
+                localStorage.removeItem('authToken');
+                showNotification('Sesión cerrada correctamente', 'info');
+
+                setTimeout(() => {
+                    window.location.href = '/login.html';
+                }, 1000);
+            }
+        }
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', async function () {
+            // Verificar autenticación
+            const isAuthenticated = await checkAuth();
+
+            if (isAuthenticated) {
+                // Cargar datos del restaurante
+                await loadRestaurantData();
+
+                // Configurar manejadores de formularios
+                setupFormHandlers();
+
+                // Logout button
+                const logoutBtn = document.getElementById('logout-btn');
+                if (logoutBtn) {
+                    logoutBtn.addEventListener('click', logout);
+                }
+            }
+
+            console.log('Página de gestión de restaurante cargada');
+        });
+
+        // ===== LIGHTBOX LOGIC FOR MENU ITEMS =====
+        let menuGalleryValidImages = [];
+        let currentMenuGalleryIndex = 0;
+
+        function buildMenuGallery() {
+            menuGalleryValidImages = [];
+            menuData.forEach((cat, cIdx) => {
+                cat.items.forEach((item, iIdx) => {
+                    if (item.imagen && item.imagen.url) {
+                        menuGalleryValidImages.push({
+                            url: item.imagen.url,
+                            nombre: item.nombre || 'Platillo',
+                            catIndex: cIdx,
+                            itemIndex: iIdx
+                        });
+                    }
+                });
+            });
+        }
+
+        window.openMenuLightbox = function (catIndex, itemIndex) {
+            buildMenuGallery();
+            if (menuGalleryValidImages.length === 0) return;
+
+            // Find index of clicked item in the solid array
+            const targetIndex = menuGalleryValidImages.findIndex(img => img.catIndex === catIndex && img.itemIndex === itemIndex);
+            if (targetIndex !== -1) {
+                currentMenuGalleryIndex = targetIndex;
+                updateMenuLightboxUI();
+                document.getElementById('menu-lightbox').style.display = 'flex';
+                document.body.style.overflow = 'hidden'; // Prevent scrolling
+            }
+        };
+
+        window.closeMenuLightbox = function () {
+            document.getElementById('menu-lightbox').style.display = 'none';
+            document.body.style.overflow = '';
+        };
+
+        window.nextMenuImage = function (e) {
+            if (e) e.stopPropagation();
+            if (menuGalleryValidImages.length <= 1) return;
+            currentMenuGalleryIndex = (currentMenuGalleryIndex + 1) % menuGalleryValidImages.length;
+            updateMenuLightboxUI();
+        };
+
+        window.prevMenuImage = function (e) {
+            if (e) e.stopPropagation();
+            if (menuGalleryValidImages.length <= 1) return;
+            currentMenuGalleryIndex = (currentMenuGalleryIndex - 1 + menuGalleryValidImages.length) % menuGalleryValidImages.length;
+            updateMenuLightboxUI();
+        };
+
+        function updateMenuLightboxUI() {
+            if (menuGalleryValidImages.length === 0) return;
+            const currentImgInfo = menuGalleryValidImages[currentMenuGalleryIndex];
+            document.getElementById('menu-lightbox-img').src = currentImgInfo.url;
+            document.getElementById('menu-lightbox-caption').textContent = `${currentImgInfo.nombre} (${currentMenuGalleryIndex + 1} de ${menuGalleryValidImages.length})`;
+
+            // Hide/show arrows if only 1 image
+            const displayArrows = menuGalleryValidImages.length > 1 ? 'flex' : 'none';
+            document.getElementById('menu-lightbox-prev').style.display = displayArrows;
+            document.getElementById('menu-lightbox-next').style.display = displayArrows;
+        }
+
+        // Close lightbox on click outside the image
+        document.getElementById('menu-lightbox').addEventListener('click', function (e) {
+            if (e.target === this) closeMenuLightbox();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && document.getElementById('menu-lightbox').style.display === 'flex') {
+                closeMenuLightbox();
+            }
+            if (e.key === 'ArrowRight' && document.getElementById('menu-lightbox').style.display === 'flex') {
+                nextMenuImage();
+            }
+            if (e.key === 'ArrowLeft' && document.getElementById('menu-lightbox').style.display === 'flex') {
+                prevMenuImage();
+            }
+        });
+    </script>
+</body>
+
+</html>

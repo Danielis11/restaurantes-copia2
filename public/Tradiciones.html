@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tradiciones - Jalpan de Serra</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables CSS existentes */
+        
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--background);
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section {
+            padding: 4rem 0;
+        }
+
+        .section-alt {
+            background-color: var(--surface);
+            border-radius: var(--border-radius);
+            padding: 4rem 2rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+            position: relative;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.1rem;
+            color: var(--text-light);
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 2px;
+        }
+
+        /* Tradiciones con Imágenes - Nuevo Diseño */
+        .tradiciones-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin-top: 2rem;
+        }
+
+        .tradicion-card {
+            background: var(--background);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .tradicion-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .tradicion-image-container {
+            position: relative;
+            height: 250px;
+            overflow: hidden;
+        }
+
+        .tradicion-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .tradicion-card:hover .tradicion-image {
+            transform: scale(1.05);
+        }
+
+        .tradicion-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                135deg, 
+                rgba(231, 76, 60, 0.8) 0%, 
+                rgba(192, 57, 43, 0.9) 100%
+            );
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .tradicion-card:hover .tradicion-overlay {
+            opacity: 1;
+        }
+
+        .tradicion-icon-overlay {
+            font-size: 3rem;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .tradicion-content {
+            padding: 2rem;
+        }
+
+        .tradicion-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .tradicion-icon {
+            font-size: 2rem;
+            color: var(--primary-color);
+            background: var(--surface);
+            padding: 0.8rem;
+            border-radius: 50%;
+            min-width: 3.6rem;
+            text-align: center;
+        }
+
+        .tradicion-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        .tradicion-description {
+            color: var(--text-light);
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        .tradicion-features {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .tradicion-feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            color: var(--text-light);
+        }
+
+        .tradicion-feature-item i {
+            color: var(--secondary-color);
+            font-size: 1rem;
+            min-width: 1.2rem;
+        }
+
+        /* Tradiciones Destacadas - Layout Especial */
+        .tradicion-destacada {
+            grid-column: span 2;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            min-height: 400px;
+        }
+
+        .tradicion-destacada .tradicion-image-container {
+            height: 100%;
+        }
+
+        .tradicion-destacada .tradicion-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 3rem;
+        }
+
+        .tradicion-destacada .tradicion-title {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .tradicion-destacada .tradicion-description {
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        /* Galería de Tradiciones */
+        .tradiciones-gallery {
+            margin-top: 3rem;
+            text-align: center;
+        }
+
+        .gallery-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            height: 200px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.02);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .gallery-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            color: white;
+            padding: 1rem;
+            font-size: 0.9rem;
+            transform: translateY(100%);
+            transition: var(--transition);
+        }
+
+        .gallery-item:hover .gallery-caption {
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .tradicion-destacada {
+                grid-column: span 1;
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .tradiciones-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tradicion-destacada .tradicion-content {
+                padding: 2rem;
+            }
+
+            .tradicion-destacada .tradicion-title {
+                font-size: 1.5rem;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Tradiciones y Cultura Alimentaria -->
+        <section id="tradiciones" class="section section-alt">
+            <h2 class="section-title">Tradiciones y Cultura Alimentaria</h2>
+            <p class="section-subtitle">
+                Descubre las costumbres ancestrales y rituales culinarios que han dado forma 
+                a la identidad gastronómica de Jalpan de Serra a través de los siglos
+            </p>
+            
+            <div class="tradiciones-grid">
+                <!-- Tradición Destacada -->
+                <div class="tradicion-card tradicion-destacada">
+                    <div class="tradicion-image-container">
+                        <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" 
+                             alt="Cocina Comunitaria" class="tradicion-image">
+                        <div class="tradicion-overlay">
+                            <i class="fas fa-users tradicion-icon-overlay"></i>
+                        </div>
+                    </div>
+                    <div class="tradicion-content">
+                        <div class="tradicion-header">
+                            <div class="tradicion-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <h3 class="tradicion-title">Cocina Comunitaria Franciscana</h3>
+                        </div>
+                        <p class="tradicion-description">
+                            La tradición de la cocina comunitaria en Jalpan de Serra se remonta a la época 
+                            franciscana del siglo XVIII. Las familias se reúnen para preparar grandes festivales 
+                            gastronómicos donde cada generación aporta sus conocimientos culinarios, 
+                            fortaleciendo los lazos sociales y preservando recetas ancestrales que han 
+                            pasado de madre a hija durante más de 300 años.
+                        </p>
+                        <div class="tradicion-features">
+                            <div class="tradicion-feature-item">
+                                <i class="fas fa-clock"></i>
+                                <span>Tradición de más de 300 años</span>
+                            </div>
+                            <div class="tradicion-feature-item">
+                                <i class="fas fa-heart"></i>
+                                <span>Fortalece vínculos familiares</span>
+                            </div>
+                            <div class="tradicion-feature-item">
+                                <i class="fas fa-book"></i>
+                                <span>Preserva recetas ancestrales</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Festivales Gastronómicos -->
+                <div class="tradicion-card">
+                    <div class="tradicion-image-container">
+                        <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" 
+                             alt="Festivales Gastronómicos" class="tradicion-image">
+                        <div class="tradicion-overlay">
+                            <i class="fas fa-calendar-alt tradicion-icon-overlay"></i>
+                        </div>
+                    </div>
+                    <div class="tradicion-content">
+                        <div class="tradicion-header">
+                            <div class="tradicion-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <h3 class="tradicion-title">Festivales Gastronómicos</h3>
+                        </div>
+                        <p class="tradicion-description">
+                            Durante las festividades religiosas y cívicas se preparan platillos especiales 
+                            que han pasado de generación en generación, como el mole franciscano y los dulces de temporada.
+                        </p>
+                        <div class="tradicion-features">
+                            <div class="tradicion-feature-item">
+                                <i class="fas fa-church"></i>
+                                <span>Festividades religiosas</span>
+                            </div>
+                            <div class="tradicion-feature-item">
+                                <i class="fas fa-flag"></i>
+                                <span>Celebraciones cívicas</span>
+                            </div>
+                            <div class="tradicion-feature-item">
+                                <i class="fas fa-star"></i>
+                                <span>Platillos únicos</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Técnicas Artesanales -->
+                <div class="tradicion-card">
+                    <div class="tradicion-image-container">
+                        <img src="https://images.unsplash.com/photo-1574514538520-8c0ee6b58852?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" 
+                             alt="Técnicas Artesanales" class="tradicion-image">
+                        <div class="tradicion-overlay">
+                            <i class="fas fa-hands tradicion-icon-overlay"></i>
+                        </div>
+                    </div>
+                    <div class="tradicion-content">
+                        <div class="tradicion-header">
+                            <div class="tradicion-icon">
+                                <i class="fas fa-hands"></i>
+                            </div>
+                            <h3 class="tradicion-title">Técnicas Artesanales</h3>
+                        </div>
+                        <p class="tradicion-description">
+                            La elaboración de alimentos sigue métodos tradicionales como el uso de metates, 
+                            comales de barro y hornos de adobe, preservando sabores auténticos.
+                        </p>
+                        <div class="tradicion-features">
+                            <div class="tradicion-feature-item">
+                                <i class="fas fa-tools"></i>
+                                <span>Utensilios tradicionales</span>
+                            </div>
+                            <div class="tradicion-feature-item">
+                                <i class="fas fa-fire"></i>
+                                <span>Hornos de adobe</span>
+                            </div>
+                            <div class="tradicion-feature-item">
+                                <i class="fas fa-leaf"></i>
+                                <span>Métodos naturales</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rituales de Temporada -->
+                <div class="tradicion-card">
+                    <div class="tradicion-image-container">
+                        <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" 
+                             alt="Rituales de Temporada" class="tradicion-image">
+                        <div class="tradicion-overlay">
+                            <i class="fas fa-seedling tradicion-icon-overlay"></i>
+                        </div>
+                    </div>
+                    <div class="tradicion-content">
+                        <div class="tradicion-header">
+                            <div class="tradicion-icon">
+                                <i class="fas fa-seedling"></i>
+                            </div>
+                            <h3 class="tradicion-title">Rituales de Temporada</h3>
+                        </div>
+                        <p class="tradicion-description">
+                            La recolección de quelites, hongos y frutos silvestres sigue rituales ancestrales 
+                            que respetan los ciclos naturales de la Sierra Gorda.
+                        </p>
+                        <div class="tradicion-features">
+                            <div class="tradicion-feature-item">
+                                <i class="fas fa-mountain"></i>
+                                <span>Recolección serrana</span>
+                            </div>
+                            <div class="tradicion-feature-item">
+                                <i class="fas fa-sync"></i>
+                                <span>Ciclos naturales</span>
+                            </div>
+                            <div class="tradicion-feature-item">
+                                <i class="fas fa-tree"></i>
+                                <span>Respeto ambiental</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transmisión del Conocimiento -->
+                <div class="tradicion-card">
+                    <div class="tradicion-image-container">
+                        <img src="https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" 
+                             alt="Transmisión del Conocimiento" class="tradicion-image">
+                        <div class="tradicion-overlay">
+                            <i class="fas fa-graduation-cap tradicion-icon-overlay"></i>
+                        </div>
+                    </div>
+                    <div class="tradicion-content">
+                        <div class="tradicion-header">
+                            <div class="tradicion-icon">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <h3 class="tradicion-title">Transmisión del Conocimiento</h3>
+                        </div>
+                        <p class="tradicion-description">
+                            Las abuelas y madres enseñan a las nuevas generaciones no solo recetas, 
+                            sino también la filosofía y espiritualidad detrás de cada platillo.
+                        </p>
+                        <div class="tradicion-features">
+                            <div class="tradicion-feature-item">
+                                <i class="fas fa-female"></i>
+                                <span>Sabiduría matriarcal</span>
+                            </div>
+                            <div class="tradicion-feature-item">
+                                <i class="fas fa-brain"></i>
+                                <span>Conocimiento integral</span>
+                            </div>
+                            <div class="tradicion-feature-item">
+                                <i class="fas fa-infinity"></i>
+                                <span>Continuidad cultural</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Galería de Tradiciones -->
+            <div class="tradiciones-gallery">
+                <h3 class="gallery-title">Momentos de Nuestras Tradiciones</h3>
+                <div class="gallery-grid">
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1577106391729-4efb6bb8e7c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Cocina tradicional">
+                        <div class="gallery-caption">Cocina tradicional con comal de barro</div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1590650046871-92c887180603?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Metate ancestral">
+                        <div class="gallery-caption">Metate utilizado desde época prehispánica</div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1606890737304-57ded91e7d55?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Celebración comunitaria">
+                        <div class="gallery-caption">Celebración comunitaria franciscana</div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1587131020485-41e1be0b2c81?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Recolección de quelites">
+                        <div class="gallery-caption">Recolección tradicional de quelites</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Efecto de aparición al hacer scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Aplicar efecto a las tarjetas
+        document.querySelectorAll('.tradicion-card, .gallery-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        // Efecto lightbox simple para la galería
+        document.querySelectorAll('.gallery-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const img = this.querySelector('img');
+                const caption = this.querySelector('.gallery-caption').textContent;
+                
+                // Crear overlay
+                const overlay = document.createElement('div');
+                overlay.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: rgba(0, 0, 0, 0.9);
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 9999;
+                    cursor: pointer;
+                `;
+                
+                const largeImg = document.createElement('img');
+                largeImg.src = img.src;
+                largeImg.style.cssText = `
+                    max-width: 90%;
+                    max-height: 80%;
+                    border-radius: 8px;
+                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                `;
+                
+                const captionEl = document.createElement('p');
+                captionEl.textContent = caption;
+                captionEl.style.cssText = `
+                    color: white;
+                    font-size: 1.1rem;
+                    margin-top: 1rem;
+                    text-align: center;
+                `;
+                
+                overlay.appendChild(largeImg);
+                overlay.appendChild(captionEl);
+                document.body.appendChild(overlay);
+                
+                // Cerrar al hacer click
+                overlay.addEventListener('click', () => {
+                    document.body.removeChild(overlay);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

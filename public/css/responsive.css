@@ -1,0 +1,323 @@
+/* ===== CORRECCIONES PARA PROBLEMAS RESPONSIVE ===== */
+
+/* Solución para espacio blanco lateral */
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    overflow-x: hidden;
+    /* Evita scroll horizontal */
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
+}
+
+/* Asegurar que ningún elemento sobresalga */
+.hero-container,
+.results-container {
+    width: 100%;
+    max-width: 100%;
+    padding-left: var(--spacing-lg);
+    padding-right: var(--spacing-lg);
+    box-sizing: border-box;
+}
+
+/* ===== CORRECCIÓN PARA MENÚ MÓVIL ===== */
+
+/* ===== REEMPLAZO POR BOTTOM NAVIGATION ===== */
+.nav-toggle {
+    display: none !important;
+}
+
+@media (max-width: 768px) {
+
+    /* Ajustes al Header (Navegación Superior) */
+    .global-nav {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        transform: none !important;
+        background: rgba(255, 255, 255, 0.98) !important;
+    }
+
+    .nav-container {
+        padding: 0.5rem 1rem !important;
+    }
+
+    .logo {
+        font-size: 1.1rem !important;
+    }
+
+    .logo img {
+        width: 24px !important;
+        height: 24px !important;
+    }
+
+    #language-selector {
+        padding: 2px 4px !important;
+        font-size: 0.8rem !important;
+        margin-right: 8px !important;
+    }
+
+    .btn-login span {
+        display: none;
+    }
+
+    .btn-login i {
+        font-size: 1.2rem;
+        margin: 0 !important;
+    }
+
+    .btn-login {
+        padding: 0.4rem !important;
+        background: transparent !important;
+        color: var(--primary) !important;
+        border: none !important;
+    }
+
+    /* Bottom Navigation Bar */
+    .nav-menu {
+        position: fixed !important;
+        bottom: 0 !important;
+        top: auto !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        background-color: var(--white) !important;
+        border-top: 1px solid var(--gray-200) !important;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05) !important;
+        flex-direction: row !important;
+        justify-content: space-around !important;
+        align-items: center !important;
+        padding: 0.5rem 0.25rem env(safe-area-inset-bottom, 0) !important;
+        gap: 0 !important;
+        transform: none !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transition: none !important;
+        z-index: 1000 !important;
+        max-height: none !important;
+        overflow-y: visible !important;
+        display: flex !important;
+    }
+
+    .nav-link {
+        display: flex !important;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.65rem !important;
+        color: var(--gray-500) !important;
+        text-decoration: none;
+        padding: 0.25rem 0 !important;
+        width: 100%;
+        font-weight: 500 !important;
+        gap: 0.25rem;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+        color: var(--primary) !important;
+        background: transparent !important;
+        border: none !important;
+    }
+
+    /* Configuración de íconos para cada enlace usando data-i18n o href como selector */
+    .nav-link::before {
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        font-size: 1.2rem;
+        display: block;
+        margin-bottom: 2px;
+    }
+
+    .nav-link[href="/"]::before {
+        content: "\f015";
+    }
+
+    /* fa-home */
+    .nav-link[href="/mapa.html"]::before {
+        content: "\f279";
+    }
+
+    /* fa-map */
+    .nav-link[href="/#restaurantes"]::before {
+        content: "\f2e7";
+    }
+
+    /* fa-utensils */
+    .nav-link[href="/#hospedaje"]::before {
+        content: "\f236";
+    }
+
+    /* fa-bed */
+    .nav-link[href="/experiencias.html"]::before {
+        content: "\f4d7";
+    }
+
+    /* fa-route */
+    .nav-link[href="/Contactos.html"]::before {
+        content: "\f0e0";
+    }
+
+    /* fa-envelope */
+
+    /* Prevenir que el contenido quede oculto detrás del bottom nav */
+    body {
+        padding-bottom: 70px !important;
+    }
+
+    .footer-container {
+        padding-bottom: 70px !important;
+    }
+}
+
+/* ===== CORRECCIONES ADICIONALES PARA MÓVIL ===== */
+
+@media (max-width: 480px) {
+
+    /* Reducir padding para evitar overflow */
+    .container {
+        padding: 0 var(--spacing-sm);
+    }
+
+    .hero-container,
+    .nav-container,
+    .results-container,
+    .footer-container {
+        padding-left: var(--spacing-sm);
+        padding-right: var(--spacing-sm);
+    }
+
+    /* Asegurar que el search box no sobresalga */
+    .search-box {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+    .search-input {
+        width: 100%;
+        min-width: 0;
+        /* Evita que el input se haga demasiado ancho */
+    }
+
+    /* Asegurar que las cards no sobresalgan */
+    .results-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+        width: 100%;
+    }
+
+    .restaurant-card {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Evitar que el texto largo cause overflow */
+    .card-title,
+    .card-description,
+    .hero-title,
+    .hero-subtitle {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
+    }
+}
+
+/* ===== CORRECCIÓN PARA FILTROS EN MÓVIL ===== */
+@media (max-width: 768px) {
+    .filter-tabs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacing-sm);
+        padding-bottom: var(--spacing-sm);
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    .filter-tab {
+        padding: var(--spacing-sm);
+        white-space: nowrap;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .filter-tabs {
+        gap: 8px;
+    }
+}
+
+/* ===== CORRECCIÓN PARA MODAL EN MÓVIL ===== */
+@media (max-width: 480px) {
+    .modal {
+        padding: var(--spacing-sm);
+    }
+
+    .modal-content {
+        margin: 0;
+        width: 100%;
+        max-width: 100%;
+        max-height: 95vh;
+        border-radius: var(--radius-md);
+        box-sizing: border-box;
+    }
+}
+
+/* ===== DEBUGGING: Detectar elementos que causan overflow ===== */
+/* Descomenta estas líneas para detectar elementos problemáticos */
+/*
+* {
+    outline: 1px solid red;
+}
+
+*:before,
+*:after {
+    outline: 1px solid blue;
+}
+*/
+
+/* ===== JAVASCRIPT NECESARIO PARA EL MENÚ ===== */
+/* Agrega este código a tu main.js: 
+
+document.addEventListener('DOMContentLoaded', function() {
+    const navToggle = document.getElementById('nav-toggle');
+    const navMenu = document.getElementById('nav-menu');
+    
+    if (navToggle && navMenu) {
+        navToggle.addEventListener('click', function() {
+            navMenu.classList.toggle('active');
+        });
+        
+        // Cerrar menú al hacer click en un enlace
+        const navLinks = navMenu.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                navMenu.classList.remove('active');
+            });
+        });
+        
+        // Cerrar menú al hacer click fuera
+        document.addEventListener('click', function(e) {
+            if (!navToggle.contains(e.target) && !navMenu.contains(e.target)) {
+                navMenu.classList.remove('active');
+            }
+        });
+    }
+});
+
+*/

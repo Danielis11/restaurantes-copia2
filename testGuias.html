@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Guías</title>
+</head>
+<body>
+    <h1>Test de Guías Turísticas</h1>
+    <button onclick="cargarGuias()">Cargar Guías</button>
+    <div id="resultado"></div>
+
+    <script>
+        async function cargarGuias() {
+            try {
+                console.log('Haciendo petición a:', 'http://localhost:5000/api/guias');
+                
+                const response = await fetch('http://localhost:5000/api/guias');
+                const data = await response.json();
+                
+                console.log('Respuesta:', data);
+                
+                document.getElementById('resultado').innerHTML = `
+                    <h2>Resultado:</h2>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('resultado').innerHTML = `
+                    <h2 style="color: red;">Error:</h2>
+                    <p>${error.message}</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

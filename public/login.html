@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso - RestauranteWeb</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Archivo de estilos global -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Auth library -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            background: var(--white);
+        }
+
+        .login-layout {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+        }
+
+        /* ===== LEFT PANEL ===== */
+        .auth-side {
+            flex: 1;
+            background: linear-gradient(135deg, var(--primary) 0%, #1e2a80 100%);
+            color: var(--white);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-side::before {
+            content: '';
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 120%;
+            height: 120%;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            transform: rotate(-10deg);
+        }
+
+        .auth-side-content {
+            position: relative;
+            z-index: 2;
+            max-width: 500px;
+        }
+
+        .side-logo {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+        }
+
+        .side-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 2rem;
+        }
+
+        .side-text {
+            font-size: 1.15rem;
+            line-height: 1.6;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        /* ===== RIGHT PANEL ===== */
+        .auth-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .auth-tabs {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .auth-tab {
+            padding: 0.75rem 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-400);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .auth-tab.active {
+            color: var(--text-dark);
+            border-bottom-color: var(--text-dark);
+        }
+
+        .auth-header {
+            margin-bottom: 2rem;
+        }
+
+        .auth-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .auth-subtitle {
+            color: var(--gray-500);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 0;
+            border: none;
+            border-bottom: 2px solid var(--gray-200);
+            background: transparent;
+            font-size: 1rem;
+            color: var(--text-dark);
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-bottom-color: var(--text-dark);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--gray-400);
+            cursor: pointer;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .btn-black {
+            background: var(--text-dark);
+            color: white;
+        }
+
+        .btn-black:hover {
+            background: #000;
+            transform: translateY(-1px);
+        }
+
+        .btn-black:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-google {
+            background: white;
+            color: var(--text-dark);
+            border: 1px solid var(--gray-200);
+            margin-top: 1rem;
+        }
+
+        .btn-google:hover {
+            background: var(--gray-100);
+        }
+
+        .return-home {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            color: var(--gray-400);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid var(--primary);
+            transform: translateX(120%);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-left-color: var(--success);
+        }
+
+        .notification.error {
+            border-left-color: var(--error);
+        }
+
+        @media (max-width: 900px) {
+            .auth-side {
+                display: none;
+            }
+
+            .auth-main {
+                padding: 3rem 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-layout">
+        <div class="auth-side">
+            <div class="auth-side-content">
+                <div class="side-logo"><i class="fas fa-asterisk"></i></div>
+                <h1 class="side-title" id="side-title">Hola<br>RestauranteWeb!</h1>
+                <p class="side-text" id="side-text">Gestiona tus establecimientos, consulta opiniones y ahorra tiempo
+                    con nuestras herramientas.</p>
+            </div>
+        </div>
+
+        <div class="auth-main">
+            <a href="/" class="return-home"><i class="fas fa-arrow-left"></i> Volver al inicio</a>
+
+            <div class="auth-card">
+                <div class="auth-tabs">
+                    <div class="auth-tab active" data-mode="login">Iniciar Sesión</div>
+                    <div class="auth-tab" data-mode="register">Registrarse</div>
+                </div>
+
+                <div class="auth-header">
+                    <h2 class="auth-title" id="form-title">¡Bienvenido de nuevo!</h2>
+                    <p class="auth-subtitle" id="form-subtitle">Ingresa tus credenciales para continuar.</p>
+                </div>
+
+                <!-- LOGIN FORM -->
+                <form id="login-form" class="form">
+                    <div class="form-group">
+                        <input type="email" id="email" class="form-input" placeholder="tu@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="password" class="form-input" placeholder="Contraseña" required>
+                        <button type="button" class="password-toggle" id="pass-toggle"><i
+                                class="fas fa-eye"></i></button>
+                    </div>
+                    <button type="submit" class="btn btn-black" id="login-btn">
+                        <span>Entrar ahora</span>
+                        <i class="fas fa-spinner fa-spin" style="display: none;" id="login-spinner"></i>
+                    </button>
+                    <!-- Botón de Google centrado -->
+                    <div id="google-signin-button" style="margin-top: -1rem; display: flex; justify-content: center;"></div>
+                    <div style="text-align: center; margin-top: 1.5rem; font-size: 0.85rem; color: var(--gray-500);">
+                        ¿Olvidaste tu contraseña? <a href="/recuperar-password.html"
+                            style="color: var(--text-dark); font-weight: 600; text-decoration: none;">Recupérala
+                            aquí</a>
+                    </div>
+                </form>
+
+                <!-- REGISTER FORM (Hidden by default) -->
+                <form id="register-form" class="form" style="display: none;">
+                    <div class="form-group">
+                        <input type="text" id="reg-nombre" class="form-input" placeholder="Tu nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="reg-email" class="form-input" placeholder="tu@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="reg-password" class="form-input" placeholder="Contraseña segura"
+                            required>
+                        <button type="button" class="password-toggle" id="reg-pass-toggle"><i
+                                class="fas fa-eye"></i></button>
+                    </div>
+                    <button type="submit" class="btn btn-black" id="reg-btn">
+                        <span>Crear cuenta de Turista</span>
+                        <i class="fas fa-spinner fa-spin" style="display: none;" id="reg-spinner"></i>
+                    </button>
+                    <p style="font-size: 0.8rem; color: var(--gray-500); text-align: center; margin-top: 1rem;">
+                        Al registrarte, aceptas nuestros <a href="/terminos.html" style="color: var(--text-dark);">términos y
+                            condiciones</a>.
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="notif" class="notification">
+        <span id="notif-msg"></span>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin + '/api';
+
+        // Inicialización de Google Sign-In
+        window.onload = function () {
+            if (typeof google !== 'undefined') {
+                google.accounts.id.initialize({
+                    client_id: "298755383551-efk68ffcahnkrii07updrv3n89hea2r3.apps.googleusercontent.com",
+                    callback: handleCredentialResponse,
+                    auto_select: false
+                });
+                google.accounts.id.renderButton(
+                    document.getElementById('google-signin-button'),
+                    { theme: "outline", size: "large", text: "continue_with" }
+                );
+            }
+        };
+
+        // Manejador del login con Google
+        async function handleCredentialResponse(response) {
+            try {
+                const res = await fetch(`${API_BASE}/auth/google`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ credential: response.credential })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    localStorage.setItem('authToken', data.data.token);
+                    localStorage.setItem('currentUser', JSON.stringify(data.data.admin));
+                    showMsg(`Bienvenido con Google, ${data.data.admin.nombre}`, 'success');
+                    setTimeout(() => {
+                        const redirectUrl = localStorage.getItem('redirectUrl');
+                        if (redirectUrl) {
+                            localStorage.removeItem('redirectUrl');
+                            window.location.href = redirectUrl;
+                        } else {
+                            const rol = data.data.admin.rol;
+                            if (rol === 'super-admin') window.location.href = '/super-admin.html';
+                            else if (rol === 'admin-turismo') window.location.href = '/admin-turismo.html';
+                            else if (rol === 'turista') window.location.href = '/user-panel.html';
+                            else window.location.href = '/admin.html';
+                        }
+                    }, 1000);
+                } else {
+                    showMsg(data.message || 'Error al iniciar sesión con Google', 'error');
+                }
+            } catch (err) {
+                showMsg('Error de conexión', 'error');
+            }
+        }
+
+        // Tabs Logic
+        document.querySelectorAll('.auth-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const mode = tab.dataset.mode;
+                document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                const loginForm = document.getElementById('login-form');
+                const regForm = document.getElementById('register-form');
+                const title = document.getElementById('form-title');
+                const subtitle = document.getElementById('form-subtitle');
+                const sideTitle = document.getElementById('side-title');
+
+                if (mode === 'login') {
+                    loginForm.style.display = 'flex';
+                    regForm.style.display = 'none';
+                    title.textContent = '¡Bienvenido de nuevo!';
+                    subtitle.textContent = 'Ingresa tus credenciales para continuar.';
+                    sideTitle.innerHTML = 'Hola<br>RestauranteWeb!';
+                } else {
+                    loginForm.style.display = 'none';
+                    regForm.style.display = 'flex';
+                    title.textContent = 'Crea tu cuenta';
+                    subtitle.textContent = 'Únete como turista para explorar y opinar.';
+                    sideTitle.innerHTML = 'Empieza<br>tu viaje.';
+                }
+            });
+        });
+
+        // Login Submit
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('login-btn');
+            const spinner = document.getElementById('login-spinner');
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            btn.disabled = true;
+            spinner.style.display = 'inline-block';
+
+            try {
+                const res = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    localStorage.setItem('authToken', data.data.token);
+                    localStorage.setItem('currentUser', JSON.stringify(data.data.admin));
+                    showMsg(`Bienvenido, ${data.data.admin.nombre}`, 'success');
+                    setTimeout(() => {
+                        const redirectUrl = localStorage.getItem('redirectUrl');
+                        if (redirectUrl) {
+                            localStorage.removeItem('redirectUrl');
+                            window.location.href = redirectUrl;
+                        } else {
+                            const rol = data.data.admin.rol;
+                            if (rol === 'super-admin') window.location.href = '/super-admin.html';
+                            else if (rol === 'admin-turismo') window.location.href = '/admin-turismo.html';
+                            else if (rol === 'turista') window.location.href = '/user-panel.html';
+                            else window.location.href = '/admin.html';
+                        }
+                    }, 1000);
+                } else {
+                    showMsg(data.message || 'Error al iniciar sesión', 'error');
+                }
+            } catch (err) {
+                showMsg('Error de conexión', 'error');
+            } finally {
+                btn.disabled = false;
+                spinner.style.display = 'none';
+            }
+        });
+
+        // Register Submit (Tourist)
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('reg-btn');
+            const spinner = document.getElementById('reg-spinner');
+            const nombre = document.getElementById('reg-nombre').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+
+            btn.disabled = true;
+            spinner.style.display = 'inline-block';
+
+            try {
+                const res = await fetch(`${API_BASE}/auth/user/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nombre, email, password })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    localStorage.setItem('authToken', data.data.token);
+                    localStorage.setItem('currentUser', JSON.stringify(data.data.user));
+                    showMsg('¡Cuenta creada con éxito!', 'success');
+                    setTimeout(() => {
+                        const redirectUrl = localStorage.getItem('redirectUrl');
+                        if (redirectUrl) {
+                            localStorage.removeItem('redirectUrl');
+                            window.location.href = redirectUrl;
+                        } else {
+                            window.location.href = '/user-panel.html';
+                        }
+                    }, 1500);
+                } else {
+                    showMsg(data.message || 'Error al registrarse', 'error');
+                }
+            } catch (err) {
+                showMsg('Error de conexión', 'error');
+            } finally {
+                btn.disabled = false;
+                spinner.style.display = 'none';
+            }
+        });
+
+        // Pass toggles
+        const setupPassToggle = (btnId, inputId) => {
+            const btn = document.getElementById(btnId);
+            const input = document.getElementById(inputId);
+            btn.addEventListener('click', () => {
+                const isPass = input.type === 'password';
+                input.type = isPass ? 'text' : 'password';
+                btn.querySelector('i').className = isPass ? 'fas fa-eye-slash' : 'fas fa-eye';
+            });
+        };
+        setupPassToggle('pass-toggle', 'password');
+        setupPassToggle('reg-pass-toggle', 'reg-password');
+
+        function showMsg(msg, type) {
+            const el = document.getElementById('notif');
+            document.getElementById('notif-msg').textContent = msg;
+            el.className = `notification show ${type}`;
+            setTimeout(() => el.classList.remove('show'), 4000);
+        }
+
+        // Auto-redirect if already logged in
+        (async function checkSession() {
+            const token = localStorage.getItem('authToken');
+            const storedUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            if (!token) return;
+
+            // Try to verify token based on stored role or try both
+            const endpoints = storedUser.rol === 'turista'
+                ? [`${API_BASE}/auth/user/profile`, `${API_BASE}/auth/profile`]
+                : [`${API_BASE}/auth/profile`, `${API_BASE}/auth/user/profile`];
+
+            for (const url of endpoints) {
+                try {
+                    const res = await fetch(url, {
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        const user = data.data.admin || data.data;
+                        if (user) {
+                            // Preserve the role: use API response first, then stored user, then infer
+                            const rol = user.rol || storedUser.rol || (url.includes('user') ? 'turista' : 'admin');
+                            user.rol = rol; // Ensure rol is always saved
+                            localStorage.setItem('currentUser', JSON.stringify(user));
+                            if (rol === 'super-admin') window.location.replace('/super-admin.html');
+                            else if (rol === 'admin-turismo') window.location.replace('/admin-turismo.html');
+                            else if (rol === 'turista') window.location.replace('/user-panel.html');
+                            else window.location.replace('/admin.html');
+                            return;
+                        }
+                    }
+                } catch (e) { }
+            }
+        })();
+    </script>
+</body>
+
+</html>

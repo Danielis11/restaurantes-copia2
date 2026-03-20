@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto - RestauranteWeb</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- EmailJS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- EmailJS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/css/responsive.css">
+
+    <style>
+        
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-main);
+            min-height: 100vh;
+            background: var(--white);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* ===== NAVBAR ===== */
+        .global-nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--gray-100);
+            height: 70px;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-container {
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .logo img {
+            height: 32px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--gray-500);
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--brand-color);
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--brand-color);
+            border-radius: 2px;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-login {
+            background: var(--brand-color);
+            color: white;
+            padding: 0.6rem 1.4rem;
+            border-radius: 2rem;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 10px rgba(46, 61, 193, 0.2);
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(46, 61, 193, 0.3);
+            filter: brightness(1.1);
+        }
+
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        /* ===== LAYOUT ===== */
+        .contact-layout {
+            display: flex;
+            min-height: 100vh;
+            padding-top: 70px;
+        }
+
+        .info-side {
+            flex: 1;
+            background: linear-gradient(135deg, var(--brand-color) 0%, #1e2a80 100%);
+            color: white;
+            padding: 5rem 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .info-side h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 2rem;
+            line-height: 1;
+        }
+
+        .info-side p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 450px;
+        }
+
+        .contact-details {
+            margin-top: 4rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+        }
+
+        .detail-item i {
+            font-size: 1.4rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 0.2rem;
+            width: 25px;
+            text-align: center;
+        }
+
+        .detail-item h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            letter-spacing: -0.01em;
+        }
+
+        .detail-item p {
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .social-links {
+            margin-top: 5rem;
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .social-icon {
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .social-icon:hover {
+            background: white;
+            color: var(--brand-color);
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* ===== FORM SIDE ===== */
+        .form-side {
+            flex: 1.2;
+            padding: 5rem 4rem;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 550px;
+        }
+
+        .form-header {
+            margin-bottom: 4rem;
+        }
+
+        .form-header h2 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .form-header p {
+            color: var(--gray-500);
+            font-size: 1.1rem;
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 1rem 0;
+            border: none;
+            border-bottom: 1px solid var(--gray-200);
+            background: transparent;
+            font-size: 1.05rem;
+            color: var(--text-dark);
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: var(--gray-400);
+            transition: all 0.3s;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-bottom-color: var(--brand-color);
+        }
+
+        .form-input:focus::placeholder,
+        .form-textarea:focus::placeholder {
+            transform: translateY(-10px);
+            font-size: 0.8rem;
+            opacity: 0.5;
+        }
+
+        .form-textarea {
+            resize: none;
+            min-height: 120px;
+        }
+
+        .btn-submit {
+            background: var(--text-dark);
+            color: white;
+            border: none;
+            padding: 1.2rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-submit:hover {
+            background: black;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* ===== FAQ SECTION ===== */
+        .faq-section {
+            padding: 8rem 2rem;
+            background: var(--gray-50);
+        }
+
+        .faq-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .faq-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .faq-header h2 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .faq-header p {
+            color: var(--gray-500);
+            font-size: 1.1rem;
+        }
+
+        .faq-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .faq-item {
+            background: white;
+            border-radius: 1rem;
+            border: 1px solid var(--gray-100);
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .faq-item:hover {
+            box-shadow: var(--shadow-md);
+            border-color: var(--gray-200);
+        }
+
+        .faq-item.active {
+            border-color: var(--brand-color);
+            box-shadow: var(--shadow-md);
+        }
+
+        .faq-question {
+            width: 100%;
+            padding: 1.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: none;
+            border: none;
+            text-align: left;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .faq-question i {
+            font-size: 1rem;
+            color: var(--gray-400);
+            transition: transform 0.3s;
+        }
+
+        .faq-item.active .faq-question i {
+            transform: rotate(180deg);
+            color: var(--brand-color);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0, 1, 0, 1);
+            padding: 0 2rem;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 1000px;
+            padding: 0 2rem 2rem 2rem;
+            transition: all 0.4s cubic-bezier(1, 0, 1, 0);
+        }
+
+        .faq-answer p {
+            color: var(--gray-600);
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: var(--text-dark);
+            color: white;
+            padding: 6rem 2rem 3rem;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.5fr;
+            gap: 4rem;
+            margin-bottom: 4rem;
+        }
+
+        .footer-brand .logo {
+            color: white;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-brand p {
+            color: var(--gray-400);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .footer-social .social-link {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .footer-social .social-link:hover {
+            background: var(--brand-color);
+            border-color: var(--brand-color);
+            transform: translateY(-3px);
+        }
+
+        .footer-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: white;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 1rem;
+        }
+
+        .footer-links a {
+            color: var(--gray-400);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-contact p {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--gray-400);
+            font-size: 0.95rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .footer-contact i {
+            color: var(--brand-color);
+            width: 20px;
+        }
+
+        .footer-bottom {
+            padding-top: 3rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .footer-bottom p {
+            color: var(--gray-500);
+            font-size: 0.9rem;
+        }
+
+        .footer-meta {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-meta a {
+            color: var(--gray-500);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .footer-meta a:hover {
+            color: white;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 1.5rem 2rem;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: var(--shadow-lg);
+            border-left: 5px solid var(--brand-color);
+            transform: translateX(150%);
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-left-color: #10b981;
+        }
+
+        .notification.error {
+            border-left-color: #ef4444;
+        }
+
+        .notification strong {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .notification p {
+            color: var(--gray-600);
+            font-size: 0.95rem;
+        }
+
+        @media (max-width: 1100px) {
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 1000px) {
+            .contact-layout {
+                flex-direction: column;
+            }
+
+            .info-side,
+            .form-side {
+                padding: 5rem 2rem;
+            }
+
+            .info-side h1 {
+                font-size: 3rem;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .nav-toggle {
+                display: block;
+            }
+
+            .nav-menu.active {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: white;
+                padding: 2rem;
+                box-shadow: var(--shadow-md);
+                border-bottom: 1px solid var(--gray-100);
+                gap: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .footer-meta {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+    <!-- Script de internacionalización -->
+    <script src="/js/i18n.js" defer></script>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <header class="global-nav">
+        <nav class="nav-container">
+            <a href="/" class="logo">
+                <img src="/images/PueblosMágicos.svg.png" alt="Logo">
+                RestauranteWeb
+            </a>
+            <div class="nav-menu" id="nav-menu">
+                <a href="/" class="nav-link" data-i18n="navbar.inicio">Inicio</a>
+                <a href="/mapa.html" class="nav-link" data-i18n="navbar.mapa">Mapa</a>
+                <a href="/#restaurantes" class="nav-link" data-i18n="navbar.guia">Restaurantes</a>
+                <a href="/#hospedaje" class="nav-link" data-i18n="navbar.hospedaje">Hospedaje</a>
+                <a href="/experiencias.html" class="nav-link" data-i18n="navbar.tours">Experiencias</a>
+                <a href="/Contactos.html" class="nav-link" data-i18n="footer.contacto">Contacto</a>
+            </div>
+            <div class="nav-actions-wrapper" style="display: flex; align-items: center;">
+                <select id="language-selector"
+                    style="margin-right: 15px; padding: 5px; border-radius: 5px; border: 1px solid #ddd; background: white; font-family: var(--font-family);">
+                    <option value="es" data-i18n="lang.switch_es">Español</option>
+                    <option value="en" data-i18n="lang.switch_en">Inglés</option>
+                    <option value="fr" data-i18n="lang.switch_fr">Français</option>
+                </select>
+                <div class="nav-actions" id="navbar-actions" style="display: flex; align-items: center;">
+                    <a href="/login.html" class="btn-login"><i class="fas fa-user-circle"></i> <span
+                            data-i18n="navbar.iniciar_sesion">Iniciar Sesión</span></a>
+                    <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="contact-layout">
+        <!-- LEFT SIDE: INFO -->
+        <section class="info-side">
+            <div class="info-content">
+                <h1 data-i18n="contacto.titulo">Hablemos.</h1>
+                <p data-i18n="contacto.subtitulo">¿Tienes alguna duda, sugerencia o quieres registrar tu
+                    establecimiento? Estamos aquí para ayudarte.
+                </p>
+
+                <div class="contact-details">
+                    <div class="detail-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h3 data-i18n="contacto.nuestra_ubicacion">Nuestra Ubicación</h3>
+                            <p data-i18n="contacto.ubicacion_desc">Independencia No. 12, Centro, Jalpan de Serra, Qro.
+                                CP 76340</p>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h3 data-i18n="contacto.envianos_correo">Envíanos un correo</h3>
+                            <p>restaurantesturismo57@gmail.com</p>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h3 data-i18n="contacto.llamanos">Llámanos</h3>
+                            <p>+52 (441) 296-0285</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="social-links">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </section>
+
+        <!-- RIGHT SIDE: FORM -->
+        <section class="form-side">
+            <div class="form-container">
+                <div class="form-header">
+                    <h2 data-i18n="contacto.envia_mensaje">Envía un mensaje</h2>
+                    <p data-i18n="contacto.envia_mensaje_desc">Cuéntanos en qué podemos ayudarte y te responderemos lo
+                        antes posible.</p>
+                </div>
+
+                <form id="contact-form" class="contact-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" name="nombre" class="form-input" placeholder="Nombre"
+                                data-i18n="contacto.nombre" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="apellido" class="form-input" placeholder="Apellido"
+                                data-i18n="contacto.apellido" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="email" name="email" class="form-input" placeholder="Correo electrónico"
+                            data-i18n="contacto.correo" required>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" name="asunto" class="form-input" placeholder="Asunto"
+                            data-i18n="contacto.asunto" required>
+                    </div>
+
+                    <div class="form-group">
+                        <textarea name="mensaje" class="form-textarea" placeholder="¿Cómo podemos ayudarte?"
+                            data-i18n="contacto.mensaje" required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-submit">
+                        <span data-i18n="contacto.enviar">Enviar Mensaje</span> <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="faq-section">
+        <div class="faq-container">
+            <div class="faq-header">
+                <h2 data-i18n="contacto.faq_titulo">Preguntas Frecuentes</h2>
+                <p data-i18n="contacto.faq_subtitulo">Todo lo que necesitas saber sobre el registro y uso de la
+                    plataforma.</p>
+            </div>
+
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span data-i18n="contacto.faq_1_q">¿Requisitos para registrarme a la plataforma?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p data-i18n="contacto.faq_1_a">Los requisitos básicos incluyen tener un establecimiento
+                            gastronómico ubicado en Jalpan de
+                            Serra, contar con los permisos municipales correspondientes, y proporcionar información
+                            completa y veraz sobre tu negocio.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span data-i18n="contacto.faq_2_q">¿Hay algún costo por usar RestauranteWeb?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p data-i18n="contacto.faq_2_a">No, RestauranteWeb es completamente gratuito para todos los
+                            establecimientos de Jalpan de
+                            Serra. Nuestro objetivo es promover la gastronomía local sin costo alguno para los
+                            propietarios.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span data-i18n="contacto.faq_3_q">¿Puedo actualizar la información de mi
+                            establecimiento?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p data-i18n="contacto.faq_3_a">Sí, una vez registrado tu establecimiento, tendrás acceso a un
+                            panel personal donde podrás
+                            actualizar toda la información, incluyendo menú, horarios, fotos y datos de contacto en
+                            tiempo real.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span data-i18n="contacto.faq_4_q">¿Cómo pueden los clientes encontrar mi
+                            establecimiento?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p data-i18n="contacto.faq_4_a">Los clientes pueden encontrar tu establecimiento a través de la
+                            búsqueda por nombre, tipo de
+                            comida, ubicación o utilizando los filtros disponibles en la página de inicio.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 4rem;">
+                <p style="color: var(--gray-50);" data-i18n="contacto.mas_dudas">¿Tienes más dudas? Escríbenos
+                    directamente usando el formulario de
+                    arriba.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="/" class="logo">
+                        <img src="/images/PueblosMágicos.svg.png" alt="Logo">
+                        RestauranteWeb
+                    </a>
+                    <p data-i18n="footer.descripcion_alt">La plataforma líder que conecta a locales y turistas con la
+                        mejor oferta gastronómica del Corazón
+                        de la Sierra Gorda.</p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h4 class="footer-title" data-i18n="footer.navegacion">Navegación</h4>
+                    <ul class="footer-links">
+                        <li><a href="/" data-i18n="navbar.inicio">Inicio</a></li>
+                        <li><a href="/mapa.html" data-i18n="navbar.mapa">Mapa</a></li>
+                        <li><a href="/Contactos.html" data-i18n="footer.contacto">Contacto</a></li>
+                        <li><a href="/login.html" data-i18n="navbar.iniciar_sesion">Panel Admin</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4 class="footer-title" data-i18n="footer.soporte">Soporte</h4>
+                    <ul class="footer-links">
+                        <li><a href="#faq" data-i18n="contacto.faq_titulo">Preguntas Frecuentes</a></li>
+                        <li><a href="mailto:restaurantesturismo57@gmail.com">Soporte Técnico</a></li>
+                        <li><a href="#">Guía de Uso</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4 class="footer-title" data-i18n="footer.contacto_titulo">Contacto</h4>
+                    <div class="footer-contact">
+                        <p><i class="fas fa-envelope"></i> restaurantesturismo57@gmail.com</p>
+                        <p><i class="fas fa-phone"></i> +52 (441) 296-0285</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Independencia No. 12, Jalpan de Serra, Qro.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 RestauranteWeb - Jalpan de Serra. <span data-i18n="footer.derechos">Todos los derechos
+                        reservados.</span></p>
+                <div class="footer-meta">
+                    <a href="#" data-i18n="footer.privacidad">Privacidad</a>
+                    <a href="#" data-i18n="footer.terminos">Términos</a>
+                    <a href="#" style="display: flex; align-items: center; gap: 0.5rem; color: white;">
+                        <i class="fas fa-code"></i> <span data-i18n="footer.desarrollado">Desarrollado por Zac</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Script JavaScript -->
+    <script>
+        /*
+        ===== CONFIGURACIÓN DE EMAILJS =====
+        Para que el formulario envíe correos reales, necesitas configurar EmailJS:
+        
+        1. Ve a https://www.emailjs.com/ y crea una cuenta gratuita
+        2. Crea un servicio de email (Gmail, Outlook, etc.)
+        3. Crea una plantilla de email
+        4. Reemplaza en el código JavaScript:
+           - "YOUR_PUBLIC_KEY" con tu clave pública
+           - "YOUR_SERVICE_ID" con tu ID de servicio
+           - "YOUR_TEMPLATE_ID" con tu ID de plantilla
+        
+        Sin EmailJS configurado, el formulario usará mailto como fallback.
+        */
+
+        // ===== NAVEGACIÓN MÓVIL (igual que página de inicio) =====
+        document.addEventListener('DOMContentLoaded', () => {
+            const navMenu = document.getElementById('nav-menu');
+            if (!navMenu) return;
+
+            let overlay = document.querySelector('.nav-overlay');
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.className = 'nav-overlay';
+                document.body.appendChild(overlay);
+            }
+
+            function closeMenu() {
+                navMenu.classList.remove('active');
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+                const t = document.getElementById('nav-toggle');
+                if (t) {
+                    const i = t.querySelector('i');
+                    if (i) i.className = 'fas fa-bars';
+                    t.setAttribute('aria-label', 'Abrir menú');
+                }
+            }
+
+            function openMenu() {
+                navMenu.classList.add('active');
+                overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                const t = document.getElementById('nav-toggle');
+                if (t) {
+                    const i = t.querySelector('i');
+                    if (i) i.className = 'fas fa-times';
+                    t.setAttribute('aria-label', 'Cerrar menú');
+                }
+            }
+
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('#nav-toggle')) {
+                    e.preventDefault();
+                    if (navMenu.classList.contains('active')) closeMenu();
+                    else openMenu();
+                }
+            });
+            navMenu.addEventListener('click', (e) => {
+                if (e.target.classList.contains('nav-link')) setTimeout(closeMenu, 100);
+            });
+            overlay.addEventListener('click', closeMenu);
+        });
+
+        // ===== FAQ ACCORDION =====
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const faqItem = question.parentElement;
+                const isActive = faqItem.classList.contains('active');
+
+                // Cerrar todos los FAQs
+                document.querySelectorAll('.faq-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+
+                // Abrir el clickeado si no estaba activo
+                if (!isActive) {
+                    faqItem.classList.add('active');
+                }
+            });
+        });
+
+        // ===== FORMULARIO DE CONTACTO =====
+        // Inicializar EmailJS
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inicializar EmailJS con tu clave pública
+            emailjs.init("K_ymq7K38Vn0ebhzQ"); // Reemplazar con tu clave pública de EmailJS
+        });
+
+        document.getElementById('contact-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            // Obtener datos del formulario
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+
+            // Validación básica
+            if (!data.nombre || !data.apellido || !data.email || !data.asunto || !data.mensaje) {
+                showNotification('Por favor completa todos los campos requeridos.', 'error');
+                return;
+            }
+
+            // Validar email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(data.email)) {
+                showNotification('Por favor ingresa un email válido.', 'error');
+                return;
+            }
+
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+
+            try {
+                // Preparar parámetros para EmailJS
+                const templateParams = {
+                    to_email: 'restaurantesturismo57@gmail.com',
+                    from_name: `${data.nombre} ${data.apellido}`,
+                    from_email: data.email,
+                    phone: data.telefono || 'No proporcionado',
+                    establishment: data.establecimiento || 'No especificado',
+                    establishment_type: data.tipo || 'No especificado',
+                    subject: data.asunto,
+                    message: data.mensaje,
+                    date: new Date().toLocaleString('es-MX'),
+                    source: 'Página de Contacto Web - RestauranteWeb Jalpan'
+                };
+
+                // Intentar enviar con EmailJS
+                const response = await emailjs.send('service_yrcynqi', 'template_v83h3rp', templateParams);
+
+                if (response.status === 200) {
+                    // Éxito con EmailJS
+                    this.reset();
+                    showNotification('¡Mensaje enviado correctamente! Te responderemos en menos de 24 horas.', 'success');
+                    console.log('Mensaje enviado exitosamente con EmailJS:', response);
+                } else {
+                    throw new Error('Error al enviar con EmailJS');
+                }
+
+            } catch (error) {
+                console.log('EmailJS no configurado o error, usando fallback mailto:', error);
+
+                // Fallback: enviar por email usando mailto con el email correcto
+                const emailSubject = encodeURIComponent(`[RestauranteWeb] ${data.asunto} - ${data.nombre} ${data.apellido}`);
+                const emailBody = encodeURIComponent(
+                    `NUEVO MENSAJE DE CONTACTO - RESTAURANTEWEB JALPAN\n\n` +
+                    `═══════════════════════════════════════\n\n` +
+                    `👤 DATOS PERSONALES:\n` +
+                    `Nombre completo: ${data.nombre} ${data.apellido}\n` +
+                    `Email: ${data.email}\n` +
+                    `Teléfono: ${data.telefono || 'No proporcionado'}\n\n` +
+                    `🏪 INFORMACIÓN DEL ESTABLECIMIENTO:\n` +
+                    `Nombre del establecimiento: ${data.establecimiento || 'No especificado'}\n` +
+                    `Tipo de establecimiento: ${data.tipo || 'No especificado'}\n\n` +
+                    `📋 CONSULTA:\n` +
+                    `Asunto: ${data.asunto}\n\n` +
+                    `💬 MENSAJE:\n` +
+                    `${data.mensaje}\n\n` +
+                    `═══════════════════════════════════════\n` +
+                    `📅 Fecha: ${new Date().toLocaleString('es-MX')}\n` +
+                    `🌐 Origen: RestauranteWeb - Página de Contacto\n` +
+                    `📧 Responder a: ${data.email}`
+                );
+
+                // Abrir cliente de email con el email correcto
+                window.location.href = `mailto:restaurantesturismo57@gmail.com?subject=${emailSubject}&body=${emailBody}`;
+
+                showNotification('Se abrirá tu cliente de email para enviar el mensaje a restaurantesturismo57@gmail.com', 'success');
+
+                // Resetear formulario
+                this.reset();
+            } finally {
+                // Restaurar botón
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        });
+
+        // ===== FUNCIÓN PARA MOSTRAR NOTIFICACIONES =====
+        function showNotification(message, type = 'success') {
+            // Remover notificación existente
+            const existing = document.querySelector('.notification');
+            if (existing) {
+                existing.remove();
+            }
+
+            // Crear nueva notificación
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <strong>${type === 'success' ? '✅ Éxito' : '❌ Error'}</strong>
+                <p>${message}</p>
+            `;
+
+            document.body.appendChild(notification);
+
+            // Mostrar con animación
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+
+            // Auto-remover después de 5 segundos
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 300);
+            }, 5000);
+        }
+
+        // ===== NAVEGACIÓN SUAVE =====
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // ===== ANIMACIÓN AL SCROLL =====
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        async function renderAuthNavbar() {
+            const nav = document.getElementById('navbar-actions');
+            if (!nav) return;
+            const toggleBtn = document.getElementById('nav-toggle');
+            const toggleHtml = toggleBtn ? toggleBtn.outerHTML : '<button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú"><i class="fas fa-bars"></i></button>';
+
+            let currentUser = null;
+            const token = localStorage.getItem('authToken');
+
+            try {
+                const stored = localStorage.getItem('currentUser');
+                if (stored) currentUser = JSON.parse(stored);
+            } catch (e) { }
+
+            if (token) {
+                try {
+                    const endpoint = (currentUser && currentUser.rol === 'turista') ? '/api/auth/user/profile' : '/api/auth/profile';
+                    const res = await fetch(endpoint, {
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        currentUser = data.data && data.data.admin ? data.data.admin : data.data;
+                        if (currentUser) {
+                            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                        }
+                    } else {
+                        localStorage.removeItem('authToken');
+                        localStorage.removeItem('currentUser');
+                        currentUser = null;
+                    }
+                } catch (e) {
+                    console.error('Error validating session:', e);
+                }
+            }
+
+            let buttonHtml = '';
+
+            if (currentUser) {
+                const nombreMostrar = currentUser.nombre ? currentUser.nombre.split(' ')[0] : 'Usuario';
+                if (currentUser.rol === 'super-admin') {
+                    buttonHtml = `
+                        <a href="/super-admin.html" class="btn" style="background-color: #ec4899; color: white; display:flex;align-items:center;gap:0.4rem;padding:0.5rem 1rem; border-radius: 0.5rem;" title="Panel Super Admin">
+                            <i class="fas fa-crown"></i> ${nombreMostrar}
+                        </a>
+                    `;
+                } else if (currentUser.rol === 'turista') {
+                    buttonHtml = `
+                        <a href="/user-panel.html" class="btn-login" style="display:flex;align-items:center;gap:0.4rem;padding:0.5rem 1rem;" title="Mi Panel">
+                            <i class="fas fa-user-circle"></i> ${nombreMostrar}
+                        </a>
+                    `;
+                } else if (currentUser.rol === 'admin-turismo') {
+                    buttonHtml = `
+                        <a href="/admin-turismo.html" class="btn" style="background-color: #0d9488; color: white; display:flex;align-items:center;gap:0.4rem;padding:0.5rem 1rem; border-radius: 0.5rem;" title="Panel Turismo">
+                            <i class="fas fa-compass"></i> ${nombreMostrar}
+                        </a>
+                    `;
+                } else {
+                    buttonHtml = `
+                        <a href="/admin.html" class="btn" style="background-color: #10b981; color: white; display:flex;align-items:center;gap:0.4rem;padding:0.5rem 1rem; border-radius: 0.5rem;" title="Panel Admin">
+                            <i class="fas fa-cog"></i> ${nombreMostrar}
+                        </a>
+                    `;
+                }
+            } else {
+                buttonHtml = `
+                    <a href="/login.html" class="btn-login"><i class="fas fa-user-circle"></i> Iniciar Sesión</a>
+                `;
+            }
+
+            nav.innerHTML = `
+                ${buttonHtml}
+                ${toggleHtml}
+            `;
+
+            const newToggleBtn = document.getElementById('nav-toggle');
+            const navMenu = document.getElementById('nav-menu');
+            if (newToggleBtn && navMenu) {
+                newToggleBtn.addEventListener('click', () => {
+                    navMenu.classList.toggle('active');
+                });
+            }
+        }
+
+        // Aplicar animación a elementos
+        document.addEventListener('DOMContentLoaded', () => {
+            renderAuthNavbar();
+            const animatedElements = document.querySelectorAll('.contact-card, .faq-item, .hero-stat');
+
+            animatedElements.forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+
+</html>

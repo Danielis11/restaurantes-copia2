@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Interactivo - Descubre Jalpan a través de la comida</title>
+    <meta name="description"
+        content="Explora el mapa interactivo de Jalpan de Serra. Encuentra la ubicación exacta de los mejores restaurantes, bares y cafeterías.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/icons/favicon.ico">
+
+    <!-- Estilos -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+
+    <!-- Mapbox GL JS -->
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' rel='stylesheet' />
+
+    <!-- Estilos de la página de mapa -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: var(--gray-50);
+            color: var(--gray-800);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* El CSS global de la barra de navegación '.header.global-nav' se movió a style.css */
+
+        /* ===== MAPA CONTAINER ===== */
+        .map-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            margin-top: 70px;
+        }
+
+        .map-wrapper {
+            flex: 1;
+            width: 100%;
+            position: relative;
+            min-height: calc(100vh - 70px);
+        }
+
+        #public-map {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* Map overlays */
+        .map-sidebar {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            width: 320px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--gray-200);
+            padding: 1.5rem;
+            max-height: calc(100vh - 110px);
+            overflow-y: auto;
+        }
+
+        .map-sidebar h2 {
+            font-size: 1.25rem;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .map-sidebar p {
+            color: var(--gray-600);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.4;
+        }
+
+        .filter-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+        }
+
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .filter-btn {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: 1px solid var(--gray-200);
+            background: white;
+            color: var(--gray-700);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-btn:hover {
+            border-color: var(--gray-300);
+            background: var(--gray-50);
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .restaurant-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .list-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--gray-100);
+            cursor: pointer;
+            transition: var(--transition);
+            background: white;
+        }
+
+        .list-item:hover {
+            border-color: var(--primary-light);
+            background: var(--gray-50);
+            transform: translateX(4px);
+        }
+
+        .list-item-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .list-item-icon.restaurante {
+            background: #f59e0b;
+        }
+
+        .list-item-icon.bar {
+            background: #8b5cf6;
+        }
+
+        .list-item-icon.cafeteria {
+            background: #06b6d4;
+        }
+
+        .list-item-icon.comida-rapida {
+            background: #ef4444;
+        }
+
+        .list-item-icon.panaderia {
+            background: #d97706;
+        }
+
+        .list-item-icon.otro {
+            background: #6b7280;
+        }
+
+        .list-item-icon.agencia {
+            background: #0d9488;
+        }
+
+        .list-item-icon.hotel {
+            background: #3b82f6;
+        }
+
+        .list-item-icon.cabana {
+            background: #22c55e;
+        }
+
+        .list-item-icon.airbnb {
+            background: #f43f5e;
+        }
+
+        .list-item-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .list-item-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .list-item-address {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Mapbox Custom Popups */
+        .mapboxgl-popup-content {
+            padding: 0;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            border: none;
+            width: 260px;
+        }
+
+        .popup-header {
+            height: 120px;
+            width: 100%;
+            background: var(--gray-200);
+            position: relative;
+        }
+
+        .popup-header img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .popup-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: white;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            text-transform: capitalize;
+        }
+
+        .popup-body {
+            padding: 1rem;
+        }
+
+        .popup-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+
+        .popup-address {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.25rem;
+        }
+
+        .popup-address i {
+            margin-top: 3px;
+        }
+
+        .popup-btn {
+            display: block;
+            width: 100%;
+            text-align: center;
+            padding: 0.5rem;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .popup-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .mapboxgl-popup-close-button {
+            width: 24px;
+            height: 24px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border-radius: 50%;
+            right: 8px;
+            top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .mapboxgl-popup-close-button:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .map-sidebar {
+                width: calc(100% - 40px);
+                max-height: 40vh;
+                top: auto;
+                bottom: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <header class="global-nav">
+        <nav class="nav-container">
+            <a href="/" class="logo">
+                <img src="/images/PueblosMágicos.svg.png" alt="Logo">
+                RestauranteWeb
+            </a>
+            <div class="nav-menu" id="nav-menu">
+                <a href="/" class="nav-link">Inicio</a>
+                <a href="/mapa.html" class="nav-link">Mapa</a>
+                <a href="/#restaurantes" class="nav-link">Restaurantes</a>
+                <a href="/#hospedaje" class="nav-link">Hospedaje</a>
+                <a href="/experiencias.html" class="nav-link">Experiencias</a>
+                <a href="/Contactos.html" class="nav-link">Contacto</a>
+            </div>
+            <div class="nav-actions" id="navbar-actions">
+                <select id="language-selector" class="language-selector"
+                    style="background: transparent; color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; padding: 0.2rem 0.5rem; font-size: 0.85rem; cursor: pointer; outline: none;">
+                    <option value="es" style="color: #000;">ES</option>
+                    <option value="en" style="color: #000;">EN</option>
+                    <option value="fr" style="color: #000;">FR</option>
+                </select>
+                <a href="/login.html" class="btn-login"><i class="fas fa-user-circle"></i> Iniciar Sesión</a>
+                <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Map Section -->
+    <main class="map-section">
+        <div class="map-wrapper">
+            <div id="public-map"></div>
+
+            <div class="map-sidebar">
+                <h2>Explorar Jalpan</h2>
+                <p>Descubre los mejores sabores de la Sierra Gorda. Filtra por tipo o explora en el mapa.</p>
+
+                <div class="filter-group">
+                    <div class="filter-title">Filtrar por categoría</div>
+                    <div class="filter-buttons" id="map-filters">
+                        <button class="filter-btn active" data-filter="all">Todos</button>
+                        <button class="filter-btn" data-filter="restaurante">Restaurantes</button>
+                        <button class="filter-btn" data-filter="cafeteria">Cafeterías</button>
+                        <button class="filter-btn" data-filter="bar">Bares</button>
+                        <button class="filter-btn" data-filter="obrador-artesanal">Obradores</button>
+                        <button class="filter-btn" data-filter="agencia">Agencias</button>
+                        <button class="filter-btn" data-filter="hotel">Hoteles</button>
+                        <button class="filter-btn" data-filter="cabana">Cabañas</button>
+                        <button class="filter-btn" data-filter="airbnb">Airbnbs</button>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <div class="filter-title">Cerca de ti</div>
+                    <div class="restaurant-list" id="sidebar-list">
+                        <!-- Lista generada por JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Removed duplicate inline footer in favor of the full footer at EOF -->
+
+    <script src="/js/map.js"></script>
+    <script>
+        async function renderAuthNavbar() {
+            const nav = document.getElementById('navbar-actions');
+            if (!nav) return;
+            const toggleBtn = document.getElementById('nav-toggle');
+            const toggleHtml = toggleBtn ? toggleBtn.outerHTML : '<button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú"><i class="fas fa-bars"></i></button>';
+
+            let currentUser = null;
+            const token = localStorage.getItem('authToken');
+
+            try {
+                const stored = localStorage.getItem('currentUser');
+                if (stored) currentUser = JSON.parse(stored);
+            } catch (e) { }
+
+            if (token) {
+                try {
+                    const endpoint = (currentUser && currentUser.rol === 'turista') ? '/api/auth/user/profile' : '/api/auth/profile';
+                    const res = await fetch(endpoint, {
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        currentUser = data.data && data.data.admin ? data.data.admin : data.data;
+                        if (currentUser) {
+                            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                        }
+                    } else {
+                        localStorage.removeItem('authToken');
+                        localStorage.removeItem('currentUser');
+                        currentUser = null;
+                    }
+                } catch (e) {
+                    console.error('Error validating session:', e);
+                }
+            }
+
+            let buttonHtml = '';
+
+            if (currentUser) {
+                const nombreMostrar = currentUser.nombre ? currentUser.nombre.split(' ')[0] : 'Usuario';
+                if (currentUser.rol === 'super-admin') {
+                    buttonHtml = `
+                        <a href="/super-admin.html" class="btn" style="background-color: #ec4899; color: white; display:flex;align-items:center;gap:0.4rem;padding:0.5rem 1rem; border-radius: 0.5rem;" title="Panel Super Admin">
+                            <i class="fas fa-crown"></i> ${nombreMostrar}
+                        </a>
+                    `;
+                } else if (currentUser.rol === 'turista') {
+                    buttonHtml = `
+                        <a href="/user-panel.html" class="btn-login" style="display:flex;align-items:center;gap:0.4rem;padding:0.5rem 1rem;" title="Mi Panel">
+                            <i class="fas fa-user-circle"></i> ${nombreMostrar}
+                        </a>
+                    `;
+                } else if (currentUser.rol === 'admin-turismo') {
+                    buttonHtml = `
+                        <a href="/admin-turismo.html" class="btn" style="background-color: #0d9488; color: white; display:flex;align-items:center;gap:0.4rem;padding:0.5rem 1rem; border-radius: 0.5rem;" title="Panel Turismo">
+                            <i class="fas fa-compass"></i> ${nombreMostrar}
+                        </a>
+                    `;
+                } else {
+                    buttonHtml = `
+                        <a href="/admin.html" class="btn" style="background-color: #10b981; color: white; display:flex;align-items:center;gap:0.4rem;padding:0.5rem 1rem; border-radius: 0.5rem;" title="Panel Admin">
+                            <i class="fas fa-cog"></i> ${nombreMostrar}
+                        </a>
+                    `;
+                }
+            } else {
+                buttonHtml = `
+                    <a href="/login.html" class="btn-login"><i class="fas fa-user-circle"></i> Iniciar Sesión</a>
+                `;
+            }
+
+            nav.innerHTML = `
+                ${buttonHtml}
+                ${toggleHtml}
+            `;
+
+            const newToggleBtn = document.getElementById('nav-toggle');
+            const navMenu = document.getElementById('nav-menu');
+            if (newToggleBtn && navMenu) {
+                newToggleBtn.addEventListener('click', () => {
+                    navMenu.classList.toggle('active');
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderAuthNavbar();
+        });
+    </script>
+
+</body>
+
+</html>

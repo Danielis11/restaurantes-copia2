@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración de Turismo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' rel='stylesheet' />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --primary-light: #ecfdf5;
+            --accent: #8b5cf6;
+            --accent-light: #f5f3ff;
+            --white: #ffffff;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-900: #0f172a;
+            --danger: #ef4444;
+            --danger-light: #fef2f2;
+            --warning: #f59e0b;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --radius: 12px;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--gray-50);
+            color: var(--gray-900);
+            min-height: 100vh;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 72px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, var(--primary) 0%, #34d399 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .logo-text {
+            color: var(--gray-900);
+        }
+
+        .logo-text span {
+            color: var(--primary);
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--gray-900);
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--primary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, #34d399 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--gray-400);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.2s;
+            font-size: 1.1rem;
+        }
+
+        .logout-btn:hover {
+            color: var(--danger);
+            background: var(--danger-light);
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2.5rem 2rem;
+        }
+
+        .page-header {
+            margin-bottom: 2.5rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .page-title i {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .page-subtitle {
+            color: var(--gray-500);
+            font-size: 1rem;
+        }
+
+        /* ===== STATS GRID ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--gray-100);
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-title {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--gray-500);
+        }
+
+        .stat-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .stat-icon.green {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .stat-icon.purple {
+            background: var(--accent-light);
+            color: var(--accent);
+        }
+
+        .stat-icon.amber {
+            background: #fffbeb;
+            color: var(--warning);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        /* ===== TABS ===== */
+        .tabs {
+            display: flex;
+            gap: 0.25rem;
+            margin-bottom: 2rem;
+            background: var(--gray-100);
+            padding: 4px;
+            border-radius: 10px;
+            width: fit-content;
+        }
+
+        .tab-btn {
+            padding: 0.65rem 1.5rem;
+            border: none;
+            background: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray-500);
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .tab-btn.active {
+            background: var(--white);
+            color: var(--gray-900);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tab-btn:hover:not(.active) {
+            color: var(--gray-700);
+        }
+
+        .panel-section {
+            display: none;
+        }
+
+        .panel-section.active {
+            display: block;
+        }
+
+        /* ===== LIST HEADER ===== */
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .list-header h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 0 1rem;
+            width: 280px;
+            transition: border-color 0.2s;
+        }
+
+        .search-box:focus-within {
+            border-color: var(--primary);
+        }
+
+        .search-box i {
+            color: var(--gray-400);
+            font-size: 0.9rem;
+        }
+
+        .search-box input {
+            border: none;
+            outline: none;
+            padding: 0.6rem 0.75rem;
+            font-size: 0.9rem;
+            font-family: inherit;
+            width: 100%;
+            background: transparent;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            padding: 0.6rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--gray-200);
+            color: var(--gray-700);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--gray-300);
+            background: var(--gray-50);
+        }
+
+        .btn-danger {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: #fee2e2;
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.75rem;
+            font-size: 0.8rem;
+        }
+
+        /* ===== TABLE ===== */
+        .table-wrapper {
+            background: var(--white);
+            border-radius: var(--radius);
+            border: 1px solid var(--gray-100);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 0.85rem 1.25rem;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: var(--gray-50);
+            font-weight: 600;
+            color: var(--gray-600);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        td {
+            border-bottom: 1px solid var(--gray-50);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: var(--gray-50);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 500;
+        }
+
+        .badge-green {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        .badge-purple {
+            background: var(--accent-light);
+            color: var(--accent);
+        }
+
+        .badge-amber {
+            background: #fffbeb;
+            color: #b45309;
+        }
+
+        .badge-red {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .actions-cell {
+            display: flex;
+            gap: 0.4rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--gray-400);
+        }
+
+        .empty-state i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            font-size: 0.95rem;
+        }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 3rem 1rem;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--white);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 640px;
+            box-shadow: var(--shadow-lg);
+            animation: modalIn 0.25s ease;
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.97);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-title i {
+            color: var(--primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--gray-400);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0.4rem;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: var(--gray-100);
+            color: var(--gray-700);
+        }
+
+        .modal-body {
+            padding: 1.5rem 2rem;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            padding: 1.25rem 2rem;
+            border-top: 1px solid var(--gray-100);
+        }
+
+        /* ===== FORM ===== */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--gray-600);
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0.65rem 0.85rem;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            color: var(--gray-900);
+            transition: border-color 0.2s;
+            background: var(--white);
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--gray-700);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            accent-color: var(--primary);
+            width: 16px;
+            height: 16px;
+        }
+
+        .form-separator {
+            border: none;
+            border-top: 1px solid var(--gray-100);
+            margin: 0.75rem 0;
+            grid-column: 1 / -1;
+        }
+
+        /* ===== CONFIRM MODAL ===== */
+        .confirm-modal .modal {
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .confirm-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--danger-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: var(--danger);
+            font-size: 1.5rem;
+        }
+
+        .confirm-text {
+            color: var(--gray-600);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        /* ===== NOTIFICATION ===== */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2000;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transform: translateX(120%);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid var(--primary);
+        }
+
+        .notification.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid var(--danger);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .nav {
+                padding: 0 1rem;
+                height: 60px;
+            }
+
+            .main {
+                padding: 1.5rem 1rem;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .list-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-body {
+                max-height: 50vh;
+            }
+
+            .checkbox-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .user-info {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <nav class="nav">
+            <a href="/" class="logo">
+                <div class="logo-icon"><i class="fas fa-mountain-sun"></i></div>
+                <div class="logo-text">Turismo <span>Admin</span></div>
+            </a>
+            <div class="user-section">
+                <div class="user-info">
+                    <div class="user-name" id="user-name">Admin</div>
+                    <div class="user-role" id="user-role">Admin Turismo</div>
+                </div>
+                <div class="user-avatar" id="user-avatar">A</div>
+                <button class="logout-btn" onclick="logout()" title="Cerrar sesión">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main">
+        <div class="page-header">
+            <h1 class="page-title"><i class="fas fa-compass"></i> Gestión de Turismo</h1>
+            <p class="page-subtitle">Administra Tours, Rutas y Guías Certificados de la región</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Tours Activos</div>
+                    <div class="stat-icon green"><i class="fas fa-route"></i></div>
+                </div>
+                <div class="stat-value" id="total-tours">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Guías Certificados</div>
+                    <div class="stat-icon purple"><i class="fas fa-id-badge"></i></div>
+                </div>
+                <div class="stat-value" id="total-guias">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Categorías</div>
+                    <div class="stat-icon amber"><i class="fas fa-layer-group"></i></div>
+                </div>
+                <div class="stat-value" id="total-categorias">0</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('tours', this)"><i class="fas fa-route"></i>&nbsp;
+                Tours</button>
+            <button class="tab-btn" onclick="switchTab('guias', this)"><i class="fas fa-id-badge"></i>&nbsp;
+                Guías</button>
+            <button class="tab-btn" onclick="switchTab('agencias', this)"><i class="fas fa-building"></i>&nbsp;
+                Agencias</button>
+        </div>
+
+        <!-- TOURS SECTION -->
+        <section id="tours-section" class="panel-section active">
+            <div class="list-header">
+                <h2>Catálogo de Tours y Rutas</h2>
+                <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="search-tours" placeholder="Buscar tours..."
+                            oninput="filterTable('tours')">
+                    </div>
+                    <button class="btn btn-primary" onclick="openTourModal()">
+                        <i class="fas fa-plus"></i> Nuevo Tour
+                    </button>
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tour</th>
+                            <th>Tipo</th>
+                            <th>Categoría</th>
+                            <th>Precio</th>
+                            <th>Duración</th>
+                            <th>Dificultad</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tours-table-body">
+                        <tr>
+                            <td colspan="6">
+                                <div class="empty-state"><i class="fas fa-spinner fa-spin"></i>
+                                    <p>Cargando tours...</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- GUIAS SECTION -->
+        <section id="guias-section" class="panel-section">
+            <div class="list-header">
+                <h2>Directorio de Guías Certificados</h2>
+                <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="search-guias" placeholder="Buscar guías..."
+                            oninput="filterTable('guias')">
+                    </div>
+                    <button class="btn btn-primary" onclick="openGuiaModal()">
+                        <i class="fas fa-plus"></i> Nuevo Guía
+                    </button>
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Guía</th>
+                            <th>Especialidad</th>
+                            <th>Credencial SECTUR</th>
+                            <th>Idiomas</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="guias-table-body">
+                        <tr>
+                            <td colspan="6">
+                                <div class="empty-state"><i class="fas fa-spinner fa-spin"></i>
+                                    <p>Cargando guías...</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- AGENCIAS SECTION -->
+        <section id="agencias-section" class="panel-section">
+            <div class="list-header">
+                <h2>Catálogo de Agencias Locales</h2>
+                <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="search-agencias" placeholder="Buscar agencias..."
+                            oninput="filterTable('agencias')">
+                    </div>
+                    <button class="btn btn-primary" onclick="openAgenciaModal()">
+                        <i class="fas fa-plus"></i> Nueva Agencia
+                    </button>
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Agencia</th>
+                            <th>Contacto</th>
+                            <th>Registro Turístico</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="agencias-table-body">
+                        <tr>
+                            <td colspan="5">
+                                <div class="empty-state"><i class="fas fa-spinner fa-spin"></i>
+                                    <p>Cargando agencias...</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- ===== MODAL: TOUR ===== -->
+    <div class="modal-overlay" id="tour-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-route"></i> <span id="tour-modal-title">Nuevo Tour</span></h3>
+                <button class="modal-close" onclick="closeModal('tour-modal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="tour-edit-id">
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label class="form-label">Nombre *</label>
+                        <input type="text" class="form-input" id="tour-nombre-es" placeholder="Ej: Ruta de las Cuevas">
+                    </div>
+                    <div class="form-group full">
+                        <label class="form-label">Descripción corta *</label>
+                        <input type="text" class="form-input" id="tour-desc-corta-es"
+                            placeholder="Breve descripción del tour">
+                    </div>
+                    <div class="form-group full">
+                        <label class="form-label">Descripción completa *</label>
+                        <textarea class="form-textarea" id="tour-desc-es"
+                            placeholder="Descripción detallada del tour"></textarea>
+                    </div>
+
+                    <!-- Imágenes -->
+                    <div class="form-group full">
+                        <label class="form-label">Imágenes del Tour</label>
+                        <div class="image-upload-wrapper">
+                            <input type="file" id="tour-imagenes" accept="image/jpeg, image/png" multiple class="form-input">
+                            <p style="font-size:12px;color:var(--gray-500);margin-top:4px;">Nota: Puedes seleccionar
+                                múltiples fotos simultáneamente (Solo JPG/PNG, máx 5MB). La primera se usará como portada.</p>
+
+                            <!-- Contenedor para pre-visualizar fotos existentes o recién seleccionadas -->
+                            <div id="tour-images-preview" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="form-separator">
+                    <div class="form-group">
+                        <label class="form-label">Categoría *</label>
+                        <select class="form-select" id="tour-categoria">
+                            <option value="">Seleccionar...</option>
+                            <option value="Espeleismo">Espeleísmo</option>
+                            <option value="Senderismo">Senderismo</option>
+                            <option value="Trail Running">Trail Running</option>
+                            <option value="MTB y Gravel">MTB y Gravel</option>
+                            <option value="RZR">RZR</option>
+                            <option value="Transporte Turístico">Transporte Turístico</option>
+                            <option value="Aviturismo">Aviturismo</option>
+                            <option value="Kayak">Kayak</option>
+                            <option value="Turismo Cultural">Turismo Cultural</option>
+                            <option value="Ciclismo de Montaña">Ciclismo de Montaña</option>
+                            <option value="Rutas Bioculturales">Rutas Bioculturales</option>
+                            <option value="Ruta Herbolaria">Ruta Herbolaria</option>
+                            <option value="Ruta del Agua">Ruta del Agua</option>
+                            <option value="Ruta del Pulque">Ruta del Pulque</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tipo *</label>
+                        <select class="form-select" id="tour-tipo">
+                            <option value="">Seleccionar...</option>
+                            <option value="Turismo Convencional">Turismo Convencional</option>
+                            <option value="Turismo Comunitario">Turismo Comunitario</option>
+                            <option value="Turismo Religioso/Espiritual">Turismo Religioso/Espiritual</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Precio (MXN) *</label>
+                        <input type="number" class="form-input" id="tour-precio" placeholder="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Duración (horas) *</label>
+                        <input type="number" class="form-input" id="tour-duracion" placeholder="0" min="0" step="0.5">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Dificultad *</label>
+                        <select class="form-select" id="tour-dificultad">
+                            <option value="">Seleccionar...</option>
+                            <option value="Fácil">Fácil</option>
+                            <option value="Moderado">Moderado</option>
+                            <option value="Difícil">Difícil</option>
+                            <option value="Extremo">Extremo</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Capacidad máxima *</label>
+                        <input type="number" class="form-input" id="tour-capacidad" placeholder="10" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Descripción de duración</label>
+                        <input type="text" class="form-input" id="tour-duracion-desc"
+                            placeholder="Ej: Media jornada, Día completo">
+                    </div>
+
+                    <hr class="form-separator">
+
+                    <!-- WhatsApp -->
+                    <div class="form-group full">
+                        <label class="form-label"><i class="fab fa-whatsapp" style="color:#25D366;"></i> Teléfono
+                            WhatsApp</label>
+                        <input type="text" class="form-input" id="tour-whatsapp"
+                            placeholder="Ej: 524411234567 (código país + número, sin espacios)">
+                        <p style="font-size:12px; color:var(--gray-500); margin-top:4px;">Este número se usará para el
+                            botón "Reservar por WhatsApp" en la página de la experiencia.</p>
+                    </div>
+
+                    <hr class="form-separator">
+
+                    <!-- Disponibilidad -->
+                    <div class="form-group full">
+                        <label class="form-label"><i class="fas fa-calendar-week" style="color:var(--primary);"></i>
+                            Disponibilidad</label>
+                        <div style="margin-bottom:0.75rem;">
+                            <label
+                                style="display:inline-flex; align-items:center; gap:0.4rem; cursor:pointer; font-size:0.9rem;">
+                                <input type="checkbox" id="tour-todo-anio" checked> Disponible todo el año
+                            </label>
+                        </div>
+                        <label class="form-label" style="font-size:0.85rem; color:var(--gray-500);">Días de
+                            operación:</label>
+                        <div class="checkbox-grid" id="tour-dias-semana"
+                            style="display:grid; grid-template-columns: repeat(4, 1fr); gap:0.5rem; margin-top:0.5rem;">
+                            <label class="checkbox-item"><input type="checkbox" value="Lunes"> Lunes</label>
+                            <label class="checkbox-item"><input type="checkbox" value="Martes"> Martes</label>
+                            <label class="checkbox-item"><input type="checkbox" value="Miércoles"> Miércoles</label>
+                            <label class="checkbox-item"><input type="checkbox" value="Jueves"> Jueves</label>
+                            <label class="checkbox-item"><input type="checkbox" value="Viernes"> Viernes</label>
+                            <label class="checkbox-item"><input type="checkbox" value="Sábado"> Sábado</label>
+                            <label class="checkbox-item"><input type="checkbox" value="Domingo"> Domingo</label>
+                        </div>
+                        <p style="font-size:12px; color:var(--gray-500); margin-top:6px;">Si no marcas ningún día, se
+                            mostrará como "Salidas todos los días (previa reservación)".</p>
+                    </div>
+
+                    <hr class="form-separator">
+
+                    <!-- Rutas Adicionales -->
+                    <div class="form-group full">
+                        <label class="form-label" style="font-size:1rem; display:flex; justify-content:space-between; align-items:center;">
+                            <span><i class="fas fa-route" style="color:var(--primary);"></i> Rutas Adicionales</span>
+                            <button type="button" class="btn btn-outline btn-sm" onclick="addRuta()">
+                                <i class="fas fa-plus"></i> Añadir Ruta
+                            </button>
+                        </label>
+                        <p style="font-size:12px; color:var(--gray-500); margin-bottom: 0.5rem;">
+                            Si este tour ofrece múltiples rutas o sub-experiencias (ej. "Ruta Corta", "Ruta Larga"), agrégalas aquí. De lo contrario, déjalo vacío.
+                        </p>
+                        <div id="tour-rutas-container" style="display:flex; flex-direction:column; gap:15px;">
+                            <!-- Las rutas se generarán dinámicamente con JS -->
+                        </div>
+                    </div>
+
+                    <hr class="form-separator">
+
+                    <!-- Detalles Operativos -->
+                    <div class="form-group full">
+                        <label class="form-label" style="font-size:1rem;"><i class="fas fa-map-signs"
+                                style="color:var(--primary);"></i> Detalles Operativos</label>
+                    </div>
+                    <div class="form-group full">
+                        <label class="form-label">Itinerario Básico (Español)</label>
+                        <textarea class="form-textarea" id="tour-itinerario-es"
+                            placeholder="Ej: Salida 9am, recorrido, retorno 2pm..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Punto de Encuentro (Español)</label>
+                        <input type="text" class="form-input" id="tour-punto-encuentro-es"
+                            placeholder="Ej: Plaza Principal">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Restricciones (Español)</label>
+                        <input type="text" class="form-input" id="tour-restricciones-es"
+                            placeholder="Ej: No apto para embarazadas">
+                    </div>
+                    <div class="form-group full">
+                        <label class="form-label">Políticas de Cancelación (Español)</label>
+                        <textarea class="form-textarea" id="tour-politicas-es"
+                            placeholder="Ej: Cancelar con 24 hrs de anticipación..."></textarea>
+                    </div>
+
+                    <hr class="form-separator">
+
+                    <!-- Información Útil -->
+                    <div class="form-group full">
+                        <label class="form-label" style="font-size:1rem;"><i class="fas fa-info-circle"
+                                style="color:var(--primary);"></i> Información Útil</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">✅ Incluye</label>
+                        <div style="display:flex; gap:0.4rem; margin-bottom:0.5rem;">
+                            <input type="text" class="form-input" id="tour-incluye-input"
+                                placeholder="Ej: Guía certificado" style="flex:1;">
+                            <button type="button" class="btn btn-primary" onclick="addInfoItem('incluye')"
+                                style="padding:0.5rem 0.75rem; white-space:nowrap;"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <div id="tour-incluye-list" style="display:flex; flex-wrap:wrap; gap:0.4rem;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">❌ No Incluye</label>
+                        <div style="display:flex; gap:0.4rem; margin-bottom:0.5rem;">
+                            <input type="text" class="form-input" id="tour-noIncluye-input" placeholder="Ej: Transporte"
+                                style="flex:1;">
+                            <button type="button" class="btn btn-primary" onclick="addInfoItem('noIncluye')"
+                                style="padding:0.5rem 0.75rem; white-space:nowrap;"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <div id="tour-noIncluye-list" style="display:flex; flex-wrap:wrap; gap:0.4rem;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">🎒 Qué Traer</label>
+                        <div style="display:flex; gap:0.4rem; margin-bottom:0.5rem;">
+                            <input type="text" class="form-input" id="tour-queTraer-input" placeholder="Ej: Ropa cómoda"
+                                style="flex:1;">
+                            <button type="button" class="btn btn-primary" onclick="addInfoItem('queTraer')"
+                                style="padding:0.5rem 0.75rem; white-space:nowrap;"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <div id="tour-queTraer-list" style="display:flex; flex-wrap:wrap; gap:0.4rem;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">📋 Requisitos</label>
+                        <div style="display:flex; gap:0.4rem; margin-bottom:0.5rem;">
+                            <input type="text" class="form-input" id="tour-requisitos-input"
+                                placeholder="Ej: Ser mayor de 18 años" style="flex:1;">
+                            <button type="button" class="btn btn-primary" onclick="addInfoItem('requisitos')"
+                                style="padding:0.5rem 0.75rem; white-space:nowrap;"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <div id="tour-requisitos-list" style="display:flex; flex-wrap:wrap; gap:0.4rem;"></div>
+                    </div>
+
+                    <hr class="form-separator">
+
+                    <!-- Guías Asignados -->
+                    <div class="form-group full">
+                        <label class="form-label" style="font-size:1rem;"><i class="fas fa-users"
+                                style="color:var(--primary);"></i> Guías Asignados</label>
+                        <p style="font-size:12px; color:var(--gray-500); margin-bottom: 0.5rem;">
+                            Selecciona los guías que impartirán esta experiencia (se mostrarán en la página pública).
+                        </p>
+                        <div class="checkbox-grid" id="tour-guias-list">
+                            <!-- Los checkboxes de guías se llenarán aquí con JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('tour-modal')">Cancelar</button>
+                <button class="btn btn-primary" id="tour-save-btn" onclick="saveTour()">
+                    <i class="fas fa-save"></i> Guardar Tour
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL: GUÍA ===== -->
+    <div class="modal-overlay" id="guia-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-id-badge"></i> <span id="guia-modal-title">Nuevo Guía</span>
+                </h3>
+                <button class="modal-close" onclick="closeModal('guia-modal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="guia-edit-id">
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label class="form-label">Nombre completo *</label>
+                        <input type="text" class="form-input" id="guia-nombre" placeholder="Nombre completo del guía">
+                    </div>
+
+                    <!-- Foto de Perfil -->
+                    <div class="form-group full">
+                        <label class="form-label">Foto de Perfil</label>
+                        <div class="image-upload-wrapper">
+                            <input type="file" id="guia-fotoperfil" accept="image/jpeg, image/png" class="form-input">
+                            <p style="font-size:12px;color:var(--gray-500);margin-top:4px;">Solo JPG/PNG, máx 5MB.</p>
+                            <div id="guia-foto-preview" style="margin-top:10px;"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Teléfono *</label>
+                        <input type="tel" class="form-input" id="guia-telefono" placeholder="441 123 4567">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="guia-email" placeholder="guia@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Credencial SECTUR *</label>
+                        <input type="text" class="form-input" id="guia-sectur" placeholder="SEC-XXXX">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Autorización CONANP</label>
+                        <input type="text" class="form-input" id="guia-conanp" placeholder="CONANP-XXX">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Estado</label>
+                        <select class="form-select" id="guia-estado">
+                            <option value="activo">Activo</option>
+                            <option value="pendiente">Pendiente</option>
+                            <option value="inactivo">Inactivo</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Idiomas (separados por coma)</label>
+                        <input type="text" class="form-input" id="guia-idiomas" placeholder="Español, Inglés">
+                    </div>
+                    <div class="form-group full">
+                        <label class="form-label">Biografía</label>
+                        <textarea class="form-textarea" id="guia-biografia"
+                            placeholder="Breve biografía del guía"></textarea>
+                    </div>
+
+                    <!-- Datos Extra -->
+                    <div class="form-group">
+                        <label class="form-label">Años de Experiencia</label>
+                        <input type="number" class="form-input" id="guia-aniosExperiencia" placeholder="Ej: 5" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Zonas de Operación (separadas por coma)</label>
+                        <input type="text" class="form-input" id="guia-zonasOperacion"
+                            placeholder="Ej: Jalpan, Pinal de Amoles">
+                    </div>
+
+                    <hr class="form-separator">
+
+                    <!-- Galería de Fotos -->
+                    <div class="form-group full">
+                        <label class="form-label"><i class="fas fa-images" style="color:var(--primary);"></i> Galería de
+                            Fotos <small style="color:var(--gray-400); font-weight:400;">(máx. 5)</small></label>
+                        <div class="image-upload-wrapper">
+                            <input type="file" id="guia-galeria" accept="image/jpeg, image/png" multiple class="form-input">
+                            <p style="font-size:12px;color:var(--gray-500);margin-top:4px;">Selecciona hasta 5 fotos
+                                para mostrar en el perfil del guía (Solo JPG/PNG, máx 5MB).</p>
+                            <div id="guia-galeria-preview"
+                                style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;"></div>
+                        </div>
+                    </div>
+
+                    <hr class="form-separator">
+
+                    <!-- Redes Sociales -->
+                    <div class="form-group full">
+                        <label class="form-label" style="font-size:1rem;"><i class="fas fa-share-alt"
+                                style="color:var(--primary);"></i> Redes Sociales</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><i class="fab fa-facebook" style="color:#1877F2;"></i>
+                            Facebook</label>
+                        <input type="url" class="form-input" id="guia-facebook" placeholder="https://facebook.com/guia">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><i class="fab fa-instagram" style="color:#E1306C;"></i>
+                            Instagram</label>
+                        <input type="url" class="form-input" id="guia-instagram"
+                            placeholder="https://instagram.com/guia">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><i class="fab fa-youtube" style="color:#FF0000;"></i> YouTube</label>
+                        <input type="url" class="form-input" id="guia-youtube" placeholder="https://youtube.com/@guia">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><i class="fab fa-tiktok"></i> TikTok</label>
+                        <input type="url" class="form-input" id="guia-tiktok" placeholder="https://tiktok.com/@guia">
+                    </div>
+
+                    <hr class="form-separator">
+
+                    <!-- Certificaciones -->
+                    <div class="form-group full">
+                        <label class="form-label"><i class="fas fa-certificate" style="color:var(--primary);"></i>
+                            Certificaciones</label>
+                        <div id="guia-certificaciones-container" style="display:flex; flex-direction:column; gap:10px;">
+                            <!-- JS generates this -->
+                        </div>
+                        <button type="button" class="btn btn-outline" onclick="agregarCertificacionGuia()"
+                            style="margin-top:10px; font-size: 0.9rem;">
+                            <i class="fas fa-plus"></i> Añadir Certificación
+                        </button>
+                    </div>
+
+                    <hr class="form-separator">
+                    <div class="form-group full">
+                        <label class="form-label">Especialidades</label>
+                        <div class="checkbox-grid" id="guia-especialidades">
+                            <label class="checkbox-item"><input type="checkbox" value="Espeleismo"> Espeleísmo</label>
+                            <label class="checkbox-item"><input type="checkbox" value="Senderismo"> Senderismo</label>
+                            <label class="checkbox-item"><input type="checkbox" value="Trail Running"> Trail
+                                Running</label>
+                            <label class="checkbox-item"><input type="checkbox" value="MTB y Gravel"> MTB y
+                                Gravel</label>
+                            <label class="checkbox-item"><input type="checkbox" value="RZR"> RZR</label>
+                            <label class="checkbox-item"><input type="checkbox" value="Transporte Turístico"> Transporte
+                                Turístico</label>
+                            <label class="checkbox-item"><input type="checkbox" value="Aviturismo"> Aviturismo</label>
+                            <label class="checkbox-item"><input type="checkbox" value="Kayak"> Kayak</label>
+                            <label class="checkbox-item"><input type="checkbox" value="Turismo Cultural"> Turismo
+                                Cultural</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('guia-modal')">Cancelar</button>
+                <button class="btn btn-primary" id="guia-save-btn" onclick="saveGuia()">
+                    <i class="fas fa-save"></i> Guardar Guía
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL: AGENCIA ===== -->
+    <div class="modal-overlay" id="agencia-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-building"></i> <span id="agencia-modal-title">Nueva
+                        Agencia</span></h3>
+                <button class="modal-close" onclick="closeModal('agencia-modal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="agencia-edit-id">
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label class="form-label">Nombre de Agencia *</label>
+                        <input type="text" class="form-input" id="agencia-nombre"
+                            placeholder="Nombre completo de la agencia">
+                    </div>
+
+                    <!-- Logo / Foto de Perfil -->
+                    <div class="form-group full">
+                        <label class="form-label">Logo de la Agencia</label>
+                        <div class="image-upload-wrapper">
+                            <input type="file" id="agencia-logo" accept="image/jpeg, image/png" class="form-input">
+                            <p style="font-size:12px;color:var(--gray-500);margin-top:4px;">Solo JPG/PNG, máx 5MB.</p>
+                            <div id="agencia-foto-preview" style="margin-top:10px;"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Teléfono *</label>
+                        <input type="tel" class="form-input" id="agencia-telefono" placeholder="441 123 4567">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="agencia-email" placeholder="agencia@email.com">
+                    </div>
+                    <div class="form-group full">
+                        <label class="form-label">Dirección Físico (RNT)</label>
+                        <input type="text" class="form-input" id="agencia-direccion"
+                            placeholder="Calle, Número, Colonia, Municipio">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Registro Nacional de Turismo *</label>
+                        <input type="text" class="form-input" id="agencia-rnt" placeholder="RNT-XXXX">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Estado</label>
+                        <select class="form-select" id="agencia-estado">
+                            <option value="activo">Activo</option>
+                            <option value="pendiente">Pendiente</option>
+                            <option value="inactivo">Inactivo</option>
+                        </select>
+                    </div>
+                    <div class="form-group full">
+                        <label class="form-label">Descripción</label>
+                        <textarea class="form-textarea" id="agencia-descripcion"
+                            placeholder="Breve descripción de la agencia"></textarea>
+                    </div>
+
+                    <hr class="form-separator">
+
+                    <!-- Galería de Fotos -->
+                    <div class="form-group full">
+                        <label class="form-label"><i class="fas fa-images" style="color:var(--primary);"></i> Galería de
+                            Fotos <small style="color:var(--gray-400); font-weight:400;">(máx. 5)</small></label>
+                        <div class="image-upload-wrapper">
+                            <input type="file" id="agencia-galeria" accept="image/jpeg, image/png" multiple class="form-input">
+                            <p style="font-size:12px;color:var(--gray-500);margin-top:4px;">Selecciona hasta 5 fotos
+                                para mostrar en el perfil de la agencia (Solo JPG/PNG, máx 5MB).</p>
+                            <div id="agencia-galeria-preview"
+                                style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;"></div>
+                        </div>
+                    </div>
+
+                    <hr class="form-separator">
+
+                    <!-- Página Web y Horarios -->
+                    <div class="form-group">
+                        <label class="form-label"><i class="fas fa-globe" style="color:var(--primary);"></i> Página
+                            Web</label>
+                        <input type="url" class="form-input" id="agencia-paginaweb"
+                            placeholder="https://www.agencia.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><i class="fas fa-clock" style="color:var(--primary);"></i> Horarios de
+                            Atención</label>
+                        <input type="text" class="form-input" id="agencia-horarios" placeholder="Lun-Sáb 9am-6pm">
+                    </div>
+
+                    <hr class="form-separator">
+
+                    <!-- Redes Sociales -->
+                    <div class="form-group full">
+                        <label class="form-label" style="font-size:1rem;"><i class="fas fa-share-alt"
+                                style="color:var(--primary);"></i> Redes Sociales</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><i class="fab fa-facebook" style="color:#1877F2;"></i>
+                            Facebook</label>
+                        <input type="url" class="form-input" id="agencia-facebook"
+                            placeholder="https://facebook.com/agencia">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><i class="fab fa-instagram" style="color:#E1306C;"></i>
+                            Instagram</label>
+                        <input type="url" class="form-input" id="agencia-instagram"
+                            placeholder="https://instagram.com/agencia">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><i class="fab fa-youtube" style="color:#FF0000;"></i> YouTube</label>
+                        <input type="url" class="form-input" id="agencia-youtube"
+                            placeholder="https://youtube.com/@agencia">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><i class="fab fa-tiktok"></i> TikTok</label>
+                        <input type="url" class="form-input" id="agencia-tiktok"
+                            placeholder="https://tiktok.com/@agencia">
+                    </div>
+
+                    <hr class="form-separator">
+
+                    <!-- Idiomas y Especialidades -->
+                    <div class="form-group">
+                        <label class="form-label"><i class="fas fa-language" style="color:var(--primary);"></i> Idiomas
+                            (separados por coma)</label>
+                        <input type="text" class="form-input" id="agencia-idiomas"
+                            placeholder="Español, Inglés, Francés">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><i class="fas fa-mountain" style="color:var(--primary);"></i>
+                            Especialidades (separadas por coma)</label>
+                        <input type="text" class="form-input" id="agencia-especialidades"
+                            placeholder="Turismo de Aventura, Ecoturismo, Senderismo">
+                    </div>
+                    <div class="form-group full">
+                        <label class="form-label"><i class="fas fa-check-circle" style="color:var(--primary);"></i>
+                            Servicios Incluidos por Defecto (separados por coma)</label>
+                        <input type="text" class="form-input" id="agencia-servicios"
+                            placeholder="Transporte Redondo, Guía Certificado, Seguro de Viajero">
+                    </div>
+
+                    <hr class="form-separator">
+
+                    <!-- Mapa Interactivo para Ubicación -->
+                    <div class="form-group full">
+                        <label class="form-label" style="font-size:1rem;"><i class="fas fa-map-pin"
+                                style="color:var(--primary);"></i> Ubicación en el Mapa</label>
+                        <p style="font-size:12px;color:var(--gray-500);margin-bottom:0.75rem;">
+                            <i class="fas fa-info-circle"></i> Arrastra el marcador rojo para ajustar la ubicación
+                            exacta de la agencia.
+                        </p>
+                        <!-- Hidden inputs store the actual values -->
+                        <input type="hidden" id="agencia-lat">
+                        <input type="hidden" id="agencia-lng">
+                        <div id="agencia-map-admin"
+                            style="height:260px; border-radius:12px; overflow:hidden; border:2px solid var(--gray-200); position:relative; z-index:1;">
+                        </div>
+                        <div id="agencia-coords-display"
+                            style="margin-top:0.5rem; font-size:0.82rem; color:var(--gray-500); text-align:center;">
+                            <i class="fas fa-crosshairs"></i> <span id="agencia-coords-text">Mueve el mapa o arrastra el
+                                marcador</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('agencia-modal')">Cancelar</button>
+                <button class="btn btn-primary" id="agencia-save-btn" onclick="saveAgencia()">
+                    <i class="fas fa-save"></i> Guardar Agencia
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL: CONFIRMAR ELIMINAR ===== -->
+    <div class="modal-overlay confirm-modal" id="confirm-modal">
+        <div class="modal">
+            <div class="modal-body" style="padding:2rem; text-align:center;">
+                <div class="confirm-icon"><i class="fas fa-trash-alt"></i></div>
+                <h3 style="margin-bottom:0.5rem;">¿Eliminar este elemento?</h3>
+                <p class="confirm-text">Esta acción desactivará el registro. Podrás reactivarlo más adelante.</p>
+            </div>
+            <div class="modal-footer" style="justify-content:center;">
+                <button class="btn btn-outline" onclick="closeModal('confirm-modal')">Cancelar</button>
+                <button class="btn btn-danger" id="confirm-delete-btn" style="background:var(--danger); color:white;">
+                    <i class="fas fa-trash"></i> Sí, eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notif-text"></span>
+    </div>
+
+    <script src="/js/admin-turismo.js"></script>
+</body>
+
+</html>

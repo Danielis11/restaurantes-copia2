@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Agencia Local - Jalpan de Serra</title>
+    <meta name="description" id="page-description" content="Información detallada de la agencia local">
+    <link rel="icon" type="image/x-icon" href="/icons/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: var(--gray-50);
+            color: var(--gray-800);
+            line-height: 1.6;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .hero-section {
+            position: relative;
+            width: 100%;
+            height: 350px;
+            overflow: hidden;
+            background: #111;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.4;
+            filter: blur(5px);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            color: white;
+            padding: 2rem;
+        }
+
+        .agency-logo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            margin-bottom: 1rem;
+            background: white;
+        }
+
+        .agency-name {
+            font-size: 2.5rem;
+            font-weight: 800;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            margin: 0;
+        }
+
+        .page-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        @media (max-width: 768px) {
+            .page-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .content-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--gray-200);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .content-card h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .content-card h3 i {
+            color: var(--primary);
+        }
+
+        .description-text {
+            font-size: 1.05rem;
+            color: var(--gray-700);
+            line-height: 1.8;
+            white-space: pre-line;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+            font-size: 1rem;
+            color: var(--gray-700);
+        }
+
+        .contact-item i {
+            color: var(--primary);
+            font-size: 1.25rem;
+            margin-top: 0.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .contact-item a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .contact-item a:hover {
+            text-decoration: underline;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gray-100);
+            color: var(--gray-600);
+            font-size: 1.2rem;
+            transition: all 0.25s;
+            text-decoration: none;
+        }
+
+        .social-links a:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+            text-decoration: none;
+        }
+
+        .btn-primary-alt {
+            display: block;
+            width: 100%;
+            text-align: center;
+            padding: 1rem;
+            background: var(--primary);
+            color: white;
+            font-weight: 700;
+            border-radius: var(--radius-lg);
+            text-decoration: none;
+            transition: background 0.2s;
+            margin-top: 1.5rem;
+        }
+
+        .btn-primary-alt:hover {
+            background: var(--primary-dark);
+        }
+
+        .loading-state,
+        .error-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 50vh;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .error-state {
+            display: none;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--gray-200);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ===== Galería ===== */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .gallery-item {
+            border-radius: 10px;
+            overflow: hidden;
+            aspect-ratio: 1;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.04);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* ===== Badges ===== */
+        .badges-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .badges-group h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray-500);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        .badge-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.3rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+
+        .badge-blue {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .badge-green {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .badge-amber {
+            background: #fff3cd;
+            color: #92400e;
+        }
+
+        /* ===== Calendar / Autocomplete List ===== */
+        .calendar-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .calendar-item {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .calendar-date {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.1rem;
+            min-width: 80px;
+        }
+
+        .calendar-tours {
+            flex-grow: 1;
+            padding-left: 1rem;
+        }
+
+        .calendar-tour-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .calendar-tour-item a {
+            color: var(--gray-800);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .calendar-tour-item a:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        .calendar-price {
+            font-weight: 700;
+            color: var(--gray-600);
+            font-size: 0.85rem;
+        }
+
+        /* ===== Contact Form ===== */
+        .form-contact-agencia {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-top: 1rem;
+            border-top: 1px dashed var(--gray-200);
+            padding-top: 1rem;
+        }
+
+        .form-contact-agencia input,
+        .form-contact-agencia textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-contact-agencia input:focus,
+        .form-contact-agencia textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-contact-agencia textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn-enviar-contacto {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-enviar-contacto:hover {
+            background: var(--primary-dark);
+        }
+
+        /* ===== Mini Mapa ===== */
+        .mini-map-wrapper {
+            border-radius: 12px;
+            overflow: hidden;
+            width: 100%;
+            height: 220px;
+            background: var(--gray-100);
+            position: relative;
+        }
+
+        .mini-map-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        .map-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--gray-400);
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .map-placeholder i {
+            font-size: 2rem;
+        }
+
+        #agency-mapbox-map {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* ===== Breadcrumb ===== */
+        .breadcrumb {
+            max-width: 1000px;
+            margin: 70px auto 0;
+            padding: 0.6rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            background: white;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb .bc-sep {
+            font-size: 0.65rem;
+            color: var(--gray-400);
+        }
+
+        .breadcrumb span {
+            color: var(--gray-600);
+            font-weight: 600;
+        }
+
+        /* ===== Share Button ===== */
+        .share-bar {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            z-index: 20;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .share-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            text-decoration: none;
+            backdrop-filter: blur(8px);
+            transition: transform 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .share-btn:hover {
+            transform: scale(1.15);
+            text-decoration: none;
+        }
+
+        .share-btn.wa {
+            background: rgba(37, 211, 102, 0.85);
+            color: white;
+        }
+
+        .share-btn.fb {
+            background: rgba(24, 119, 242, 0.85);
+            color: white;
+        }
+
+        .share-btn.copy {
+            background: rgba(255, 255, 255, 0.25);
+            color: white;
+        }
+
+        /* ===== Verified Badge ===== */
+        .verified-rnt {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1.5px solid rgba(255, 255, 255, 0.4);
+            padding: 0.35rem 1rem;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            backdrop-filter: blur(4px);
+            color: white;
+            margin-top: 0.5rem;
+        }
+
+        .verified-rnt i {
+            color: #86efac;
+        }
+
+        /* ===== Star Rating ===== */
+        .rating-stars {
+            display: flex;
+            gap: 2px;
+            font-size: 1.1rem;
+        }
+
+        .rating-stars .fa-star {
+            color: #fbbf24;
+        }
+
+        .rating-stars .fa-star-o {
+            color: var(--gray-300);
+        }
+
+        .rating-summary {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .rating-big {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--gray-800);
+        }
+
+        .rating-count {
+            font-size: 0.85rem;
+            color: var(--gray-500);
+        }
+
+        /* ===== Review Card ===== */
+        .review-card {
+            border: 1px solid var(--gray-100);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1rem;
+            background: var(--gray-50);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-author {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .review-date {
+            font-size: 0.78rem;
+            color: var(--gray-400);
+        }
+
+        .review-comment {
+            font-size: 0.92rem;
+            color: var(--gray-700);
+            line-height: 1.6;
+        }
+
+        .review-form-area {
+            margin-top: 1.5rem;
+            border-top: 1px solid var(--gray-100);
+            padding-top: 1.25rem;
+        }
+
+        .star-picker {
+            display: flex;
+            gap: 0.3rem;
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+        }
+
+        .star-picker .fa-star {
+            color: var(--gray-200);
+            transition: color 0.15s;
+        }
+
+        .star-picker .fa-star.active {
+            color: #fbbf24;
+        }
+
+        .review-textarea {
+            width: 100%;
+            min-height: 80px;
+            border: 1.5px solid var(--gray-200);
+            border-radius: 10px;
+            padding: 0.75rem;
+            font-family: inherit;
+            font-size: 0.95rem;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+
+        .btn-review-submit {
+            margin-top: 0.6rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.65rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: background 0.2s;
+        }
+
+        .btn-review-submit:hover {
+            background: var(--primary-dark);
+        }
+
+        .delete-review-btn {
+            background: none;
+            border: none;
+            color: var(--gray-400);
+            cursor: pointer;
+            font-size: 0.8rem;
+            padding: 0;
+        }
+
+        .delete-review-btn:hover {
+            color: var(--error);
+        }
+
+        /* ===== Tours Grid ===== */
+        .tours-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+
+        .tour-mini-card {
+            border-radius: 12px;
+            overflow: hidden;
+            background: white;
+            border: 1px solid var(--gray-200);
+            transition: box-shadow 0.2s, transform 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .tour-mini-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-3px);
+            text-decoration: none;
+        }
+
+        .tour-mini-img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            background: var(--gray-100);
+            display: block;
+        }
+
+        .tour-mini-body {
+            padding: 0.75rem;
+        }
+
+        .tour-mini-name {
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+            color: var(--gray-800);
+        }
+
+        .tour-mini-meta {
+            font-size: 0.78rem;
+            color: var(--gray-500);
+            display: flex;
+            gap: 0.4rem;
+            align-items: center;
+        }
+
+        .tour-mini-price {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 0.88rem;
+            margin-top: 0.3rem;
+        }
+
+        .btn-see-all {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.6rem 1.4rem;
+            background: var(--primary);
+            color: white;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .btn-see-all:hover {
+            background: var(--primary-dark);
+            text-decoration: none;
+        }
+
+        /* ===== Lightbox ===== */
+        .lightbox-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(0, 0, 0, 0.92);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lightbox-overlay.open {
+            display: flex;
+        }
+
+        .lightbox-overlay img {
+            max-width: 90vw;
+            max-height: 85vh;
+            border-radius: 8px;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 1.25rem;
+            right: 1.5rem;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            line-height: 1;
+            background: none;
+            border: none;
+        }
+
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .lightbox-nav:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .lightbox-prev {
+            left: 1rem;
+        }
+
+        .lightbox-next {
+            right: 1rem;
+        }
+    </style>
+    <!-- Mapbox GL JS -->
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' rel='stylesheet' />
+    <script src="/js/i18n.js" defer></script>
+</head>
+
+<body>
+    <!-- NAVBAR -->
+    <header class="global-nav">
+        <nav class="nav-container">
+            <a href="/" class="logo">
+                <img src="/images/PueblosMágicos.svg.png" alt="Logo">
+                RestauranteWeb
+            </a>
+            <div class="nav-menu" id="nav-menu">
+                <a href="/" class="nav-link" data-i18n="navbar.inicio">Inicio</a>
+                <a href="/mapa.html" class="nav-link" data-i18n="navbar.mapa">Mapa</a>
+                <a href="/#restaurantes" class="nav-link" data-i18n="navbar.guia">Restaurantes</a>
+                <a href="/#hospedaje" class="nav-link" data-i18n="navbar.hospedaje">Hospedaje</a>
+                <a href="/experiencias.html" class="nav-link" data-i18n="navbar.tours">Experiencias</a>
+                <a href="/Contactos.html" class="nav-link" data-i18n="footer.contacto">Contacto</a>
+            </div>
+            <div class="nav-actions-wrapper" style="display: flex; align-items: center;">
+                <select id="language-selector"
+                    style="margin-right: 15px; padding: 5px; border-radius: 5px; border: 1px solid #ddd; background: white; font-family: var(--font-family);">
+                    <option value="es" data-i18n="lang.switch_es">Español</option>
+                    <option value="en" data-i18n="lang.switch_en">Inglés</option>
+                    <option value="fr" data-i18n="lang.switch_fr">Français</option>
+                </select>
+                <div class="nav-actions" id="navbar-actions" style="display: flex; align-items: center;">
+                    <a href="/login.html" class="btn-login"><i class="fas fa-user-circle"></i> <span
+                            data-i18n="navbar.iniciar_sesion">Iniciar Sesión</span></a>
+                    <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú"><i
+                            class="fas fa-bars"></i></button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main id="page-content">
+        <div class="loading-state" id="loading-state">
+            <div class="spinner"></div>
+            <p style="margin-top: 1rem;" data-i18n="agencia.cargando">Cargando información de la agencia...</p>
+        </div>
+
+        <div class="error-state" id="error-state">
+            <i class="fas fa-exclamation-triangle"
+                style="font-size: 3rem; color: var(--error); margin-bottom: 1rem;"></i>
+            <h2 data-i18n="agencia.no_encontrada">Agencia no encontrada</h2>
+            <p style="color: var(--gray-500); margin-bottom: 1.5rem;" data-i18n="agencia.no_encontrada_desc">No pudimos
+                cargar la información de esta agencia. Puede que no exista o haya un error de conexión.</p>
+            <a href="/experiencias.html" class="btn-primary-alt"
+                style="display: inline-block; width: auto; padding: 0.75rem 1.5rem;"><i class="fas fa-arrow-left"></i>
+                <span data-i18n="experiencia_detalle.volver">Volver a Experiencias</span></a>
+        </div>
+
+        <div id="agency-content" style="display:none;">
+            <!-- Breadcrumb -->
+            <nav class="breadcrumb" id="breadcrumb-bar">
+                <a href="/"><i class="fas fa-home"></i> Inicio</a>
+                <i class="fas fa-chevron-right bc-sep"></i>
+                <a href="/experiencias.html">Directorio Turístico</a>
+                <i class="fas fa-chevron-right bc-sep"></i>
+                <span id="breadcrumb-name">Agencia</span>
+            </nav>
+
+            <div class="hero-section">
+                <img id="agency-bg" src="/images/PueblosMágicos.svg.png" class="hero-bg" alt="Fondo">
+                <div class="hero-content">
+                    <img id="agency-logo" src="/images/PueblosMágicos.svg.png" class="agency-logo"
+                        alt="Logo de Agencia">
+                    <h1 class="agency-name" id="agency-name" style="margin-bottom:0.5rem; display:inline-block;">Nombre
+                        de la Agencia</h1>
+                    <button class="btn-primary-alt" id="btn-fav-agencia" onclick="toggleFavoritoAgencia()"
+                        style="display:none; vertical-align:middle; margin-left:1rem; padding: 0.4rem 1rem; font-size: 0.9rem;">
+                        <i class="far fa-heart"></i> Guardar
+                    </button>
+                    <div style="margin-top: 0.5rem;">
+                        <span id="agency-rnt-badge" class="verified-rnt" style="display:none;">
+                            <i class="fas fa-certificate"></i> Agencia Verificada &bull; RNT: <span
+                                id="agency-rnt-val"></span>
+                        </span>
+                    </div>
+                    <div id="agency-hero-stars"
+                        style="justify-content:center; margin-top:0.4rem; display:none; flex-direction:column; align-items:center; gap:0.1rem;">
+                        <div class="rating-stars" id="hero-stars"></div>
+                        <span style="font-size:0.8rem; color:rgba(255,255,255,0.8);" id="hero-rating-text"></span>
+                    </div>
+                </div>
+                <!-- Share bar -->
+                <div class="share-bar">
+                    <a class="share-btn wa" id="share-wa" href="#" title="Compartir en WhatsApp">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <a class="share-btn fb" id="share-fb" href="#" title="Compartir en Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <button class="share-btn copy" id="share-copy" title="Copiar enlace" onclick="copyAgenciaLink()">
+                        <i class="fas fa-link"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="page-container">
+                <div class="main-column">
+                    <div class="content-card">
+                        <h3><i class="fas fa-info-circle"></i> <span data-i18n="agencia.sobre_nosotros">Sobre la
+                                Agencia</span></h3>
+                        <p class="description-text" id="agency-desc">Cargando descripción...</p>
+                    </div>
+
+                    <!-- Galería de Fotos -->
+                    <div class="content-card" id="agency-gallery-section" style="display:none;">
+                        <h3><i class="fas fa-images"></i> Galería de Fotos</h3>
+                        <div class="gallery-grid" id="agency-gallery"></div>
+                    </div>
+
+                    <!-- Idiomas, Especialidades, Servicios -->
+                    <div class="content-card" id="agency-badges-section" style="display:none;"></div>
+
+                    <!-- Calendario de la Agencia -->
+                    <div class="content-card" id="agency-calendar-section" style="display:none; margin-bottom: 2rem;">
+                        <h3 style="margin-bottom: 1rem;"><i class="fas fa-calendar-alt"></i> Próximas Fechas Disponibles
+                        </h3>
+                        <div id="agency-calendar-list" class="calendar-list">
+                            <p style="color:var(--gray-400); font-size:0.9rem;">Cargando calendario...</p>
+                        </div>
+                    </div>
+
+                    <!-- Tours de la Agencia -->
+                    <div class="content-card" id="agency-tours-section" style="display:none;">
+                        <h3><i class="fas fa-hiking"></i> Tours y Paquetes</h3>
+                        <div class="tours-grid" id="agency-tours-grid"></div>
+                        <a id="btn-ver-todos-tours" href="/experiencias.html" class="btn-see-all">
+                            <i class="fas fa-compass"></i> Ver todos en Experiencias
+                        </a>
+                    </div>
+
+                    <!-- Reseñas -->
+                    <div class="content-card" id="agency-reviews-section">
+                        <h3><i class="fas fa-star"></i> Reseñas</h3>
+                        <!-- Rating summary -->
+                        <div class="rating-summary" id="reviews-summary" style="display:none;">
+                            <span class="rating-big" id="reviews-avg">0</span>
+                            <div>
+                                <div class="rating-stars" id="reviews-stars-header"></div>
+                                <div class="rating-count" id="reviews-count-text">0 reseñas</div>
+                            </div>
+                        </div>
+
+                        <!-- Galería de Viajeros (Photos from reviews) -->
+                        <div id="traveler-gallery-section" style="display:none; margin-bottom: 1.5rem;">
+                            <h4 style="font-size: 1rem; color: var(--gray-800); margin-bottom: 0.75rem;"><i
+                                    class="fas fa-camera"></i> Fotos de viajeros</h4>
+                            <div class="gallery-grid" id="traveler-gallery"
+                                style="grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 0.5rem;">
+                            </div>
+                        </div>
+
+                        <!-- Review list -->
+                        <div id="reviews-list">
+                            <p style="color:var(--gray-400); font-size:0.9rem;">Sin reseñas aún. ¡Sé el primero!</p>
+                        </div>
+                        <!-- Review form (only for logged-in users) -->
+                        <div class="review-form-area" id="review-form-area" style="display:none;">
+                            <h4 style="font-weight:700; margin-bottom:0.75rem;"><i class="fas fa-pen"></i> Escribe tu
+                                reseña</h4>
+                            <div class="star-picker" id="star-picker">
+                                <i class="fas fa-star" data-val="1"></i>
+                                <i class="fas fa-star" data-val="2"></i>
+                                <i class="fas fa-star" data-val="3"></i>
+                                <i class="fas fa-star" data-val="4"></i>
+                                <i class="fas fa-star" data-val="5"></i>
+                            </div>
+                            <textarea class="review-textarea" id="review-comment"
+                                placeholder="Comparte tu experiencia con esta agencia..."></textarea>
+                            <input type="file" id="review-fotos" multiple accept="image/*" class="form-input"
+                                style="margin-bottom:1rem; font-size:0.9rem;">
+                            <button class="btn-review-submit" onclick="submitReview()"><i
+                                    class="fas fa-paper-plane"></i> Publicar Reseña</button>
+                        </div>
+                        <p id="review-login-prompt"
+                            style="font-size:0.85rem; color:var(--gray-500); margin-top:0.75rem; display:none;">
+                            <a href="#"
+                                onclick="localStorage.setItem('redirectUrl', window.location.href); window.location.href='/login.html'; return false;"
+                                style="color:var(--primary);">Inicia sesión</a> para dejar tu reseña.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="sidebar">
+                    <div class="content-card">
+                        <h3><i class="fas fa-address-card"></i> <span data-i18n="agencia.info_contacto">Información de
+                                Contacto</span></h3>
+
+                        <div id="contact-info-container">
+                            <!-- Contact items injected here -->
+                        </div>
+
+                        <div class="social-links" id="social-links-container">
+                            <!-- Social links injected here -->
+                        </div>
+
+                        <a id="btn-whatsapp" href="#" target="_blank" class="btn-primary-alt"
+                            style="display:none; background:#25D366; margin-bottom: 1rem;"><i
+                                class="fab fa-whatsapp"></i> Contactar por
+                            WhatsApp</a>
+
+                        <form id="form-contacto-agencia" class="form-contact-agencia"
+                            onsubmit="enviarContactoForm(event)">
+                            <h4 style="font-size: 1rem; color: var(--gray-800); margin-bottom: 0;"><i
+                                    class="fas fa-paper-plane" style="color:var(--primary);"></i> Enviar Mensaje</h4>
+                            <p style="font-size:0.85rem; color:var(--gray-500); margin:0 0 0.5rem;">Solicita información
+                                directamente a la agencia.</p>
+
+                            <input type="text" id="contacto-nombre" placeholder="Tu nombre" required>
+                            <input type="email" id="contacto-email" placeholder="Tu correo electrónico" required>
+                            <input type="tel" id="contacto-telefono" placeholder="Teléfono (Opcional)">
+                            <textarea id="contacto-mensaje" placeholder="¿En quéツアー te interesa? o deja tus dudas..."
+                                required></textarea>
+
+                            <button type="submit" class="btn-enviar-contacto" id="btn-submit-contacto">
+                                Enviar Mensaje
+                            </button>
+                            <p id="msg-contacto-estado"
+                                style="font-size:0.85rem; text-align:center; display:none; margin:0; padding:0.5rem; border-radius:4px;">
+                            </p>
+                        </form>
+                    </div>
+
+                    <!-- Mini Mapa Leaflet -->
+                    <div class="content-card" id="agency-map-section" style="display:none;">
+                        <h3><i class="fas fa-map-marked-alt"></i> Ubicación</h3>
+                        <div class="mini-map-wrapper">
+                            <div id="agency-mapbox-map"></div>
+                        </div>
+                        <a id="btn-ver-mapa" href="/mapa.html" target="_blank"
+                            style="display:block; margin-top:0.75rem; text-align:center; color:var(--primary); font-weight:600; font-size:0.9rem; text-decoration:none;">
+                            <i class="fas fa-map-marked-alt"></i> Ver en el Mapa
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- LIGHTBOX OVERLAY -->
+    <div class="lightbox-overlay" id="lightbox-overlay" onclick="closeLightboxOutside(event)">
+        <button class="lightbox-close" onclick="closeLightbox()"><i class="fas fa-times"></i></button>
+        <button class="lightbox-nav lightbox-prev" onclick="lightboxMove(-1)"><i
+                class="fas fa-chevron-left"></i></button>
+        <img id="lightbox-img" src="" alt="Imagen ampliada">
+        <button class="lightbox-nav lightbox-next" onclick="lightboxMove(1)"><i
+                class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <img src="/images/PueblosMágicos.svg.png" alt="Logo">
+                        RestauranteWeb
+                    </div>
+                    <p data-i18n="footer.descripcion">Tu guía completa para descubrir los mejores restaurantes, hoteles
+                        y experiencias en el corazón de la Sierra Gorda.</p>
+                </div>
+                <div class="footer-links">
+                    <h4 data-i18n="footer.enlaces">Enlaces Rápidos</h4>
+                    <ul>
+                        <li><a href="/#restaurantes" data-i18n="navbar.guia">Restaurantes</a></li>
+                        <li><a href="/#hospedaje" data-i18n="navbar.hospedaje">Hospedaje</a></li>
+                        <li><a href="/experiencias.html" data-i18n="navbar.tours">Experiencias</a></li>
+                        <li><a href="/mapa.html" data-i18n="navbar.mapa">Mapa de Ubicaciones</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h4 data-i18n="footer.contacto">Contacto</h4>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> Jalpan de Serra, Querétaro, México</li>
+                        <li><i class="fas fa-envelope"></i> info@turismojalpan.mx</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 RestauranteWeb Jalpan de Serra. <span data-i18n="footer.derechos">Todos los derechos
+                        reservados.</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/agencia.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+
+</html>
