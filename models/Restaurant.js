@@ -233,6 +233,11 @@ const restaurantSchema = new mongoose.Schema({
     min: 0,
     default: 0
   },
+  rangoPrecio: {
+    type: String,
+    enum: ['$', '$$', '$$$', ''],
+    default: ''
+  },
   descripcion: {
     type: bilingueSchema,
     required: [true, 'La descripción es obligatoria']
@@ -358,6 +363,17 @@ const restaurantSchema = new mongoose.Schema({
     clicsWhatsapp: { type: Number, default: 0 },
     clicsMapa: { type: Number, default: 0 }
   }],
+  homePosition: {
+    type: Number,
+    min: 1,
+    max: 12,
+    default: null
+  },
+  rankingUpdatedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Admin',
+    default: null
+  },
   activo: {
     type: Boolean,
     default: true,
@@ -381,6 +397,7 @@ const restaurantSchema = new mongoose.Schema({
 restaurantSchema.index({ adminId: 1, activo: 1 });
 restaurantSchema.index({ tipo: 1, activo: 1 });
 restaurantSchema.index({ 'direccion.ciudad': 1, activo: 1 });
+restaurantSchema.index({ homePosition: 1, activo: 1 });
 
 // Virtual para obtener la imagen principal
 restaurantSchema.virtual('imagenPrincipal').get(function() {

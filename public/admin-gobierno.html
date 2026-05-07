@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Gubernamental - RestauranteWeb</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    
+    <!-- Mapbox GL JS -->
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
+
+    <style>
+        :root {
+            --primary: #1e3a8a; /* Azul institucional */
+            --primary-dark: #1e40af;
+            --secondary: #0ea5e9;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --white: #ffffff;
+            --radius-md: 0.5rem;
+            --radius-lg: 1rem;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--gray-50);
+            color: var(--gray-900);
+            line-height: 1.6;
+        }
+
+        /* Header Institucional */
+        .header {
+            background: linear-gradient(135deg, var(--gray-900) 0%, var(--primary) 100%);
+            color: var(--white);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .logo { display: flex; align-items: center; gap: 0.5rem; color: var(--white); text-decoration: none; font-size: 1.25rem; font-weight: 700; }
+        .user-section { display: flex; align-items: center; gap: 1.5rem; }
+
+        .btn-logout, .btn-primary {
+            background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);
+            padding: 0.5rem 1rem; border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .btn-logout:hover { background: rgba(255,255,255,0.2); }
+        .btn-primary { background: var(--primary); color: white; border: none; font-weight: 500; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-success { background: var(--success); color: white; border: none; font-weight: 500; padding: 0.5rem 1rem; border-radius: var(--radius-md); display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; }
+        .btn-success:hover { background: #059669; }
+
+        /* Tabs */
+        .nav-tabs { background: var(--white); border-bottom: 1px solid var(--gray-200); position: sticky; top: 70px; z-index: 99; }
+        .tabs-container { max-width: 1400px; margin: 0 auto; display: flex; gap: 2rem; padding: 0 1.5rem; overflow-x: auto; scrollbar-width: none; }
+        .tabs-container::-webkit-scrollbar { display: none; }
+        .tab-button {
+            background: none; border: none; padding: 1rem 0; color: var(--gray-500); font-weight: 500; cursor: pointer;
+            border-bottom: 2px solid transparent; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem; white-space: nowrap;
+        }
+        .tab-button.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+        /* Main Context */
+        .main { max-width: 1400px; margin: 0 auto; padding: 2rem 1.5rem; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .page-header { margin-bottom: 2rem; border-bottom: 1px solid var(--gray-200); padding-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;}
+        .page-title { font-size: 1.8rem; font-weight: 700; color: var(--gray-900); }
+        .page-subtitle { color: var(--gray-500); font-size: 1rem; margin-top: 0.25rem; }
+
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: var(--white); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--gray-200); box-shadow: var(--shadow-sm); position: relative; overflow: hidden; }
+        .stat-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--primary); }
+        .stat-card.success::before { background: var(--success); }
+        .stat-card.warning::before { background: var(--warning); }
+        .stat-card.danger::before { background: var(--danger); }
+        .stat-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; }
+        .stat-title { color: var(--gray-500); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-value { font-size: 2.2rem; font-weight: 700; color: var(--gray-900); line-height: 1.2; }
+        .stat-icon { font-size: 1.5rem; color: var(--primary); opacity: 0.8; }
+        .stat-sub { font-size: 0.85rem; color: var(--gray-500); margin-top: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+
+        /* Charts Grid */
+        .charts-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+        .charts-grid.equal { grid-template-columns: 1fr 1fr; }
+        @media (max-width: 900px) { .charts-grid, .charts-grid.equal { grid-template-columns: 1fr; } }
+        
+        .chart-card { background: var(--white); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--gray-200); box-shadow: var(--shadow-sm); }
+        .chart-header { margin-bottom: 1rem; font-weight: 600; color: var(--gray-800); font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center; }
+        .chart-container { position: relative; height: 300px; width: 100%; }
+
+        /* Map Container */
+        .map-wrapper { height: 400px; width: 100%; border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--gray-200); position: relative; }
+        #heatMap { width: 100%; height: 100%; }
+
+        /* Table Styles */
+        .table-container { background: var(--white); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); border: 1px solid var(--gray-200); overflow: hidden; margin-bottom: 2rem; }
+        .table-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center; background: var(--gray-50); }
+        .table-title { font-size: 1.1rem; font-weight: 600; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: var(--white); padding: 1rem 1.5rem; text-align: left; font-weight: 600; color: var(--gray-600); border-bottom: 2px solid var(--gray-200); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        td { padding: 1rem 1.5rem; border-bottom: 1px solid var(--gray-200); color: var(--gray-800); font-size: 0.95rem; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover { background: var(--gray-50); }
+        
+        /* Badges */
+        .badge { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+        .badge.success { background: #d1fae5; color: #065f46; }
+        .badge.warning { background: #fef3c7; color: #92400e; }
+        .badge.danger { background: #fee2e2; color: #991b1b; }
+        .badge.info { background: #dbeafe; color: #1e40af; }
+        .badge.gray { background: #f1f5f9; color: #475569; }
+
+        /* Lists for Rankings */
+        .ranking-list { list-style: none; }
+        .ranking-item { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px dashed var(--gray-200); }
+        .ranking-item:last-child { border-bottom: none; }
+        .ranking-info { display: flex; flex-direction: column; }
+        .ranking-name { font-weight: 600; color: var(--gray-800); }
+        .ranking-desc { font-size: 0.85rem; color: var(--gray-500); }
+        .ranking-score { font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; gap: 0.25rem; }
+        .ranking-score i { color: var(--warning); font-size: 0.9rem; }
+
+        /* Alerts List */
+        .alert-item { display: flex; gap: 1rem; padding: 1rem; border-radius: var(--radius-md); background: var(--white); border: 1px solid var(--gray-200); margin-bottom: 1rem; border-left: 4px solid var(--danger); }
+        .alert-item.warning { border-left-color: var(--warning); }
+        .alert-icon { font-size: 1.5rem; color: var(--danger); margin-top: 0.25rem; }
+        .alert-item.warning .alert-icon { color: var(--warning); }
+        .alert-content h4 { font-size: 1rem; margin-bottom: 0.25rem; }
+        .alert-content p { font-size: 0.85rem; color: var(--gray-600); }
+        .alert-meta { font-size: 0.75rem; color: var(--gray-400); margin-top: 0.5rem; display: flex; gap: 1rem; }
+
+        .loading-screen { position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .spinner { width: 50px; height: 50px; border: 4px solid var(--gray-200); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 1rem; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div id="startup-loading" class="loading-screen">
+        <div class="spinner"></div>
+        <h2 style="color:var(--gray-700)">Cargando Sistema Gubernamental...</h2>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <a href="/" class="logo">
+                <i class="fas fa-landmark"></i>
+                Panel Gubernamental Jalpan
+            </a>
+            <div class="user-section">
+                <a href="/" class="btn-logout" style="border: none; background: transparent; padding: 0;">
+                    <i class="fas fa-home"></i> Inicio
+                </a>
+                <div style="width: 1px; height: 20px; background: rgba(255,255,255,0.3);"></div>
+                <div class="user-info">
+                    <div class="user-name" id="user-name">Funcionario</div>
+                    <div class="user-role" style="font-size:0.8rem; opacity:0.8;">Auditoría Ciega</div>
+                </div>
+                <button class="btn-logout" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Salir
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Tabs -->
+    <nav class="nav-tabs">
+        <div class="tabs-container">
+            <button class="tab-button active" data-tab="dashboard" onclick="switchTab('dashboard')">
+                <i class="fas fa-chart-pie"></i> Resumen de Impacto
+            </button>
+            <button class="tab-button" data-tab="turismo" onclick="switchTab('turismo')">
+                <i class="fas fa-map-marked-alt"></i> Turismo y Guías
+            </button>
+            <button class="tab-button" data-tab="gastronomia" onclick="switchTab('gastronomia')">
+                <i class="fas fa-utensils"></i> Alimentos y Bebidas
+            </button>
+            <button class="tab-button" data-tab="hospedajes" onclick="switchTab('hospedajes')">
+                <i class="fas fa-hotel"></i> Hospedajes
+            </button>
+            <button class="tab-button" data-tab="heatmaps" onclick="switchTab('heatmaps')">
+                <i class="fas fa-fire"></i> Mapeo Territorial
+            </button>
+            <button class="tab-button" data-tab="restaurants" onclick="switchTab('restaurants')">
+                <i class="fas fa-store"></i> Padrón General
+            </button>
+            <button class="tab-button" data-tab="alertas" onclick="switchTab('alertas')" id="tab-alertas">
+                <i class="fas fa-bell"></i> Alertas y Calidad
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+        
+        <!-- Tab 1: Dashboard Resumen -->
+        <div id="dashboard" class="tab-content active">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Resumen de Impacto Económico</h1>
+                    <p class="page-subtitle">Indicadores macroeconómicos y crecimiento de la plataforma turística.</p>
+                </div>
+                <button class="btn-primary" onclick="window.print()">
+                    <i class="fas fa-print"></i> Imprimir Reporte
+                </button>
+            </div>
+
+            <div class="stats-grid" id="main-stats">
+                <!-- Se llena con JS -->
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <span><i class="fas fa-chart-area" style="color:var(--primary)"></i> Crecimiento del Sector (Últimos 6 meses)</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="growthChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <span><i class="fas fa-chart-pie" style="color:var(--secondary)"></i> Distribución Comercial</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="typeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-grid equal">
+                <div class="chart-card" style="border-top: 4px solid var(--success)">
+                    <div class="chart-header">
+                        <span><i class="fas fa-trophy" style="color:var(--warning)"></i> Top 5: Excelencia Turística</span>
+                    </div>
+                    <ul class="ranking-list" id="top-restaurants">
+                        <!-- JS -->
+                    </ul>
+                </div>
+
+                <div class="chart-card" style="border-top: 4px solid var(--danger)">
+                    <div class="chart-header">
+                        <span><i class="fas fa-exclamation-circle" style="color:var(--danger)"></i> Foco de Atención: Menor Calificación</span>
+                    </div>
+                    <ul class="ranking-list" id="bottom-restaurants">
+                        <!-- JS -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 2: Turismo y Guías -->
+        <div id="turismo" class="tab-content">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Oferta Turística y Guías</h1>
+                    <p class="page-subtitle">Monitoreo del padrón de prestadores de servicios turísticos.</p>
+                </div>
+                <button class="btn-success" onclick="exportGuiasCSV()">
+                    <i class="fas fa-file-csv"></i> Exportar Padrón de Guías
+                </button>
+            </div>
+
+            <div class="stats-grid" id="turismo-stats">
+                <!-- JS -->
+            </div>
+
+            <div class="charts-grid equal">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <span><i class="fas fa-hiking" style="color:var(--success)"></i> Tours por Categoría</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="tourCatChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <span><i class="fas fa-route" style="color:var(--primary)"></i> Tipos de Recorridos</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="tourTypeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <div class="table-header">
+                    <h2 class="table-title">Padrón de Guías Certificados</h2>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table id="guias-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre Completo</th>
+                                <th>Estado</th>
+                                <th>Certificación SECTUR</th>
+                                <th>Especialidades</th>
+                                <th>Calificación</th>
+                                <th>Registro</th>
+                            </tr>
+                        </thead>
+                        <tbody><!-- JS --></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 3: Alimentos y Bebidas (Gastronomía) -->
+        <div id="gastronomia" class="tab-content">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Sector Gastronómico</h1>
+                    <p class="page-subtitle">Monitoreo específico de restaurantes, bares, cafeterías y centros de consumo.</p>
+                </div>
+            </div>
+
+            <div class="stats-grid" id="gastro-stats">
+                <!-- JS -->
+            </div>
+
+            <div class="charts-grid equal">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <span><i class="fas fa-chart-bar" style="color:var(--primary)"></i> Calificaciones Promedio por Tipo</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="gastroRatingChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <span><i class="fas fa-store-slash" style="color:var(--danger)"></i> Estado Operativo</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="gastroStatusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="table-container" style="margin-top: 2rem;">
+                <div class="table-header">
+                    <h2 class="table-title">Desglose Rápido del Sector</h2>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table id="gastro-summary-table">
+                        <thead>
+                            <tr>
+                                <th>Giro Comercial</th>
+                                <th>Total Registrados</th>
+                                <th>Activos</th>
+                                <th>En Pausa / Inactivos</th>
+                                <th>Calificación Media</th>
+                            </tr>
+                        </thead>
+                        <tbody><!-- JS --></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 3.5: Hospedajes -->
+        <div id="hospedajes" class="tab-content">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Sector Hotelero y Hospedaje</h1>
+                    <p class="page-subtitle">Monitoreo de la capacidad instalada, hoteles, cabañas y plataformas AirBnb.</p>
+                </div>
+            </div>
+
+            <div class="stats-grid" id="hospedajes-stats">
+                <!-- JS -->
+            </div>
+
+            <div class="charts-grid equal">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <span><i class="fas fa-chart-pie" style="color:var(--primary)"></i> Distribución de Capacidad instalada</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="hospedajesTypeChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <span><i class="fas fa-star" style="color:var(--warning)"></i> Calificaciones Promedio</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="hospedajesRatingChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-container" style="margin-top: 2rem;">
+                <div class="table-header">
+                    <h2 class="table-title">Desglose del Sector de Hospedaje</h2>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table id="hospedajes-summary-table">
+                        <thead>
+                            <tr>
+                                <th>Tipo de Alojamiento</th>
+                                <th>Total Registrados</th>
+                                <th>Activos en Plataforma</th>
+                                <th>Calificación Media</th>
+                            </tr>
+                        </thead>
+                        <tbody><!-- JS --></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 4: Heatmaps -->
+        <div id="heatmaps" class="tab-content">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Mapeo Territorial Diferenciado</h1>
+                    <p class="page-subtitle">Distribución geográfica sectorial transversal del Padrón Municipal.</p>
+                </div>
+            </div>
+            
+            <div class="chart-card" style="padding: 0; overflow: hidden; border-radius: var(--radius-lg);">
+                <div class="map-wrapper" id="heatMap" style="height: 600px;"></div>
+                <div style="padding: 1rem; background: var(--gray-50); border-top: 1px solid var(--gray-200); display: flex; gap: 2rem; flex-wrap: wrap;">
+                    <span style="font-size: 0.9rem; color: var(--gray-600);"><i class="fas fa-circle" style="color: rgba(239, 68, 68, 0.8)"></i> Sector Alimentos / Gastronomía</span>
+                    <span style="font-size: 0.9rem; color: var(--gray-600);"><i class="fas fa-circle" style="color: rgba(59, 130, 246, 0.8)"></i> Sector Hospedajes (Múltiple)</span>
+                    <span style="font-size: 0.9rem; color: var(--gray-600);"><i class="fas fa-circle" style="color: rgba(16, 185, 129, 0.8)"></i> Otros giros</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 4: Restaurantes -->
+        <div id="restaurants" class="tab-content">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Padrón General Comercial</h1>
+                    <p class="page-subtitle">Directorio de sólo lectura de todos los perfiles de la plataforma.</p>
+                </div>
+                <button class="btn-success" onclick="exportRestaurantesCSV()">
+                    <i class="fas fa-file-csv"></i> Exportar Padrón Comercial
+                </button>
+            </div>
+
+            <div class="table-container">
+                <div class="table-header">
+                    <h2 class="table-title">Registros Actuales</h2>
+                    <input type="text" id="search-padrón" placeholder="Buscar por nombre o municipio..." style="padding:0.5rem 1rem; border:1px solid var(--gray-300); border-radius:var(--radius-md); width:300px;">
+                </div>
+                <div style="overflow-x:auto;">
+                    <table id="padrón-table">
+                        <thead>
+                            <tr>
+                                <th>Establecimiento</th>
+                                <th>Tipo</th>
+                                <th>Ubicación</th>
+                                <th>Rating</th>
+                                <th>Estado</th>
+                                <th>Admin Responsable</th>
+                            </tr>
+                        </thead>
+                        <tbody><!-- JS --></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 5: Alertas -->
+        <div id="alertas" class="tab-content">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Panel de Alertas y Calidad</h1>
+                    <p class="page-subtitle">Focos rojos y atención preventiva requerida en el sector.</p>
+                </div>
+            </div>
+
+            <div class="charts-grid equal">
+                <div>
+                    <h3 style="margin-bottom: 1rem; color: var(--gray-700);"><i class="fas fa-star-half-alt" style="color:var(--danger)"></i> Reseñas Críticas Recientes (Últimos 7 días)</h3>
+                    <div id="alertas-reseñas">
+                        <!-- JS -->
+                    </div>
+                </div>
+                <div>
+                    <h3 style="margin-bottom: 1rem; color: var(--gray-700);"><i class="fas fa-clipboard-check" style="color:var(--warning)"></i> Avisos Operativos</h3>
+                    <div id="alertas-operativas">
+                        <!-- JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="js/admin-gobierno.js"></script>
+</body>
+</html>

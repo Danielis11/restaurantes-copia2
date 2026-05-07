@@ -25,6 +25,8 @@
     <link rel="icon" type="image/x-icon" href="/icons/favicon.ico">
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/responsive.css">
+    <link rel="stylesheet" href="/css/ui-enhancements.css">
+    <script src="/js/ui-enhancements.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <!-- Google Fonts: Outfit -->
@@ -48,7 +50,7 @@
             height: 420px;
             overflow: hidden;
             background: #111;
-            margin-top: 70px;
+            margin-top: 0;
         }
 
         .tour-carousel-item {
@@ -121,39 +123,33 @@
             z-index: 10;
         }
 
-        /* ===== INFO SUPERPUESTA ===== */
+        /* ===== INFO SUPERPUESTA (legacy, ya no se usa) ===== */
         .hero-info {
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
-            z-index: 20;
-            background: rgba(0, 0, 0, 0.65);
-            backdrop-filter: blur(12px);
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            color: white;
-            max-width: 420px;
+            display: none;
         }
 
         .hero-badge {
             display: inline-flex;
             align-items: center;
             gap: 0.4rem;
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            border: none;
             padding: 0.2rem 0.6rem;
             border-radius: 999px;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             font-weight: 600;
             text-transform: uppercase;
             margin-bottom: 0.5rem;
         }
 
         .hero-name {
-            font-size: 1.5rem;
+            font-size: 2.2rem;
             font-weight: 800;
-            line-height: 1.2;
-            margin-bottom: 0.4rem;
+            line-height: 1.1;
+            margin-bottom: 0;
+            color: var(--gray-900);
+            font-family: 'Google Sans', 'Outfit', sans-serif;
         }
 
         .hero-price {
@@ -178,12 +174,13 @@
         }
 
         .badge-cat {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
+            background: rgba(37, 99, 235, 0.08);
+            color: var(--primary);
         }
 
         .badge-diff {
             color: white;
+            border-radius: 999px;
         }
 
         .badge-diff.easy {
@@ -736,31 +733,27 @@
 
         <!-- Contenido real (oculto hasta cargar) -->
         <div id="tour-content" style="display:none;">
-            <!-- CARRUSEL DE IMÁGENES -->
-            <div class="detail-hero" id="hero-section">
-                <div id="hero-carousel-items">
-                    <!-- Images injected here -->
-                </div>
-
-                <div id="hero-nav-buttons">
-                    <!-- Nav buttons injected here -->
-                </div>
-
-                <div id="hero-indicator"></div>
-
-                <!-- Info superpuesta -->
-                <div class="hero-info" id="hero-info">
-                    <div class="hero-badge">
+            <!-- CABECERA DE INFORMACION (Fuera de la imagen) -->
+            <div class="restaurant-header" style="max-width: 1100px; margin: 90px auto 1rem auto; padding: 0 1.5rem;">
+                <!-- Insignias y Tipo -->
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                    <div class="hero-badge" id="hero-badge" style="background: rgba(37, 99, 235, 0.1); color: var(--primary); border: none; margin: 0; display: inline-flex; font-size: 0.75rem;">
                         <i class="fas fa-map-marked-alt"></i>
                         <span id="hero-tipo">Experiencia</span>
                     </div>
-                    <div style="display:flex; align-items:center;">
-                        <h1 class="hero-name" id="hero-name">Nombre de la Experiencia</h1>
+                </div>
+
+                <!-- Título y Botones -->
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 0.75rem;">
+                    <h1 class="hero-name" id="hero-name" style="font-size: 2.2rem; font-weight: 800; color: var(--gray-900); margin: 0; line-height: 1.1; font-family: 'Google Sans', sans-serif;">Nombre de la Experiencia</h1>
+                    
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <div class="hero-price" id="hero-price" style="font-size: 1.25rem; font-weight: 800; color: var(--primary); margin-right: 0.5rem; margin-bottom: 0;">$0 MXN</div>
                         <div id="btn-toggle-like" class="con-like" title="Guardar en favoritos"
-                            style="display: none; margin-left: 1rem;">
+                            style="display: none;">
                             <input class="like" type="checkbox" title="like" id="favorite-checkbox">
                             <div class="checkmark">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="outline" viewBox="0 0 24 24">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="outline" viewBox="0 0 24 24" style="fill: var(--gray-400)">
                                     <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
                                 </svg>
                                 <svg xmlns="http://www.w3.org/2000/svg" class="filled" viewBox="0 0 24 24">
@@ -777,25 +770,39 @@
                             </div>
                         </div>
                     </div>
-                    <div class="hero-price" id="hero-price">$0 MXN</div>
+                </div>
 
-                    <div class="detail-badges" id="hero-badges">
+                <!-- Info Meta (Rating, Direccion, etc) -->
+                <div class="hero-meta" style="color: var(--gray-600); opacity: 1; font-size: 0.9rem; align-items: center; display: flex; flex-wrap: wrap; gap: 1rem;">
+                    <div class="detail-badges" id="hero-badges" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0;">
                         <!-- Badges injected here -->
                     </div>
-                    <div class="share-buttons" style="margin-top: 0.75rem;">
-                        <button class="share-btn whatsapp" id="share-whatsapp" title="Compartir en WhatsApp">
+                    
+                    <div class="share-buttons" style="margin-top: 0; margin-left: auto; display: flex; align-items: center;">
+                        <button class="share-btn whatsapp" id="share-whatsapp" title="Compartir en WhatsApp" style="width: 28px; height: 28px; font-size: 0.8rem;">
                             <i class="fab fa-whatsapp"></i>
                         </button>
-                        <button class="share-btn facebook" id="share-facebook" title="Compartir en Facebook">
+                        <button class="share-btn facebook" id="share-facebook" title="Compartir en Facebook" style="width: 28px; height: 28px; font-size: 0.8rem;">
                             <i class="fab fa-facebook-f"></i>
                         </button>
-                        <button class="share-btn copy-link" id="share-copy" title="Copiar enlace">
+                        <button class="share-btn copy-link" id="share-copy" title="Copiar enlace" style="width: 28px; height: 28px; font-size: 0.8rem; background: var(--gray-100); color: var(--gray-700); border: 1px solid var(--gray-200);">
                             <i class="fas fa-link"></i>
                         </button>
                     </div>
                 </div>
+            </div>
 
-                <!-- El Botón de Favoritos se movió junto al título -->
+            <!-- CARRUSEL DE IMÁGENES -->
+            <div class="detail-hero" id="hero-section" style="max-width: 1100px; margin: 0 auto; border-radius: 12px; overflow: hidden; position: relative; height: 50vh; min-height: 400px;">
+                <div id="hero-carousel-items">
+                    <!-- Images injected here -->
+                </div>
+
+                <div id="hero-nav-buttons">
+                    <!-- Nav buttons injected here -->
+                </div>
+
+                <div id="hero-indicator"></div>
             </div>
 
             <!-- LAYOUT -->
@@ -976,105 +983,142 @@
                                 </div>
                             </div>
 
-                            <!-- Contenedor Reseñas -->
-                            <div class="content-card" id="card-reviews">
-                                <div class="card-header-section"
-                                    style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-                                    <h3><i class="fas fa-star" style="color: var(--warning);"></i> <span
-                                            data-i18n="restaurante.resenas">Reseñas de Viajeros</span></h3>
-                                    <button id="btn-write-review" class="btn"
-                                        style="background: var(--primary); color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 600; font-size: 0.9rem; cursor: pointer; border: none;"><i
-                                            class="fas fa-pen"></i> <span
-                                            data-i18n="restaurante.escribir_resena">Escribir
-                                            Reseña</span></button>
+                            <!-- Galería de Fotos de Viajeros -->
+                            <div class="content-card" id="card-user-gallery" style="display:none; margin-top: 2rem;">
+                                <div class="card-header-section">
+                                    <h3><i class="fas fa-camera-retro" style="color: var(--primary);"></i> <span
+                                            data-i18n="experiencia.galeria_viajeros">Galería de Viajeros</span>
+                                    </h3>
+                                    <span id="gallery-user-count" style="font-size:0.85rem; color: var(--gray-500);"></span>
                                 </div>
                                 <div class="card-body">
-                                    <div class="reviews-summary" id="reviews-summary"
-                                        style="margin-bottom: 1.5rem; text-align: center; border-bottom: 1px solid var(--gray-200); padding-bottom: 1rem;">
-                                        <!-- Summary injected here -->
-                                        <p style="color: var(--gray-500);" data-i18n="experiencia_detalle.sin_resenas">
-                                            Aún no
-                                            hay reseñas. ¡Sé el primero en opinar!</p>
+                                    <div id="user-gallery-grid"
+                                        style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.5rem;">
                                     </div>
+                                </div>
+                            </div>
 
-                                    <!-- Formulario de nueva reseña (Oculto por defecto) -->
-                                    <div id="review-form-container"
-                                        style="display: none; background: var(--gray-50); padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
-                                        <h4 style="margin-bottom: 1rem;" data-i18n="experiencia_detalle.tu_opinion">Tu
-                                            opinión
-                                        </h4>
-                                        <form id="form-nueva-resena">
-                                            <div style="margin-bottom: 1rem;">
-                                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;"
-                                                    data-i18n="experiencia_detalle.calificacion">Calificación</label>
-                                                <select id="review-rating" class="form-control" required
-                                                    style="width: 100%; padding: 0.8rem; border-radius: 0.5rem; border: 1px solid var(--gray-300);">
-                                                    <option value="5" data-i18n="experiencia_detalle.excelente">⭐⭐⭐⭐⭐ -
-                                                        Excelente</option>
-                                                    <option value="4" data-i18n="experiencia_detalle.muy_bueno">⭐⭐⭐⭐ -
-                                                        Muy Bueno
-                                                    </option>
-                                                    <option value="3" data-i18n="experiencia_detalle.bueno">⭐⭐⭐ - Bueno
-                                                    </option>
-                                                    <option value="2" data-i18n="experiencia_detalle.regular">⭐⭐ -
-                                                        Regular
-                                                    </option>
-                                                    <option value="1" data-i18n="experiencia_detalle.malo">⭐ - Malo
-                                                    </option>
-                                                </select>
-                                            </div>
-                                            <div style="margin-bottom: 1rem;">
-                                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;"
-                                                    data-i18n="experiencia_detalle.comentario">Comentario</label>
-                                                <textarea id="review-comment" class="form-control" rows="4" required
-                                                    style="width: 100%; padding: 0.8rem; border-radius: 0.5rem; border: 1px solid var(--gray-300); resize: vertical;"></textarea>
-                                            </div>
-                                            <!-- Zona de subida de fotos -->
-                                            <div style="margin-bottom: 1rem;">
-                                                <label
-                                                    style="display: block; margin-bottom: 0.5rem; font-weight: 600;"><span
-                                                        data-i18n="experiencia_detalle.fotos">Fotos</span>
-                                                    <span style="font-weight:400; color: var(--gray-500);"
-                                                        data-i18n="experiencia_detalle.opcional_max">(opcional, máx.
-                                                        5)</span></label>
-                                                <div id="review-photo-zone"
-                                                    style="border: 2px dashed var(--gray-300); border-radius: 0.5rem; padding: 1.2rem; text-align: center; cursor: pointer; transition: all 0.2s;"
-                                                    onclick="document.getElementById('review-photo-input').click()">
-                                                    <i class="fas fa-cloud-upload-alt"
-                                                        style="font-size: 1.5rem; color: var(--gray-400);"></i>
-                                                    <p
-                                                        style="margin: 0.5rem 0 0; font-size: 0.85rem; color: var(--gray-500);">
-                                                        <span data-i18n="experiencia_detalle.arrastra_fotos">Arrastra
-                                                            fotos aquí
-                                                            o</span> <span
-                                                            style="color: var(--primary); font-weight: 600;"
-                                                            data-i18n="experiencia_detalle.haz_clic">haz clic</span>
-                                                    </p>
-                                                    <p style="font-size: 0.75rem; color: var(--gray-400); margin-top: 0.25rem;"
-                                                        data-i18n="experiencia_detalle.restricciones_peso">
-                                                        JPG, PNG, WebP · Máx. 5MB c/u</p>
-                                                </div>
-                                                <input type="file" id="review-photo-input" accept="image/*" multiple
-                                                    style="display:none;">
-                                                <div id="review-photo-preview"
-                                                    style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:0.75rem;">
-                                                </div>
-                                            </div>
-                                            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
-                                                <button type="button" id="btn-cancel-review" class="btn"
-                                                    style="padding: 0.6rem 1.2rem; background: var(--gray-200); border-radius: 0.5rem; cursor: pointer; border: none;"
-                                                    data-i18n="experiencia_detalle.cancelar">Cancelar</button>
-                                                <button type="submit" class="btn"
-                                                    style="padding: 0.6rem 1.2rem; background: var(--primary); color: white; border-radius: 0.5rem; font-weight: 600; cursor: pointer; border: none;"
-                                                    data-i18n="experiencia_detalle.enviar_resena">Enviar
-                                                    Reseña</button>
-                                            </div>
-                                        </form>
-                                    </div>
+                            <!-- Reseñas de Viajeros -->
+                            <div class="content-card" id="native-reviews-card"
+                                style="margin-top: 2rem; border-color: transparent; box-shadow: none; padding: 0;">
+                                <div
+                                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                                    <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--gray-900);">Opiniones</h2>
+                                    <button id="btn-write-review" class="btn"
+                                        style="background: var(--primary); color: white; padding: 0.5rem 1rem; border-radius: 0.75rem; font-weight: 600; font-size: 0.875rem; cursor: pointer; border: none; box-shadow: 0 1px 2px rgba(0,0,0,0.05);"
+                                        onclick="handleEscribirOpinion()">
+                                        Escribir Opinión
+                                    </button>
+                                </div>
 
-                                    <div class="reviews-list" id="reviews-list"
+                                <!-- Summary box injected dynamically by JS -->
+                                <div id="reviews-summary-native"></div>
+
+                                <!-- Formulario de nueva reseña en línea (Oculto por defecto) -->
+                                <div id="review-form-container"
+                                    style="display: none; background: white; padding: 1.25rem; border-radius: 1rem; border: 1px solid var(--gray-200); margin-bottom: 1.5rem;">
+                                    <form id="write-review-form" onsubmit="submitReview(event)"
                                         style="display: flex; flex-direction: column; gap: 1rem;">
-                                        <!-- Reviews injected here -->
+                                        <div>
+                                            <label
+                                                style="display: block; font-size: 0.875rem; font-weight: 500; color: var(--gray-900); margin-bottom: 0.375rem;">Publicando
+                                                como</label>
+                                            <div
+                                                style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 0.75rem; color: var(--gray-900);">
+                                                <i class="fas fa-user" style="color: var(--gray-500); font-size: 0.875rem;"></i>
+                                                <span id="review-author-name"
+                                                    style="font-weight: 500; font-size: 0.95rem;">Usuario</span>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label
+                                                style="display: block; font-size: 0.875rem; font-weight: 500; color: var(--gray-900); margin-bottom: 0.375rem;">Calificación</label>
+                                            <div id="star-rating-selector" style="display: flex; gap: 0.125rem;">
+                                                <i class="fas fa-star" data-val="1" onclick="selectStar(1)"
+                                                    style="color: var(--gray-300); cursor: pointer; font-size: 1.25rem; transition: transform 0.2s;"></i>
+                                                <i class="fas fa-star" data-val="2" onclick="selectStar(2)"
+                                                    style="color: var(--gray-300); cursor: pointer; font-size: 1.25rem; transition: transform 0.2s;"></i>
+                                                <i class="fas fa-star" data-val="3" onclick="selectStar(3)"
+                                                    style="color: var(--gray-300); cursor: pointer; font-size: 1.25rem; transition: transform 0.2s;"></i>
+                                                <i class="fas fa-star" data-val="4" onclick="selectStar(4)"
+                                                    style="color: var(--gray-300); cursor: pointer; font-size: 1.25rem; transition: transform 0.2s;"></i>
+                                                <i class="fas fa-star" data-val="5" onclick="selectStar(5)"
+                                                    style="color: var(--gray-300); cursor: pointer; font-size: 1.25rem; transition: transform 0.2s;"></i>
+                                            </div>
+                                            <input type="hidden" id="review-rating-value" required>
+                                        </div>
+
+                                        <div>
+                                            <label
+                                                style="display: block; font-size: 0.875rem; font-weight: 500; color: var(--gray-900); margin-bottom: 0.375rem;">Tu
+                                                experiencia</label>
+                                            <textarea id="review-comment" rows="3"
+                                                style="width: 100%; padding: 0.75rem 1rem; border-radius: 0.75rem; border: 1px solid var(--gray-200); background: var(--gray-50); color: var(--gray-900); resize: none; outline: none; transition: border-color 0.2s;"
+                                                placeholder="Cuéntanos qué tal fue tu experiencia en este lugar..."
+                                                onfocus="this.style.borderColor='var(--primary)'"
+                                                onblur="this.style.borderColor='var(--gray-200)'"></textarea>
+                                        </div>
+
+                                        <div>
+                                            <label
+                                                style="display: block; font-size: 0.875rem; font-weight: 500; color: var(--gray-900); margin-bottom: 0.375rem;">Fotos
+                                                <span
+                                                    style="font-weight: 400; color: var(--gray-500);">(opcional)</span></label>
+                                            <div id="review-photo-zone-rest"
+                                                style="border: 1px dashed var(--gray-300); border-radius: 0.75rem; padding: 1rem; text-align: center; cursor: pointer; background: var(--gray-50); transition: all 0.2s;"
+                                                onclick="document.getElementById('review-photo-input-rest').click()">
+                                                <i class="fas fa-cloud-upload-alt"
+                                                    style="font-size: 1.25rem; color: var(--gray-400);"></i>
+                                                <p style="margin: 0.375rem 0 0; font-size: 0.8125rem; color: var(--gray-500);">
+                                                    Añadir fotos</p>
+                                            </div>
+                                            <input type="file" id="review-photo-input-rest" accept="image/*" multiple
+                                                style="display:none;">
+                                            <div id="review-photo-preview-rest"
+                                                style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:0.75rem;"></div>
+                                        </div>
+
+                                        <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                                            <button type="button" class="btn"
+                                                style="flex: 1; padding: 0.75rem; background: var(--gray-100); color: var(--gray-700); border-radius: 0.75rem; font-weight: 600; cursor: pointer; border: none; transition: background 0.2s;"
+                                                onclick="closeReviewModal()">
+                                                Cancelar
+                                            </button>
+                                            <button type="submit" id="btn-submit-review" class="btn"
+                                                style="flex: 2; padding: 0.75rem; background: var(--primary); color: white; border-radius: 0.75rem; font-weight: 700; cursor: pointer; border: none; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: opacity 0.3s;"
+                                                onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+                                                <i class="fas fa-paper-plane"></i> Enviar Opinión
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <div id="native-reviews-container" class="reviews-carousel" style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 1rem; padding-bottom: 1rem; scrollbar-width: none; -ms-overflow-style: none;">
+                                    <!-- Reviews injected here -->
+                                </div>
+                            </div>
+
+                            <!-- Widgets y Fotos (se cargan dinámicamente) -->
+                            <div class="content-card" id="reviews-widget-card"
+                                style="display:none; max-width: 100%; min-width: 0; overflow: hidden;">
+                                <div class="card-header-section">
+                                    <h3><i class="fas fa-star" style="color: #f59e0b;"></i> Opiniones y Fotos</h3>
+                                </div>
+                                <div class="card-body"
+                                    style="overflow-x: hidden; max-width: 100%; min-width: 0; padding: 1.5rem 1rem;">
+                                    <!-- Google Badge se inyecta aquí -->
+                                    <div id="google-badge-container" style="display:none; text-align:center; padding: 1rem 0;">
+                                    </div>
+
+                                    <div id="widget-separator"
+                                        style="margin: 2rem 0; border-top: 1px solid var(--gray-100); display:none;"></div>
+
+                                    <!-- Instagram Embeds se inyectan en este grid -->
+                                    <div id="instagram-wrapper" style="position: relative; width: 100%; display: none;">
+                                        <div id="instagram-container"
+                                            style="display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 1rem; scroll-snap-type: x mandatory; scrollbar-width: none; -ms-overflow-style: none;">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1162,18 +1206,7 @@
                 </div>
 
 
-                <!-- Recomendaciones Cruzadas -->
-                <div id="cross-recommendations" style="display:none; margin-top:2.5rem;">
-                    <h2
-                        style="font-size:1.4rem; font-weight:700; color:var(--gray-800); margin-bottom:1.2rem; text-align:center;">
-                        <i class="fas fa-compass" style="color: var(--primary); margin-right: 0.4rem;"></i> Te
-                        podría
-                        interesar
-                    </h2>
-                    <div id="recommendations-grid"
-                        style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 320px)); gap:1.2rem; justify-content:center;">
-                    </div>
-                </div>
+
 
             </div>
     </main>
@@ -1183,6 +1216,43 @@
         <button class="lightbox-close" onclick="closeTourLightbox()">&times;</button>
         <img id="tour-lightbox-img" src="" alt="Zoom Tour">
     </div>
+
+    <!-- Sugerencias Estilo TripAdvisor (Agregado Automáticamente) -->
+    <div class="content-card" id="recomendaciones-container" style="display: none; padding: 2rem 1.5rem; border: none; background: #ffffff; border-top: 1px solid #e2e8f0; border-radius: 0; margin-bottom: 0;">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <h3 style="font-size: 1.5rem; color: #1e293b; margin-bottom: 0.5rem;"><i class="fas fa-map-marked-alt" style="color: #3b82f6;"></i> Te podría interesar cerca de aquí</h3>
+            <p style="font-size: 0.95rem; color: #64748b; margin-bottom: 1.5rem;">Descubre lugares increíbles para hospedarte o visitar después de tu experiencia.</p>
+            
+            <div id="recomendaciones-scroll" style="display: flex; gap: 1.25rem; overflow-x: auto; padding-bottom: 1rem; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;">
+                <!-- Las tarjetas de recomendación se inyectarán aquí vía JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Estilos en línea para el scrollbar (para que se vea más limpio) -->
+    <style>
+        #recomendaciones-scroll::-webkit-scrollbar {
+            display: none;
+        }
+        .recomendacion-card {
+            min-width: 200px;
+            max-width: 220px;
+            flex-shrink: 0;
+            scroll-snap-align: start;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid var(--gray-200);
+            background: var(--white);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .recomendacion-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+    </style>
 
     <!-- Footer -->
     <footer class="footer">

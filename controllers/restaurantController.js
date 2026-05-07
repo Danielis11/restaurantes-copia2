@@ -21,6 +21,7 @@ const obtenerRestaurantes = async (req, res) => {
       buscar,
       ordenar = 'fechaCreacion',
       direccion = 'desc',
+      homeOrder,
       compact
     } = req.query;
 
@@ -45,48 +46,105 @@ const obtenerRestaurantes = async (req, res) => {
 
     // Configurar ordenamiento
     const sortOptions = {};
-    sortOptions[ordenar] = direccion === 'desc' ? -1 : 1;
+    if (homeOrder === 'true') {
+      sortOptions.homePosition = 1;
+      sortOptions.fechaCreacion = -1;
+    } else {
+      sortOptions[ordenar] = direccion === 'desc' ? -1 : 1;
+    }
 
     // Calcular skip
     const skip = (parseInt(pagina) - 1) * parseInt(limite);
 
     const ts1 = Date.now();
     
-    let dbQuery = Restaurant.find(filtros)
-      .sort(sortOptions)
-      .skip(skip)
-      .limit(parseInt(limite))
-      .lean(); // Mejor performance
-      
-    if (compact === 'true') {
-      dbQuery = dbQuery.select('nombre tipo direccion.coordenadas direccion.calle googleRating googleTotalReviews imagenes _id');
-    } else {
-      dbQuery = dbQuery.populate('adminId', 'nombre apellido email telefono');
-    }
+    let restaurantes = [];
+    let total = 0;
 
-    // Ejecutar consultas en paralelo
-    const [restaurantes, total] = await Promise.all([
-      dbQuery,
-      Restaurant.countDocuments(filtros)
-    ]);
+    if (homeOrder === 'true') {
+      let allQuery = Restaurant.find(filtros)
+        .sort({ fechaCreacion: -1 })
+        .lean();
+
+      if (compact === 'true') {
+        allQuery = allQuery.select('nombre tipo direccion.coordenadas direccion.calle googleReviews imagenes _id homePosition');
+      } else {
+        allQuery = allQuery.populate('adminId', 'nombre apellido email telefono');
+      }
+
+      const allRestaurantes = await allQuery;
+
+      const ordered = allRestaurantes
+        .map((item, idx) => ({ item, idx }))
+        .sort((a, b) => {
+          const posA = Number.isInteger(a.item.homePosition) ? a.item.homePosition : Number.MAX_SAFE_INTEGER;
+          const posB = Number.isInteger(b.item.homePosition) ? b.item.homePosition : Number.MAX_SAFE_INTEGER;
+          if (posA !== posB) return posA - posB;
+          return a.idx - b.idx;
+        })
+        .map(({ item }) => item);
+
+      total = ordered.length;
+      restaurantes = ordered.slice(skip, skip + parseInt(limite));
+    } else {
+      let dbQuery = Restaurant.find(filtros)
+        .sort(sortOptions)
+        .skip(skip)
+        .limit(parseInt(limite))
+        .lean(); // Mejor performance
+
+      if (compact === 'true') {
+        dbQuery = dbQuery.select('nombre tipo direccion.coordenadas direccion.calle googleReviews imagenes _id homePosition');
+      } else {
+        dbQuery = dbQuery.populate('adminId', 'nombre apellido email telefono');
+      }
+
+      // Ejecutar consultas en paralelo
+      const [resultadoRestaurantes, resultadoTotal] = await Promise.all([
+        dbQuery,
+        Restaurant.countDocuments(filtros)
+      ]);
+
+      restaurantes = resultadoRestaurantes;
+      total = resultadoTotal;
+    }
     const ts2 = Date.now();
 
     const totalPaginas = Math.ceil(total / parseInt(limite));
+
+    // CALCULAR CALIFICACIONES DE RESEÑAS NATIVAS
+    const Review = require('../models/Review');
+    const restauranteIds = restaurantes.map(r => r._id);
+    
+    const reviewStats = await Review.aggregate([
+      { $match: { restaurantId: { $in: restauranteIds }, estado: 'aprobada' } },
+      { $group: { _id: '$restaurantId', count: { $sum: 1 }, avg: { $avg: '$rating' } } }
+    ]);
+    
+    const ratingMap = {};
+    reviewStats.forEach(r => {
+      ratingMap[r._id.toString()] = { rating: r.avg, totalReviews: r.count };
+    });
 
     res.json({
       success: true,
       message: 'Restaurantes obtenidos exitosamente',
       data: {
         restaurantes: restaurantes.map(restaurant => {
+          const revs = ratingMap[restaurant._id.toString()];
+          const nativeRating = revs ? revs.rating : 0;
+          const nativeTotal = revs ? revs.totalReviews : 0;
+          
           if (compact === 'true') {
             return {
               id: restaurant._id,
               nombre: restaurant.nombre,
               tipo: restaurant.tipo,
               direccion: restaurant.direccion,
-              googleRating: restaurant.googleRating,
-              googleTotalReviews: restaurant.googleTotalReviews,
-              imagenPrincipal: restaurant.imagenes && restaurant.imagenes.length > 0 ? restaurant.imagenes[0] : null
+              googleRating: nativeRating > 0 ? nativeRating : (restaurant.googleReviews ? restaurant.googleReviews.rating : 0),
+              googleTotalReviews: nativeTotal > 0 ? nativeTotal : (restaurant.googleReviews ? restaurant.googleReviews.totalReviews : 0),
+              imagenPrincipal: restaurant.imagenes && restaurant.imagenes.length > 0 ? restaurant.imagenes[0] : null,
+              homePosition: restaurant.homePosition || null
             };
           }
           return {
@@ -94,11 +152,14 @@ const obtenerRestaurantes = async (req, res) => {
             nombre: restaurant.nombre,
             tipo: restaurant.tipo,
             descripcion: restaurant.descripcion,
+            homePosition: restaurant.homePosition || null,
             direccion: restaurant.direccion,
             telefono: restaurant.telefono,
             email: restaurant.email,
             horarios: restaurant.horarios,
             imagenPrincipal: restaurant.imagenes && restaurant.imagenes.length > 0 ? restaurant.imagenes[0] : null,
+            googleRating: nativeRating > 0 ? nativeRating : (restaurant.googleReviews ? restaurant.googleReviews.rating : 0),
+            googleTotalReviews: nativeTotal > 0 ? nativeTotal : (restaurant.googleReviews ? restaurant.googleReviews.totalReviews : 0),
             redes: restaurant.redes,
             admin: restaurant.adminId,
             fechaCreacion: restaurant.fechaCreacion,

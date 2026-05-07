@@ -757,9 +757,47 @@
                         <div class="form-group">
                             <label class="form-label">Ubicación en el Mapa</label>
                             <p style="font-size: 0.85rem; color: var(--gray-600); margin-bottom: 0.5rem;">Haz clic en el
-                                mapa o arrastra el marcador para establecer la ubicación exacta.</p>
+                                mapa, arrastra el marcador, o pega coordenadas para establecer la ubicación exacta.</p>
+
+                            <!-- Coordinate Paste Input -->
+                            <div id="coord-input-wrapper" style="
+                                display: flex; gap: 0.5rem; align-items: stretch; margin-bottom: 0.75rem;
+                                background: linear-gradient(135deg, rgba(37,99,235,0.04), rgba(16,185,129,0.04));
+                                padding: 0.75rem; border-radius: 0.6rem; border: 1.5px solid var(--gray-200);
+                            ">
+                                <div style="position:relative; flex:1;">
+                                    <i class="fas fa-crosshairs" style="
+                                        position:absolute; left:0.75rem; top:50%; transform:translateY(-50%);
+                                        color:var(--primary); font-size:0.85rem; opacity:0.7;
+                                    "></i>
+                                    <input type="text" id="coord-paste-input" class="form-input" placeholder="Pegar coordenadas: 21.2185, -99.4752" style="
+                                        padding-left: 2.2rem; font-size: 0.88rem; border-color: var(--gray-300);
+                                        font-family: 'Segoe UI Mono', 'Consolas', monospace;
+                                    ">
+                                </div>
+                                <button type="button" id="coord-apply-btn" onclick="applyPastedCoordinates()" style="
+                                    display:inline-flex; align-items:center; gap:0.4rem; padding:0.6rem 1rem;
+                                    background:var(--primary); color:white; border:none; border-radius:0.5rem;
+                                    font-weight:600; font-size:0.85rem; cursor:pointer; transition:all 0.2s;
+                                    white-space:nowrap;
+                                " onmouseover="this.style.filter='brightness(1.1)'; this.style.transform='translateY(-1px)'"
+                                   onmouseout="this.style.filter=''; this.style.transform=''">
+                                    <i class="fas fa-map-pin"></i> Ubicar
+                                </button>
+                            </div>
+                            <div id="coord-feedback" style="display:none; font-size:0.8rem; margin-bottom:0.5rem; padding:0.4rem 0.7rem; border-radius:0.4rem;"></div>
+
                             <div id="admin-map"
                                 style="width: 100%; height: 300px; border-radius: 0.5rem; border: 2px solid var(--gray-200);">
+                            </div>
+                            <div id="coord-display" style="
+                                display: flex; justify-content: space-between; align-items: center;
+                                padding: 0.5rem 0.75rem; margin-top: 0.4rem;
+                                background: var(--gray-50); border-radius: 0.4rem; border: 1px solid var(--gray-200);
+                                font-size: 0.8rem; color: var(--gray-600);
+                            ">
+                                <span><i class="fas fa-map-marker-alt" style="color:var(--primary); margin-right:0.3rem;"></i> Coordenadas actuales:</span>
+                                <span id="coord-current-display" style="font-family:'Consolas',monospace; font-weight:600; color:var(--gray-800);">—</span>
                             </div>
                             <input type="hidden" id="edit-lat" name="lat">
                             <input type="hidden" id="edit-lng" name="lng">
@@ -997,7 +1035,13 @@
         let marker;
 
         // Configura aquí tu token de Mapbox
-        mapboxgl.accessToken = 'YOUR_MAPBOX_ACCESS_TOKEN'; // Usa el token del usuario o uno de prueba si es necesario. Ajusta.
+        (async () => {
+            try {
+                const res = await fetch('/api/config/mapbox');
+                const data = await res.json();
+                if (data.success && data.token) mapboxgl.accessToken = data.token;
+            } catch(e) {}
+        })();
 
         // Funciones de notificación (igual que admin.html)
         function showNotification(message, type = 'info') {
@@ -1160,11 +1204,11 @@
             document.getElementById('info-zip').textContent = data.direccion.codigoPostal;
 
             document.getElementById('info-facebook').textContent =
-                data.redes.facebook || 'No configurado';
+                data.redes?.facebook || 'No configurado';
             document.getElementById('info-instagram').textContent =
-                data.redes.instagram || 'No configurado';
+                data.redes?.instagram || 'No configurado';
             document.getElementById('info-website').textContent =
-                data.redes.website || 'No configurado';
+                data.redes?.website || 'No configurado';
         }
 
         // Poblar formularios de edición
@@ -1206,9 +1250,9 @@
             initMap(data.direccion.coordenadas);
 
             // Redes sociales
-            document.getElementById('edit-facebook').value = data.redes.facebook || '';
-            document.getElementById('edit-instagram').value = data.redes.instagram || '';
-            document.getElementById('edit-website').value = data.redes.website || '';
+            document.getElementById('edit-facebook').value = data.redes?.facebook || '';
+            document.getElementById('edit-instagram').value = data.redes?.instagram || '';
+            document.getElementById('edit-website').value = data.redes?.website || '';
 
             // Horarios
             Object.keys(data.horarios).forEach(dia => {
@@ -1268,6 +1312,9 @@
                 document.getElementById('edit-lng').value = initialLng;
             }
 
+            // Update initial coordinate display
+            updateCoordDisplay(initialLat, initialLng);
+
             if (map) {
                 map.setCenter([initialLng, initialLat]);
                 marker.setLngLat([initialLng, initialLat]);
@@ -1289,6 +1336,7 @@
                 const lngLat = marker.getLngLat();
                 document.getElementById('edit-lng').value = lngLat.lng;
                 document.getElementById('edit-lat').value = lngLat.lat;
+                updateCoordDisplay(lngLat.lat, lngLat.lng);
             }
 
             marker.on('dragend', onDragEnd);
@@ -1303,6 +1351,125 @@
                 map.resize();
             }, 500);
         }
+
+        // Actualizar display de coordenadas debajo del mapa
+        function updateCoordDisplay(lat, lng) {
+            const el = document.getElementById('coord-current-display');
+            if (el) {
+                el.textContent = `${Number(lat).toFixed(6)}, ${Number(lng).toFixed(6)}`;
+            }
+        }
+
+        // Parsear coordenadas pegadas en múltiples formatos
+        function parseCoordinates(text) {
+            if (!text || text.trim().length === 0) return null;
+            text = text.trim();
+
+            // Intentar formato: lat, lng (más común)
+            // Soporta: "21.2185, -99.4752" | "21.2185 -99.4752" | "21.2185,-99.4752"
+            let match = text.match(/^(-?\d+\.?\d*)[,\s]+(-?\d+\.?\d*)$/);
+            if (match) {
+                const a = parseFloat(match[1]);
+                const b = parseFloat(match[2]);
+                // Decidir cuál es lat y cuál lng basado en rango
+                if (a >= -90 && a <= 90 && b >= -180 && b <= 180) {
+                    return { lat: a, lng: b };
+                }
+                if (b >= -90 && b <= 90 && a >= -180 && a <= 180) {
+                    return { lat: b, lng: a };
+                }
+                return { lat: a, lng: b };
+            }
+
+            // Formato Google Maps URL: @21.2185,-99.4752
+            match = text.match(/@(-?\d+\.?\d*),(-?\d+\.?\d*)/);
+            if (match) {
+                return { lat: parseFloat(match[1]), lng: parseFloat(match[2]) };
+            }
+
+            // Formato con grados: "21°13'06.6"N 99°28'30.7"W" (simplificado)
+            match = text.match(/(\d+)[°]\s*(\d+)[′']\s*(\d+\.?\d*)[″"]?\s*([NSns])\s*,?\s*(\d+)[°]\s*(\d+)[′']\s*(\d+\.?\d*)[″"]?\s*([EWew])/);
+            if (match) {
+                let lat = parseInt(match[1]) + parseInt(match[2]) / 60 + parseFloat(match[3]) / 3600;
+                let lng = parseInt(match[5]) + parseInt(match[6]) / 60 + parseFloat(match[7]) / 3600;
+                if (match[4].toUpperCase() === 'S') lat = -lat;
+                if (match[8].toUpperCase() === 'W') lng = -lng;
+                return { lat, lng };
+            }
+
+            // Intentar extraer de un link de Google Maps completo: place/.../@lat,lng
+            match = text.match(/google\.com.*@(-?\d+\.?\d*),(-?\d+\.?\d*)/);
+            if (match) {
+                return { lat: parseFloat(match[1]), lng: parseFloat(match[2]) };
+            }
+
+            return null;
+        }
+
+        // Aplicar coordenadas pegadas al mapa y marcador
+        function applyPastedCoordinates() {
+            const input = document.getElementById('coord-paste-input');
+            const feedback = document.getElementById('coord-feedback');
+            const value = input.value;
+
+            const result = parseCoordinates(value);
+
+            if (!result) {
+                feedback.style.display = 'block';
+                feedback.style.background = 'rgba(239,68,68,0.08)';
+                feedback.style.color = '#dc2626';
+                feedback.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Formato no reconocido. Usa: <b>21.2185, -99.4752</b> o pega un enlace de Google Maps.';
+                setTimeout(() => { feedback.style.display = 'none'; }, 4000);
+                return;
+            }
+
+            const { lat, lng } = result;
+
+            // Validar rango
+            if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+                feedback.style.display = 'block';
+                feedback.style.background = 'rgba(239,68,68,0.08)';
+                feedback.style.color = '#dc2626';
+                feedback.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Coordenadas fuera de rango válido.';
+                setTimeout(() => { feedback.style.display = 'none'; }, 4000);
+                return;
+            }
+
+            // Actualizar hidden inputs
+            document.getElementById('edit-lat').value = lat;
+            document.getElementById('edit-lng').value = lng;
+
+            // Mover mapa y marcador
+            if (map && marker) {
+                marker.setLngLat([lng, lat]);
+                map.flyTo({ center: [lng, lat], zoom: 16, essential: true });
+            }
+
+            updateCoordDisplay(lat, lng);
+
+            // Feedback positivo
+            feedback.style.display = 'block';
+            feedback.style.background = 'rgba(16,185,129,0.08)';
+            feedback.style.color = '#059669';
+            feedback.innerHTML = `<i class="fas fa-check-circle"></i> Ubicación actualizada: <b>${lat.toFixed(6)}, ${lng.toFixed(6)}</b>`;
+            setTimeout(() => { feedback.style.display = 'none'; }, 3000);
+
+            // Limpiar input
+            input.value = '';
+        }
+
+        // Permitir Enter en el input de coordenadas
+        document.addEventListener('DOMContentLoaded', () => {
+            const coordInput = document.getElementById('coord-paste-input');
+            if (coordInput) {
+                coordInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        applyPastedCoordinates();
+                    }
+                });
+            }
+        });
 
         // Función para controlar el estado de los campos de horario
         function toggleDayInputs(day) {

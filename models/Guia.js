@@ -83,7 +83,12 @@ const guiaSchema = new mongoose.Schema({
       'Trail Running',
       'MTB y Gravel',
       'RZR',
-      'Turismo Cultural'
+      'Turismo Cultural',
+      'Aviturismo',
+      'Excursionismo',
+      'Interpretación Ambiental',
+      'Transporte Turístico',
+      'Kayak'
     ]
   }],
   biografia: {

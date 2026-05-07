@@ -12,7 +12,15 @@ exports.getDashboardStats = async (req, res) => {
     const totalAdmins = await Admin.countDocuments();
     const adminActivos = await Admin.countDocuments({ activo: true });
     const totalSuperAdmins = await Admin.countDocuments({ rol: 'super-admin' });
-    
+    // Agregación para tipos de restaurantes
+    const statsTipo = await Restaurant.aggregate([
+      { $group: { _id: "$tipo", count: { $sum: 1 } } }
+    ]);
+    const estadisticasTipo = {};
+    statsTipo.forEach(st => {
+      if (st._id) estadisticasTipo[st._id] = st.count;
+    });
+
     // Devolvemos datos organizados como los espera el frontend
     const stats = {
       resumen: {
@@ -23,11 +31,7 @@ exports.getDashboardStats = async (req, res) => {
         totalSuperAdmins,
         totalUsuarios: totalUsers
       },
-      estadisticasTipo: {
-        restaurante: activeRestaurants,
-        bar: 0,
-        cafeteria: 0
-      },
+      estadisticasTipo: estadisticasTipo,
       userTrends: [
         { period: 'Ene', newUsers: 10, activeUsers: 8, churned: 2 },
         { period: 'Feb', newUsers: 15, activeUsers: 12, churned: 3 },
@@ -138,7 +142,10 @@ exports.deleteAdmin = async (req, res) => {
 
 exports.getRestaurants = async (req, res) => {
   try {
-    const restaurants = await Restaurant.find().populate('adminId', 'nombre apellido');
+    const restaurants = await Restaurant.find().populate({
+      path: 'adminId',
+      select: '+passwordPlano nombre apellido email'
+    });
     res.json({ success: true, data: { restaurants } });
   } catch (error) {
     console.error('Error fetching restaurants:', error);
@@ -152,8 +159,14 @@ exports.toggleRestaurantStatus = async (req, res) => {
     const restaurant = await Restaurant.findById(id);
     if (!restaurant) return res.status(404).json({ success: false, message: 'Restaurante no encontrado' });
 
-    restaurant.activo = !restaurant.activo;
-    await restaurant.save();
+    const nuevoEstado = !restaurant.activo;
+    
+    // Usar findByIdAndUpdate para evitar validaciones de otros campos en la base de datos
+    await Restaurant.findByIdAndUpdate(id, { 
+      activo: nuevoEstado,
+      fechaActualizacion: new Date()
+    });
+
     res.json({ success: true, message: 'Estado del restaurante actualizado' });
   } catch (error) {
     console.error('Error toggling restaurant status:', error);

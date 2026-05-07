@@ -5,6 +5,8 @@ let allGuias = [];
 let allAgencias = [];
 const API = window.location.origin + '/api';
 
+
+
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('authToken');
@@ -920,6 +922,7 @@ function openGuiaModal(guiaId) {
     // Reset checkboxes and custom fields
     document.querySelectorAll('#guia-especialidades input[type="checkbox"]').forEach(cb => cb.checked = false);
     galeriaGuiaAEliminar = [];
+    document.getElementById('guia-fotoperfil').value = ''; // Limpiar archivo de foto anterior
     document.getElementById('guia-galeria').value = '';
     document.getElementById('guia-galeria-preview').innerHTML = '';
     guiaCertificaciones = [];
@@ -1367,7 +1370,7 @@ function showNotification(msg, type) {
 let agenciaAdminMap = null;
 let agenciaAdminMarker = null;
 
-const MAPBOX_TOKEN = 'YOUR_MAPBOX_ACCESS_TOKEN';
+
 // Default center: Jalpan de Serra, Querétaro
 const JALPAN_LAT = 21.2163;
 const JALPAN_LNG = -99.4752;
@@ -1384,8 +1387,13 @@ function initAgenciaMap(lat, lng) {
     }
 
     // Wait for modal DOM to be visible before Mapbox measures the container
-    setTimeout(() => {
-        mapboxgl.accessToken = MAPBOX_TOKEN;
+    setTimeout(async () => {
+        try {
+            const res = await fetch('/api/config/mapbox');
+            const data = await res.json();
+            if (data.success && data.token) mapboxgl.accessToken = data.token;
+            else return;
+        } catch(err) { return; }
 
         agenciaAdminMap = new mapboxgl.Map({
             container: 'agencia-map-admin',

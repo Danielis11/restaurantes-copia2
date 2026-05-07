@@ -29,9 +29,10 @@ const storage = new CloudinaryStorage({
     folder: async (req, file) => {
       try {
         if (req.admin && req.admin._id) {
-          // Si es administrador del subsistema de Turismo (tours y guías)
-          if (req.admin.rol === 'admin-turismo' || req.originalUrl.includes('/tours') || req.originalUrl.includes('/guias')) {
-            const subFolder = req.originalUrl.includes('/guias') ? 'guias' : 'tours';
+          // Si es administrador del subsistema de Turismo (tours, guías, agencias) o super-admin en esas rutas
+          const isTurismoRoute = req.originalUrl.includes('/tours') || req.originalUrl.includes('/guias') || req.originalUrl.includes('/agencias');
+          if (req.admin.rol === 'admin-turismo' || (req.admin.rol === 'super-admin' && isTurismoRoute) || isTurismoRoute) {
+            const subFolder = req.originalUrl.includes('/guias') ? 'guias' : req.originalUrl.includes('/agencias') ? 'agencias' : 'tours';
             return `restaurantes-jalpan/${subFolder}`;
           }
 

@@ -155,10 +155,36 @@ const verificarTokenUsuario = async (req, res, next) => {
   }
 };
 
+// Middleware para verificar admin gubernamental (super-admin o gobernamental)
+const verificarGobernamental = (req, res, next) => {
+  if (req.admin && (req.admin.rol === 'super-admin' || req.admin.rol === 'gobernamental')) {
+    next();
+  } else {
+    res.status(403).json({
+      success: false,
+      message: 'Acceso denegado - Se requieren permisos de perfil Gubernamental'
+    });
+  }
+};
+
+// Middleware para verificar admin de ranking (super-admin o admin-ranking)
+const verificarAdminRanking = (req, res, next) => {
+  if (req.admin && (req.admin.rol === 'super-admin' || req.admin.rol === 'admin-ranking')) {
+    next();
+  } else {
+    res.status(403).json({
+      success: false,
+      message: 'Acceso denegado - Se requieren permisos de admin-ranking'
+    });
+  }
+};
+
 module.exports = {
   verificarToken,
   verificarSuperAdmin,
   verificarAdminTurismo,
   verificarPropietario,
-  verificarTokenUsuario
+  verificarTokenUsuario,
+  verificarGobernamental,
+  verificarAdminRanking
 };

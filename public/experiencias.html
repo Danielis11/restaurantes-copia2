@@ -7,6 +7,8 @@
     <title>Experiencias - Jalpan de Serra</title>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/responsive.css">
+    <link rel="stylesheet" href="/css/ui-enhancements.css">
+    <script src="/js/ui-enhancements.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Script de internacionalización -->
     <script src="/js/i18n.js" defer></script>
@@ -58,11 +60,10 @@
             overflow: visible !important;
         }
 
+        /* Disable ::before image - rotating slides take over */
         .hero.exp-hero::before {
-            background-image: url('images/Ciclismo-35.jpg');
-            background-size: cover;
-            background-position: center 40%;
-            opacity: 1;
+            background-image: none !important;
+            opacity: 0 !important;
         }
 
         .hero.exp-hero::after {
@@ -70,6 +71,70 @@
                     rgba(0, 0, 0, 0.25) 0%,
                     rgba(0, 0, 0, 0.4) 50%,
                     rgba(0, 0, 0, 0.65) 100%) !important;
+            z-index: 1;
+        }
+
+        /* ===== HERO ROTATING SLIDES ===== */
+        .hero-slides {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .hero-slide {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center 40%;
+            opacity: 0;
+            transition: opacity 1.8s ease-in-out;
+            will-change: opacity, transform;
+        }
+
+        .hero-slide.active {
+            opacity: 1;
+            animation: slowKenBurns 14s ease-in-out forwards;
+        }
+
+        @keyframes slowKenBurns {
+            from { transform: scale(1); }
+            to { transform: scale(1.08); }
+        }
+
+        /* Dots indicator */
+        .hero-slide-dots {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.4rem;
+            z-index: 5;
+        }
+
+        .hero-slide-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 0;
+        }
+
+        .hero-slide-dot.active {
+            background: white;
+            width: 24px;
+            border-radius: 4px;
+        }
+
+        /* Ensure content sits above slides */
+        .hero.exp-hero .hero-container {
+            position: relative;
+            z-index: 2;
         }
 
         .hero.exp-hero .hero-container {
@@ -315,6 +380,281 @@
             font-weight: 600;
         }
 
+        /* Skeleton loaders removed in favor of ui-enhancements.css */
+
+        /* ===== STICKY FILTERS BAR ===== */
+        .exp-sticky-bar {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            background: transparent;
+            padding: 1rem 0;
+            transition: background 0.3s ease, box-shadow 0.3s ease, padding 0.3s ease;
+            margin-bottom: 1.25rem;
+        }
+
+        .exp-sticky-bar.is-stuck {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            box-shadow: 0 2px 14px rgba(0, 0, 0, 0.08);
+            padding: 0.65rem 1rem;
+            /* Full-bleed effect */
+            margin-left: calc(50% - 50vw);
+            margin-right: calc(50% - 50vw);
+            padding-left: max(1rem, calc(50vw - 640px));
+            padding-right: max(1rem, calc(50vw - 640px));
+        }
+
+        .exp-sticky-inner {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .exp-sticky-bar.is-stuck .exp-sticky-inner {
+            flex-direction: row;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Neutralize legacy left:50%/translateX trick on .exp-tabs so flex centering works */
+        .exp-sticky-inner .exp-tabs {
+            position: static;
+            left: auto;
+            transform: none;
+            margin-bottom: 0;
+        }
+
+        .exp-sticky-bar.is-stuck .exp-tabs {
+            margin: 0;
+        }
+
+        .exp-sticky-search {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            flex: 1;
+            min-width: 200px;
+            max-width: 340px;
+            padding: 0.4rem 0.9rem;
+            border-radius: 999px;
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            color: #1f2937;
+        }
+
+        .exp-sticky-bar.is-stuck .exp-sticky-search {
+            display: flex;
+        }
+
+        .exp-sticky-search i {
+            color: #9ca3af;
+        }
+
+        .exp-sticky-search input {
+            border: none;
+            background: transparent;
+            outline: none;
+            flex: 1;
+            font-size: 0.9rem;
+            color: inherit;
+            min-width: 0;
+        }
+
+        /* Results meta: count + clear filters */
+        .results-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: var(--gray-600, #6b7280);
+        }
+
+        .results-count {
+            font-weight: 500;
+        }
+
+        .clear-filters-btn {
+            display: none;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.4rem 0.85rem;
+            background: #eff6ff;
+            color: var(--primary, #2563eb);
+            border: 1px solid #bfdbfe;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .clear-filters-btn.visible {
+            display: inline-flex;
+        }
+
+        .clear-filters-btn:hover {
+            background: var(--primary, #2563eb);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        /* ===== TOUR CARD ENHANCEMENTS ===== */
+        .tour-category-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.28rem 0.7rem;
+            background: #eff6ff;
+            color: var(--primary, #2563eb);
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-bottom: 0.4rem;
+            width: fit-content;
+        }
+
+        .tour-category-chip i {
+            font-size: 0.75rem;
+        }
+
+        .tour-card-rating {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.85rem;
+            color: var(--gray-700, #374151);
+            font-weight: 600;
+            margin-top: 0.2rem;
+        }
+
+        .tour-card-rating .stars {
+            color: #f59e0b;
+            font-size: 0.8rem;
+        }
+
+        .tour-card-rating .count {
+            color: var(--gray-500, #6b7280);
+            font-size: 0.75rem;
+            font-weight: 400;
+        }
+
+        .tour-card-rating .new-badge {
+            padding: 0.15rem 0.5rem;
+            background: #ecfdf5;
+            color: #059669;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        /* Improved price badge */
+        .tour-price-badge {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(8px);
+            padding: 0.4rem 0.75rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            line-height: 1.1;
+        }
+
+        .tour-price-label {
+            font-size: 0.65rem;
+            color: #6b7280;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .tour-price-amount {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #0f172a;
+            display: flex;
+            align-items: baseline;
+            gap: 0.2rem;
+        }
+
+        .tour-price-per {
+            font-size: 0.65rem;
+            color: #6b7280;
+            font-weight: 500;
+            margin-top: 0.05rem;
+        }
+
+        /* ===== PRETTY EMPTY STATE ===== */
+        .exp-empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 3rem 1.5rem;
+            background: linear-gradient(180deg, #f9fafb 0%, #f3f4f6 100%);
+            border-radius: 1rem;
+            border: 2px dashed #e5e7eb;
+            max-width: 560px;
+            margin: 2rem auto;
+        }
+
+        .exp-empty-state .empty-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            margin-bottom: 1.2rem;
+            font-size: 1.8rem;
+            color: #9ca3af;
+        }
+
+        .exp-empty-state h3 {
+            font-size: 1.3rem;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .exp-empty-state p {
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .exp-empty-state button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary, #2563eb);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.4rem;
+            border-radius: 0.6rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .exp-empty-state button:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+        }
+
         @media (max-width: 768px) {
             .hero.exp-hero {
                 min-height: 70vh !important;
@@ -335,10 +675,27 @@
             .exp-filter-pills {
                 gap: 0.5rem;
             }
+
+            .exp-sticky-bar.is-stuck {
+                padding: 0.5rem;
+            }
+
+            .exp-sticky-bar.is-stuck .exp-sticky-search {
+                display: none;
+            }
         }
     </style>
     <main>
         <section class="hero exp-hero">
+            <!-- Rotating hero slides -->
+            <div class="hero-slides" aria-hidden="true">
+                <div class="hero-slide active" style="background-image: url('/images/Ciclismo-35.jpg');"></div>
+                <div class="hero-slide" style="background-image: url('/images/Kayak%20en%20la%20Presa-103.jpg');"></div>
+                <div class="hero-slide" style="background-image: url('/images/CUEVA%20DEL%20AGUA%20JALPAN.JPG');"></div>
+                <div class="hero-slide" style="background-image: url('/images/_DSC0255.JPG');"></div>
+                <div class="hero-slide" style="background-image: url('/images/Turismo%20-%20Rey.JPG');"></div>
+            </div>
+            <div class="hero-slide-dots" id="hero-slide-dots"></div>
             <div class="hero-container">
                 <div class="hero-content">
                     <h1 class="hero-title" data-i18n="experiencias.hero_title">Experiencias</h1>
@@ -404,18 +761,36 @@
                         style="font-size: 1.05rem; color: #6b7280; max-width: 600px; margin: 0 auto;">Explora las
                         diferentes formas de vivir Jalpan de Serra a través de nuestras opciones de turismo.</p>
                 </div>
-                <!-- Tabs debajo del hero -->
-                <div class="exp-tabs">
-                    <button class="exp-tab active" onclick="switchExpTab('turismo-convencional', this)">
-                        <i class="fas fa-map-marked-alt"></i> <span
-                            data-i18n="experiencias.convencional">Convencional</span>
-                    </button>
-                    <button class="exp-tab" onclick="switchExpTab('turismo-comunitario', this)">
-                        <i class="fas fa-users"></i> <span data-i18n="experiencias.comunitario">Comunitario</span>
-                    </button>
-                    <button class="exp-tab" onclick="switchExpTab('turismo-religioso', this)">
-                        <i class="fas fa-church"></i> <span
-                            data-i18n="experiencias.religioso">Religioso/Espiritual</span>
+                <!-- Sticky tabs + compact search (shown when scrolled) -->
+                <div id="exp-sticky-bar" class="exp-sticky-bar">
+                    <div class="exp-sticky-inner">
+                        <div class="exp-tabs">
+                            <button class="exp-tab active" onclick="switchExpTab('turismo-convencional', this)">
+                                <i class="fas fa-map-marked-alt"></i> <span
+                                    data-i18n="experiencias.convencional">Convencional</span>
+                            </button>
+                            <button class="exp-tab" onclick="switchExpTab('turismo-comunitario', this)">
+                                <i class="fas fa-users"></i> <span data-i18n="experiencias.comunitario">Comunitario</span>
+                            </button>
+                            <button class="exp-tab" onclick="switchExpTab('turismo-religioso', this)">
+                                <i class="fas fa-church"></i> <span
+                                    data-i18n="experiencias.religioso">Religioso/Espiritual</span>
+                            </button>
+                        </div>
+                        <div class="exp-sticky-search">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="sticky-filter-search" placeholder="Buscar experiencia..."
+                                oninput="syncStickySearch(this.value)">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results meta: count + clear filters -->
+                <div class="results-meta">
+                    <span class="results-count" id="results-count"></span>
+                    <button type="button" class="clear-filters-btn" id="clear-filters-btn" onclick="clearAllFilters()">
+                        <i class="fas fa-times"></i>
+                        <span>Limpiar filtros</span>
                     </button>
                 </div>
 
@@ -491,7 +866,101 @@
         let experiencesFetched = false;
         let guiasFetched = false;
 
+        // ===== MAPA DE ÍCONOS POR CATEGORÍA =====
+        const CATEGORY_ICONS = {
+            'Espeleismo': 'fa-mountain',
+            'Senderismo': 'fa-person-hiking',
+            'Trail Running': 'fa-person-running',
+            'MTB y Gravel': 'fa-bicycle',
+            'RZR': 'fa-car-side',
+            'Transporte Turístico': 'fa-bus',
+            'Aviturismo': 'fa-dove',
+            'Kayak': 'fa-ship',
+            'Turismo Cultural': 'fa-landmark',
+            'Ciclismo de Montaña': 'fa-bicycle',
+            'Rutas Bioculturales': 'fa-leaf',
+            'Ruta Herbolaria': 'fa-mortar-pestle',
+            'Ruta del Agua': 'fa-water',
+            'Ruta del Pulque': 'fa-wine-bottle'
+        };
+
+        function getCategoryIcon(cat) {
+            if (!cat) return 'fa-tag';
+            const key = typeof cat === 'string' ? cat : (cat?.es || cat?.en || cat?.fr || '');
+            return CATEGORY_ICONS[key] || 'fa-tag';
+        }
+
+        // Skeleton loaders function moved to ui-enhancements.js
+
+        // ===== HERO ROTATING SLIDES =====
+        function startHeroRotation() {
+            const slides = document.querySelectorAll('.hero-slide');
+            const dotsContainer = document.getElementById('hero-slide-dots');
+            if (slides.length < 2) return;
+
+            // Create dots
+            if (dotsContainer) {
+                slides.forEach((_, i) => {
+                    const dot = document.createElement('button');
+                    dot.className = 'hero-slide-dot' + (i === 0 ? ' active' : '');
+                    dot.setAttribute('aria-label', `Imagen ${i + 1}`);
+                    dot.addEventListener('click', () => goToSlide(i));
+                    dotsContainer.appendChild(dot);
+                });
+            }
+
+            let current = 0;
+            let intervalId = null;
+
+            function goToSlide(idx) {
+                slides[current].classList.remove('active');
+                current = idx;
+                slides[current].classList.add('active');
+                const dots = dotsContainer?.querySelectorAll('.hero-slide-dot') || [];
+                dots.forEach((d, i) => d.classList.toggle('active', i === current));
+                // Restart animation on the new active slide by forcing reflow
+                void slides[current].offsetWidth;
+            }
+
+            function next() { goToSlide((current + 1) % slides.length); }
+
+            intervalId = setInterval(next, 6000);
+
+            // Pause on tab not visible
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    if (intervalId) { clearInterval(intervalId); intervalId = null; }
+                } else if (!intervalId) {
+                    intervalId = setInterval(next, 6000);
+                }
+            });
+        }
+
+        // ===== STICKY FILTERS BAR =====
+        function setupStickyBar() {
+            const bar = document.getElementById('exp-sticky-bar');
+            if (!bar) return;
+
+            let ticking = false;
+            const check = () => {
+                const rect = bar.getBoundingClientRect();
+                // When the bar's natural top reaches the viewport top, mark as stuck
+                bar.classList.toggle('is-stuck', rect.top <= 0);
+                ticking = false;
+            };
+
+            window.addEventListener('scroll', () => {
+                if (!ticking) {
+                    requestAnimationFrame(check);
+                    ticking = true;
+                }
+            }, { passive: true });
+            check();
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
+            startHeroRotation();
+            setupStickyBar();
             loadExperiences('Turismo Convencional');
 
             // Preload the other tabs in background for instant switching
@@ -502,6 +971,21 @@
 
             loadGuias();
         });
+
+        // Sync both search inputs (hero + sticky)
+        function syncStickySearch(value) {
+            const main = document.getElementById('filter-search');
+            if (main && main.value !== value) main.value = value;
+            applyFilters();
+        }
+
+        // Clear all active filters
+        function clearAllFilters() {
+            resetFilters();
+            const sticky = document.getElementById('sticky-filter-search');
+            if (sticky) sticky.value = '';
+            applyFilters();
+        }
 
         async function preloadExperiences(tipo) {
             const lang = localStorage.getItem('appLang') || 'es';
@@ -562,8 +1046,7 @@
             const grid = document.getElementById('agencias-grid');
             if (!grid) return;
             const lang = localStorage.getItem('appLang') || 'es';
-            const cargandoTxt = lang === 'en' ? 'Loading agencies...' : 'Cargando agencias...';
-            grid.innerHTML = `<div class="loading"><div class="loader"><div class="bar1"></div><div class="bar2"></div><div class="bar3"></div><div class="bar4"></div><div class="bar5"></div><div class="bar6"></div><div class="bar7"></div><div class="bar8"></div><div class="bar9"></div><div class="bar10"></div><div class="bar11"></div><div class="bar12"></div></div><p>${cargandoTxt}</p></div>`;
+            grid.innerHTML = window.UIEnhancements ? window.UIEnhancements.renderSkeletons(3) : '';
 
             try {
                 const res = await fetch('/api/agencias');
@@ -718,8 +1201,10 @@
             }
 
             const grid = document.getElementById('exp-grid');
-            const cargandoTxt = lang === 'en' ? 'Loading experiences...' : lang === 'fr' ? 'Chargement des expériences...' : 'Cargando experiencias...';
-            grid.innerHTML = `<div class="loading"><div class="loader"><div class="bar1"></div><div class="bar2"></div><div class="bar3"></div><div class="bar4"></div><div class="bar5"></div><div class="bar6"></div><div class="bar7"></div><div class="bar8"></div><div class="bar9"></div><div class="bar10"></div><div class="bar11"></div><div class="bar12"></div></div><p>${cargandoTxt}</p></div>`;
+            grid.innerHTML = window.UIEnhancements ? window.UIEnhancements.renderSkeletons(6) : '';
+            // Clear count while loading
+            const countEl = document.getElementById('results-count');
+            if (countEl) countEl.textContent = '';
 
             try {
                 const res = await fetch(`/api/tours?tipo=${encodeURIComponent(tipo)}&lang=${lang}&allLangs=true`);
@@ -742,76 +1227,158 @@
             }
         }
 
+        // Detecta si hay filtros activos
+        function hasActiveFilters() {
+            const search = (document.getElementById('filter-search')?.value || '').trim();
+            const diff = document.getElementById('filter-difficulty')?.value || 'all';
+            const dur = document.getElementById('filter-duration')?.value || 'all';
+            return search !== '' || diff !== 'all' || dur !== 'all';
+        }
+
+        // Renderiza estrellas según rating (0-5)
+        function renderStars(rating) {
+            const r = Math.max(0, Math.min(5, Number(rating) || 0));
+            const full = Math.floor(r);
+            const half = r - full >= 0.5 ? 1 : 0;
+            const empty = 5 - full - half;
+            return '★'.repeat(full) + (half ? '⯨' : '') + '☆'.repeat(empty);
+        }
+
         function renderExperiences(items) {
             const grid = document.getElementById('exp-grid');
             const lang = localStorage.getItem('appLang') || 'es';
+            const countEl = document.getElementById('results-count');
+            const clearBtn = document.getElementById('clear-filters-btn');
+
+            // Actualizar contador
+            if (countEl) {
+                const total = allExperiences.length;
+                const shown = items.length;
+                if (total === 0) {
+                    countEl.textContent = '';
+                } else if (shown === total) {
+                    countEl.textContent = lang === 'en' ? `${shown} experiences` : lang === 'fr' ? `${shown} expériences` : `${shown} experiencias`;
+                } else {
+                    countEl.textContent = lang === 'en'
+                        ? `Showing ${shown} of ${total}`
+                        : lang === 'fr' ? `${shown} sur ${total}` : `Mostrando ${shown} de ${total}`;
+                }
+            }
+
+            // Mostrar/ocultar botón limpiar filtros
+            if (clearBtn) {
+                clearBtn.classList.toggle('visible', hasActiveFilters());
+            }
 
             if (items.length === 0) {
-                const emptyTxt = lang === 'en' ? 'No experiences of this type available at the moment.' : 'No hay experiencias de este tipo disponibles por el momento.';
-                grid.innerHTML = `<p class="empty-state">${emptyTxt}</p>`;
+                const filtersActive = hasActiveFilters();
+                let title, msg, ctaTxt, iconClass;
+                if (filtersActive) {
+                    title = lang === 'en' ? 'No matches found' : lang === 'fr' ? 'Aucun résultat' : 'No hay resultados';
+                    msg = lang === 'en' ? 'Try adjusting your filters or search differently.' : lang === 'fr' ? 'Essayez d\'ajuster vos filtres ou de chercher autrement.' : 'Intenta ajustar tus filtros o buscar diferente.';
+                    ctaTxt = lang === 'en' ? 'Clear filters' : lang === 'fr' ? 'Effacer les filtres' : 'Limpiar filtros';
+                    iconClass = 'fa-search';
+                } else {
+                    title = lang === 'en' ? 'No experiences yet' : lang === 'fr' ? 'Pas encore d\'expériences' : 'Sin experiencias todavía';
+                    msg = lang === 'en' ? 'There are no experiences of this type at the moment. Check back soon!' : lang === 'fr' ? 'Il n\'y a pas d\'expériences de ce type pour le moment.' : 'No hay experiencias de este tipo por el momento. ¡Vuelve pronto!';
+                    ctaTxt = lang === 'en' ? 'Explore other types' : lang === 'fr' ? 'Voir d\'autres types' : 'Ver otros tipos';
+                    iconClass = 'fa-mountain-sun';
+                }
+                grid.innerHTML = `
+                    <div class="exp-empty-state">
+                        <div class="empty-icon"><i class="fas ${iconClass}"></i></div>
+                        <h3>${title}</h3>
+                        <p>${msg}</p>
+                        ${filtersActive
+                            ? `<button onclick="clearAllFilters()"><i class="fas fa-times"></i> ${ctaTxt}</button>`
+                            : `<button onclick="document.querySelector('.exp-tab:not(.active)').click()"><i class="fas fa-arrow-right"></i> ${ctaTxt}</button>`
+                        }
+                    </div>
+                `;
                 return;
             }
 
-            const verDetallesTxt = lang === 'en' ? 'See details' : 'Ver detalles';
+            const verDetallesTxt = lang === 'en' ? 'See details' : lang === 'fr' ? 'Voir détails' : 'Ver detalles';
+            const porPersonaTxt = lang === 'en' ? 'per person' : lang === 'fr' ? 'par personne' : 'por persona';
+            const desdeText = lang === 'en' ? 'From' : lang === 'fr' ? 'Dès' : 'Desde';
+            const nuevoTxt = lang === 'en' ? 'New' : lang === 'fr' ? 'Nouveau' : 'Nuevo';
+            const opinionesTxt = lang === 'en' ? 'reviews' : lang === 'fr' ? 'avis' : 'opiniones';
 
             grid.innerHTML = items.reduce((acc, tour) => {
                 try {
                     const imageUrl = tour.imagenes?.[0]?.url || 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=600&h=400&fit=crop';
+                    const categoriaStr = typeof tour.categoria === 'string' ? tour.categoria : (tour.categoria?.es || '');
+                    const categoriaLabel = typeof tour.categoria === 'string' ? translateCategoria(tour.categoria) : getL(tour.categoria);
+                    const catIcon = getCategoryIcon(categoriaStr);
+
+                    // Rating
+                    const rating = Number(tour.calificacionPromedio) || 0;
+                    const reviewCount = Number(tour.numeroResenas) || 0;
+                    const ratingHtml = reviewCount > 0
+                        ? `<div class="tour-card-rating">
+                                <span class="stars">${renderStars(rating)}</span>
+                                <span>${rating.toFixed(1)}</span>
+                                <span class="count">(${reviewCount} ${opinionesTxt})</span>
+                            </div>`
+                        : `<div class="tour-card-rating"><span class="new-badge">${nuevoTxt}</span></div>`;
+
                     const output = `
                     <div class="restaurant-card tour-card" data-id="${tour._id}">
-                    <div class="card-image" onclick="window.location.href='/experiencia.html?id=${tour._id}'" style="cursor: pointer;">
-                        <img src="${imageUrl}" alt="${tour.nombre}" onerror="this.style.display='none'">
-                        <div class="tour-price-badge">$${tour.precio.amount} ${tour.precio.moneda}</div>
-                        ${tour.imagenes?.length > 1 ? `<div style="position:absolute; top:1rem; right:1rem; background:rgba(0,0,0,0.6); color:white; padding:0.25rem 0.5rem; border-radius:10px; font-size:0.8rem;"><i class="fas fa-images"></i> ${tour.imagenes.length}</div>` : ''}
-                    </div>
-                    <div class="card-content">
-                        <div class="card-header">
-                            <div>
-                                <h3 class="card-title">${getL(tour.nombre)}</h3>
-                                <span class="card-type">
-                                    <i class="fas fa-tag"></i>
-                                    ${Object.prototype.toString.call(tour.categoria) === '[object String]' ? translateCategoria(tour.categoria) : getL(tour.categoria)}
-                                </span>
+                        <div class="card-image" onclick="window.location.href='/experiencia.html?id=${tour._id}'" style="cursor: pointer;">
+                            <img src="${imageUrl}" alt="${tour.nombre}" loading="lazy" onerror="this.style.display='none'">
+                            <div class="tour-price-badge">
+                                <span class="tour-price-label">${desdeText}</span>
+                                <span class="tour-price-amount">$${tour.precio.amount} <span style="font-size:0.7rem; font-weight:600; color:#6b7280;">${tour.precio.moneda}</span></span>
+                                <span class="tour-price-per">${porPersonaTxt}</span>
                             </div>
+                            ${tour.imagenes?.length > 1 ? `<div style="position:absolute; top:1rem; right:1rem; background:rgba(0,0,0,0.6); color:white; padding:0.25rem 0.5rem; border-radius:10px; font-size:0.8rem;"><i class="fas fa-images"></i> ${tour.imagenes.length}</div>` : ''}
                         </div>
-                        <p class="card-description">${getL(tour.descripcionCorta)}</p>
-                        <div class="card-info">
-                            <div class="info-item">
-                                <i class="fas fa-clock"></i>
-                                <span>${lang === 'en' ? 'Duration' : lang === 'fr' ? 'Durée' : 'Duración'}: ${tour.duracion.horas}h</span>
+                        <div class="card-content">
+                            <div class="tour-category-chip">
+                                <i class="fas ${catIcon}"></i>
+                                <span>${categoriaLabel}</span>
                             </div>
-                            <div class="info-item">
-                                <i class="fas fa-signal"></i>
-                                <span>${lang === 'en' ? 'Difficulty' : lang === 'fr' ? 'Difficulté' : 'Dificultad'}: ${tour.dificultad === 'Fácil' ? (lang === 'en' ? 'Easy' : lang === 'fr' ? 'Facile' : 'Fácil') :
+                            <h3 class="card-title">${getL(tour.nombre)}</h3>
+                            ${ratingHtml}
+                            <p class="card-description">${getL(tour.descripcionCorta)}</p>
+                            <div class="card-info">
+                                <div class="info-item">
+                                    <i class="fas fa-clock"></i>
+                                    <span>${tour.duracion.horas}h</span>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-signal"></i>
+                                    <span>${tour.dificultad === 'Fácil' ? (lang === 'en' ? 'Easy' : lang === 'fr' ? 'Facile' : 'Fácil') :
                             tour.dificultad === 'Moderado' ? (lang === 'en' ? 'Moderate' : lang === 'fr' ? 'Modéré' : 'Moderado') :
                                 tour.dificultad === 'Difícil' ? (lang === 'en' ? 'Hard' : lang === 'fr' ? 'Difficile' : 'Difícil') :
                                     tour.dificultad === 'Extremo' ? (lang === 'en' ? 'Extreme' : lang === 'fr' ? 'Extrême' : 'Extremo') : tour.dificultad
                         }</span>
+                                </div>
+                            </div>
+                            <div class="card-actions" style="display:flex; gap:0.5rem; margin-top:auto; padding-top:0.75rem; border-top:1px solid var(--gray-100);">
+                                <button class="card-detail-btn"
+                                   style="flex:1; display:inline-flex; align-items:center; justify-content:center; gap:0.4rem;
+                                          padding:0.55rem 1rem; background:var(--primary); color:white; border-radius:0.5rem;
+                                          font-size:0.85rem; font-weight:600; text-decoration:none;
+                                          transition:all 0.2s ease; border:none; cursor:pointer;"
+                                   onmouseover="this.style.background='var(--primary-dark)'; this.style.transform='translateY(-1px)'"
+                                   onmouseout="this.style.background='var(--primary)'; this.style.transform='translateY(0)'"
+                                   onclick="window.location.href='/experiencia.html?id=${tour._id}'">
+                                    <i class="fas fa-eye"></i>
+                                    ${verDetallesTxt}
+                                </button>
+                                <button onclick="window.location.href='/experiencia.html?id=${tour._id}'"
+                                        title="${verDetallesTxt}"
+                                        style="padding:0.55rem 0.9rem; background:var(--gray-100); color:var(--gray-700);
+                                               border:1px solid var(--gray-200); border-radius:0.5rem; font-size:0.85rem;
+                                               font-weight:600; cursor:pointer; transition:all 0.2s ease;"
+                                        onmouseover="this.style.background='var(--gray-200)'"
+                                        onmouseout="this.style.background='var(--gray-100)'">
+                                    <i class="fas fa-info-circle"></i>
+                                </button>
                             </div>
                         </div>
-                        <div class="card-actions" style="display:flex; gap:0.5rem; margin-top:auto; padding-top:0.75rem; border-top:1px solid var(--gray-100);">
-                            <button class="card-detail-btn"
-                               style="flex:1; display:inline-flex; align-items:center; justify-content:center; gap:0.4rem;
-                                      padding:0.55rem 1rem; background:var(--primary); color:white; border-radius:0.5rem;
-                                      font-size:0.85rem; font-weight:600; text-decoration:none;
-                                      transition:all 0.2s ease; border:none; cursor:pointer;"
-                               onmouseover="this.style.background='var(--primary-dark)'; this.style.transform='translateY(-1px)'"
-                               onmouseout="this.style.background='var(--primary)'; this.style.transform='translateY(0)'"
-                               onclick="window.location.href='/experiencia.html?id=${tour._id}'">
-                                <i class="fas fa-eye"></i>
-                                ${verDetallesTxt}
-                            </button>
-                            <button onclick="window.location.href='/experiencia.html?id=${tour._id}'"
-                                    style="padding:0.55rem 0.9rem; background:var(--gray-100); color:var(--gray-700);
-                                           border:1px solid var(--gray-200); border-radius:0.5rem; font-size:0.85rem;
-                                           font-weight:600; cursor:pointer; transition:all 0.2s ease;"
-                                    onmouseover="this.style.background='var(--gray-200)'"
-                                    onmouseout="this.style.background='var(--gray-100)'">
-                                <i class="fas fa-info-circle"></i>
-                            </button>
-                        </div>
                     </div>
-                </div>
                     `;
                     acc.push(output);
                 } catch (e) {
@@ -833,8 +1400,7 @@
             const grid = document.getElementById('guias-grid');
             if (!grid) return;
             const lang = localStorage.getItem('appLang') || 'es';
-            const cargandoTxt = lang === 'en' ? 'Loading guides...' : 'Cargando guías...';
-            grid.innerHTML = `<div class="loading"><div class="loader"><div class="bar1"></div><div class="bar2"></div><div class="bar3"></div><div class="bar4"></div><div class="bar5"></div><div class="bar6"></div><div class="bar7"></div><div class="bar8"></div><div class="bar9"></div><div class="bar10"></div><div class="bar11"></div><div class="bar12"></div></div><p>${cargandoTxt}</p></div>`;
+            grid.innerHTML = renderSkeletons(3);
 
             try {
                 const res = await fetch('/api/guias');

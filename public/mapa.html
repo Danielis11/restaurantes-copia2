@@ -14,6 +14,8 @@
     <!-- Estilos -->
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/responsive.css">
+    <link rel="stylesheet" href="/css/ui-enhancements.css">
+    <script src="/js/ui-enhancements.js" defer></script>
 
     <!-- Font Awesome para iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -474,6 +476,12 @@
                     buttonHtml = `
                         <a href="/admin-turismo.html" class="btn" style="background-color: #0d9488; color: white; display:flex;align-items:center;gap:0.4rem;padding:0.5rem 1rem; border-radius: 0.5rem;" title="Panel Turismo">
                             <i class="fas fa-compass"></i> ${nombreMostrar}
+                        </a>
+                    `;
+                } else if (currentUser.rol === 'gobernamental') {
+                    buttonHtml = `
+                        <a href="/admin-gobierno.html" class="btn" style="background-color: #3b82f6; color: white; display:flex;align-items:center;gap:0.4rem;padding:0.5rem 1rem; border-radius: 0.5rem;" title="Panel Gubernamental">
+                            <i class="fas fa-landmark"></i> ${nombreMostrar}
                         </a>
                     `;
                 } else {

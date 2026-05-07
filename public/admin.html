@@ -585,8 +585,11 @@
     <main class="main">
         <!-- Page Header -->
         <div class="page-header"
-            style="margin-bottom: 2rem; border-bottom: 1px solid var(--gray-200); padding-bottom: 1rem;">
+            style="margin-bottom: 2rem; border-bottom: 1px solid var(--gray-200); padding-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
             <h1 class="page-title" id="welcome-message">Bienvenido</h1>
+            <button class="btn btn-outline" onclick="copiarEnlacePublico()" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
+                <i class="fas fa-link"></i> Copiar enlace a mi perfil
+            </button>
         </div>
 
         <!-- Dashboard Stats -->
@@ -619,31 +622,78 @@
                 </div>
             </div>
 
+            <!-- NUEVO: Reseñas Promedio -->
             <div class="stat-card">
                 <div class="stat-header">
-                    <div class="stat-title">Estado del Sistema</div>
-                    <div class="stat-icon success">
-                        <i class="fas fa-check-circle"></i>
+                    <div class="stat-title">Calificación Media</div>
+                    <div class="stat-icon" style="background-color: #f59e0b;">
+                        <i class="fas fa-star"></i>
                     </div>
                 </div>
-                <div class="stat-value" style="font-size: 1.5rem;">Activo</div>
-                <div class="stat-change positive">
-                    <i class="fas fa-arrow-up"></i>
-                    <span>Funcionando correctamente</span>
+                <div class="stat-value" id="avg-rating">0.0</div>
+                <div class="stat-change" id="total-reviews-msg">
+                    <i class="fas fa-comment-dots"></i>
+                    <span>Cargando reseñas...</span>
                 </div>
             </div>
 
+            <!-- NUEVO: Estado de Hoy -->
             <div class="stat-card">
                 <div class="stat-header">
-                    <div class="stat-title">Último Acceso</div>
-                    <div class="stat-icon primary">
-                        <i class="fas fa-clock"></i>
+                    <div class="stat-title">Estado Hoy</div>
+                    <div class="stat-icon success" id="status-icon">
+                        <i class="fas fa-door-open"></i>
                     </div>
                 </div>
-                <div class="stat-value" style="font-size: 1.2rem;" id="last-access">Ahora</div>
-                <div class="stat-change">
-                    <i class="fas fa-history"></i>
-                    <span>Sesión activa</span>
+                <div class="stat-value" style="font-size: 1.5rem;" id="today-status">Verificando...</div>
+                <div class="stat-change" id="today-hours">
+                    <i class="fas fa-clock"></i>
+                    <span>Horario de hoy</span>
+                </div>
+            </div>
+
+            <!-- Vistas del Perfil -->
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Vistas del Perfil</div>
+                    <div class="stat-icon" style="background-color: #6366f1;">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="total-views">0</div>
+                <div class="stat-change" id="views-month-msg">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Cargando...</span>
+                </div>
+            </div>
+
+            <!-- Clics en WhatsApp -->
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Clics en WhatsApp</div>
+                    <div class="stat-icon" style="background-color: #25d366;">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="total-whatsapp">0</div>
+                <div class="stat-change" id="whatsapp-month-msg">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Cargando...</span>
+                </div>
+            </div>
+
+            <!-- Clics en Mapa -->
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Clics en Mapa</div>
+                    <div class="stat-icon" style="background-color: #0ea5e9;">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="total-map">0</div>
+                <div class="stat-change" id="map-month-msg">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Cargando...</span>
                 </div>
             </div>
         </div>
@@ -704,24 +754,59 @@
                     <div class="action-description">Código QR elegante para las mesas de tu restaurante</div>
                 </a>
 
-                <!-- Ofertas Flash -->
+                <!-- Ofertas Flash / Inventario Muerto -->
                 <a href="javascript:void(0)" class="action-card" onclick="abrirModalOfertas()">
                     <div class="action-icon" style="background: #ef4444;">
                         <i class="fas fa-bolt"></i>
                     </div>
-                    <div class="action-title">Ofertas Flash</div>
-                    <div class="action-description">Crear banners temporales destacados en la página principal</div>
+                    <div class="action-title">Inventario Muerto / Flash</div>
+                    <div class="action-description">Liquida producto rápidamente en la vista principal</div>
                 </a>
 
-                <!-- Ver Sitio Público -->
-                <a href="/" class="action-card">
-                    <div class="action-icon">
-                        <i class="fas fa-globe"></i>
+                <!-- Bolsa de Trabajo -->
+                <a href="javascript:void(0)" class="action-card" onclick="abrirModalVacantes()">
+                    <div class="action-icon" style="background: #14b8a6;">
+                        <i class="fas fa-briefcase"></i>
                     </div>
-                    <div class="action-title">Ver Sitio Público</div>
-                    <div class="action-description">Ir a la página principal</div>
+                    <div class="action-title">Bolsa de Trabajo</div>
+                    <div class="action-description">Publica letrero digital para contratar nuevo personal</div>
                 </a>
 
+                <!-- Ver Mi Restaurante -->
+                <a href="javascript:void(0)" class="action-card" onclick="verMiRestaurantePublico()">
+                    <div class="action-icon">
+                        <i class="fas fa-external-link-alt"></i>
+                    </div>
+                    <div class="action-title">Ver Mi Perfil</div>
+                    <div class="action-description">Mira cómo ven los clientes tu restaurante en la web</div>
+                </a>
+                
+                <!-- Contactos CRM -->
+                <a href="javascript:void(0)" class="action-card" onclick="openCRMModal()">
+                    <div class="action-icon" style="background: #eab308;">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="action-title">Mis Clientes (CRM)</div>
+                    <div class="action-description">Base de datos de tus clientes que piden promociones</div>
+                </a>
+
+                <!-- Buzón Privado -->
+                <a href="javascript:void(0)" class="action-card" onclick="openInboxModal()">
+                    <div class="action-icon" style="background: #ef4444;">
+                        <i class="fas fa-envelope-open-text"></i>
+                    </div>
+                    <div class="action-title">Buzón Gerencia</div>
+                    <div class="action-description">Lee quejas o mensajes antes de que vayan a internet</div>
+                </a>
+
+                <!-- Calendario de Eventos -->
+                <a href="javascript:void(0)" class="action-card" onclick="abrirModalEventos()">
+                    <div class="action-icon" style="background: #f97316;">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="action-title">Eventos</div>
+                    <div class="action-description">Crea y gestiona eventos de tu establecimiento</div>
+                </a>
             </div>
         </div>
 
@@ -790,6 +875,98 @@
             <button id="btn-descargar-qr" onclick="descargarQR()" style="width:100%; padding:0.875rem; background:#0ea5e9; color:white; border:none; border-radius:0.5rem; font-size:0.95rem; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:0.5rem; transition:background 0.2s;" onmouseover="this.style.background='#0284c7'" onmouseout="this.style.background='#0ea5e9'">
                 <i class="fas fa-download"></i> Descargar QR (PNG)
             </button>
+        </div>
+    </div>
+
+    <!-- ===== MODAL: CRM ===== -->
+    <div id="modal-crm" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); align-items:center; justify-content:center;">
+        <div style="background:white; border-radius:1rem; max-width:800px; width:92%; padding:2rem; position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.3); max-height:90vh; animation: modalIn 0.3s ease;">
+            <button onclick="cerrarCRMModal()" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.2rem; color:var(--gray-400); cursor:pointer;">
+                <i class="fas fa-times"></i>
+            </button>
+            <h3 style="font-size:1.3rem; font-weight:700; color:var(--gray-900); margin-bottom:0.5rem; display:flex; align-items:center; gap:0.5rem;">
+                <i class="fas fa-users" style="color:#eab308;"></i> Clientes CRM
+            </h3>
+            <p style="font-size:0.85rem; color:var(--gray-500); margin-bottom:1.5rem;">Estos clientes han dejado sus datos desde tu perfil público para recibir promociones.</p>
+            
+            <div style="background:var(--gray-50); border:1px solid var(--gray-200); border-radius:0.5rem; overflow-y:auto; max-height:50vh;">
+                <table style="width:100%; border-collapse:collapse; font-size:0.85rem; text-align:left;">
+                    <thead style="background:var(--gray-200); position:sticky; top:0;">
+                        <tr>
+                            <th style="padding:0.75rem 1rem;">Nombre</th>
+                            <th style="padding:0.75rem 1rem;">Email</th>
+                            <th style="padding:0.75rem 1rem;">WhatsApp</th>
+                            <th style="padding:0.75rem 1rem;">Cumpleaños</th>
+                            <th style="padding:0.75rem 1rem;">Fecha Reg.</th>
+                        </tr>
+                    </thead>
+                    <tbody id="crm-tbody" style="background:#fff;">
+                        <tr><td colspan="5" style="text-align:center; padding:1rem; color:var(--gray-400);"><i class="fas fa-spinner fa-spin"></i> Cargando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div style="margin-top:1rem; text-align:right;">
+                <button onclick="exportarCRMCSV()" style="background:var(--gray-800); color:white; border:none; padding:0.5rem 1rem; border-radius:0.5rem; font-size:0.85rem; cursor:pointer;"><i class="fas fa-file-csv"></i> Descargar lista de clientes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL: BOLSA DE TRABAJO ===== -->
+    <div id="modal-vacantes" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); align-items:center; justify-content:center;">
+        <div style="background:white; border-radius:1rem; max-width:800px; width:92%; padding:2rem; position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.3); max-height:90vh; overflow-y:auto; animation: modalIn 0.3s ease;">
+            <button onclick="cerrarModalVacantes()" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.2rem; color:var(--gray-400); cursor:pointer;">
+                <i class="fas fa-times"></i>
+            </button>
+            <h3 style="font-size:1.3rem; font-weight:700; color:var(--gray-900); margin-bottom:0.5rem; display:flex; align-items:center; gap:0.5rem;">
+                <i class="fas fa-briefcase" style="color:#14b8a6;"></i> Bolsa de Trabajo
+            </h3>
+            <p style="font-size:0.85rem; color:var(--gray-500); margin-bottom:1.5rem;">Publica letreros digitales para que la comunidad sepa que estás contratando.</p>
+            
+            <form id="form-nueva-vacante" onsubmit="crearVacante(event)" style="background:var(--gray-50); border:1px solid var(--gray-200); padding:1.5rem; border-radius:0.5rem; margin-bottom:1.5rem;">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+                    <div>
+                        <label style="display:block; font-size:0.85rem; font-weight:600; color:var(--gray-700); margin-bottom:0.4rem;">Puesto a contratar *</label>
+                        <input type="text" id="vacante-titulo" placeholder="Ej. Mesero de fin de semana" required style="width:100%; padding:0.6rem; border:1px solid var(--gray-300); border-radius:0.4rem; font-size:0.9rem;">
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:0.85rem; font-weight:600; color:var(--gray-700); margin-bottom:0.4rem;">Sueldo o Propina (Opcional)</label>
+                        <input type="text" id="vacante-sueldo" placeholder="Ej. $1,200 semanal + propinas libres" style="width:100%; padding:0.6rem; border:1px solid var(--gray-300); border-radius:0.4rem; font-size:0.9rem;">
+                    </div>
+                </div>
+                <div style="margin-bottom:1rem;">
+                    <label style="display:block; font-size:0.85rem; font-weight:600; color:var(--gray-700); margin-bottom:0.4rem;">Descripción y Requisitos *</label>
+                    <textarea id="vacante-desc" rows="3" placeholder="Ej. Buscamos persona proactiva, 18+ años, experiencia no necesaria..." required style="width:100%; padding:0.6rem; border:1px solid var(--gray-300); border-radius:0.4rem; font-size:0.9rem; resize:vertical;"></textarea>
+                </div>
+                <div style="margin-bottom:1.5rem;">
+                    <label style="display:block; font-size:0.85rem; font-weight:600; color:var(--gray-700); margin-bottom:0.4rem;">Contacto o Instrucción *</label>
+                    <input type="text" id="vacante-contacto" placeholder="Ej. Traer solicitud elaborada de 10am a 12pm, o enviar WhatsApp al 442..." required style="width:100%; padding:0.6rem; border:1px solid var(--gray-300); border-radius:0.4rem; font-size:0.9rem;">
+                </div>
+                <button type="submit" id="btn-crear-vacante" style="width:100%; padding:0.75rem; background:#14b8a6; color:white; border:none; border-radius:0.4rem; font-size:0.9rem; font-weight:600; cursor:pointer; transition:background 0.2s;">
+                    <i class="fas fa-bullhorn"></i> Publicar Vacante
+                </button>
+            </form>
+
+            <h4 style="font-size:0.95rem; font-weight:600; color:var(--gray-800); margin-bottom:0.75rem;">Administrar Letreros</h4>
+            <div id="lista-mis-vacantes" style="min-height:40px;">
+                <p style="color:var(--gray-400); font-size:0.85rem; text-align:center;"><i class="fas fa-spinner fa-spin"></i> Cargando...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL: Buzón Gerencia ===== -->
+    <div id="modal-inbox" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); align-items:center; justify-content:center;">
+        <div style="background:white; border-radius:1rem; max-width:600px; width:92%; padding:2rem; position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.3); max-height:90vh; display:flex; flex-direction:column; animation: modalIn 0.3s ease;">
+            <button onclick="cerrarInboxModal()" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.2rem; color:var(--gray-400); cursor:pointer;">
+                <i class="fas fa-times"></i>
+            </button>
+            <h3 style="font-size:1.3rem; font-weight:700; color:var(--gray-900); margin-bottom:0.5rem; display:flex; align-items:center; gap:0.5rem;">
+                <i class="fas fa-envelope-open-text" style="color:#ef4444;"></i> Buzón de Quejas y Sugerencias
+            </h3>
+            <p style="font-size:0.85rem; color:var(--gray-500); margin-bottom:1.5rem;">Atiende estas quejas privadas antes de que el cliente las publique en reseñas de Google.</p>
+            
+            <div id="inbox-messages-container" style="overflow-y:auto; flex:1; padding-right:0.5rem; display:flex; flex-direction:column; gap:1rem;">
+                <p style="text-align:center; color:var(--gray-400);"><i class="fas fa-spinner fa-spin"></i> Cargando mensajes...</p>
+            </div>
         </div>
     </div>
 
@@ -987,6 +1164,15 @@
 
                     // Cargar estadísticas de imágenes
                     loadImageStats();
+                    
+                    // Cargar reseñas administrativas
+                    loadReviewsStats();
+                    
+                    // Cargar estadísticas de visitas/clics
+                    loadVisitStats(myRestaurantData);
+                    
+                    // Actualizar horarios del día de hoy
+                    updateTodaySchedule(myRestaurantData);
                 } else {
                     const totalRestaurants = document.getElementById('total-restaurants');
                     if (totalRestaurants) {
@@ -996,6 +1182,149 @@
             } catch (error) {
                 console.error('Error verificando restaurante:', error);
             }
+        }
+
+        // Cargar estadísticas de Reseñas
+        async function loadReviewsStats() {
+            const token = localStorage.getItem('authToken');
+            if (!token) return;
+
+            try {
+                // Rutas del admin según router.js
+                const response = await fetch(`${API_BASE}/admin/my-restaurant/reviews`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success && result.data) {
+                        const reviews = Array.isArray(result.data) ? result.data : (result.data.resenas || []);
+                        const avgRatingEl = document.getElementById('avg-rating');
+                        const totalReviewsMsg = document.getElementById('total-reviews-msg');
+                        
+                        if (reviews.length > 0) {
+                            // Suma y promedio
+                            const sum = reviews.reduce((acc, rev) => acc + (rev.rating || 0), 0);
+                            const avg = (sum / reviews.length).toFixed(1);
+                            avgRatingEl.textContent = avg;
+                            
+                            const pendientes = reviews.filter(r => !r.respuestaAdmin && r.estado === 'aprobada').length;
+                            
+                            totalReviewsMsg.innerHTML = `
+                                <i class="fas fa-comment-dots"></i>
+                                <span>${reviews.length} total, ${pendientes} sin responder</span>
+                            `;
+                        } else {
+                            avgRatingEl.textContent = '-';
+                            totalReviewsMsg.innerHTML = `<i class="fas fa-comment-slash"></i> <span>Aún sin reseñas</span>`;
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error cargando reseñas:', error);
+            }
+        }
+
+        // Cargar estadísticas de visitas, WhatsApp y Mapa
+        function loadVisitStats(restaurantData) {
+            if (!restaurantData) return;
+
+            const stats = restaurantData.estadisticas || {};
+            const mensual = restaurantData.estadisticasMensuales || [];
+
+            // Totales globales
+            const totalViewsEl = document.getElementById('total-views');
+            const totalWhatsappEl = document.getElementById('total-whatsapp');
+            const totalMapEl = document.getElementById('total-map');
+
+            if (totalViewsEl) totalViewsEl.textContent = (stats.vistasPerfil || 0).toLocaleString('es-MX');
+            if (totalWhatsappEl) totalWhatsappEl.textContent = (stats.clicsWhatsapp || 0).toLocaleString('es-MX');
+            if (totalMapEl) totalMapEl.textContent = (stats.clicsMapa || 0).toLocaleString('es-MX');
+
+            // Calcular datos del mes actual
+            const ahora = new Date();
+            const mesActual = `${ahora.getFullYear()}-${(ahora.getMonth() + 1).toString().padStart(2, '0')}`;
+            const datosMes = mensual.find(m => m.fecha === mesActual);
+
+            const viewsMonthMsg = document.getElementById('views-month-msg');
+            const whatsappMonthMsg = document.getElementById('whatsapp-month-msg');
+            const mapMonthMsg = document.getElementById('map-month-msg');
+
+            if (datosMes) {
+                if (viewsMonthMsg) viewsMonthMsg.innerHTML = `<i class="fas fa-chart-line"></i> <span>${datosMes.vistas || 0} este mes</span>`;
+                if (whatsappMonthMsg) whatsappMonthMsg.innerHTML = `<i class="fas fa-chart-line"></i> <span>${datosMes.clicsWhatsapp || 0} este mes</span>`;
+                if (mapMonthMsg) mapMonthMsg.innerHTML = `<i class="fas fa-chart-line"></i> <span>${datosMes.clicsMapa || 0} este mes</span>`;
+            } else {
+                if (viewsMonthMsg) viewsMonthMsg.innerHTML = `<i class="fas fa-chart-line"></i> <span>0 este mes</span>`;
+                if (whatsappMonthMsg) whatsappMonthMsg.innerHTML = `<i class="fas fa-chart-line"></i> <span>0 este mes</span>`;
+                if (mapMonthMsg) mapMonthMsg.innerHTML = `<i class="fas fa-chart-line"></i> <span>0 este mes</span>`;
+            }
+        }
+
+        // Horario y estado del día de hoy
+        function updateTodaySchedule(restaurantData) {
+            if (!restaurantData || !restaurantData.horarios) return;
+
+            const daysMap = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
+            const todayIndex = new Date().getDay();
+            const todayName = daysMap[todayIndex];
+            
+            // Los horarios vienen como objeto: horarios.lunes, horarios.martes, etc.
+            const scheduleToday = restaurantData.horarios[todayName];
+            
+            const todayStatusEl = document.getElementById('today-status');
+            const todayHoursEl = document.getElementById('today-hours');
+            const statusIcon = document.getElementById('status-icon');
+
+            if (scheduleToday && scheduleToday.abierto) {
+                todayStatusEl.textContent = 'Abierto';
+                todayStatusEl.style.color = 'inherit';
+                statusIcon.className = 'stat-icon success';
+                statusIcon.innerHTML = '<i class="fas fa-door-open"></i>';
+                
+                todayHoursEl.innerHTML = `
+                    <i class="fas fa-clock"></i>
+                    <span>${scheduleToday.apertura} - ${scheduleToday.cierre}</span>
+                `;
+            } else {
+                todayStatusEl.textContent = 'Cerrado';
+                todayStatusEl.style.color = '#ef4444';
+                statusIcon.className = 'stat-icon error';
+                statusIcon.innerHTML = '<i class="fas fa-door-closed"></i>';
+                
+                todayHoursEl.innerHTML = `
+                    <i class="fas fa-info-circle"></i>
+                    <span>No abre el día de hoy</span>
+                `;
+            }
+        }
+
+        // Funcionalidad para copiar enlace directo
+        function copiarEnlacePublico() {
+            if (!myRestaurantData || !myRestaurantData._id) {
+                showNotification('Aún no tienes un perfil creado', 'warning');
+                return;
+            }
+            
+            // Generar URL pública
+            const publicUrl = `${window.location.origin}/restaurante.html?id=${myRestaurantData._id}`;
+            
+            navigator.clipboard.writeText(publicUrl).then(() => {
+                showNotification('Enlace copiado al portapapeles. ¡Compártelo!', 'success');
+            }).catch(err => {
+                console.error('Error al copiar:', err);
+                showNotification('No se pudo copiar el enlace', 'error');
+            });
+        }
+
+        // Abrir perfil público en nueva pestaña
+        function verMiRestaurantePublico() {
+            if (!myRestaurantData || !myRestaurantData._id) {
+                showNotification('Debes configurar tu información básica primero.', 'warning');
+                return;
+            }
+            const publicUrl = `${window.location.origin}/restaurante.html?id=${myRestaurantData._id}`;
+            window.open(publicUrl, '_blank');
         }
 
         // Cargar estadísticas de imágenes
@@ -1394,7 +1723,474 @@
         document.getElementById('modal-ofertas').addEventListener('click', function(e) {
             if (e.target === this) cerrarModalOfertas();
         });
+
+        // ==========================================
+        // BOLSA DE TRABAJO (LETREROS DIGITALES)
+        // ==========================================
+        function abrirModalVacantes() {
+            if (!myRestaurantData) {
+                showNotification('Primero necesitas tener un restaurante registrado', 'warning');
+                return;
+            }
+            document.getElementById('modal-vacantes').style.display = 'flex';
+            cargarMisVacantes();
+        }
+
+        function cerrarModalVacantes() {
+            document.getElementById('modal-vacantes').style.display = 'none';
+        }
+
+        document.getElementById('modal-vacantes').addEventListener('click', function(e) {
+            if (e.target === this) cerrarModalVacantes();
+        });
+
+        async function crearVacante(e) {
+            e.preventDefault();
+            const token = localStorage.getItem('authToken');
+            if (!token) return;
+
+            const btn = document.getElementById('btn-crear-vacante');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Publicando...';
+
+            try {
+                const body = {
+                    titulo: document.getElementById('vacante-titulo').value,
+                    sueldo: document.getElementById('vacante-sueldo').value,
+                    descripcion: document.getElementById('vacante-desc').value,
+                    contacto: document.getElementById('vacante-contacto').value
+                };
+
+                const res = await fetch(`${API_BASE}/bolsa-trabajo`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    showNotification('¡Letrero de vacante publicado!', 'success');
+                    document.getElementById('form-nueva-vacante').reset();
+                    cargarMisVacantes();
+                } else {
+                    showNotification(data.message || 'Error al crear la vacante', 'error');
+                }
+            } catch (err) {
+                console.error(err);
+                showNotification('Error de conexión', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-bullhorn"></i> Publicar Vacante';
+            }
+        }
+
+        async function cargarMisVacantes() {
+            const token = localStorage.getItem('authToken');
+            const container = document.getElementById('lista-mis-vacantes');
+            container.innerHTML = '<p style="color:var(--gray-400); font-size:0.85rem; text-align:center;"><i class="fas fa-spinner fa-spin"></i> Cargando vacantes...</p>';
+
+            try {
+                const res = await fetch(`${API_BASE}/bolsa-trabajo/mis-vacantes`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+
+                if (data.success && data.data && data.data.length > 0) {
+                    container.innerHTML = data.data.map(v => `
+                        <div style="display:flex; align-items:center; gap:0.75rem; padding:1rem; border:1px solid var(--gray-200); border-radius:0.5rem; margin-bottom:0.5rem; background: ${v.activa ? '#fff' : '#f8fafc'}; opacity: ${v.activa ? '1' : '0.6'};">
+                            <div style="flex:1;">
+                                <div style="font-weight:700; color:var(--gray-800); font-size:0.95rem; margin-bottom:0.25rem;">
+                                    ${v.titulo} ${!v.activa ? '<span style="font-size:0.7rem; background:#cbd5e1; color:white; padding:0.1rem 0.4rem; border-radius:1rem;">Pausada</span>' : ''}
+                                </div>
+                                <div style="font-size:0.8rem; color:var(--gray-500);"><i class="fas fa-dollar-sign"></i> ${v.sueldo || 'No especificado'}</div>
+                                <div style="font-size:0.8rem; color:var(--gray-500);"><i class="fas fa-phone"></i> ${v.contacto}</div>
+                            </div>
+                            <div style="display:flex; gap:0.5rem;">
+                                <button onclick="cambiarEstadoVacante('${v._id}')" class="btn" style="background:${v.activa ? 'var(--gray-200)' : '#10b981'}; color:${v.activa ? 'var(--gray-600)' : 'white'}; padding:0.4rem 0.8rem; border-radius:0.4rem; font-size:0.8rem; border:none; cursor:pointer;" title="${v.activa ? 'Pausar búsqueda' : 'Reactivar búsqueda'}">
+                                    <i class="fas ${v.activa ? 'fa-pause' : 'fa-play'}"></i> ${v.activa ? 'Pausar' : 'Activar'}
+                                </button>
+                                <button onclick="eliminarVacante('${v._id}')" class="btn" style="background:#ef4444; color:white; padding:0.4rem 0.8rem; border-radius:0.4rem; font-size:0.8rem; border:none; cursor:pointer;" title="Eliminar letrero definitivamente">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<p style="color:var(--gray-400); font-size:0.85rem; text-align:center; padding:1rem 0;">No tienes vacantes activas</p>';
+                }
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = '<p style="color:var(--gray-400); font-size:0.85rem; text-align:center;">Error al cargar vacantes</p>';
+            }
+        }
+
+        async function cambiarEstadoVacante(id) {
+            const token = localStorage.getItem('authToken');
+            try {
+                const res = await fetch(`${API_BASE}/bolsa-trabajo/${id}/estado`, {
+                    method: 'PATCH',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showNotification(data.message, 'success');
+                    cargarMisVacantes();
+                }
+            } catch (err) {
+                showNotification('Error de conexión', 'error');
+            }
+        }
+
+        async function eliminarVacante(id) {
+            if (!confirm('¿Eliminar esta vacante definitivamente?')) return;
+            const token = localStorage.getItem('authToken');
+            try {
+                const res = await fetch(`${API_BASE}/bolsa-trabajo/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showNotification('Vacante eliminada', 'success');
+                    cargarMisVacantes();
+                } else {
+                    showNotification(data.message || 'Error', 'error');
+                }
+            } catch (err) {
+                showNotification('Error de conexión', 'error');
+            }
+        }
+        // ==========================================
+        // CRM Y BUZÓN (NUEVAS FUNCIONES)
+        // ==========================================
+        function openCRMModal() {
+            document.getElementById('modal-crm').style.display = 'flex';
+            loadCRMData();
+        }
+        function cerrarCRMModal() {
+            document.getElementById('modal-crm').style.display = 'none';
+        }
+
+        async function loadCRMData() {
+            const tbody = document.getElementById('crm-tbody');
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:1rem;"><i class="fas fa-spinner fa-spin"></i> Cargando clientes...</td></tr>';
+            try {
+                const token = localStorage.getItem('authToken');
+                const res = await fetch(`${API_BASE}/crm-quejas/mis-contactos`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!res.ok) throw new Error('Error al cargar CRM');
+                
+                const contactos = await res.json();
+                
+                if (contactos.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:1rem; color:var(--gray-500);">Aún no tienes clientes registrados.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = contactos.map(c => `
+                    <tr style="border-bottom:1px solid var(--gray-200);">
+                        <td style="padding:0.75rem 1rem; font-weight:600;">${c.nombre}</td>
+                        <td style="padding:0.75rem 1rem;">${c.email || '-'}</td>
+                        <td style="padding:0.75rem 1rem;">${c.telefono || '-'}</td>
+                        <td style="padding:0.75rem 1rem;">${c.cumpleanos || '-'}</td>
+                        <td style="padding:0.75rem 1rem;">${new Date(c.fechaRegistro).toLocaleDateString()}</td>
+                    </tr>
+                `).join('');
+
+                // Guardar en window para exportar 
+                window.currentCRMData = contactos;
+            } catch (err) {
+                console.error(err);
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:1rem; color:red;">Error cargando datos.</td></tr>';
+            }
+        }
+
+        function exportarCRMCSV() {
+            if (!window.currentCRMData || window.currentCRMData.length === 0) {
+                return showNotification('No hay datos para exportar', 'warning');
+            }
+            
+            const headers = ['Nombre', 'Email', 'WhatsApp', 'Cumpleaños', 'Fecha de Registro'];
+            const rows = window.currentCRMData.map(c => [
+                `"${c.nombre || ''}"`,
+                `"${c.email || ''}"`,
+                `"${c.telefono || ''}"`,
+                `"${c.cumpleanos || ''}"`,
+                `"${new Date(c.fechaRegistro).toLocaleDateString()}"`
+            ]);
+            
+            const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'clientes_crm.csv';
+            link.click();
+        }
+
+        function openInboxModal() {
+            document.getElementById('modal-inbox').style.display = 'flex';
+            loadInboxData();
+        }
+        function cerrarInboxModal() {
+            document.getElementById('modal-inbox').style.display = 'none';
+        }
+
+        async function loadInboxData() {
+            const container = document.getElementById('inbox-messages-container');
+            container.innerHTML = '<p style="text-align:center;"><i class="fas fa-spinner fa-spin"></i> Cargando...</p>';
+            
+            try {
+                const token = localStorage.getItem('authToken');
+                const res = await fetch(`${API_BASE}/crm-quejas/mis-mensajes`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!res.ok) throw new Error('Error al cargar Inbox');
+                
+                const mensajes = await res.json();
+                
+                if (mensajes.length === 0) {
+                    container.innerHTML = '<p style="text-align:center; color:var(--gray-500); padding:2rem;">No tienes mensajes privados ni quejas (¡Eso es bueno!).</p>';
+                    return;
+                }
+
+                container.innerHTML = mensajes.map(m => `
+                    <div style="background: ${m.leido ? 'var(--gray-50)' : 'var(--blue-50)'}; border: 1px solid ${m.leido ? 'var(--gray-200)' : 'var(--blue-200)'}; border-radius: 0.5rem; padding: 1rem; position: relative;">
+                        ${!m.leido ? '<span style="position:absolute; top:1rem; right:1rem; background:var(--blue-600); color:white; font-size:0.7rem; padding:0.2rem 0.5rem; border-radius:1rem;">NUEVO</span>' : ''}
+                        <div style="font-size:0.8rem; color:var(--gray-500); margin-bottom:0.5rem;">${new Date(m.fecha).toLocaleString()}</div>
+                        <h4 style="font-size:1rem; margin-bottom:0.25rem;">${m.nombre}</h4>
+                        ${m.contacto ? `<div style="font-size:0.85rem; color:var(--gray-600); margin-bottom:0.75rem;"><i class="fas fa-phone"></i> ${m.contacto}</div>` : ''}
+                        
+                        <p style="font-size:0.95rem; color:var(--gray-800); background:white; padding:1rem; border-radius:0.5rem; border:1px solid var(--gray-200); margin-top:0.5rem;">${m.mensaje}</p>
+                        
+                        ${!m.leido ? `
+                            <button onclick="marcarComoLeido('${m._id}')" style="margin-top:1rem; background:none; border:none; color:var(--primary); font-size:0.85rem; cursor:pointer; font-weight:600;"><i class="fas fa-check"></i> Marcar como leído e investigado</button>
+                        ` : '<div style="margin-top:1rem; font-size:0.8rem; color:var(--gray-400);"><i class="fas fa-check-double"></i> Atendido</div>'}
+                    </div>
+                `).join('');
+
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = '<p style="text-align:center; color:red;">Error cargando buzón.</p>';
+            }
+        }
+
+        async function marcarComoLeido(id) {
+            try {
+                const token = localStorage.getItem('authToken');
+                await fetch(`${API_BASE}/crm-quejas/mis-mensajes/${id}/leido`, {
+                    method: 'PATCH',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                loadInboxData(); // Recargar
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // ===== EVENTOS =====
+        let eventosData = [];
+
+        function abrirModalEventos() {
+            document.getElementById('modal-eventos').style.display = 'flex';
+            cargarEventos();
+        }
+        function cerrarModalEventos() {
+            document.getElementById('modal-eventos').style.display = 'none';
+        }
+
+        async function cargarEventos() {
+            const token = localStorage.getItem('authToken');
+            const container = document.getElementById('eventos-list');
+            container.innerHTML = '<p style="text-align:center; color:var(--gray-400);"><i class="fas fa-spinner fa-spin"></i> Cargando...</p>';
+            try {
+                const res = await fetch(`${API_BASE}/restaurants/my-restaurant/eventos`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    eventosData = data.data || [];
+                    renderEventos();
+                }
+            } catch (err) {
+                container.innerHTML = '<p style="text-align:center; color:red;">Error cargando eventos.</p>';
+            }
+        }
+
+        function renderEventos() {
+            const container = document.getElementById('eventos-list');
+            if (eventosData.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:2rem; color:var(--gray-400);"><i class="fas fa-calendar-times fa-2x" style="margin-bottom:0.5rem;"></i><p>No tienes eventos registrados</p></div>';
+                return;
+            }
+            const tipoIcons = {
+                'musica-en-vivo': 'fas fa-music', 'noche-tematica': 'fas fa-moon', 'degustacion': 'fas fa-wine-glass-alt',
+                'happy-hour': 'fas fa-glass-cheers', 'karaoke': 'fas fa-microphone', 'taller': 'fas fa-chalkboard-teacher',
+                'especial': 'fas fa-star', 'otro': 'fas fa-calendar'
+            };
+            const tipoLabels = {
+                'musica-en-vivo': 'Música en Vivo', 'noche-tematica': 'Noche Temática', 'degustacion': 'Degustación',
+                'happy-hour': 'Happy Hour', 'karaoke': 'Karaoke', 'taller': 'Taller',
+                'especial': 'Especial', 'otro': 'Otro'
+            };
+            container.innerHTML = eventosData.map(e => {
+                const fechaStr = new Date(e.fecha).toLocaleDateString('es-MX', { weekday:'short', day:'numeric', month:'short', year:'numeric' });
+                const icon = tipoIcons[e.tipo] || 'fas fa-calendar';
+                const label = tipoLabels[e.tipo] || e.tipo;
+                const pasado = new Date(e.fecha) < new Date() && !e.recurrente;
+                return `
+                    <div style="background:${pasado ? 'var(--gray-50)' : 'white'}; border:1px solid var(--gray-200); border-radius:0.75rem; padding:1rem; display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; ${pasado ? 'opacity:0.6;' : ''}">
+                        <div style="flex:1;">
+                            <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                                <i class="${icon}" style="color:#f97316;"></i>
+                                <span style="font-size:0.75rem; background:rgba(249,115,22,0.1); color:#f97316; padding:0.1rem 0.5rem; border-radius:999px; font-weight:600;">${label}</span>
+                                ${e.recurrente ? '<span style="font-size:0.7rem; background:rgba(59,130,246,0.1); color:#3b82f6; padding:0.1rem 0.4rem; border-radius:999px;">Recurrente</span>' : ''}
+                            </div>
+                            <h4 style="font-size:1rem; font-weight:700; color:var(--gray-900); margin:0.25rem 0;">${e.titulo}</h4>
+                            <p style="font-size:0.85rem; color:var(--gray-600); margin:0.25rem 0;">${e.descripcion}</p>
+                            <div style="font-size:0.8rem; color:var(--gray-500); margin-top:0.5rem;">
+                                <i class="fas fa-calendar-day"></i> ${fechaStr} &nbsp; <i class="fas fa-clock"></i> ${e.horaInicio}${e.horaFin ? ' - ' + e.horaFin : ''}
+                            </div>
+                        </div>
+                        <button onclick="eliminarEvento('${e._id}')" style="background:none; border:none; color:var(--gray-400); cursor:pointer; font-size:1rem; padding:0.25rem;" title="Eliminar">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>`;
+            }).join('');
+        }
+
+        function mostrarFormEvento() {
+            document.getElementById('form-nuevo-evento').style.display = 'block';
+        }
+        function ocultarFormEvento() {
+            document.getElementById('form-nuevo-evento').style.display = 'none';
+        }
+
+        async function crearEvento() {
+            const token = localStorage.getItem('authToken');
+            const titulo = document.getElementById('ev-titulo').value.trim();
+            const descripcion = document.getElementById('ev-descripcion').value.trim();
+            const tipo = document.getElementById('ev-tipo').value;
+            const fecha = document.getElementById('ev-fecha').value;
+            const horaInicio = document.getElementById('ev-hora-inicio').value;
+            const horaFin = document.getElementById('ev-hora-fin').value;
+            const recurrente = document.getElementById('ev-recurrente').checked;
+
+            if (!titulo || !descripcion || !fecha || !horaInicio) {
+                alert('Completa los campos obligatorios: título, descripción, fecha y hora de inicio.');
+                return;
+            }
+            try {
+                const res = await fetch(`${API_BASE}/restaurants/my-restaurant/eventos`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ titulo, descripcion, tipo, fecha, horaInicio, horaFin, recurrente })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    ocultarFormEvento();
+                    document.getElementById('ev-titulo').value = '';
+                    document.getElementById('ev-descripcion').value = '';
+                    document.getElementById('ev-fecha').value = '';
+                    document.getElementById('ev-hora-inicio').value = '';
+                    document.getElementById('ev-hora-fin').value = '';
+                    document.getElementById('ev-recurrente').checked = false;
+                    cargarEventos();
+                } else {
+                    alert(data.message || 'Error creando evento');
+                }
+            } catch (err) {
+                alert('Error de conexión');
+            }
+        }
+
+        async function eliminarEvento(id) {
+            if (!confirm('¿Eliminar este evento?')) return;
+            const token = localStorage.getItem('authToken');
+            try {
+                await fetch(`${API_BASE}/restaurants/my-restaurant/eventos/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                cargarEventos();
+            } catch (err) {
+                alert('Error eliminando evento');
+            }
+        }
+
     </script>
+
+    <!-- ===== MODAL: Eventos ===== -->
+    <div id="modal-eventos" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); align-items:center; justify-content:center;">
+        <div style="background:white; border-radius:1rem; max-width:700px; width:95%; padding:2rem; position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.3); max-height:90vh; overflow-y:auto; animation: modalIn 0.3s ease;">
+            <button onclick="cerrarModalEventos()" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.2rem; color:var(--gray-400); cursor:pointer;">
+                <i class="fas fa-times"></i>
+            </button>
+            <h3 style="font-size:1.3rem; font-weight:700; color:var(--gray-900); margin-bottom:0.25rem; display:flex; align-items:center; gap:0.5rem;">
+                <i class="fas fa-calendar-alt" style="color:#f97316;"></i> Calendario de Eventos
+            </h3>
+            <p style="font-size:0.85rem; color:var(--gray-500); margin-bottom:1.5rem;">Crea y gestiona los eventos de tu establecimiento.</p>
+
+            <button onclick="mostrarFormEvento()" style="margin-bottom:1rem; padding:0.6rem 1.2rem; background:#f97316; color:white; border:none; border-radius:0.5rem; font-weight:600; cursor:pointer; font-size:0.9rem; display:flex; align-items:center; gap:0.4rem;">
+                <i class="fas fa-plus"></i> Nuevo Evento
+            </button>
+
+            <!-- Form nuevo evento -->
+            <div id="form-nuevo-evento" style="display:none; background:var(--gray-50); border:1px solid var(--gray-200); border-radius:0.75rem; padding:1.25rem; margin-bottom:1.5rem;">
+                <div style="display:grid; gap:0.75rem;">
+                    <div>
+                        <label style="font-size:0.8rem; font-weight:600; color:var(--gray-700); display:block; margin-bottom:0.25rem;">Título *</label>
+                        <input id="ev-titulo" type="text" placeholder="Ej: Noche de Jazz" style="width:100%; padding:0.5rem 0.75rem; border:1px solid var(--gray-300); border-radius:0.375rem; font-size:0.9rem; box-sizing:border-box;">
+                    </div>
+                    <div>
+                        <label style="font-size:0.8rem; font-weight:600; color:var(--gray-700); display:block; margin-bottom:0.25rem;">Descripción *</label>
+                        <textarea id="ev-descripcion" rows="2" placeholder="Describe brevemente el evento..." style="width:100%; padding:0.5rem 0.75rem; border:1px solid var(--gray-300); border-radius:0.375rem; font-size:0.9rem; resize:vertical; box-sizing:border-box;"></textarea>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:600; color:var(--gray-700); display:block; margin-bottom:0.25rem;">Tipo</label>
+                            <select id="ev-tipo" style="width:100%; padding:0.5rem 0.75rem; border:1px solid var(--gray-300); border-radius:0.375rem; font-size:0.9rem; box-sizing:border-box;">
+                                <option value="musica-en-vivo">Música en Vivo</option>
+                                <option value="noche-tematica">Noche Temática</option>
+                                <option value="degustacion">Degustación</option>
+                                <option value="happy-hour">Happy Hour</option>
+                                <option value="karaoke">Karaoke</option>
+                                <option value="taller">Taller</option>
+                                <option value="especial" selected>Especial</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:600; color:var(--gray-700); display:block; margin-bottom:0.25rem;">Fecha *</label>
+                            <input id="ev-fecha" type="date" style="width:100%; padding:0.5rem 0.75rem; border:1px solid var(--gray-300); border-radius:0.375rem; font-size:0.9rem; box-sizing:border-box;">
+                        </div>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.75rem; align-items:end;">
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:600; color:var(--gray-700); display:block; margin-bottom:0.25rem;">Hora Inicio *</label>
+                            <input id="ev-hora-inicio" type="time" style="width:100%; padding:0.5rem 0.75rem; border:1px solid var(--gray-300); border-radius:0.375rem; font-size:0.9rem; box-sizing:border-box;">
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:600; color:var(--gray-700); display:block; margin-bottom:0.25rem;">Hora Fin</label>
+                            <input id="ev-hora-fin" type="time" style="width:100%; padding:0.5rem 0.75rem; border:1px solid var(--gray-300); border-radius:0.375rem; font-size:0.9rem; box-sizing:border-box;">
+                        </div>
+                        <label style="display:flex; align-items:center; gap:0.4rem; font-size:0.85rem; cursor:pointer; padding-bottom:0.5rem;">
+                            <input type="checkbox" id="ev-recurrente"> Recurrente
+                        </label>
+                    </div>
+                    <div style="display:flex; gap:0.5rem; justify-content:flex-end; margin-top:0.5rem;">
+                        <button onclick="ocultarFormEvento()" style="padding:0.5rem 1rem; background:var(--gray-100); border:1px solid var(--gray-300); border-radius:0.375rem; cursor:pointer; font-size:0.85rem;">Cancelar</button>
+                        <button onclick="crearEvento()" style="padding:0.5rem 1rem; background:#f97316; color:white; border:none; border-radius:0.375rem; cursor:pointer; font-weight:600; font-size:0.85rem;"><i class="fas fa-check"></i> Crear Evento</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de eventos -->
+            <div id="eventos-list" style="display:flex; flex-direction:column; gap:0.75rem;"></div>
+        </div>
+    </div>
+
 </body>
 
 </html>
+

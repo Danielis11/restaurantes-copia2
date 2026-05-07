@@ -157,10 +157,20 @@ function switchTab(tabId) {
 
     // Update tab content
     document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-    document.getElementById(tabId).classList.add('active');
+    const tabContent = document.getElementById(tabId);
+    tabContent.classList.add('active');
 
-    // Load tab content
-    switch(tabId) {
+    const tabName = tabId;
+
+    if (tabName === 'noticias' && typeof window.initNoticiasAdmin === 'function') {
+        const noticiasAdmin = window.initNoticiasAdmin();
+        if (noticiasAdmin && typeof noticiasAdmin.cargarNoticias === 'function') {
+            noticiasAdmin.cargarNoticias();
+        }
+    }
+
+    // Load tab-specific data
+    switch (tabName) {
         case 'dashboard':
             loadDashboard();
             break;
@@ -330,17 +340,20 @@ function createDashboardCharts(data) {
     }
 
     const typeData = data.estadisticasTipo || {};
+    const typeLabels = Object.keys(typeData).map(k => k.charAt(0).toUpperCase() + k.slice(1));
+    const typeValues = Object.values(typeData);
+    
+    // Generar colores (si hay más tipos de los contemplados)
+    const baseColors = ['#059669', '#22c55e', '#f59e0b', '#3b82f6', '#8b5cf6', '#ec4899', '#f43f5e', '#14b8a6'];
+    const colors = typeLabels.map((_, i) => baseColors[i % baseColors.length]);
+
     charts.typeChart = new Chart(typeCtx, {
         type: 'doughnut',
         data: {
-            labels: ['Restaurantes', 'Bares', 'Cafeterías'],
+            labels: typeLabels.length ? typeLabels : ['Sin Datos'],
             datasets: [{
-                data: [
-                    typeData.restaurante || 0,
-                    typeData.bar || 0,
-                    typeData.cafeteria || 0
-                ],
-                backgroundColor: ['#059669', '#22c55e', '#f59e0b'],
+                data: typeValues.length ? typeValues : [1],
+                backgroundColor: typeValues.length ? colors : ['#cbd5e1'],
                 borderWidth: 2,
                 borderColor: '#ffffff'
             }]
@@ -546,6 +559,14 @@ async function loadAdmins(page = 1) {
 
 function renderAdminsTable(data) {
     const container = document.getElementById('admins-table-container');
+    const roleLabel = (rol) => {
+        if (rol === 'super-admin') return '👑 Super Admin';
+        if (rol === 'gobernamental') return '🏛️ Gubernamental';
+        if (rol === 'admin-ranking') return '📌 Admin Ranking';
+        if (rol === 'admin-turismo') return '🧭 Admin Turismo';
+        return '👤 Admin';
+    };
+    const roleBadge = (rol) => (rol === 'super-admin' ? 'badge-primary' : 'badge-success');
     
     const tableHTML = `
         <table class="table">
@@ -567,8 +588,8 @@ function renderAdminsTable(data) {
                         <td>${admin.email}</td>
                         <td>${admin.telefono}</td>
                         <td>
-                            <span class="badge ${admin.rol === 'super-admin' ? 'badge-primary' : 'badge-success'}">
-                                ${admin.rol === 'super-admin' ? '👑 Super Admin' : '👤 Admin'}
+                            <span class="badge ${roleBadge(admin.rol)}">
+                                ${roleLabel(admin.rol)}
                             </span>
                         </td>
                         <td>
@@ -1436,11 +1457,16 @@ let createRestaurantMarker = null;
 let editRestaurantMap = null;
 let editRestaurantMarker = null;
 
-function initCreateRestaurantMap() {
+async function initCreateRestaurantMap() {
     const container = document.getElementById('create-restaurant-map');
     if (!container || createRestaurantMap) return;
 
-    mapboxgl.accessToken = 'YOUR_MAPBOX_ACCESS_TOKEN';
+    try {
+        const res = await fetch('/api/config/mapbox');
+        const data = await res.json();
+        if (data.success && data.token) mapboxgl.accessToken = data.token;
+        else return;
+    } catch(err) { return; }
 
     createRestaurantMap = new mapboxgl.Map({
         container: 'create-restaurant-map',
@@ -1473,7 +1499,7 @@ function initCreateRestaurantMap() {
     setTimeout(() => createRestaurantMap.resize(), 200);
 }
 
-function initEditRestaurantMap(lat, lng) {
+async function initEditRestaurantMap(lat, lng) {
     const container = document.getElementById('edit-restaurant-map');
     if (!container) return;
 
@@ -1484,7 +1510,12 @@ function initEditRestaurantMap(lat, lng) {
         editRestaurantMarker = null;
     }
 
-    mapboxgl.accessToken = 'YOUR_MAPBOX_ACCESS_TOKEN';
+    try {
+        const res = await fetch('/api/config/mapbox');
+        const data = await res.json();
+        if (data.success && data.token) mapboxgl.accessToken = data.token;
+        else return;
+    } catch(err) { return; }
 
     const center = [lng || -99.4752, lat || 21.2185];
 
@@ -1636,20 +1667,32 @@ function debounce(func, wait) {
     };
 }
 
-function showNotification(message, type = 'info') {
+function showNotification(message, type = 'info', title = '') {
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
     
     const icon = type === 'success' ? 'fa-check-circle' : 
                 type === 'error' ? 'fa-exclamation-circle' : 
                 type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle';
+
+    const resolvedTitle = title || (
+        type === 'success' ? 'Acción completada' :
+        type === 'error' ? 'Algo salió mal' :
+        type === 'warning' ? 'Atención' : 'Información'
+    );
     
     notification.innerHTML = `
-        <i class="fas ${icon}"></i>
-        <span class="notification-message">${message}</span>
-        <button class="notification-close">
+        <div class="notification-icon-wrap">
+            <i class="fas ${icon}"></i>
+        </div>
+        <div class="notification-text-wrap">
+            <div class="notification-title">${resolvedTitle}</div>
+            <div class="notification-message">${message}</div>
+        </div>
+        <button class="notification-close" aria-label="Cerrar notificación">
             <i class="fas fa-times"></i>
         </button>
+        <div class="notification-progress"></div>
     `;
     
     document.body.appendChild(notification);
@@ -1675,17 +1718,31 @@ function showNotification(message, type = 'info') {
     };
 }
 
-function logout() {
+async function logout() {
     const confirmed = confirm('¿Estás seguro de que quieres cerrar sesión?');
     
-    if (confirmed) {
+    if (!confirmed) return;
+
+    showNotification('Cerrando sesión de forma segura...', 'info', 'Cierre de sesión');
+
+    try {
+        await fetch(`${API_BASE}/auth/logout`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('authToken') || ''}`,
+                'Content-Type': 'application/json'
+            }
+        });
+    } catch (error) {
+        console.warn('No se pudo cerrar sesión en servidor, continuando logout local:', error);
+    } finally {
         localStorage.removeItem('authToken');
         localStorage.removeItem('currentUser');
-        showNotification('Sesión cerrada correctamente', 'info');
-        
+        showNotification('Sesión cerrada correctamente. Redirigiendo al acceso...', 'success', 'Sesión finalizada');
+
         setTimeout(() => {
             window.location.href = '/login.html';
-        }, 1000);
+        }, 1300);
     }
 }
 
@@ -2434,21 +2491,27 @@ async function saveRestaurant(e) {
     const adminType = document.querySelector('input[name="admin-type"]:checked')?.value || 'existing';
     const formData = {
         restaurantData: {
-            nombre: document.getElementById('restaurant-nombre').value,
-            detalles: { tipo: document.getElementById('restaurant-tipo').value },
+            nombre: document.getElementById('restaurant-nombre')?.value || '',
+            tipo: document.getElementById('restaurant-tipo')?.value || '',
+            descripcion: {
+                es: document.getElementById('restaurant-descripcion')?.value || ''
+            },
+            telefono: document.getElementById('restaurant-telefono')?.value || '',
+            email: document.getElementById('restaurant-email')?.value || '',
             direccion: {
-                calle: document.getElementById('restaurant-calle').value,
-                colonia: document.getElementById('restaurant-colonia').value,
-                ciudad: document.getElementById('restaurant-ciudad').value,
-                cp: document.getElementById('restaurant-cp').value,
+                calle: document.getElementById('restaurant-calle')?.value || '',
+                colonia: document.getElementById('restaurant-colonia')?.value || '',
+                ciudad: document.getElementById('restaurant-ciudad')?.value || '',
+                codigoPostal: document.getElementById('restaurant-codigo-postal')?.value || '',
                 coordenadas: {
-                    lat: parseFloat(document.getElementById('restaurant-lat').value) || 0,
-                    lng: parseFloat(document.getElementById('restaurant-lng').value) || 0
+                    lat: parseFloat(document.getElementById('restaurant-lat')?.value) || 0,
+                    lng: parseFloat(document.getElementById('restaurant-lng')?.value) || 0
                 }
             },
-            contacto: {
-                telefono: document.getElementById('restaurant-telefono').value,
-                redesSociales: { instagram: [] }
+            redes: {
+                facebook: '',
+                instagram: document.getElementById('restaurant-instagram')?.value || '',
+                website: ''
             }
         }
     };
@@ -2600,7 +2663,12 @@ async function initHeatmap() {
         const restaurants = json.success ? json.data.restaurantes : [];
 
         // Configure Mapbox
-        mapboxgl.accessToken = 'YOUR_MAPBOX_ACCESS_TOKEN';
+        try {
+            const resMap = await fetch('/api/config/mapbox');
+            const dataMap = await resMap.json();
+            if (dataMap.success && dataMap.token) mapboxgl.accessToken = dataMap.token;
+            else return;
+        } catch(err) { return; }
         
         heatmapMap = new mapboxgl.Map({
             container: 'map-heatmap',
@@ -2872,14 +2940,15 @@ async function exportRestaurantsCSVMinimal() {
         };
 
         const headers = [
-            'Nombre', 'Dirección', 'Teléfono(s)', 'Administrador/Propietario',
+            'Nombre', 'Dirección', 'Teléfono Establecimiento', 'Correo Establecimiento', 'Administrador/Propietario',
+            'Correo Administrador', 'Contraseña Administrador',
             'RNT / Registro', 'Pet Friendly', 'Se admiten mascotas', 'Capacidad',
-            'Correo', 'Facebook', 'Instagram'
+            'Facebook', 'Instagram'
         ];
 
         const allRows = [];
         // Título general
-        allRows.push(['ALIMENTOS Y BEBIDAS  -  JALPAN DE SERRA', '', '', '', '', '', '', '', '', '', '']);
+        allRows.push(['ALIMENTOS Y BEBIDAS  -  JALPAN DE SERRA', '', '', '', '', '', '', '', '', '', '', '', '']);
         allRows.push([]); // fila vacía
         allRows.push(headers);
 
@@ -2892,30 +2961,36 @@ async function exportRestaurantsCSVMinimal() {
             const items = tipoMap[tipo];
             const label = tipoLabels[tipo] || tipo.toUpperCase();
             // Fila separadora con el nombre del tipo
-            allRows.push([label, '', '', '', '', '', '', '', '', '', '']);
+            allRows.push([label, '', '', '', '', '', '', '', '', '', '', '', '']);
 
             items.forEach(r => {
                 const adminName = r.adminId
                     ? `${r.adminId.nombre || ''} ${r.adminId.apellido || ''}`.trim()
                     : '';
+                const adminEmail = r.adminId?.email || '';
+                const adminPassword = r.adminId?.passwordPlano || 'Protegida / No disponible';
 
                 const direccionParts = [];
                 if (r.direccion?.calle) direccionParts.push(r.direccion.calle);
                 if (r.direccion?.colonia) direccionParts.push(r.direccion.colonia);
                 if (r.direccion?.ciudad) direccionParts.push(r.direccion.ciudad);
                 if (r.direccion?.cp) direccionParts.push('C.P. ' + r.direccion.cp);
+                else if (r.direccion?.codigoPostal) direccionParts.push('C.P. ' + r.direccion.codigoPostal);
                 const direccion = direccionParts.join(', ');
 
-                const telefono = r.contacto?.telefono || '';
+                const telefonoEstablecimiento = r.telefono || r.contacto?.telefono || '';
+                const correoEstablecimiento = r.email || r.contacto?.email || '';
                 const rnt = r.detalles?.rnt || r.rnt || '';
-                const petFriendly = r.detalles?.petFriendly ? 'Sí' : 'No';
+                const petFriendly = r.detalles?.petFriendly || r.servicios?.petFriendly ? 'Sí' : 'No';
                 const admiteMascotas = r.detalles?.admiteMascotas ? 'Sí' : 'No';
                 const capacidad = r.detalles?.capacidad || r.capacidad || '';
-                const correo = r.contacto?.email || r.adminId?.email || '';
 
                 let facebook = '';
                 let instagram = '';
-                if (r.contacto?.redesSociales) {
+                if (r.redes) {
+                    facebook = r.redes.facebook || '';
+                    instagram = r.redes.instagram || '';
+                } else if (r.contacto?.redesSociales) {
                     facebook = Array.isArray(r.contacto.redesSociales.facebook)
                         ? r.contacto.redesSociales.facebook.join(', ')
                         : (r.contacto.redesSociales.facebook || '');
@@ -2927,13 +3002,15 @@ async function exportRestaurantsCSVMinimal() {
                 allRows.push([
                     r.nombre || '',
                     direccion,
-                    telefono,
+                    telefonoEstablecimiento,
+                    correoEstablecimiento,
                     adminName,
+                    adminEmail,
+                    adminPassword,
                     rnt,
                     petFriendly,
                     admiteMascotas,
                     capacidad,
-                    correo,
                     facebook,
                     instagram
                 ]);

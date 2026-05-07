@@ -770,6 +770,7 @@
             align-items: center;
             padding: 16px;
             gap: 12px;
+            overflow: hidden;
         }
 
         .notification.show {
@@ -778,14 +779,33 @@
 
         .notification.success {
             border-left-color: var(--success);
+            background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 45%);
         }
 
         .notification.error {
             border-left-color: var(--error);
+            background: linear-gradient(135deg, #fef2f2 0%, #ffffff 45%);
         }
 
         .notification.warning {
             border-left-color: var(--warning);
+            background: linear-gradient(135deg, #fffbeb 0%, #ffffff 45%);
+        }
+
+        .notification.info {
+            border-left-color: var(--info);
+            background: linear-gradient(135deg, #eff6ff 0%, #ffffff 45%);
+        }
+
+        .notification-icon-wrap {
+            width: 34px;
+            height: 34px;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(124, 58, 237, 0.1);
+            flex-shrink: 0;
         }
 
         .notification i {
@@ -803,6 +823,20 @@
 
         .notification.warning i {
             color: var(--warning);
+        }
+
+        .notification-text-wrap {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .notification-title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
         }
 
         .notification-message {
@@ -823,6 +857,52 @@
         .notification-close:hover {
             background: var(--gray-100);
             color: var(--gray-600);
+        }
+
+        .notification-progress {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 3px;
+            background: rgba(0, 0, 0, 0.08);
+        }
+
+        .notification-progress::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            transform-origin: left center;
+            animation: notification-progress 5s linear forwards;
+            background: var(--primary);
+        }
+
+        .notification.success .notification-progress::after {
+            background: var(--success);
+        }
+
+        .notification.error .notification-progress::after {
+            background: var(--error);
+        }
+
+        .notification.warning .notification-progress::after {
+            background: var(--warning);
+        }
+
+        .notification.info .notification-progress::after {
+            background: var(--info);
+        }
+
+        @keyframes notification-progress {
+            from {
+                transform: scaleX(1);
+            }
+            to {
+                transform: scaleX(0);
+            }
         }
 
         /* Responsive */
@@ -911,6 +991,9 @@
             </a>
 
             <div class="user-section">
+                <a href="/" class="logout-btn" style="text-decoration: none; margin-right: 0.5rem;" title="Ir a la pantalla principal">
+                    <i class="fas fa-home"></i> Inicio
+                </a>
                 <div class="user-info">
                     <div class="user-name" id="user-name">Cargando...</div>
                     <div class="user-role" id="user-role">super-admin</div>
@@ -980,6 +1063,22 @@
 
             <!-- Dashboard Content -->
             <div id="dashboard-content" style="display: none;">
+                <!-- Quick Actions -->
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="font-size: 1.1rem; color: var(--gray-600); margin-bottom: 1rem;">Accesos Rápidos</h3>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="document.querySelector('[data-tab=\'restaurants\']').click(); setTimeout(()=>openCreateRestaurantModal(), 300)">
+                            <i class="fas fa-plus"></i> Añadir Establecimiento
+                        </button>
+                        <button class="btn btn-primary" onclick="document.querySelector('[data-tab=\'admins\']').click(); setTimeout(()=>openCreateAdminModal(), 300)" style="background: var(--warning); color: #fff;">
+                            <i class="fas fa-user-plus"></i> Añadir Administrador
+                        </button>
+                        <button class="btn btn-outline" onclick="exportRestaurantsCSVMinimal()" style="border-color: var(--primary); color: var(--primary);">
+                            <i class="fas fa-download"></i> Exportar Todo (CSV)
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Stats Grid -->
                 <div class="stats-grid" id="dashboard-stats">
                     <!-- Stats will be loaded here -->
@@ -1286,7 +1385,7 @@
                 <div class="table-header">
                     <h2 class="table-title">Gestión de Noticias y Eventos</h2>
                     <div class="table-actions">
-                        <button class="btn btn-primary" onclick="window.noticiasAdmin.openCreateModal()">
+                        <button class="btn btn-primary" onclick="window.openCreateNoticiaModal()">
                             <i class="fas fa-plus"></i>
                             Nueva Noticia
                         </button>
@@ -1468,6 +1567,8 @@
                             <select id="admin-rol" class="form-select" required>
                                 <option value="admin">Administrador</option>
                                 <option value="super-admin">Super Administrador</option>
+                                <option value="gobernamental">Gubernamental</option>
+                                <option value="admin-ranking">Admin Ranking</option>
                             </select>
                         </div>
                     </div>
@@ -1488,7 +1589,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title" id="noticia-modal-title">Nueva Noticia</h3>
-                <button class="modal-close" onclick="window.noticiasAdmin.closeModal()">&times;</button>
+                <button class="modal-close" onclick="window.closeNoticiaModal()">&times;</button>
             </div>
             <div class="modal-body">
                 <form id="noticia-form">
@@ -1545,7 +1646,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline"
-                    onclick="window.noticiasAdmin.closeModal()">Cancelar</button>
+                    onclick="window.closeNoticiaModal()">Cancelar</button>
                 <button type="submit" form="noticia-form" class="btn btn-primary">
                     <i class="fas fa-save"></i>
                     Guardar Noticia
@@ -1929,6 +2030,8 @@
                             <select id="admin-rol" class="form-select" required>
                                 <option value="admin">Administrador Regular</option>
                                 <option value="super-admin">Super Administrador</option>
+                                <option value="gobernamental">Gubernamental</option>
+                                <option value="admin-ranking">Admin Ranking</option>
                             </select>
                         </div>
                         <div class="form-group" id="password-group">
@@ -1979,7 +2082,7 @@
 
     <!-- Custom JS (Unique source of truth) -->
     <script src="js/Super Admin.js?v=9"></script>
-    <script src="js/AdminNoticias.js"></script>
+    <script src="js/AdminNoticias.js?v=4"></script>
 </body>
 
 </html>

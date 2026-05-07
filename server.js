@@ -19,6 +19,7 @@ const Review = require('./models/Review');
 const Guia = require('./models/Guia');
 const Tour = require('./models/Tour');
 const Agencia = require('./models/Agencia');
+const Evento = require('./models/Evento');
 const { translateText } = require('./utils/translator');
 const { ReviewTurismo, HotelTurismo, AirbnbTurismo, CabanaTurismo } = require('./models/turismoModels');
 
@@ -60,6 +61,28 @@ app.use((req, res, next) => {
   next();
 });
 
+// ===== MIDDLEWARE: Transformar URLs de Cloudinary a Proxy Local =====
+// Evita bloqueo por "Tracking Prevention" en navegadores modernos
+app.use('/api', (req, res, next) => {
+  // No interceptar la ruta del proxy ni uploads de archivos
+  if (req.path === '/img-proxy' || req.path.startsWith('/img-proxy')) return next();
+  
+  const originalJson = res.json.bind(res);
+  res.json = function(data) {
+    try {
+      let jsonStr = JSON.stringify(data);
+      // Reemplazar todas las URLs de Cloudinary con URLs del proxy
+      jsonStr = jsonStr.replace(/https?:\/\/res\.cloudinary\.com\/[^"\\]+/g, (match) => {
+        return `/api/img-proxy?url=${encodeURIComponent(match)}`;
+      });
+      return originalJson(JSON.parse(jsonStr));
+    } catch (e) {
+      return originalJson(data);
+    }
+  };
+  next();
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 // ===== RUTAS EXTERNAS =====
 app.use('/api/guias', require('./routes/guiaRoutes'));
@@ -71,7 +94,68 @@ app.use('/api/admin', require('./routes/admin'));
 app.use('/api/restaurants', require('./routes/restaurants'));
 app.use('/api/itinerarios', require('./routes/itinerarioRoutes'));
 app.use('/api/super-admin', require('./routes/superAdminRoutes'));
+app.use('/api/ranking-admin', require('./routes/rankingAdminRoutes'));
 app.use('/api/ofertas-flash', require('./routes/ofertaFlashRoutes'));
+app.use('/api/crm-quejas', require('./routes/crmQuejasRoutes'));
+app.use('/api/bolsa-trabajo', require('./routes/bolsaTrabajoRoutes'));
+app.use('/api/recomendaciones', require('./routes/recommendationsRoutes'));
+
+// ===== CONFIG =====
+app.get('/api/config/mapbox', (req, res) => {
+  res.json({ success: true, token: process.env.MAPBOX_TOKEN });
+});
+
+// ===== PROXY DE IMÁGENES CLOUDINARY =====
+// Evita bloqueo por "Tracking Prevention" al servir imágenes desde el mismo dominio
+app.get('/api/img-proxy', async (req, res) => {
+  try {
+    let imageUrl = req.query.url;
+    if (!imageUrl) {
+      return res.status(400).json({ success: false, message: 'URL de imagen no válida' });
+    }
+
+    // Decodificar completamente (puede venir doble-encoded)
+    let maxDecode = 5;
+    while (maxDecode-- > 0 && (imageUrl.includes('%2F') || imageUrl.includes('%3A'))) {
+      imageUrl = decodeURIComponent(imageUrl);
+    }
+
+    // Si la URL es otro proxy (doble-wrap), extraer la URL real de Cloudinary
+    const cloudMatch = imageUrl.match(/(https?:\/\/res\.cloudinary\.com\/[^\s"']+)/);
+    if (!cloudMatch) {
+      return res.status(400).json({ success: false, message: 'URL de Cloudinary no encontrada' });
+    }
+    imageUrl = cloudMatch[1];
+
+    const https = require('https');
+    https.get(imageUrl, (imgRes) => {
+      if (imgRes.statusCode >= 300 && imgRes.statusCode < 400 && imgRes.headers.location) {
+        // Manejar redirects
+        https.get(imgRes.headers.location, (redirectRes) => {
+          res.set({
+            'Content-Type': redirectRes.headers['content-type'] || 'image/jpeg',
+            'Cache-Control': 'public, max-age=86400',
+            'Access-Control-Allow-Origin': '*'
+          });
+          redirectRes.pipe(res);
+        }).on('error', () => res.status(502).end());
+        return;
+      }
+      res.set({
+        'Content-Type': imgRes.headers['content-type'] || 'image/jpeg',
+        'Cache-Control': 'public, max-age=86400',
+        'Access-Control-Allow-Origin': '*'
+      });
+      imgRes.pipe(res);
+    }).on('error', (err) => {
+      console.error('Error proxy imagen:', err.message);
+      res.status(502).json({ success: false, message: 'Error al obtener imagen' });
+    });
+  } catch (error) {
+    console.error('Error proxy:', error);
+    res.status(500).json({ success: false, message: 'Error interno' });
+  }
+});
 
 // ===== CONECTAR A MONGODB =====
 const connectDB = async () => {
@@ -118,6 +202,16 @@ app.get('/admin', (req, res) => {
 // Panel de admin Turismo
 app.get('/admin-turismo', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin-turismo.html'));
+});
+
+// Panel Gubernamental
+app.get('/admin-gobierno', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin-gobierno.html'));
+});
+
+// Panel Admin Ranking
+app.get('/admin-ranking', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin-ranking.html'));
 });
 
 // ===== RUTAS DE AUTENTICACIÓN (EMBEBIDAS) =====
@@ -1821,7 +1915,7 @@ app.get('/api/admin/my-restaurant', verificarToken, async (req, res) => {
 // Actualizar información básica
 app.patch('/api/restaurants/my-restaurant/basic-info', verificarToken, async (req, res) => {
   try {
-    const { nombre, descripcion, telefono, email, tipoComida, opcionesPago, precioPromedio } = req.body;
+    const { nombre, descripcion, telefono, email, tipoComida, opcionesPago, precioPromedio, rangoPrecio } = req.body;
     
     // Validar campos requeridos
     if (!nombre || !descripcion || !telefono || !email) {
@@ -1847,6 +1941,7 @@ app.patch('/api/restaurants/my-restaurant/basic-info', verificarToken, async (re
         tipoComida: tipoComida ? tipoComida.trim() : '',
         opcionesPago: opcionesPago || { efectivo: true, tarjeta: false, transferencia: false },
         precioPromedio: precioPromedio || 0,
+        rangoPrecio: rangoPrecio || '',
         fechaActualizacion: new Date()
       },
       { new: true, runValidators: true }
@@ -2735,7 +2830,7 @@ app.post('/api/restaurants/menu/:categoryId/item/:itemId/image', verificarToken,
 
     platillo.imagen = nuevaImagen;
     restaurant.fechaActualizacion = new Date();
-    await restaurant.save();
+    await restaurant.save({ validateModifiedOnly: true });
 
     res.json({
       success: true,
@@ -2824,6 +2919,84 @@ app.patch('/api/restaurants/images/:imageId/set-main', verificarToken, async (re
     res.status(500).json({
       success: false,
       message: 'Error del servidor al establecer imagen principal',
+      error: error.message
+    });
+  }
+});
+
+// 🔄 Reordenar imágenes (arrastrar y soltar)
+app.patch('/api/restaurants/images/reorder', verificarToken, async (req, res) => {
+  try {
+    const { imageIds } = req.body;
+
+    if (!Array.isArray(imageIds) || imageIds.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Se requiere un array de imageIds'
+      });
+    }
+
+    const restaurant = await Restaurant.findOne({
+      adminId: req.admin._id,
+      activo: true
+    });
+
+    if (!restaurant) {
+      return res.status(404).json({
+        success: false,
+        message: 'No se encontró restaurante asociado'
+      });
+    }
+
+    if (!restaurant.imagenes || restaurant.imagenes.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'No hay imágenes disponibles'
+      });
+    }
+
+    // Mapear por id
+    const imageMap = new Map();
+    restaurant.imagenes.forEach(img => imageMap.set(img._id.toString(), img));
+
+    // Construir nuevo arreglo en el orden solicitado
+    const reordered = [];
+    const seen = new Set();
+    for (const id of imageIds) {
+      const key = String(id);
+      const img = imageMap.get(key);
+      if (img && !seen.has(key)) {
+        reordered.push(img);
+        seen.add(key);
+      }
+    }
+
+    // Agregar cualquier imagen faltante al final (seguridad)
+    restaurant.imagenes.forEach(img => {
+      const key = img._id.toString();
+      if (!seen.has(key)) reordered.push(img);
+    });
+
+    restaurant.imagenes = reordered;
+    restaurant.fechaActualizacion = new Date();
+    await restaurant.save();
+
+    console.log(`✅ Orden de imágenes actualizado para ${restaurant.nombre} (${reordered.length} imágenes)`);
+
+    res.json({
+      success: true,
+      message: 'Orden de imágenes actualizado',
+      data: {
+        totalImagenes: restaurant.imagenes.length,
+        imagenPrincipal: restaurant.imagenes[0]
+      }
+    });
+
+  } catch (error) {
+    console.error('❌ Error reordenando imágenes:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error del servidor al reordenar imágenes',
       error: error.message
     });
   }
@@ -3180,35 +3353,152 @@ app.get('/api/restaurants/:id/main-image', async (req, res) => {
   }
 });
 
+// ===== RUTAS DE EVENTOS =====
+
+// Obtener eventos de MI restaurante (admin)
+app.get('/api/restaurants/my-restaurant/eventos', verificarToken, async (req, res) => {
+  try {
+    const restaurant = await Restaurant.findOne({ adminId: req.admin._id, activo: true });
+    if (!restaurant) {
+      return res.status(404).json({ success: false, message: 'Establecimiento no encontrado' });
+    }
+    const eventos = await Evento.find({ restaurantId: restaurant._id }).sort({ fecha: -1 });
+    res.json({ success: true, data: eventos });
+  } catch (error) {
+    console.error('Error obteniendo eventos:', error);
+    res.status(500).json({ success: false, message: 'Error interno del servidor' });
+  }
+});
+
+// Crear evento (admin)
+app.post('/api/restaurants/my-restaurant/eventos', verificarToken, async (req, res) => {
+  try {
+    const restaurant = await Restaurant.findOne({ adminId: req.admin._id, activo: true });
+    if (!restaurant) {
+      return res.status(404).json({ success: false, message: 'Establecimiento no encontrado' });
+    }
+    const { titulo, descripcion, tipo, fecha, horaInicio, horaFin, recurrente, diasRecurrencia } = req.body;
+    if (!titulo || !descripcion || !fecha || !horaInicio) {
+      return res.status(400).json({ success: false, message: 'Título, descripción, fecha y hora de inicio son obligatorios' });
+    }
+    const evento = await Evento.create({
+      restaurantId: restaurant._id,
+      adminId: req.admin._id,
+      titulo: titulo.trim(),
+      descripcion: descripcion.trim(),
+      tipo: tipo || 'especial',
+      fecha: new Date(fecha),
+      horaInicio,
+      horaFin: horaFin || '',
+      recurrente: recurrente || false,
+      diasRecurrencia: diasRecurrencia || []
+    });
+    res.status(201).json({ success: true, message: 'Evento creado exitosamente', data: evento });
+  } catch (error) {
+    console.error('Error creando evento:', error);
+    res.status(500).json({ success: false, message: 'Error interno del servidor' });
+  }
+});
+
+// Actualizar evento (admin)
+app.patch('/api/restaurants/my-restaurant/eventos/:eventoId', verificarToken, async (req, res) => {
+  try {
+    const restaurant = await Restaurant.findOne({ adminId: req.admin._id, activo: true });
+    if (!restaurant) {
+      return res.status(404).json({ success: false, message: 'Establecimiento no encontrado' });
+    }
+    const evento = await Evento.findOneAndUpdate(
+      { _id: req.params.eventoId, restaurantId: restaurant._id },
+      { ...req.body, fechaActualizacion: new Date() },
+      { new: true, runValidators: true }
+    );
+    if (!evento) {
+      return res.status(404).json({ success: false, message: 'Evento no encontrado' });
+    }
+    res.json({ success: true, message: 'Evento actualizado', data: evento });
+  } catch (error) {
+    console.error('Error actualizando evento:', error);
+    res.status(500).json({ success: false, message: 'Error interno del servidor' });
+  }
+});
+
+// Eliminar evento (admin)
+app.delete('/api/restaurants/my-restaurant/eventos/:eventoId', verificarToken, async (req, res) => {
+  try {
+    const restaurant = await Restaurant.findOne({ adminId: req.admin._id, activo: true });
+    if (!restaurant) {
+      return res.status(404).json({ success: false, message: 'Establecimiento no encontrado' });
+    }
+    const evento = await Evento.findOneAndDelete({ _id: req.params.eventoId, restaurantId: restaurant._id });
+    if (!evento) {
+      return res.status(404).json({ success: false, message: 'Evento no encontrado' });
+    }
+    res.json({ success: true, message: 'Evento eliminado exitosamente' });
+  } catch (error) {
+    console.error('Error eliminando evento:', error);
+    res.status(500).json({ success: false, message: 'Error interno del servidor' });
+  }
+});
+
+// Obtener eventos de un restaurante (público)
+app.get('/api/restaurants/:id/eventos', async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({ success: false, message: 'ID inválido' });
+    }
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    const eventos = await Evento.find({
+      restaurantId: id,
+      activo: true,
+      $or: [
+        { fecha: { $gte: hoy } },
+        { recurrente: true }
+      ]
+    }).sort({ fecha: 1 }).limit(20);
+    res.json({ success: true, data: eventos });
+  } catch (error) {
+    console.error('Error obteniendo eventos públicos:', error);
+    res.status(500).json({ success: false, message: 'Error interno del servidor' });
+  }
+});
+
+// Obtener todos los eventos próximos (global, para index)
+app.get('/api/eventos/proximos', async (req, res) => {
+  try {
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    const limite = parseInt(req.query.limite) || 10;
+    const eventos = await Evento.find({
+      activo: true,
+      $or: [
+        { fecha: { $gte: hoy } },
+        { recurrente: true }
+      ]
+    }).populate('restaurantId', 'nombre tipo imagenes direccion').sort({ fecha: 1 }).limit(limite);
+    res.json({ success: true, data: eventos });
+  } catch (error) {
+    console.error('Error obteniendo eventos próximos:', error);
+    res.status(500).json({ success: false, message: 'Error interno del servidor' });
+  }
+});
+
 // Registrar vista del perfil
 app.post('/api/restaurants/:id/view', async (req, res) => {
   try {
     const { id } = req.params;
-    
-    // Increment the 'estadisticas.vistasPerfil' by 1
     const result = await Restaurant.updateOne(
       { _id: id, activo: true },
       { $inc: { 'estadisticas.vistasPerfil': 1 } }
     );
-
     if (result.matchedCount === 0) {
-      return res.status(404).json({
-        success: false,
-        message: 'Restaurante no encontrado'
-      });
+      return res.status(404).json({ success: false, message: 'Restaurante no encontrado' });
     }
-
-    res.json({
-      success: true,
-      message: 'Vista registrada exitosamente'
-    });
-
+    res.json({ success: true, message: 'Vista registrada exitosamente' });
   } catch (error) {
     console.error('Error incrementando vistas:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Error interno del servidor'
-    });
+    res.status(500).json({ success: false, message: 'Error interno del servidor' });
   }
 });
 
@@ -3334,6 +3624,7 @@ app.get('/api/restaurants', async (req, res) => {
         imagenes: imagenesValidas,
         redes: restaurant.redes,
         admin: restaurant.adminId,
+        rangoPrecio: restaurant.rangoPrecio || '',
         googleRating: restaurant.googleReviews?.rating || 0,
         googleTotalReviews: restaurant.googleReviews?.totalReviews || 0,
         fechaCreacion: restaurant.fechaCreacion,
@@ -5441,6 +5732,18 @@ app.delete('/api/itinerarios/:id', verificarToken, async (req, res) => {
     res.status(500).json({ success: false, message: 'Error al eliminar itinerario' });
   }
 });
+
+// ===== RUTAS PARA ROL GUBERNAMENTAL =====
+const gobiernoController = require('./controllers/gobiernoController');
+
+// Middleware extra (en auth.js se provee o aquí)
+const { verificarGobernamental } = require('./middleware/auth');
+
+// Estadísticas para Dashboard
+app.get('/api/gobierno/dashboard', verificarToken, verificarGobernamental, gobiernoController.getDashboardStats);
+
+// Listado de restaurantes protegidos
+app.get('/api/gobierno/restaurants', verificarToken, verificarGobernamental, gobiernoController.getRestaurantsReadOnly);
 
 // ===== MANEJO DE ERRORES =====
 app.use('*', (req, res) => {

@@ -245,11 +245,74 @@
             width: 100%;
             margin-bottom: 1.5rem;
             break-inside: avoid;
+            cursor: grab;
+        }
+
+        .image-card:active {
+            cursor: grabbing;
         }
 
         .image-card:hover {
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             transform: translateY(-2px);
+        }
+
+        /* ===== DRAG & DROP STATES ===== */
+        .image-card.dragging {
+            opacity: 0.4;
+            transform: scale(0.95);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .image-card.drop-target-before {
+            box-shadow: -4px 0 0 var(--primary, #2563eb);
+        }
+
+        .image-card.drop-target-after {
+            box-shadow: 4px 0 0 var(--primary, #2563eb);
+        }
+
+        /* Drag handle (grip icon) */
+        .drag-handle {
+            position: absolute;
+            top: 0.6rem;
+            left: 0.6rem;
+            z-index: 5;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+        }
+
+        .image-card:hover .drag-handle {
+            opacity: 1;
+        }
+
+        /* Reorder hint banner */
+        .reorder-hint {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.75rem 1rem;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            color: #1e40af;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .reorder-hint i {
+            font-size: 1rem;
         }
 
         /* ===== CONTENEDOR DE IMAGEN ADAPTABLE CON TAMAÑO NATURAL ===== */
@@ -642,7 +705,7 @@
                 </button>
             </div>
 
-            <input type="file" id="file-input" multiple accept="image/jpeg, image/png">
+            <input type="file" id="file-input" multiple accept="image/jpeg, image/png, image/webp">
 
             <div class="progress-container" id="progress-container">
                 <div class="progress-bar">
@@ -664,6 +727,11 @@
             <div id="loading" class="loading">
                 <div class="spinner"></div>
                 <p>Cargando imágenes...</p>
+            </div>
+
+            <div id="reorder-hint" class="reorder-hint" style="display: none;">
+                <i class="fas fa-hand-rock"></i>
+                <span>Arrastra las imágenes para reordenarlas. La primera será la imagen principal.</span>
             </div>
 
             <div id="gallery-grid" class="gallery-grid" style="display: none;">
@@ -889,18 +957,23 @@
 
             if (images.length === 0) {
                 showEmptyState();
+                document.getElementById('reorder-hint').style.display = 'none';
                 return;
             }
 
             emptyState.style.display = 'none';
             galleryGrid.style.display = 'block';
             imageCount.textContent = images.length;
+            document.getElementById('reorder-hint').style.display = images.length > 1 ? 'flex' : 'none';
 
             galleryGrid.innerHTML = images.map((image, index) => `
-                <div class="image-card" data-image-id="${image.id}">
+                <div class="image-card" data-image-id="${image.id}" draggable="true">
+                    <div class="drag-handle" title="Arrastra para reordenar">
+                        <i class="fas fa-grip-vertical"></i>
+                    </div>
                     ${image.esPrincipal ? '<div class="main-badge">Principal</div>' : ''}
                     <div class="image-container">
-                        <img src="${image.url}" alt="${image.filename}" loading="lazy">
+                        <img src="${image.url}" alt="${image.filename}" loading="lazy" draggable="false">
                         <div class="image-overlay">
                             <div class="image-actions">
                                 ${!image.esPrincipal ? `
@@ -923,6 +996,110 @@
                     </div>
                 </div>
             `).join('');
+
+            setupImageDragAndDrop();
+        }
+
+        // ===== DRAG & DROP PARA REORDENAR IMÁGENES =====
+        let draggedCard = null;
+
+        function setupImageDragAndDrop() {
+            const cards = galleryGrid.querySelectorAll('.image-card');
+
+            cards.forEach(card => {
+                card.addEventListener('dragstart', (e) => {
+                    draggedCard = card;
+                    card.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/plain', card.dataset.imageId);
+                });
+
+                card.addEventListener('dragend', () => {
+                    card.classList.remove('dragging');
+                    cards.forEach(c => c.classList.remove('drop-target-before', 'drop-target-after'));
+                    draggedCard = null;
+                });
+
+                card.addEventListener('dragover', (e) => {
+                    if (!draggedCard || draggedCard === card) return;
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+
+                    // Decide if the drop is before or after based on horizontal midpoint
+                    const rect = card.getBoundingClientRect();
+                    const isBefore = (e.clientX - rect.left) < rect.width / 2;
+                    card.classList.toggle('drop-target-before', isBefore);
+                    card.classList.toggle('drop-target-after', !isBefore);
+                });
+
+                card.addEventListener('dragleave', () => {
+                    card.classList.remove('drop-target-before', 'drop-target-after');
+                });
+
+                card.addEventListener('drop', async (e) => {
+                    e.preventDefault();
+                    if (!draggedCard || draggedCard === card) return;
+
+                    const rect = card.getBoundingClientRect();
+                    const isBefore = (e.clientX - rect.left) < rect.width / 2;
+
+                    const draggedId = draggedCard.dataset.imageId;
+                    const targetId = card.dataset.imageId;
+
+                    // Reordenar el arreglo local
+                    const fromIndex = images.findIndex(img => img.id === draggedId);
+                    const toIndexRaw = images.findIndex(img => img.id === targetId);
+                    if (fromIndex === -1 || toIndexRaw === -1) return;
+
+                    const [moved] = images.splice(fromIndex, 1);
+                    // Recalcular el índice destino tras el splice
+                    let toIndex = images.findIndex(img => img.id === targetId);
+                    if (!isBefore) toIndex += 1;
+                    images.splice(toIndex, 0, moved);
+
+                    // Actualizar flag de principal (primera imagen)
+                    images.forEach((img, idx) => { img.esPrincipal = idx === 0; });
+
+                    card.classList.remove('drop-target-before', 'drop-target-after');
+
+                    // Re-render optimista
+                    displayImages();
+
+                    // Persistir en el servidor
+                    await persistImageOrder();
+                });
+            });
+        }
+
+        async function persistImageOrder() {
+            const token = localStorage.getItem('authToken');
+            if (!token) return;
+
+            const imageIds = images.map(img => img.id);
+
+            try {
+                const response = await fetch(`${API_BASE}/restaurants/images/reorder`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ imageIds })
+                });
+
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok) {
+                    showNotification(data.message || 'No se pudo guardar el orden', 'error');
+                    // Recargar para mantener consistencia con el servidor
+                    loadImages();
+                } else {
+                    showNotification('Orden actualizado', 'success');
+                }
+            } catch (error) {
+                console.error('Error guardando orden:', error);
+                showNotification('Error al guardar el orden de las imágenes', 'error');
+                loadImages();
+            }
         }
 
         // Formatear tamaño de archivo
@@ -979,13 +1156,13 @@
 
         // Validar y subir
         function validateAndUpload(files) {
-            const validTypes = ['image/jpeg', 'image/png'];
+            const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
             const maxSizeBytes = 5 * 1024 * 1024; // 5MB
 
             let validFiles = [];
             for (let file of files) {
                 if (!validTypes.includes(file.type)) {
-                    showNotification(`El archivo "${file.name}" no es JPG o PNG. Por favor sube solo imágenes en estos formatos.`, 'warning');
+                    showNotification(`El archivo "${file.name}" no es JPG, PNG o WEBP. Por favor sube solo imágenes en estos formatos.`, 'warning');
                     continue;
                 }
                 if (file.size > maxSizeBytes) {

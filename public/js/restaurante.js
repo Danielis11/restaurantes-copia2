@@ -181,6 +181,14 @@ function renderPage() {
     // Inicializar el botón de Favoritos
     initFavoriteButton();
 
+    // Cargar nuevas integraciones (Inventario Muerto y Bolsa de Trabajo)
+    cargarOfertasFlash(r._id || r.id);
+    cargarBolsaTrabajo(r._id || r.id);
+    cargarRecomendaciones(r._id || r.id);
+
+    // Cargar eventos próximos
+    cargarEventosPublicos(r._id || r.id);
+
     // Mostrar contenido
     document.getElementById('loading-state').style.display = 'none';
     document.getElementById('restaurant-content').style.display = 'block';
@@ -194,6 +202,21 @@ function renderHero(r) {
     // Badge tipo
     const icon = TYPE_ICONS[r.tipo] || 'fas fa-store';
     document.getElementById('hero-badge').innerHTML = `<i class="${icon}"></i> <span>${capitalizeFirst(r.tipo)}</span>`;
+
+    // Badge de precio
+    if (r.rangoPrecio) {
+        const precioBadge = document.getElementById('hero-precio-badge');
+        if (precioBadge) {
+            const colors = { '$': '#10b981', '$$': '#3b82f6', '$$$': '#8b5cf6' };
+            const bgs = { '$': 'rgba(16,185,129,0.1)', '$$': 'rgba(59,130,246,0.1)', '$$$': 'rgba(139,92,246,0.1)' };
+            const labels = { '$': '$ Económico', '$$': '$$ Moderado', '$$$': '$$$ Premium' };
+            precioBadge.style.color = colors[r.rangoPrecio];
+            precioBadge.style.background = bgs[r.rangoPrecio];
+            precioBadge.textContent = labels[r.rangoPrecio];
+            precioBadge.style.display = 'inline-flex';
+        }
+    }
+
     document.getElementById('hero-name').textContent = r.nombre;
     document.getElementById('hero-ciudad').textContent = r.direccion?.ciudad || 'Jalpan de Serra';
     document.getElementById('hero-telefono').textContent = formatPhone(r.telefono);
@@ -204,6 +227,17 @@ function renderHero(r) {
     statusEl.innerHTML = abierto
         ? `<span class="status-badge open"><i class="fas fa-circle" style="font-size:0.5rem;"></i> Abierto ahora</span>`
         : `<span class="status-badge closed"><i class="fas fa-circle" style="font-size:0.5rem;"></i> Cerrado</span>`;
+
+    // Contador de visitas público
+    const vistas = r.estadisticas?.vistasPerfil || 0;
+    if (vistas > 0) {
+        const heroViews = document.getElementById('hero-views');
+        const heroViewsCount = document.getElementById('hero-views-count');
+        if (heroViews && heroViewsCount) {
+            heroViewsCount.textContent = vistas.toLocaleString('es-MX');
+            heroViews.style.display = 'inline-flex';
+        }
+    }
 
     // Imágenes en hero
     if (r.imagenes && r.imagenes.length > 0) {
@@ -270,7 +304,7 @@ function renderHero(r) {
             }
 
             const thumbsContainer = document.getElementById('hero-thumbnails');
-            r.imagenes.slice(0, 5).forEach((imagen, i) => {
+            r.imagenes.forEach((imagen, i) => {
                 const thumb = document.createElement('div');
                 thumb.className = `hero-thumb ${i === 0 ? 'active' : ''}`;
                 thumb.innerHTML = `<img src="${imagen.url}" alt="">`;
@@ -411,10 +445,35 @@ function renderInfoAdicional(r) {
     }
 }
 
-// ===== MENÚ =====
+// ===== MENÚ (Paginación por Pestañas) =====
+let currentMenuData = [];
+let currentMenuPage = 1;
+
 function renderMenu(menu) {
+    currentMenuData = menu || [];
+    currentMenuPage = 1;
+    renderMenuPage();
+}
+
+function renderMenuPage() {
     const body = document.getElementById('menu-body');
-    body.innerHTML = menu.map((cat, cIdx) => `
+    const categoriesPerPage = 2;
+    const totalPages = Math.ceil(currentMenuData.length / categoriesPerPage);
+    
+    if (currentMenuData.length === 0) {
+        body.innerHTML = '<p class="empty-section">Menú no disponible.</p>';
+        return;
+    }
+    
+    if (currentMenuPage < 1) currentMenuPage = 1;
+    if (currentMenuPage > totalPages) currentMenuPage = totalPages;
+    
+    const startIndex = (currentMenuPage - 1) * categoriesPerPage;
+    const pageCategories = currentMenuData.slice(startIndex, startIndex + categoriesPerPage);
+    
+    let html = pageCategories.map((cat, localIdx) => {
+        const cIdx = startIndex + localIdx; // Para el lightbox de la galería del menú
+        return `
         <div class="menu-category">
             <div class="menu-category-title">${getL(cat.categoria)}</div>
             <div class="menu-items-list">
@@ -438,8 +497,35 @@ function renderMenu(menu) {
                 `).join('')}
             </div>
         </div>
-    `).join('');
+    `}).join('');
+
+    // Añadir pestañas de paginación
+    if (totalPages > 1) {
+        let paginationHtml = '<div class="menu-pagination-tabs" style="display:flex; justify-content:center; gap:0.5rem; margin-top:2rem; flex-wrap:wrap;">';
+        for (let i = 1; i <= totalPages; i++) {
+            paginationHtml += `
+                <button onclick="changeMenuPage(${i})" 
+                        style="padding: 0.5rem 1.2rem; border: none; border-radius: 999px; font-weight: bold; cursor: pointer; transition: 0.2s; 
+                        ${i === currentMenuPage 
+                            ? 'background: var(--primary); color: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); transform: scale(1.05);' 
+                            : 'background: var(--gray-100); color: var(--gray-600);'}">
+                    Menú ${i}
+                </button>
+            `;
+        }
+        paginationHtml += '</div>';
+        html += paginationHtml;
+    }
+    
+    body.innerHTML = html;
 }
+
+window.changeMenuPage = function(page) {
+    currentMenuPage = page;
+    renderMenuPage();
+    // Scroll suave hacia el título del menú para evitar desorientación
+    document.getElementById('menu').scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
 
 // ===== GALERÍA =====
 function renderGallery(imagenes) {
@@ -664,8 +750,13 @@ function renderMiniMap(dir) {
     mapCard.style.display = 'block';
 
     // Wait for DOM to render before initializing map
-    setTimeout(() => {
-        mapboxgl.accessToken = 'YOUR_MAPBOX_ACCESS_TOKEN';
+    setTimeout(async () => {
+        try {
+            const res = await fetch('/api/config/mapbox');
+            const data = await res.json();
+            if (data.success && data.token) mapboxgl.accessToken = data.token;
+            else return;
+        } catch(err) { return; }
 
         const miniMap = new mapboxgl.Map({
             container: 'restaurant-minimap',
@@ -791,11 +882,13 @@ async function renderAuthNavbar() {
         const iniciales = (currentUser.nombre?.charAt(0) || '') + (currentUser.apellido?.charAt(0) || '');
         const badgeColor = currentUser.rol === 'super-admin' ? '#ec4899' :
                            currentUser.rol === 'admin-turismo' ? '#0d9488' :
+                           currentUser.rol === 'gobernamental' ? '#3b82f6' :
                            currentUser.rol === 'admin' ? '#10b981' : 'var(--primary)';
         
         let rolDisplay = currentUser.rol || '';
         if (rolDisplay === 'super-admin') rolDisplay = 'Super Admin';
         else if (rolDisplay === 'admin-turismo') rolDisplay = 'Admin Turismo';
+        else if (rolDisplay === 'gobernamental') rolDisplay = 'Gubernamental';
         else if (rolDisplay === 'admin') rolDisplay = 'Administrador';
         else if (rolDisplay === 'turista') rolDisplay = 'Turista';
 
@@ -810,6 +903,8 @@ async function renderAuthNavbar() {
             links = `<a href="/super-admin.html" class="profile-dropdown-link"><i class="fas fa-crown"></i> Panel Super Admin</a>`;
         } else if (currentUser.rol === 'admin-turismo') {
             links = `<a href="/admin-turismo.html" class="profile-dropdown-link"><i class="fas fa-compass"></i> Panel Turismo</a>`;
+        } else if (currentUser.rol === 'gobernamental') {
+            links = `<a href="/admin-gobierno.html" class="profile-dropdown-link"><i class="fas fa-landmark"></i> Panel Gubernamental</a>`;
         } else {
             links = `<a href="/admin.html" class="profile-dropdown-link"><i class="fas fa-cog"></i> Panel Admin</a>`;
         }
@@ -1093,8 +1188,13 @@ function buildEditForm(section) {
             </div>
             <div class="form-row">
                 <div class="form-group">
-                    <label class="form-label">Precio Promedio ($ MXN)</label>
-                    <input type="number" class="form-input" id="edit-precio-promedio" value="${r.precioPromedio || 0}" min="0">
+                    <label class="form-label">Rango de Precio</label>
+                    <select class="form-select" id="edit-rango-precio">
+                        <option value="" ${!r.rangoPrecio ? 'selected' : ''}>Sin definir</option>
+                        <option value="$" ${r.rangoPrecio === '$' ? 'selected' : ''}>$ Económico</option>
+                        <option value="$$" ${r.rangoPrecio === '$$' ? 'selected' : ''}>$$ Moderado</option>
+                        <option value="$$$" ${r.rangoPrecio === '$$$' ? 'selected' : ''}>$$$ Premium</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Opciones de Pago</label>
@@ -1379,7 +1479,7 @@ async function saveChanges() {
                 telefono: document.getElementById('edit-telefono').value.trim(),
                 email: document.getElementById('edit-email').value.trim(),
                 tipoComida: document.getElementById('edit-tipo-comida')?.value.trim() || '',
-                precioPromedio: parseFloat(document.getElementById('edit-precio-promedio')?.value) || 0,
+                rangoPrecio: document.getElementById('edit-rango-precio')?.value || '',
                 opcionesPago: {
                     efectivo: document.getElementById('edit-pago-efectivo')?.checked ?? true,
                     tarjeta: document.getElementById('edit-pago-tarjeta')?.checked ?? false,
@@ -1640,33 +1740,27 @@ async function loadNativeReviews() {
 
         if (summaryEl) {
             summaryEl.innerHTML = `
-                <div style="display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 1.5rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 2rem;">
-                        <div style="text-align: left; min-width: 120px;">
-                            <div style="font-size: 3rem; font-weight: 700; color: var(--gray-900); line-height: 1;">${avgRating.toFixed(1)}</div>
-                            <div style="display: flex; gap: 0.25rem; margin: 0.5rem 0;">
-                                ${Array(5).fill(0).map((_, i) => `<i class="fas fa-star" style="color: ${i < avgRating ? '#f59e0b' : '#e5e7eb'}; font-size: 1.125rem;"></i>`).join('')}
-                            </div>
-                            <p style="color: var(--gray-500); font-size: 0.875rem; margin: 0;">Basado en ${totalReviews} opinion${totalReviews !== 1 ? 'es' : ''}</p>
+                <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 3rem; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--gray-200);">
+                    <div style="display: flex; flex-direction: column; align-items: center; min-width: 140px;">
+                        <div style="font-size: 4rem; font-weight: 400; color: var(--gray-900); line-height: 1; font-family: 'Google Sans', Roboto, Arial, sans-serif;">${avgRating.toFixed(1)}</div>
+                        <div style="display: flex; gap: 2px; margin: 0.5rem 0 0.25rem 0;">
+                            ${Array(5).fill(0).map((_, i) => `<i class="fas fa-star" style="color: ${i < avgRating ? '#fbbc04' : '#e0e0e0'}; font-size: 1.125rem;"></i>`).join('')}
                         </div>
-                        
-                        <div style="flex: 1; min-width: 250px; display: flex; flex-direction: column; gap: 0.875rem; padding: 0 0.5rem;">
-                            ${[5, 4, 3, 2, 1].map(stars => {
-                                const count = ratingCounts[stars];
-                                const percentage = totalReviews > 0 ? (count / totalReviews) * 100 : 0;
-                                return `
-                                <div style="display: flex; align-items: center; gap: 1rem;">
-                                    <div style="display: flex; align-items: center; gap: 0.25rem; width: 45px; justify-content: flex-end;">
-                                        <span style="font-size: 0.875rem; font-weight: 500; color: var(--gray-700);">${stars}</span>
-                                        <i class="fas fa-star" style="color: #f59e0b; font-size: 0.75rem;"></i>
-                                    </div>
-                                    <div style="flex: 1; height: 8px; background: var(--gray-100); border-radius: 4px; overflow: hidden;">
-                                        <div style="height: 100%; background: #f59e0b; border-radius: 4px; width: ${percentage}%;"></div>
-                                    </div>
-                                    <span style="font-size: 0.875rem; color: var(--gray-500); width: 28px; text-align: left;">${count}</span>
-                                </div>`;
-                            }).join('')}
-                        </div>
+                        <p style="color: var(--gray-600); font-size: 0.85rem; margin: 0;">${totalReviews} opinion${totalReviews !== 1 ? 'es' : ''}</p>
+                    </div>
+                    
+                    <div style="flex: 1; min-width: 250px; display: flex; flex-direction: column; gap: 0.4rem; padding-right: 1rem;">
+                        ${[5, 4, 3, 2, 1].map(stars => {
+                            const count = ratingCounts[stars];
+                            const percentage = totalReviews > 0 ? (count / totalReviews) * 100 : 0;
+                            return `
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <span style="font-size: 0.85rem; font-weight: 500; color: var(--gray-700); width: 12px; text-align: right;">${stars}</span>
+                                <div style="flex: 1; height: 10px; background: #f1f3f4; border-radius: 5px; overflow: hidden;">
+                                    <div style="height: 100%; background: #fbbc04; border-radius: 5px; width: ${percentage}%;"></div>
+                                </div>
+                            </div>`;
+                        }).join('')}
                     </div>
                 </div>
             `;
@@ -1685,8 +1779,8 @@ async function loadNativeReviews() {
                     <div style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:0.75rem;">
                         ${r.fotos.map(f => `
                             <img src="${f.url}" alt="Foto de ${userName}"
-                                style="width:80px; height:80px; object-fit:cover; border-radius:0.4rem; cursor:pointer; border:1px solid var(--gray-200); transition: transform 0.2s;"
-                                onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"
+                                style="width:64px; height:64px; object-fit:cover; border-radius:0.4rem; cursor:pointer; transition: opacity 0.2s;"
+                                onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'"
                                 onclick="openPhotoLightbox('${f.url}')">
                         `).join('')}
                     </div>
@@ -1696,7 +1790,8 @@ async function loadNativeReviews() {
                 fotosHtml = `
                     <div style="margin-top:0.75rem;">
                         <img src="${r.imagenUrl}" alt="Foto de ${userName}"
-                            style="max-height:200px; border-radius:0.4rem; cursor:pointer; object-fit:cover; max-width:100%; border:1px solid var(--gray-200);"
+                            style="width:64px; height:64px; border-radius:0.4rem; cursor:pointer; object-fit:cover; transition: opacity 0.2s;"
+                            onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'"
                             onclick="openPhotoLightbox('${r.imagenUrl}')">
                     </div>
                 `;
@@ -1717,7 +1812,7 @@ async function loadNativeReviews() {
                 const cu = JSON.parse(localStorage.getItem('currentUser'));
                 if (cu && (cu.rol === 'admin' || cu.rol === 'admin-turismo' || cu.rol === 'super-admin') && !r.respuestaAdmin) {
                     replyBtnHtml = `
-                        <button onclick="toggleReplyForm('${r._id}')" class="btn" style="background: transparent; border: 1px solid var(--gray-200); color: var(--primary); padding: 0.375rem 0.875rem; border-radius: 20px; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.375rem; margin-left: 0.5rem;" onmouseover="this.style.background='var(--gray-50)'" onmouseout="this.style.background='transparent'">
+                        <button onclick="toggleReplyForm('${r._id}')" class="btn" style="background: transparent; border: none; color: var(--primary); padding: 0.25rem 0.5rem; font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.375rem; margin-left: 0.5rem;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
                             <i class="fas fa-reply" style="transform: translateY(-1px);"></i>
                             <span>Responder</span>
                         </button>
@@ -1726,52 +1821,54 @@ async function loadNativeReviews() {
             } catch(e) {}
 
             return `
-                <div style="padding: 1.5rem; background: white; border: 1px solid var(--gray-200); border-radius: 1rem; position: relative; transition: box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)'" onmouseout="this.style.boxShadow='none'">
-                    ${r.destacada ? '<span style="position: absolute; top: -10px; right: 1.5rem; background: #f59e0b; color: white; padding: 2px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; box-shadow: 0 2px 4px rgba(245, 158, 11, 0.2);"><i class="fas fa-star" style="font-size: 10px; margin-right: 4px;"></i> Destacada</span>' : ''}
+                <div class="review-card" style="position: relative;">
+                    ${r.destacada ? '<span style="position: absolute; top: -10px; right: 1.5rem; background: #f59e0b; color: white; padding: 2px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; box-shadow: 0 2px 4px rgba(245, 158, 11, 0.2); z-index: 10;"><i class="fas fa-star" style="font-size: 10px; margin-right: 4px;"></i> Destacada</span>' : ''}
                     
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
-                        <div style="display: flex; align-items: center; gap: 1rem;">
-                            <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 1.125rem;">
-                                ${userInitial}
-                            </div>
-                            <div>
-                                <h4 style="margin: 0; font-size: 1rem; font-weight: 600; color: var(--gray-900);">${userName}</h4>
-                                <span style="font-size: 0.8125rem; color: var(--gray-500);">${fecha}</span>
-                            </div>
+                    <div style="display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.75rem;">
+                        <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 1.125rem; flex-shrink: 0;">
+                            ${userInitial}
                         </div>
-                        <div style="display: flex; gap: 0.125rem;">
-                            ${Array(5).fill(0).map((_, i) => `<i class="fas fa-star" style="color: ${i < r.rating ? '#f59e0b' : '#e5e7eb'}; font-size: 0.875rem;"></i>`).join('')}
+                        <div style="flex-grow: 1;">
+                            <h4 style="margin: 0; font-size: 0.95rem; font-weight: 600; color: var(--gray-900);">${userName}</h4>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
+                                <div style="display: flex; gap: 2px;">
+                                    ${Array(5).fill(0).map((_, i) => `<i class="fas fa-star" style="color: ${i < r.rating ? '#f59e0b' : '#e5e7eb'}; font-size: 0.75rem;"></i>`).join('')}
+                                </div>
+                                <span style="font-size: 0.75rem; color: var(--gray-500);">${fecha}</span>
+                            </div>
                         </div>
                     </div>
                     
-                    <div style="padding-left: 3.5rem;">
-                        <p style="color: var(--gray-700); font-size: 0.95rem; margin: 0; line-height: 1.6;">${r.comentario}</p>
+                    <div style="flex-grow: 1; display: flex; flex-direction: column;">
+                        <p style="color: var(--gray-700); font-size: 0.9rem; margin: 0; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">${r.comentario}</p>
+                        
                         ${fotosHtml}
+                        
                         ${r.respuestaAdmin ? `
-                        <div style="margin-top: 1.25rem; padding: 1rem 1.25rem; background: var(--gray-50); border-radius: 0.75rem; border: 1px solid var(--gray-100);">
-                            <div style="font-weight: 600; color: var(--gray-900); font-size: 0.875rem; margin-bottom: 0.375rem; display: flex; align-items: center; gap: 0.5rem;">
-                                <i class="fas fa-reply" style="color: var(--primary);"></i> Respuesta del propietario
+                        <div style="margin-top: 1rem; padding: 0.75rem; background: var(--gray-50); border-radius: 0.5rem; border: 1px solid var(--gray-100);">
+                            <div style="font-weight: 600; color: var(--gray-900); font-size: 0.8rem; margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.4rem;">
+                                <i class="fas fa-reply" style="color: var(--primary);"></i> Propietario
                             </div>
-                            <p style="color: var(--gray-700); font-size: 0.9rem; line-height: 1.5; margin: 0;">${r.respuestaAdmin}</p>
+                            <p style="color: var(--gray-700); font-size: 0.85rem; line-height: 1.4; margin: 0;">${r.respuestaAdmin}</p>
                         </div>
                         ` : ''}
                         
-                        <!-- Reply form (hidden by default) -->
+                        <!-- Reply form -->
                         <div id="reply-form-${r._id}" style="display: none; margin-top: 1rem; padding: 1rem; background: #f0f4ff; border-radius: 0.75rem; border: 1px solid #dbeafe;">
-                            <textarea id="reply-text-${r._id}" placeholder="Escribe tu respuesta como propietario..." maxlength="500" style="width: 100%; min-height: 80px; border: 1px solid var(--gray-200); border-radius: 0.5rem; padding: 0.75rem; font-family: inherit; font-size: 0.9rem; resize: vertical; outline: none;"></textarea>
+                            <textarea id="reply-text-${r._id}" placeholder="Escribe tu respuesta..." maxlength="500" style="width: 100%; min-height: 80px; border: 1px solid var(--gray-200); border-radius: 0.5rem; padding: 0.75rem; font-family: inherit; font-size: 0.9rem; resize: vertical; outline: none;"></textarea>
                             <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem;">
                                 <button onclick="toggleReplyForm('${r._id}')" style="background: transparent; border: 1px solid var(--gray-200); border-radius: 0.5rem; padding: 0.4rem 1rem; cursor: pointer; font-family: inherit; font-size: 0.85rem; color: var(--gray-600);">Cancelar</button>
                                 <button onclick="submitReply('${r._id}')" style="background: var(--primary); color: white; border: none; border-radius: 0.5rem; padding: 0.4rem 1rem; cursor: pointer; font-family: inherit; font-size: 0.85rem; font-weight: 600;">Publicar</button>
                             </div>
                         </div>
+                    </div>
                         
-                        <div style="margin-top: 1.25rem; display: flex; align-items: center;">
-                            <button onclick="likeReview('${r._id}', this)" class="btn" style="background: transparent; border: 1px solid ${isLiked ? '#ef4444' : 'var(--gray-200)'}; color: ${isLiked ? '#ef4444' : 'var(--gray-600)'}; padding: 0.375rem 0.875rem; border-radius: 20px; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.375rem;" onmouseover="this.style.background='var(--gray-50)'" onmouseout="this.style.background='transparent'">
-                                <i class="${isLiked ? 'fas' : 'far'} fa-heart" style="transform: translateY(-1px);"></i>
-                                <span>Me gusta (<span id="like-count-${r._id}">${r.likes || 0}</span>)</span>
-                            </button>
-                            ${replyBtnHtml}
-                        </div>
+                    <div style="margin-top: 1rem; display: flex; align-items: center; padding-top: 0.75rem; border-top: 1px solid var(--gray-100);">
+                        <button onclick="likeReview('${r._id}', this)" class="btn" style="background: transparent; border: none; color: ${isLiked ? '#3b82f6' : 'var(--gray-500)'}; padding: 0.25rem 0.5rem; font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.375rem;" onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='${isLiked ? '#3b82f6' : 'var(--gray-500)'}'">
+                            <i class="${isLiked ? 'fas' : 'far'} fa-thumbs-up" style="font-size: 1rem;"></i>
+                            <span>Útil (<span id="like-count-${r._id}">${r.likes || 0}</span>)</span>
+                        </button>
+                        ${replyBtnHtml}
                     </div>
                 </div>
             `;
@@ -2371,3 +2468,147 @@ window.guardarEnItinerario = async function(e) {
     }
 };
 
+// ==========================================
+// OFERTAS RELÁMPAGO Y BOLSA DE TRABAJO
+// ==========================================
+async function cargarOfertasFlash(restaurantId) {
+    try {
+        const res = await fetch(`/api/ofertas-flash/activas/${restaurantId}`);
+        const data = await res.json();
+        const container = document.getElementById('ofertas-flash-container');
+        const listContainer = document.getElementById('oferta-flash-list');
+
+        if (data.success && data.data && data.data.length > 0) {
+            container.style.display = 'block';
+            listContainer.innerHTML = data.data.map(of => `
+                <div style="background: rgba(255,255,255,0.1); border-left: 4px solid #fde047; padding: 1rem; border-radius: 0.5rem; backdrop-filter: blur(4px);">
+                    <div style="font-weight: 800; font-size: 1.15rem; color: #fde047; margin-bottom: 0.25rem;">${of.titulo}</div>
+                    <div style="font-size: 0.95rem; color: white;">${of.descripcion}</div>
+                    <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 0.5rem;"><i class="fas fa-clock"></i> Expira en ${of.horasDuracion || 24} hrs desde su publicación</div>
+                </div>
+            `).join('');
+        } else {
+            container.style.display = 'none';
+        }
+    } catch(err) {
+        console.error('Error cargando Ofertas Flash:', err);
+    }
+}
+
+async function cargarBolsaTrabajo(restaurantId) {
+    try {
+        const res = await fetch(`/api/bolsa-trabajo/activas/${restaurantId}`);
+        const data = await res.json();
+        const container = document.getElementById('bolsa-trabajo-container');
+        const listContainer = document.getElementById('bolsa-trabajo-list');
+
+        if (data.success && data.data && data.data.length > 0) {
+            container.style.display = 'block';
+            listContainer.innerHTML = data.data.map(v => `
+                <div style="border-bottom: 1px solid var(--gray-200); padding-bottom: 1rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.5rem;">
+                        <div style="font-weight:700; font-size:1.1rem; color:var(--gray-900);">${v.titulo}</div>
+                        ${v.sueldo ? `<span style="background:#ecfdf5; color:#10b981; font-weight:700; font-size:0.85rem; padding:0.2rem 0.6rem; border-radius:1rem;">${v.sueldo}</span>` : ''}
+                    </div>
+                    <p style="font-size:0.9rem; color:var(--gray-600); line-height:1.5; margin-bottom:0.75rem;">${v.descripcion}</p>
+                    <div style="display:inline-block; background:var(--gray-50); border:1px solid var(--gray-200); padding:0.4rem 0.8rem; border-radius:0.4rem; font-size:0.85rem; font-weight:600; color:var(--gray-700);">
+                        <i class="fas fa-hand-pointer" style="color:var(--primary); margin-right:0.3rem;"></i> ${v.contacto}
+                    </div>
+                </div>
+            `).join('<div style="height:0.5rem;"></div>');
+        } else {
+            container.style.display = 'none';
+        }
+    } catch(err) {
+        console.error('Error cargando Bolsa de Trabajo:', err);
+    }
+}
+
+async function cargarRecomendaciones(restaurantId) {
+    try {
+        const res = await fetch(`/api/recomendaciones/${restaurantId}`);
+        const data = await res.json();
+        
+        const container = document.getElementById('recomendaciones-container');
+        const scroll = document.getElementById('recomendaciones-scroll');
+        
+        if (data.success && data.data && data.data.length > 0) {
+            container.style.display = 'block';
+            scroll.innerHTML = data.data.map(item => `
+                <a href="${item.enlace}" class="recomendacion-card">
+                    <div style="height: 140px; background: #cbd5e1; position: relative;">
+                        <img src="${item.imagen}" alt="${item.nombre}" style="width: 100%; height: 100%; object-fit: cover;">
+                        <div style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); color: white; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-size: 0.7rem; font-weight: bold; backdrop-filter: blur(4px);">
+                            ${item.tipo}
+                        </div>
+                    </div>
+                    <div style="padding: 0.75rem; background: white; flex-grow: 1; display: flex; flex-direction: column;">
+                        <h4 style="font-size: 0.95rem; color: #0f172a; margin: 0 0 0.5rem 0; font-weight: 700; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${item.nombre}</h4>
+                        <div style="margin-top: auto; font-size: 0.8rem; color: #3b82f6; font-weight: 600;">Ver detalles <i class="fas fa-chevron-right" style="font-size: 0.7rem;"></i></div>
+                    </div>
+                </a>
+            `).join('');
+            
+            // Efecto Hover simple con JS
+            const cards = scroll.querySelectorAll('a');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => card.style.transform = 'translateY(-4px)');
+                card.addEventListener('mouseleave', () => card.style.transform = 'translateY(0)');
+            });
+
+        } else {
+            container.style.display = 'none';
+        }
+    } catch(err) {
+        console.error('Error cargando recomendaciones:', err);
+    }
+}
+
+// ===== EVENTOS PÚBLICOS =====
+async function cargarEventosPublicos(restaurantId) {
+    try {
+        const res = await fetch(`/api/restaurants/${restaurantId}/eventos`);
+        const data = await res.json();
+        const card = document.getElementById('eventos-card');
+        const body = document.getElementById('eventos-body');
+        if (!card || !body) return;
+
+        if (data.success && data.data && data.data.length > 0) {
+            card.style.display = 'block';
+            const tipoIcons = {
+                'musica-en-vivo': 'fas fa-music', 'noche-tematica': 'fas fa-moon', 'degustacion': 'fas fa-wine-glass-alt',
+                'happy-hour': 'fas fa-glass-cheers', 'karaoke': 'fas fa-microphone', 'taller': 'fas fa-chalkboard-teacher',
+                'especial': 'fas fa-star', 'otro': 'fas fa-calendar'
+            };
+            const tipoLabels = {
+                'musica-en-vivo': 'Música en Vivo', 'noche-tematica': 'Noche Temática', 'degustacion': 'Degustación',
+                'happy-hour': 'Happy Hour', 'karaoke': 'Karaoke', 'taller': 'Taller',
+                'especial': 'Especial', 'otro': 'Otro'
+            };
+            body.innerHTML = data.data.map(e => {
+                const fechaStr = new Date(e.fecha).toLocaleDateString('es-MX', { weekday:'short', day:'numeric', month:'short' });
+                const icon = tipoIcons[e.tipo] || 'fas fa-calendar';
+                const label = tipoLabels[e.tipo] || e.tipo;
+                return `
+                    <div style="display:flex; gap:0.75rem; padding:0.75rem; background:var(--gray-50); border-radius:0.5rem; border:1px solid var(--gray-100);">
+                        <div style="min-width:48px; height:48px; background:rgba(249,115,22,0.1); border-radius:0.5rem; display:flex; align-items:center; justify-content:center;">
+                            <i class="${icon}" style="color:#f97316; font-size:1.1rem;"></i>
+                        </div>
+                        <div style="flex:1;">
+                            <div style="display:flex; align-items:center; gap:0.4rem; flex-wrap:wrap;">
+                                <strong style="font-size:0.9rem; color:var(--gray-900);">${e.titulo}</strong>
+                                <span style="font-size:0.65rem; background:rgba(249,115,22,0.1); color:#f97316; padding:0.1rem 0.4rem; border-radius:999px; font-weight:600;">${label}</span>
+                                ${e.recurrente ? '<span style="font-size:0.6rem; background:rgba(59,130,246,0.1); color:#3b82f6; padding:0.1rem 0.3rem; border-radius:999px;">Semanal</span>' : ''}
+                            </div>
+                            <p style="font-size:0.8rem; color:var(--gray-600); margin:0.15rem 0;">${e.descripcion}</p>
+                            <div style="font-size:0.75rem; color:var(--gray-500);">
+                                <i class="fas fa-calendar-day"></i> ${fechaStr} &nbsp;<i class="fas fa-clock"></i> ${e.horaInicio}${e.horaFin ? ' - ' + e.horaFin : ''}
+                            </div>
+                        </div>
+                    </div>`;
+            }).join('');
+        }
+    } catch (err) {
+        console.error('Error cargando eventos públicos:', err);
+    }
+}

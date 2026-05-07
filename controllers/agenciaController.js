@@ -127,16 +127,18 @@ exports.actualizarAgencia = async (req, res) => {
         }
         
         if (Array.isArray(imagenesAEliminar)) {
+            const deletionPromises = [];
             for (const id of imagenesAEliminar) {
                 const imgIndex = galeriaActualizada.findIndex(i => i._id && i._id.toString() === id);
                 if (imgIndex !== -1) {
                     const img = galeriaActualizada[imgIndex];
                     if (img.public_id && cloudinaryConfigurado()) {
-                        try { await eliminarImagenCloudinary(img.public_id); } catch (e) { console.error('Error eliminando de Cloudinary', e); }
+                        deletionPromises.push(eliminarImagenCloudinary(img.public_id).catch(e => console.error('Error eliminando de Cloudinary', e)));
                     }
                     galeriaActualizada.splice(imgIndex, 1);
                 }
             }
+            await Promise.all(deletionPromises);
         }
     }
 
@@ -173,11 +175,10 @@ exports.eliminarAgencia = async (req, res) => {
     }
 
     if (agencia.galeria && agencia.galeria.length > 0 && cloudinaryConfigurado()) {
-        for (const img of agencia.galeria) {
-            if (img.public_id) {
-                try { await eliminarImagenCloudinary(img.public_id); } catch (e) {}
-            }
-        }
+        const deletionPromises = agencia.galeria
+            .filter(img => img.public_id)
+            .map(img => eliminarImagenCloudinary(img.public_id).catch(e => console.error('Error', e)));
+        await Promise.all(deletionPromises);
     }
 
     res.json({ success: true, message: 'Agencia eliminada' });

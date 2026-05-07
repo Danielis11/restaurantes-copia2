@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Ranking - RestauranteWeb</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background: #f7f8fa; color: #111827; }
+    .header { background: #111827; color: #fff; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; }
+    .header h1 { margin: 0; font-size: 1.1rem; }
+    .actions { display: flex; gap: 10px; }
+    .btn { border: none; border-radius: 8px; padding: 10px 14px; cursor: pointer; font-weight: 600; }
+    .btn-primary { background: #2563eb; color: #fff; }
+    .btn-outline { background: #fff; border: 1px solid #d1d5db; }
+    .container { max-width: 1200px; margin: 20px auto; padding: 0 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; }
+    .card-header { padding: 14px 16px; border-bottom: 1px solid #e5e7eb; font-weight: 700; }
+    .card-body { padding: 14px 16px; }
+    .search { width: 100%; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 8px; padding: 10px; margin-bottom: 12px; }
+    .item { border: 1px solid #e5e7eb; border-radius: 10px; padding: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .item-title { font-weight: 600; }
+    .item-sub { color: #6b7280; font-size: 0.85rem; }
+    .item-controls { display: flex; gap: 6px; flex-wrap: wrap; }
+    .pos-badge { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; border-radius: 999px; padding: 4px 8px; font-size: 0.8rem; }
+    .empty { color: #6b7280; font-size: 0.9rem; }
+    .top-list { display: grid; gap: 8px; }
+    .top-slot { border: 1px dashed #cbd5e1; border-radius: 10px; padding: 10px; display: flex; justify-content: space-between; align-items: center; }
+    .slot-index { font-weight: 700; color: #1e40af; min-width: 45px; }
+
+    .toast-stack { position: fixed; top: 16px; right: 16px; z-index: 9999; display: grid; gap: 10px; width: min(360px, calc(100vw - 32px)); }
+    .toast { background: #fff; border-left: 4px solid #2563eb; border-radius: 10px; box-shadow: 0 10px 24px rgba(15, 23, 42, 0.16); padding: 10px 12px; display: flex; align-items: flex-start; gap: 10px; transform: translateX(110%); opacity: 0; transition: 0.22s ease; }
+    .toast.show { transform: translateX(0); opacity: 1; }
+    .toast i { margin-top: 2px; color: #2563eb; }
+    .toast.success { border-left-color: #10b981; }
+    .toast.success i { color: #10b981; }
+    .toast.error { border-left-color: #ef4444; }
+    .toast.error i { color: #ef4444; }
+    .toast.warning { border-left-color: #f59e0b; }
+    .toast.warning i { color: #f59e0b; }
+    .toast-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: #334155; letter-spacing: 0.4px; }
+    .toast-message { font-size: 0.9rem; color: #0f172a; }
+    @media (max-width: 980px) { .container { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div id="toast-stack" class="toast-stack"></div>
+  <header class="header">
+    <h1><i class="fas fa-list-ol"></i> Panel Admin Ranking</h1>
+    <div class="actions">
+      <a href="/" class="btn btn-outline" style="text-decoration:none; color:#111827;"><i class="fas fa-home"></i> Inicio</a>
+      <button id="logout-btn" class="btn btn-outline"><i class="fas fa-sign-out-alt"></i> Salir</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <div class="card-header">Establecimientos</div>
+      <div class="card-body">
+        <input id="search-input" class="search" placeholder="Buscar por nombre, tipo o ciudad" />
+        <div id="list-container"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-header">Top 12 de Portada</div>
+      <div class="card-body">
+        <div id="top-container" class="top-list"></div>
+        <div style="margin-top: 12px; display:flex; gap:8px;">
+          <button id="save-btn" class="btn btn-primary">Guardar posiciones</button>
+          <button id="clear-btn" class="btn btn-outline">Limpiar top</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/js/admin-ranking.js"></script>
+</body>
+</html>

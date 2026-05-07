@@ -116,16 +116,21 @@ const actualizarInformacionBasica = async (req, res) => {
       });
     }
 
+    // Normalizar descripción: puede llegar como string o como {es: "texto"}
+    const descripcionStr = typeof descripcion === 'object' && descripcion !== null
+      ? (descripcion.es || descripcion.en || '')
+      : String(descripcion || '');
+
     // Traducir descripción al inglés
-    const descripcionEn = await translateText(descripcion, 'EN-US');
+    const descripcionEn = await translateText(descripcionStr, 'EN-US');
     
     const restaurant = await Restaurant.findOneAndUpdate(
       { adminId: req.admin.id, activo: true },
       {
         nombre: nombre.trim(),
         descripcion: {
-          es: descripcion.trim(),
-          en: descripcionEn.trim()
+          es: descripcionStr.trim(),
+          en: (typeof descripcionEn === 'string' ? descripcionEn : descripcionStr).trim()
         },
         telefono: telefono.trim(),
         email: email.toLowerCase().trim(),
@@ -185,6 +190,12 @@ const actualizarDireccion = async (req, res) => {
         message: 'Todos los campos de dirección son requeridos'
       });
     }
+
+    const direccionToUpdate = {
+      calle: direccion.calle.trim(),
+      ciudad: direccion.ciudad.trim(),
+      codigoPostal: direccion.codigoPostal.trim()
+    };
 
     if (direccion.lat !== undefined && direccion.lng !== undefined) {
       direccionToUpdate.coordenadas = {

@@ -34,11 +34,12 @@ const adminSchema = new mongoose.Schema({
   telefono: {
     type: String,
     required: [true, 'El teléfono es obligatorio'],
-    match: [/^[\+]?[1-9][\d]{0,15}$/, 'Formato de teléfono inválido']
+    trim: true,
+    match: [/^\+?[\d\s\-\(\)]{8,20}$/, 'Formato de teléfono inválido']
   },
   rol: {
     type: String,
-    enum: ['admin', 'super-admin', 'admin-turismo'],
+    enum: ['admin', 'super-admin', 'admin-turismo', 'gobernamental', 'admin-ranking'],
     default: 'admin'
   },
   activo: {

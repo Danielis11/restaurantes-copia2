@@ -23,6 +23,67 @@ const mapTourInfo = (obj) => {
     return obj;
 };
 
+const parseYTraducirBilingue = async (campo) => {
+  let obj = { es: '', en: '', fr: '' };
+  if (!campo) return obj;
+  
+  if (typeof campo === 'string') {
+    if (campo.startsWith('{')) {
+      try { obj = JSON.parse(campo); } catch(e) { obj.es = campo; }
+    } else {
+      obj.es = campo;
+    }
+  } else if (typeof campo === 'object') {
+    obj = { ...campo };
+  }
+
+  if (obj.es) {
+    let enPromise = Promise.resolve(obj.en);
+    let frPromise = Promise.resolve(obj.fr);
+
+    if (!obj.en) {
+      enPromise = translateText(obj.es, 'EN-US').catch(() => '');
+    }
+    if (!obj.fr) {
+      frPromise = translateText(obj.es, 'FR').catch(() => '');
+    }
+
+    const [en, fr] = await Promise.all([enPromise, frPromise]);
+    obj.en = en || '';
+    obj.fr = fr || '';
+  }
+  return obj;
+};
+
+const parseArrayBilingue = async (arr) => {
+    if (!arr || !Array.isArray(arr)) return [];
+    
+    const resultPromises = arr.map(async (item) => {
+        if (typeof item === 'object' && item.es && item.en && item.fr) return item;
+        const tempVal = typeof item === 'object' ? item.es || item.en || item.fr : item;
+        if (!tempVal) return { es: '', en: '', fr: '' };
+        
+        let enVal = typeof item === 'object' ? item.en || '' : '';
+        let frVal = typeof item === 'object' ? item.fr || '' : '';
+        
+        let enPromise = Promise.resolve(enVal);
+        let frPromise = Promise.resolve(frVal);
+        
+        if (!enVal) {
+          enPromise = translateText(tempVal, 'EN-US').catch(() => '');
+        }
+        if (!frVal) {
+          frPromise = translateText(tempVal, 'FR').catch(() => '');
+        }
+        
+        const [en, fr] = await Promise.all([enPromise, frPromise]);
+        return { es: tempVal, en: en || '', fr: fr || '' };
+    });
+    
+    return Promise.all(resultPromises);
+};
+
+
 // @desc    Obtener todos los tours (Público)
 // @route   GET /api/tours
 // @access  Público
@@ -72,39 +133,23 @@ exports.crearTour = async (req, res) => {
   try {
     let tourData = { ...req.body };
     
-    // Helper para parsear y traducir campos bilingües
-    const parseYTraducirBilingue = async (campo) => {
-      let obj = { es: '', en: '', fr: '' };
-      if (!campo) return obj;
-      
-      if (typeof campo === 'string') {
-        if (campo.startsWith('{')) {
-          try { obj = JSON.parse(campo); } catch(e) { obj.es = campo; }
-        } else {
-          obj.es = campo;
-        }
-      } else if (typeof campo === 'object') {
-        obj = { ...campo };
-      }
-
-      if (obj.es) {
-        if (!obj.en) {
-          try { obj.en = await translateText(obj.es, 'EN-US'); } catch(e) { console.error('EN Trans Error', e); }
-        }
-        if (!obj.fr) {
-          try { obj.fr = await translateText(obj.es, 'FR'); } catch(e) { console.error('FR Trans Error', e); }
-        }
-      }
-      return obj;
-    };
-
-    tourData.nombre = await parseYTraducirBilingue(tourData.nombre);
-    tourData.descripcion = await parseYTraducirBilingue(tourData.descripcion);
-    tourData.descripcionCorta = await parseYTraducirBilingue(tourData.descripcionCorta);
-    tourData.itinerarioBasico = await parseYTraducirBilingue(tourData.itinerarioBasico);
-    tourData.puntoEncuentro = await parseYTraducirBilingue(tourData.puntoEncuentro);
-    tourData.politicasCancelacion = await parseYTraducirBilingue(tourData.politicasCancelacion);
-    tourData.restricciones = await parseYTraducirBilingue(tourData.restricciones);
+    const [nombre, descripcion, descripcionCorta, itinerarioBasico, puntoEncuentro, politicasCancelacion, restricciones] = await Promise.all([
+      parseYTraducirBilingue(tourData.nombre),
+      parseYTraducirBilingue(tourData.descripcion),
+      parseYTraducirBilingue(tourData.descripcionCorta),
+      parseYTraducirBilingue(tourData.itinerarioBasico),
+      parseYTraducirBilingue(tourData.puntoEncuentro),
+      parseYTraducirBilingue(tourData.politicasCancelacion),
+      parseYTraducirBilingue(tourData.restricciones)
+    ]);
+    
+    tourData.nombre = nombre;
+    tourData.descripcion = descripcion;
+    tourData.descripcionCorta = descripcionCorta;
+    tourData.itinerarioBasico = itinerarioBasico;
+    tourData.puntoEncuentro = puntoEncuentro;
+    tourData.politicasCancelacion = politicasCancelacion;
+    tourData.restricciones = restricciones;
 
     const safeParseArray = (val) => {
       if (!val) return [];
@@ -197,36 +242,17 @@ exports.crearTour = async (req, res) => {
       }
     }
 
-    // Arrays bilingües
-    const parseArrayBilingue = async (arr) => {
-        if (!arr || !Array.isArray(arr)) return [];
-        const result = [];
-        for (const item of arr) {
-            const tempVal = typeof item === 'object' ? item.es || item.en || item.fr : item;
-            if (!tempVal) {
-                result.push({ es: '', en: '', fr: '' });
-                continue;
-            }
-            
-            let enVal = typeof item === 'object' ? item.en || '' : '';
-            let frVal = typeof item === 'object' ? item.fr || '' : '';
-            
-            if (!enVal) {
-              try { enVal = await translateText(tempVal, 'EN-US'); } catch(e) {}
-            }
-            if (!frVal) {
-              try { frVal = await translateText(tempVal, 'FR'); } catch(e) {}
-            }
-            
-            result.push({ es: tempVal, en: enVal, fr: frVal });
-        }
-        return result;
-    };
-
-    tourData.incluye = await parseArrayBilingue(tourData.incluye);
-    tourData.noIncluye = await parseArrayBilingue(tourData.noIncluye);
-    tourData.queTraer = await parseArrayBilingue(tourData.queTraer);
-    tourData.requisitos = await parseArrayBilingue(tourData.requisitos);
+    const [incluye, noIncluye, queTraer, requisitos] = await Promise.all([
+      parseArrayBilingue(tourData.incluye),
+      parseArrayBilingue(tourData.noIncluye),
+      parseArrayBilingue(tourData.queTraer),
+      parseArrayBilingue(tourData.requisitos)
+    ]);
+    
+    tourData.incluye = incluye;
+    tourData.noIncluye = noIncluye;
+    tourData.queTraer = queTraer;
+    tourData.requisitos = requisitos;
 
     const tour = await Tour.create(tourData);
     res.status(201).json({ success: true, data: tour });
@@ -242,39 +268,23 @@ exports.actualizarTour = async (req, res) => {
   try {
     let tourData = { ...req.body };
     
-    // Helper para parsear y traducir campos bilingües
-    const parseYTraducirBilingue = async (campo) => {
-      let obj = { es: '', en: '', fr: '' };
-      if (!campo) return obj;
-      
-      if (typeof campo === 'string') {
-        if (campo.startsWith('{')) {
-          try { obj = JSON.parse(campo); } catch(e) { obj.es = campo; }
-        } else {
-          obj.es = campo;
-        }
-      } else if (typeof campo === 'object') {
-        obj = { ...campo };
-      }
-
-      if (obj.es) {
-        if (!obj.en) {
-          try { obj.en = await translateText(obj.es, 'EN-US'); } catch(e) {}
-        }
-        if (!obj.fr) {
-          try { obj.fr = await translateText(obj.es, 'FR'); } catch(e) {}
-        }
-      }
-      return obj;
-    };
-
-    tourData.nombre = await parseYTraducirBilingue(tourData.nombre);
-    tourData.descripcion = await parseYTraducirBilingue(tourData.descripcion);
-    tourData.descripcionCorta = await parseYTraducirBilingue(tourData.descripcionCorta);
-    tourData.itinerarioBasico = await parseYTraducirBilingue(tourData.itinerarioBasico);
-    tourData.puntoEncuentro = await parseYTraducirBilingue(tourData.puntoEncuentro);
-    tourData.politicasCancelacion = await parseYTraducirBilingue(tourData.politicasCancelacion);
-    tourData.restricciones = await parseYTraducirBilingue(tourData.restricciones);
+    const [nombre, descripcion, descripcionCorta, itinerarioBasico, puntoEncuentro, politicasCancelacion, restricciones] = await Promise.all([
+      parseYTraducirBilingue(tourData.nombre),
+      parseYTraducirBilingue(tourData.descripcion),
+      parseYTraducirBilingue(tourData.descripcionCorta),
+      parseYTraducirBilingue(tourData.itinerarioBasico),
+      parseYTraducirBilingue(tourData.puntoEncuentro),
+      parseYTraducirBilingue(tourData.politicasCancelacion),
+      parseYTraducirBilingue(tourData.restricciones)
+    ]);
+    
+    tourData.nombre = nombre;
+    tourData.descripcion = descripcion;
+    tourData.descripcionCorta = descripcionCorta;
+    tourData.itinerarioBasico = itinerarioBasico;
+    tourData.puntoEncuentro = puntoEncuentro;
+    tourData.politicasCancelacion = politicasCancelacion;
+    tourData.restricciones = restricciones;
 
     const safeParseArray = (val) => {
       if (!val) return [];
@@ -324,14 +334,15 @@ exports.actualizarTour = async (req, res) => {
         ? JSON.parse(req.body.imagenesEliminar) 
         : req.body.imagenesEliminar;
         
-      await Promise.all(imagenesEliminar.map(async (id) => {
+      const deletionPromises = imagenesEliminar.map(async (id) => {
         const img = imagenesFinales.find(i => i._id.toString() === id);
         if (img) {
           if (cloudinaryConfigurado() && img.cloudinaryId) {
             try { await eliminarImagenCloudinary(img.cloudinaryId); } catch(ex) {}
           }
         }
-      }));
+      });
+      await Promise.all(deletionPromises);
       imagenesFinales = imagenesFinales.filter(i => !imagenesEliminar.includes(i._id.toString()));
     }
 
@@ -410,39 +421,17 @@ exports.actualizarTour = async (req, res) => {
 
     tourData.imagenes = imagenesFinales;
 
-    const parseArrayBilingue = async (arr) => {
-        if (!arr || !Array.isArray(arr)) return [];
-        const result = [];
-        for (const item of arr) {
-            if (typeof item === 'object' && item.es && item.en && item.fr) {
-                result.push(item); // Ya procesado
-                continue;
-            }
-            const tempVal = typeof item === 'object' ? item.es || item.en || item.fr : item;
-            if (!tempVal) {
-                result.push({ es: '', en: '', fr: '' });
-                continue;
-            }
-            
-            let enVal = typeof item === 'object' ? item.en || '' : '';
-            let frVal = typeof item === 'object' ? item.fr || '' : '';
-            
-            if (!enVal) {
-              try { enVal = await translateText(tempVal, 'EN-US'); } catch(e) {}
-            }
-            if (!frVal) {
-              try { frVal = await translateText(tempVal, 'FR'); } catch(e) {}
-            }
-            
-            result.push({ es: tempVal, en: enVal, fr: frVal });
-        }
-        return result;
-    };
-
-    tourData.incluye = await parseArrayBilingue(tourData.incluye);
-    tourData.noIncluye = await parseArrayBilingue(tourData.noIncluye);
-    tourData.queTraer = await parseArrayBilingue(tourData.queTraer);
-    tourData.requisitos = await parseArrayBilingue(tourData.requisitos);
+    const [incluye, noIncluye, queTraer, requisitos] = await Promise.all([
+      parseArrayBilingue(tourData.incluye),
+      parseArrayBilingue(tourData.noIncluye),
+      parseArrayBilingue(tourData.queTraer),
+      parseArrayBilingue(tourData.requisitos)
+    ]);
+    
+    tourData.incluye = incluye;
+    tourData.noIncluye = noIncluye;
+    tourData.queTraer = queTraer;
+    tourData.requisitos = requisitos;
 
     const tour = await Tour.findByIdAndUpdate(req.params.id, tourData, {
       new: true,

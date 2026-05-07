@@ -251,6 +251,11 @@ function createRestaurantCard(restaurant) {
     }
     
     const restaurantId = restaurant._id || restaurant.id;
+    
+    let targetPage = '/restaurante.html';
+    if (restaurant.tipo === 'bar') targetPage = '/bar.html';
+    else if (restaurant.tipo === 'cafeteria') targetPage = '/cafeteria.html';
+
     return `
         <div class="restaurant-card" data-id="${restaurantId}">
             <div class="card-image">
@@ -277,19 +282,9 @@ function createRestaurantCard(restaurant) {
                         <i class="fas fa-phone"></i>
                         <span>${formatPhone(restaurant.telefono)}</span>
                     </div>
-                    <div class="info-item">
-                        <i class="fas fa-envelope"></i>
-                        <span>${restaurant.email}</span>
-                    </div>
-                    ${restaurant.imagenes && restaurant.imagenes.length > 0 ? `
-                    <div class="info-item">
-                        <i class="fas fa-images"></i>
-                        <span>${restaurant.imagenes.length} imagen(es)</span>
-                    </div>
-                    ` : ''}
                 </div>
                 <div class="card-actions" style="display:flex; gap:0.5rem; margin-top:1rem; padding-top:0.75rem; border-top:1px solid var(--gray-100);">
-                    <a href="/restaurante.html?id=${restaurantId}"
+                    <a href="${targetPage}?id=${restaurantId}"
                        class="card-detail-btn"
                        style="flex:1; display:inline-flex; align-items:center; justify-content:center; gap:0.4rem;
                               padding:0.55rem 1rem; background:var(--primary); color:white; border-radius:0.5rem;
@@ -837,11 +832,15 @@ async function renderAuthNavbar() {
         const iniciales = (currentUser.nombre?.charAt(0) || '') + (currentUser.apellido?.charAt(0) || '');
         const badgeColor = currentUser.rol === 'super-admin' ? '#ec4899' :
                            currentUser.rol === 'admin-turismo' ? '#0d9488' :
+                           currentUser.rol === 'gobernamental' ? '#3b82f6' :
+                           currentUser.rol === 'admin-ranking' ? '#1d4ed8' :
                            currentUser.rol === 'admin' ? '#10b981' : 'var(--primary)';
         
         let rolDisplay = currentUser.rol || '';
         if (rolDisplay === 'super-admin') rolDisplay = 'Super Admin';
         else if (rolDisplay === 'admin-turismo') rolDisplay = 'Admin Turismo';
+        else if (rolDisplay === 'gobernamental') rolDisplay = 'Gubernamental';
+        else if (rolDisplay === 'admin-ranking') rolDisplay = 'Admin Ranking';
         else if (rolDisplay === 'admin') rolDisplay = 'Administrador';
         else if (rolDisplay === 'turista') rolDisplay = 'Turista';
 
@@ -856,6 +855,10 @@ async function renderAuthNavbar() {
             links = `<a href="/super-admin.html" class="profile-dropdown-link"><i class="fas fa-crown"></i> Panel Super Admin</a>`;
         } else if (currentUser.rol === 'admin-turismo') {
             links = `<a href="/admin-turismo.html" class="profile-dropdown-link"><i class="fas fa-compass"></i> Panel Turismo</a>`;
+        } else if (currentUser.rol === 'gobernamental') {
+            links = `<a href="/admin-gobierno.html" class="profile-dropdown-link"><i class="fas fa-landmark"></i> Panel Gubernamental</a>`;
+        } else if (currentUser.rol === 'admin-ranking') {
+            links = `<a href="/admin-ranking.html" class="profile-dropdown-link"><i class="fas fa-list-ol"></i> Panel Ranking</a>`;
         } else {
             links = `<a href="/admin.html" class="profile-dropdown-link"><i class="fas fa-cog"></i> Panel Admin</a>`;
         }

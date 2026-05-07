@@ -389,6 +389,8 @@
                             const rol = data.data.admin.rol;
                             if (rol === 'super-admin') window.location.href = '/super-admin.html';
                             else if (rol === 'admin-turismo') window.location.href = '/admin-turismo.html';
+                            else if (rol === 'gobernamental') window.location.href = '/admin-gobierno.html';
+                            else if (rol === 'admin-ranking') window.location.href = '/admin-ranking.html';
                             else if (rol === 'turista') window.location.href = '/user-panel.html';
                             else window.location.href = '/admin.html';
                         }
@@ -462,6 +464,8 @@
                             const rol = data.data.admin.rol;
                             if (rol === 'super-admin') window.location.href = '/super-admin.html';
                             else if (rol === 'admin-turismo') window.location.href = '/admin-turismo.html';
+                            else if (rol === 'gobernamental') window.location.href = '/admin-gobierno.html';
+                            else if (rol === 'admin-ranking') window.location.href = '/admin-ranking.html';
                             else if (rol === 'turista') window.location.href = '/user-panel.html';
                             else window.location.href = '/admin.html';
                         }
@@ -567,6 +571,8 @@
                             localStorage.setItem('currentUser', JSON.stringify(user));
                             if (rol === 'super-admin') window.location.replace('/super-admin.html');
                             else if (rol === 'admin-turismo') window.location.replace('/admin-turismo.html');
+                            else if (rol === 'gobernamental') window.location.replace('/admin-gobierno.html');
+                            else if (rol === 'admin-ranking') window.location.replace('/admin-ranking.html');
                             else if (rol === 'turista') window.location.replace('/user-panel.html');
                             else window.location.replace('/admin.html');
                             return;

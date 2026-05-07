@@ -2,9 +2,15 @@
 // Lógica para el mapa interactivo de RestauranteWeb usando Mapbox
 
 // Configura aquí tu token de Mapbox
-mapboxgl.accessToken = 'YOUR_MAPBOX_ACCESS_TOKEN'; // Configura aquí tu token de Mapbox
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const res = await fetch('/api/config/mapbox');
+        const data = await res.json();
+        if (data.success && data.token) mapboxgl.accessToken = data.token;
+        else return;
+    } catch(err) { return; }
+
     // Inicializar el mapa
     const map = new mapboxgl.Map({
         container: 'public-map',
@@ -155,13 +161,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Obtener rating según el tipo
     function getRating(item) {
+        let score = 0, count = 0;
+        
         if (item._itemType === 'agencia') {
-            return { score: item.calificacionPromedio || 0, count: item.numeroResenas || 0 };
+            score = item.calificacionPromedio || 0;
+            count = item.numeroResenas || 0;
+        } else if (item._itemType === 'hospedaje') {
+            score = item.calificacion?.promedio || 0;
+            count = item.calificacion?.totalReviews || 0;
+        } else {
+            score = item.googleRating || 0;
+            count = item.googleTotalReviews || 0;
         }
-        if (item._itemType === 'hospedaje') {
-            return { score: item.calificacion?.promedio || 0, count: item.calificacion?.totalReviews || 0 };
-        }
-        return { score: item.googleRating || 0, count: item.googleTotalReviews || 0 };
+
+        return { score, count };
     }
 
     // Obtener URL de detalle según el tipo
@@ -178,7 +191,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (item._itemType === 'hospedaje') {
             return item.imagenes && item.imagenes.length > 0 ? item.imagenes[0].url : fallback;
         }
-        return item.imagenes && item.imagenes.length > 0 ? item.imagenes[0].url : fallback;
+        // Restaurantes: compact API devuelve 'imagenPrincipal', full API devuelve 'imagenes'
+        if (item.imagenPrincipal) return item.imagenPrincipal.url || fallback;
+        if (item.imagenes && item.imagenes.length > 0) return item.imagenes[0].url || fallback;
+        return fallback;
     }
 
     // Cargar todo y renderizar
@@ -330,7 +346,15 @@ document.addEventListener('DOMContentLoaded', () => {
             boundsCoords.push([lng, lat]);
 
             // Lista del sidebar
-            const ratingText = rating.score > 0 ? ` · <span style="color:#f59e0b;">★</span> ${rating.score.toFixed(1)}` : '';
+            const ratingHtmlSidebar = rating.score > 0 ? `
+                <div style="display:flex; align-items:center; gap:0.2rem; color:#f59e0b; font-size:0.8rem; margin-top:2px;">
+                    <i class="fas fa-star"></i>
+                    <span style="color:#374151; font-weight:600;">${rating.score.toFixed(1)}</span>
+                    ${rating.count ? `<span style="color:#6b7280; font-weight:normal; font-size:0.75rem;">(${rating.count})</span>` : ''}
+                </div>
+            ` : `
+                <div style="font-size:0.75rem; color:#9ca3af; margin-top:2px;">Nuevo</div>
+            `;
 
             const listItem = document.createElement('div');
             listItem.className = 'list-item';
@@ -340,8 +364,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="list-item-content">
                     <div class="list-item-title">${item.nombre}</div>
-                    <div class="list-item-address">
-                        ${address}${ratingText}
+                    ${ratingHtmlSidebar}
+                    <div class="list-item-address" style="margin-top:4px;">
+                        ${address}
                         ${distanceText ? `<br>${distanceText}` : ''}
                     </div>
                 </div>

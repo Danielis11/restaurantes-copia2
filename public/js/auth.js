@@ -5,6 +5,14 @@ class AuthManager {
         this.initializeAuth();
     }
 
+    getDashboardByRole(rol) {
+        if (rol === 'super-admin') return '/super-admin.html';
+        if (rol === 'admin-turismo') return '/admin-turismo.html';
+        if (rol === 'gobernamental') return '/admin-gobierno.html';
+        if (rol === 'admin-ranking') return '/admin-ranking.html';
+        return '/admin.html';
+    }
+
     initializeAuth() {
         // Verificar si ya está autenticado al cargar la página
         this.checkAuthStatus();
@@ -88,7 +96,7 @@ class AuthManager {
                 
                 // Redirigir al panel admin
                 setTimeout(() => {
-                    window.location.href = '/admin.html';
+                    window.location.href = this.getDashboardByRole(response?.data?.admin?.rol);
                 }, 1000);
             }
         } catch (error) {
@@ -145,7 +153,7 @@ class AuthManager {
                 
                 // Redirigir al panel admin
                 setTimeout(() => {
-                    window.location.href = '/admin.html';
+                    window.location.href = this.getDashboardByRole(response?.data?.admin?.rol);
                 }, 1000);
             }
         } catch (error) {
@@ -303,7 +311,7 @@ class AuthManager {
         const currentPath = window.location.pathname;
 
         // Rutas que requieren autenticación
-        const protectedRoutes = ['/admin.html', '/admin'];
+        const protectedRoutes = ['/admin.html', '/admin', '/super-admin.html', '/admin-turismo.html', '/admin-gobierno.html', '/admin-ranking.html', '/admin-ranking'];
         
         // Rutas que NO deben ser accesibles si ya está autenticado
         const authRoutes = ['/login.html', '/register.html'];
@@ -319,7 +327,7 @@ class AuthManager {
                     
                     // Si está en página de auth, redirigir al admin
                     if (authRoutes.includes(currentPath)) {
-                        window.location.href = '/admin.html';
+                        window.location.href = this.getDashboardByRole(response?.data?.admin?.rol);
                         return;
                     }
                 } else {

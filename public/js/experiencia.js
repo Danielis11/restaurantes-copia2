@@ -1,4 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Prevent browser from restoring previous scroll position on refresh
+    if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+
     const urlParams = new URLSearchParams(window.location.search);
     currentTourId = urlParams.get('id');
 
@@ -8,8 +14,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     loadExperienceData(currentTourId);
-    setupReviewsAndLikes();
+    setupFavoriteToggle();
+    setupReviewPhotoUpload();
 });
+
 
 let currentTourId = null;
 let currentUser = null;
@@ -18,8 +26,8 @@ let currentTourImages = [];
 let currentTourImageIndex = 0;
 
 function showRecommendationSkeletons(lang) {
-    const container = document.getElementById('cross-recommendations');
-    const recGrid = document.getElementById('recommendations-grid');
+    const container = document.getElementById('recomendaciones-container');
+    const recGrid = document.getElementById('recomendaciones-scroll');
     if (!container || !recGrid) return;
     
     if (!document.getElementById('pulse-style')) {
@@ -31,36 +39,11 @@ function showRecommendationSkeletons(lang) {
     
     container.style.display = 'block';
     
-    // Ensure the original 'Te podría interesar' title is visible
-    const h2Title = container.querySelector('h2');
-    if (h2Title) h2Title.style.display = 'block';
+    const skeletonHTML = Array(5).fill(`
+        <div style="min-width: 200px; max-width: 220px; flex-shrink: 0; height: 220px; border-radius: var(--radius-lg); background: #e2e8f0; animation: pulseLoader 1.5s infinite;"></div>
+    `).join('');
     
-    const skeletonHTML = `
-        <div style="height:200px; border-radius:16px; background:#e2e8f0; animation:pulseLoader 1.5s infinite;"></div>
-        <div style="height:200px; border-radius:16px; background:#e2e8f0; animation:pulseLoader 1.5s infinite; animation-delay: 0.2s;"></div>
-        <div style="height:200px; border-radius:16px; background:#e2e8f0; animation:pulseLoader 1.5s infinite; animation-delay: 0.4s;"></div>
-    `;
     recGrid.innerHTML = skeletonHTML;
-    
-    const restCercTxt = lang === 'en' ? 'Nearby Restaurants' : lang === 'fr' ? 'Restaurants à Proximité' : 'Restaurantes Cercanos';
-    let restSection = document.getElementById('nearby-restaurants-section');
-    if (!restSection) {
-        restSection = document.createElement('div');
-        restSection.id = 'nearby-restaurants-section';
-        restSection.style.marginTop = '2rem';
-        restSection.innerHTML = `
-            <h2 style="font-size:1.4rem; font-weight:700; color:var(--gray-800); margin-bottom:1.2rem; text-align:center;">
-                <i class="fas fa-utensils" style="color: var(--primary); margin-right: 0.4rem;"></i> ${restCercTxt}
-            </h2>
-            <div id="nearby-restaurants-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 320px)); gap:1.2rem; justify-content:center;">
-                ${skeletonHTML}
-            </div>
-        `;
-        container.appendChild(restSection);
-    } else {
-        restSection.style.display = 'block';
-        document.getElementById('nearby-restaurants-grid').innerHTML = skeletonHTML;
-    }
 }
 
 async function loadExperienceData(id) {
@@ -130,9 +113,12 @@ function renderExperience(tour) {
     setMeta('tw-title', ogTitle);
     setMeta('tw-description', ogDesc);
     
-    document.getElementById('hero-name').textContent = getL(tour.nombre) || xpTxt;
-    document.getElementById('hero-tipo').textContent = translateCategoria(tour.categoria) || 'Tour';
-    document.getElementById('hero-price').textContent = `$${tour.precio?.amount || 0} ${tour.precio?.moneda || 'MXN'}`;
+    const heroName = document.getElementById('hero-name') || document.getElementById('hero-nombre');
+    if (heroName) heroName.textContent = getL(tour.nombre) || xpTxt;
+    const heroTipo = document.getElementById('hero-tipo');
+    if (heroTipo) heroTipo.textContent = translateCategoria(tour.categoria) || 'Tour';
+    const heroPrice = document.getElementById('hero-price') || document.getElementById('hero-precio');
+    if (heroPrice) heroPrice.textContent = `$${tour.precio?.amount || 0} ${tour.precio?.moneda || 'MXN'}`;
     document.getElementById('desc-text').textContent = getL(tour.descripcion) || getL(tour.descripcionCorta) || noDescTxt;
 
     // Badges
@@ -146,10 +132,11 @@ function renderExperience(tour) {
                         tour.dificultad;
 
     const badgesHtml = `
-        <span class="detail-badge badge-cat"><i class="fas fa-tag"></i> ${translateCategoria(tour.categoria)}</span>
-        <span class="detail-badge badge-diff ${diffClass}">${diffDisplay}</span>
+        <span class="detail-badge badge-cat" style="background: rgba(37, 99, 235, 0.08); color: var(--primary); padding: 0.25rem 0.6rem; border-radius: 999px; font-weight: 600; font-size: 0.8rem;"><i class="fas fa-tag"></i> ${translateCategoria(tour.categoria)}</span>
+        <span class="detail-badge badge-diff ${diffClass}" style="color: white; padding: 0.25rem 0.6rem; border-radius: 999px; font-weight: 600; font-size: 0.8rem;">${diffDisplay}</span>
     `;
-    document.getElementById('hero-badges').innerHTML = badgesHtml;
+    const heroBadges = document.getElementById('hero-badges');
+    if (heroBadges) heroBadges.innerHTML = badgesHtml;
 
     // Details Grid
     const diasHTML = (tour.disponibilidad?.diasSemana && tour.disponibilidad.diasSemana.length) ? 
@@ -258,13 +245,12 @@ function renderExperience(tour) {
         document.getElementById('hero-indicator').innerHTML = '';
     }
 
-    renderReviews(tour.resenas || [], tour.calificacionPromedio || 0, tour.numeroResenas || 0);
+    renderNativeReviews(tour.resenas || []);
     renderUserGallery(tour.resenas || []);
     renderFAQ(tour);
     
     Promise.all([
-        loadRecommendations(tour),
-        loadNearbyRestaurants(tour)
+        loadRecomendaciones(tour)
     ]).catch(err => console.error('Error in side recommendations:', err));
 
     renderMeetingMap(tour);
@@ -600,80 +586,116 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// ===== REVIEWS AND LIKES LOGIC =====
+function renderNativeReviews(reviews) {
+    const container = document.getElementById('native-reviews-container');
+    const summaryEl = document.getElementById('reviews-summary-native');
+    if (!container) return;
 
-function renderReviews(resenas, promedio, total) {
-    const summaryContainer = document.getElementById('reviews-summary');
-    const listContainer = document.getElementById('reviews-list');
-    
-    const lang = localStorage.getItem('appLang') || 'es';
-    if (total > 0) {
-        // Render Summary
-        let starsHtml = '';
-        for (let i = 1; i <= 5; i++) {
-            if (i <= promedio) {
-                starsHtml += '<i class="fas fa-star" style="color: var(--warning);"></i>';
-            } else if (i - 0.5 <= promedio) {
-                starsHtml += '<i class="fas fa-star-half-alt" style="color: var(--warning);"></i>';
-            } else {
-                starsHtml += '<i class="far fa-star" style="color: var(--warning);"></i>';
-            }
-        }
-        
-        const reviewTxt = lang === 'en' ? (total === 1 ? 'review' : 'reviews') : (total === 1 ? 'reseña' : 'reseñas');
-        
-        summaryContainer.innerHTML = `
-            <div style="font-size: 2.5rem; font-weight: 700; color: var(--gray-800);">${Number(promedio).toFixed(1)}</div>
-            <div style="font-size: 1.2rem; margin: 0.5rem 0;">${starsHtml}</div>
-            <div style="color: var(--gray-500);">${total} ${reviewTxt}</div>
-        `;
-        
-        // Render List
-        listContainer.innerHTML = resenas.map(r => {
-            let userStars = '';
-            for (let i = 1; i <= 5; i++) {
-                userStars += i <= r.calificacion 
-                    ? '<i class="fas fa-star" style="color: var(--warning); font-size: 0.8rem;"></i>' 
-                    : '<i class="far fa-star" style="color: var(--warning); font-size: 0.8rem;"></i>';
-            }
-            
-            const date = new Date(r.fecha).toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' });
-            
-            // Fotos de la reseña
-            let fotosHtml = '';
-            if (r.fotos && r.fotos.length > 0) {
-                fotosHtml = `
-                    <div style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:0.75rem;">
-                        ${r.fotos.map((f, idx) => `
-                            <img src="${f.url}" alt="Foto de ${r.nombreUsuario}" 
-                                style="width:80px; height:80px; object-fit:cover; border-radius:0.4rem; cursor:pointer; border:1px solid var(--gray-200); transition: transform 0.2s;"
-                                onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"
-                                onclick="openPhotoLightbox('${f.url}')">
-                        `).join('')}
-                    </div>
-                `;
-            }
-            
-            return `
-                <div style="padding: 1rem; border: 1px solid var(--gray-200); border-radius: 0.5rem; background: var(--gray-50);">
-                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
-                        <div>
-                            <div style="font-weight: 600; color: var(--gray-800);">${r.nombreUsuario}</div>
-                            <div style="margin-top: 0.2rem;">${userStars}</div>
-                        </div>
-                        <div style="font-size: 0.8rem; color: var(--gray-500);">${date}</div>
-                    </div>
-                    <p style="color: var(--gray-700); font-size: 0.95rem; margin-top: 0.5rem; line-height: 1.5;">${r.comentario}</p>
-                    ${fotosHtml}
-                </div>
-            `;
-        }).join('');
-    } else {
-        const noReviewsTxt = lang === 'en' ? 'No reviews yet. Be the first to review!' : 'Aún no hay reseñas. ¡Sé el primero en opinar!';
-        summaryContainer.innerHTML = `<p style="color: var(--gray-500); padding: 1rem 0;">${noReviewsTxt}</p>`;
-        listContainer.innerHTML = '';
+    if (!reviews || reviews.length === 0) {
+        if (summaryEl) summaryEl.innerHTML = '<p style="color: var(--gray-500); padding: 1rem 0;">Aún no hay reseñas. ¡Sé el primero en opinar!</p>';
+        container.innerHTML = '';
+        return;
     }
+
+    const totalReviews = reviews.length;
+    const avgRating = reviews.reduce((acc, r) => acc + (r.calificacion || r.rating || 0), 0) / totalReviews;
+    const ratingCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+    reviews.forEach(r => {
+        const rt = r.calificacion || r.rating || 0;
+        if (rt >= 1 && rt <= 5) ratingCounts[Math.floor(rt)]++;
+    });
+
+    if (summaryEl) {
+        summaryEl.innerHTML = `
+            <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 3rem; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--gray-200);">
+                <div style="display: flex; flex-direction: column; align-items: center; min-width: 140px;">
+                    <div style="font-size: 4rem; font-weight: 400; color: var(--gray-900); line-height: 1; font-family: 'Google Sans', Roboto, Arial, sans-serif;">${avgRating.toFixed(1)}</div>
+                    <div style="display: flex; gap: 2px; margin: 0.5rem 0 0.25rem 0;">
+                        ${Array(5).fill(0).map((_, i) => `<i class="fas fa-star" style="color: ${i < avgRating ? '#fbbc04' : '#e0e0e0'}; font-size: 1.125rem;"></i>`).join('')}
+                    </div>
+                    <p style="color: var(--gray-600); font-size: 0.85rem; margin: 0;">${totalReviews} opinion${totalReviews !== 1 ? 'es' : ''}</p>
+                </div>
+                <div style="flex: 1; min-width: 250px; display: flex; flex-direction: column; gap: 0.4rem; padding-right: 1rem;">
+                    ${[5, 4, 3, 2, 1].map(stars => {
+                        const count = ratingCounts[stars];
+                        const pct = totalReviews > 0 ? (count / totalReviews) * 100 : 0;
+                        return `<div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <span style="font-size: 0.85rem; font-weight: 500; color: var(--gray-700); width: 12px; text-align: right;">${stars}</span>
+                            <div style="flex: 1; height: 10px; background: #f1f3f4; border-radius: 5px; overflow: hidden;">
+                                <div style="height: 100%; background: #fbbc04; border-radius: 5px; width: ${pct}%;"></div>
+                            </div>
+                        </div>`;
+                    }).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    container.innerHTML = reviews.map(r => {
+        const rating = r.calificacion || r.rating || 0;
+        const userName = r.nombreUsuario || (r.userId && r.userId.nombre) || 'Anónimo';
+        const userInitial = userName.charAt(0).toUpperCase();
+        const fecha = new Date(r.fecha || r.fechaCreacion).toLocaleDateString('es-MX', { year: 'numeric', month: 'short', day: 'numeric' });
+
+        let fotosHtml = '';
+        if (r.fotos && r.fotos.length > 0) {
+            fotosHtml = `<div style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:0.75rem;">
+                ${r.fotos.map(f => `<img src="${f.url}" alt="Foto" style="width:64px; height:64px; object-fit:cover; border-radius:0.4rem; cursor:pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'" onclick="openPhotoLightbox('${f.url}')">`).join('')}
+            </div>`;
+        }
+
+        let replyBtnHtml = '';
+        try {
+            const cu = JSON.parse(localStorage.getItem('currentUser'));
+            if (cu && (cu.rol === 'admin' || cu.rol === 'admin-turismo' || cu.rol === 'super-admin') && !r.respuestaAdmin) {
+                replyBtnHtml = `<button onclick="toggleReplyForm('${r._id}')" class="btn" style="background: transparent; border: none; color: var(--primary); padding: 0.25rem 0.5rem; font-size: 0.85rem; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 0.375rem; margin-left: 0.5rem;"><i class="fas fa-reply"></i><span>Responder</span></button>`;
+            }
+        } catch(e) {}
+
+        let isLiked = false;
+        try {
+            const cu2 = JSON.parse(localStorage.getItem('currentUser'));
+            if (cu2 && r.likedBy && r.likedBy.includes(cu2._id)) isLiked = true;
+        } catch(e) {}
+
+        return `
+            <div class="review-card" style="position: relative;">
+                ${r.destacada ? '<span style="position: absolute; top: -10px; right: 1.5rem; background: #f59e0b; color: white; padding: 2px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; z-index: 10;"><i class="fas fa-star" style="font-size: 10px; margin-right: 4px;"></i> Destacada</span>' : ''}
+                <div style="display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.75rem;">
+                    <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 1.125rem; flex-shrink: 0;">${userInitial}</div>
+                    <div style="flex-grow: 1;">
+                        <h4 style="margin: 0; font-size: 0.95rem; font-weight: 600; color: var(--gray-900);">${userName}</h4>
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
+                            <div style="display: flex; gap: 2px;">${Array(5).fill(0).map((_, i) => `<i class="fas fa-star" style="color: ${i < rating ? '#f59e0b' : '#e5e7eb'}; font-size: 0.75rem;"></i>`).join('')}</div>
+                            <span style="font-size: 0.75rem; color: var(--gray-500);">${fecha}</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="flex-grow: 1; display: flex; flex-direction: column;">
+                    <p style="color: var(--gray-700); font-size: 0.9rem; margin: 0; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;">${r.comentario}</p>
+                    ${fotosHtml}
+                    ${r.respuestaAdmin ? `<div style="margin-top: 1rem; padding: 0.75rem; background: var(--gray-50); border-radius: 0.5rem; border: 1px solid var(--gray-100);"><div style="font-weight: 600; color: var(--gray-900); font-size: 0.8rem; margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.4rem;"><i class="fas fa-reply" style="color: var(--primary);"></i> Propietario</div><p style="color: var(--gray-700); font-size: 0.85rem; line-height: 1.4; margin: 0;">${r.respuestaAdmin}</p></div>` : ''}
+                    <div id="reply-form-${r._id}" style="display: none; margin-top: 1rem; padding: 1rem; background: #f0f4ff; border-radius: 0.75rem; border: 1px solid #dbeafe;">
+                        <textarea id="reply-text-${r._id}" placeholder="Escribe tu respuesta..." maxlength="500" style="width: 100%; min-height: 80px; border: 1px solid var(--gray-200); border-radius: 0.5rem; padding: 0.75rem; font-family: inherit; font-size: 0.9rem; resize: vertical; outline: none;"></textarea>
+                        <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem;">
+                            <button onclick="toggleReplyForm('${r._id}')" style="background: transparent; border: 1px solid var(--gray-200); border-radius: 0.5rem; padding: 0.4rem 1rem; cursor: pointer; font-size: 0.85rem; color: var(--gray-600);">Cancelar</button>
+                            <button onclick="submitReply('${r._id}')" style="background: var(--primary); color: white; border: none; border-radius: 0.5rem; padding: 0.4rem 1rem; cursor: pointer; font-size: 0.85rem; font-weight: 600;">Publicar</button>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem; display: flex; align-items: center; padding-top: 0.75rem; border-top: 1px solid var(--gray-100);">
+                    <button onclick="likeReview('${r._id}', this)" class="btn" style="background: transparent; border: none; color: ${isLiked ? '#3b82f6' : 'var(--gray-500)'}; padding: 0.25rem 0.5rem; font-size: 0.85rem; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 0.375rem;">
+                        <i class="${isLiked ? 'fas' : 'far'} fa-thumbs-up" style="font-size: 1rem;"></i>
+                        <span>Útil (<span id="like-count-${r._id}">${r.likes || 0}</span>)</span>
+                    </button>
+                    ${replyBtnHtml}
+                </div>
+            </div>
+        `;
+    }).join('');
 }
+
+
 
 function renderUserGallery(resenas) {
     const galleryCard = document.getElementById('card-user-gallery');
@@ -849,414 +871,349 @@ function getTourImage(tour) {
     return '/images/PueblosMágicos.svg.png';
 }
 
-async function loadRecommendations(currentTour) {
+async function loadRecomendaciones(currentTour) {
     try {
         const lang = localStorage.getItem('appLang') || 'es';
-        const tipo = currentTour.tipo; // Assuming 'tipo' is a property of currentTour
-        const res = await fetch(`/api/tours?tipo=${encodeURIComponent(tipo)}&limit=3&lang=${lang}&allLangs=true`);
-        const data = await res.json();
-        
-        if (!data.success || !data.data) return;
-        
+        const tipo = currentTour.tipo;
         const currentId = currentTour._id || currentTour.id;
         
-        // Filter: same category or same type, excluding current tour
-        let similar = data.data.filter(t => {
-            const tId = t._id || t.id;
-            return tId !== currentId && (
-                t.categoria === currentTour.categoria || t.tipo === currentTour.tipo
-            );
-        });
-        
-        // Shuffle and take up to 3
-        similar = similar.sort(() => Math.random() - 0.5).slice(0, 3);
-        
-        const container = document.getElementById('cross-recommendations');
-        const grid = document.getElementById('recommendations-grid');
-        
-        if (similar.length === 0) {
-            grid.innerHTML = '';
-            const t = container.querySelector('h2');
-            if (t) t.style.display = 'none';
-            return;
-        }
-
-        container.style.display = 'block';
-        
-        grid.innerHTML = similar.map(tour => {
-            const img = getTourImage(tour);
-            
-            let iconClass = 'fas fa-map-marked-alt';
-            if (tour.categoria) {
-                const catLower = tour.categoria.toLowerCase();
-                if (catLower.includes('cultural') || catLower.includes('arqueolog') || catLower.includes('historia')) iconClass = 'fas fa-landmark';
-                else if (catLower.includes('naturaleza') || catLower.includes('eco')) iconClass = 'fas fa-leaf';
-                else if (catLower.includes('aventura')) iconClass = 'fas fa-hiking';
-                else if (catLower.includes('acu') || catLower.includes('rio') || catLower.includes('cascada')) iconClass = 'fas fa-water';
-                else if (catLower.includes('gastro')) iconClass = 'fas fa-utensils';
-                else if (catLower.includes('religios')) iconClass = 'fas fa-church';
-            }
-            const cleanTitle = getL(tour.nombre) || 'Experiencia';
-            
-            return `
-                <a href="/experiencia.html?id=${tour._id || tour.id}" style="text-decoration:none;">
-                    <div style="height:200px; border-radius:16px; position:relative; overflow:hidden; box-shadow:0 4px 10px rgba(0,0,0,0.15); transition:all 0.3s ease;"
-                        onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.2)'"
-                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 10px rgba(0,0,0,0.15)'">
-                        <div style="background-image:url('${img}'); position:absolute; inset:0; background-size:cover; background-position:center; filter:brightness(0.85);"></div>
-                        <div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.1) 100%);"></div>
-                        
-                        <div style="position:absolute; top:0.8rem; right:0.8rem; z-index:2;">
-                            <span style="background:var(--primary); color:white; padding:0.2rem 0.6rem; border-radius:1rem; font-size:0.7rem; font-weight:700; box-shadow:0 2px 4px rgba(0,0,0,0.3);"><i class="fas fa-tag" style="margin-right:0.3rem;"></i>${translateCategoria(tour.categoria)}</span>
-                        </div>
-
-                        <div style="position:relative; z-index:2; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:1.2rem; text-align:center;">
-                            <i class="${iconClass}" style="color:white; font-size:2.5rem; margin-bottom:1rem; filter:drop-shadow(0 2px 5px rgba(0,0,0,0.6));"></i>
-                            <span style="color:white; font-weight:700; font-size:1.1rem; text-shadow:0 2px 4px rgba(0,0,0,0.9); line-height:1.2;">${cleanTitle}</span>
-                        </div>
-                    </div>
-                </a>
-            `;
-        }).join('');
-    } catch (err) {
-        console.error('Error loading recommendations:', err);
-    }
-}
-
-// ===== NEARBY RESTAURANTS =====
-function haversineDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371; // km
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-        Math.sin(dLon/2) * Math.sin(dLon/2);
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
-
-async function loadNearbyRestaurants(currentTour) {
-    try {
-        const lang = localStorage.getItem('appLang') || 'es';
-        const response = await fetch(`/api/restaurants?limit=3&sort=-calificacion&lang=${lang}`);
-        const data = await response.json();
-        
-        const hideRest = () => {
-            const r = document.getElementById('nearby-restaurants-section');
-            if (r) r.style.display = 'none';
-        };
-
-        if (!data.success || !data.data || !data.data.restaurantes) {
-            hideRest();
-            return;
-        }
-        
-        let restaurants = data.data.restaurantes.filter(r => r.activo !== false);
-        
-        // If tour has coordinates, sort by distance
-        const tourLat = currentTour.direccion?.coordenadas?.lat;
-        const tourLng = currentTour.direccion?.coordenadas?.lng;
-        
-        if (tourLat && tourLng) {
-            restaurants = restaurants.map(r => {
-                const rLat = r.direccion?.coordenadas?.lat;
-                const rLng = r.direccion?.coordenadas?.lng;
-                r._distance = (rLat && rLng) ? haversineDistance(tourLat, tourLng, rLat, rLng) : 9999;
-                return r;
-            }).sort((a, b) => a._distance - b._distance);
-        } else {
-            // Random selection
-            restaurants = restaurants.sort(() => Math.random() - 0.5);
-        }
-        
-        // Take up to 3
-        restaurants = restaurants.slice(0, 3);
-        if (restaurants.length === 0) {
-            const r = document.getElementById('nearby-restaurants-section');
-            if (r) r.style.display = 'none';
-            return;
-        }
-        
-        // Show container and populate grid
-        const container = document.getElementById('cross-recommendations');
-        container.style.display = 'block';
-        
-        const restCercTxt = lang === 'en' ? 'Nearby Restaurants' : 'Restaurantes Cercanos';
-
-        // Add heading and grid for restaurants
-        let restaurantSection = document.getElementById('nearby-restaurants-section');
-        if (!restaurantSection) {
-            restaurantSection = document.createElement('div');
-            restaurantSection.id = 'nearby-restaurants-section';
-            restaurantSection.style.marginTop = '2rem';
-            container.appendChild(restaurantSection);
-        }
-        restaurantSection.innerHTML = `
-            <h2 style="font-size:1.4rem; font-weight:700; color:var(--gray-800); margin-bottom:1.2rem; text-align:center;">
-                <i class="fas fa-utensils" style="color: var(--primary); margin-right: 0.4rem;"></i> ${restCercTxt}
-            </h2>
-            <div id="nearby-restaurants-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 320px)); gap:1.2rem; justify-content:center;"></div>
-        `;
-        
-        const grid = document.getElementById('nearby-restaurants-grid');
-        if (!grid) return;
-        
-        grid.innerHTML = restaurants.map(rest => {
-            const img = (rest.imagenes && rest.imagenes.length > 0 && rest.imagenes[0].url) 
-                ? rest.imagenes[0].url 
-                : '/images/PueblosMágicos.svg.png';
-            const distTxt = rest._distance && rest._distance < 9999 
-                ? `<div style="position:absolute; top:0.8rem; right:0.8rem; background:rgba(0,0,0,0.7); color:white; padding:0.2rem 0.6rem; border-radius:1rem; font-size:0.75rem; font-weight:600; z-index:3; backdrop-filter:blur(4px); border:1px solid rgba(255,255,255,0.2);"><i class="fas fa-map-marker-alt" style="margin-right:0.3rem;"></i>${rest._distance.toFixed(1)} km</div>`
-                : '';
-                
-            const cleanTitle = getL(rest.nombre) || 'Restaurante';
-            
-            return `
-                <a href="/restaurante.html?id=${rest._id || rest.id}" style="text-decoration:none;">
-                     <div style="height:200px; border-radius:16px; position:relative; overflow:hidden; box-shadow:0 4px 10px rgba(0,0,0,0.15); transition:all 0.3s ease;"
-                        onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.2)'"
-                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 10px rgba(0,0,0,0.15)'">
-                        <div style="background-image:url('${img}'); position:absolute; inset:0; background-size:cover; background-position:center; filter:brightness(0.85);"></div>
-                        <div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.1) 100%);"></div>
-                        
-                        ${distTxt}
-                        <div style="position:absolute; top:0.8rem; left:0.8rem; z-index:2;">
-                            <span style="background:#eab308; color:white; padding:0.2rem 0.6rem; border-radius:1rem; font-size:0.75rem; font-weight:700; box-shadow:0 2px 4px rgba(0,0,0,0.3);"><i class="fas fa-star" style="margin-right:0.3rem;"></i>${rest.calificacionPromedio || 'N/A'}</span>
-                        </div>
-
-                        <div style="position:relative; z-index:2; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:1.2rem; text-align:center;">
-                            <i class="fas fa-utensils" style="color:white; font-size:2.5rem; margin-bottom:1rem; filter:drop-shadow(0 2px 5px rgba(0,0,0,0.6));"></i>
-                            <span style="color:white; font-weight:700; font-size:1.1rem; text-shadow:0 2px 4px rgba(0,0,0,0.9); line-height:1.2;">${cleanTitle}</span>
-                        </div>
-                    </div>
-                </a>
-            `;
-        }).join('');
-    } catch (err) {
-        console.error('Error loading nearby restaurants:', err);
-    }
-}
-
-async function setupReviewsAndLikes() {
-    const token = localStorage.getItem('authToken');
-    
-    // UI Elements
-    const btnWriteReview = document.getElementById('btn-write-review');
-    const formContainer = document.getElementById('review-form-container');
-    const btnToggleLike = document.getElementById('btn-toggle-like');
-    
-    // Check Auth
-    if (token) {
-        try {
-            const stored = localStorage.getItem('currentUser');
-            if (stored) currentUser = JSON.parse(stored);
-            
-            if (currentUser && currentUser.rol === 'turista') {
-                // UI Changes - Logged in Tourist
-                if (btnWriteReview) btnWriteReview.style.display = 'block';
-                if (btnToggleLike) btnToggleLike.style.display = 'inline-flex';
-                
-                // Fetch User Favorites to update Like button state
-                const res = await fetch('/api/auth/user/profile', {
-                    headers: { 'Authorization': 'Bearer ' + token }
+        // Cargar experiencias similares
+        const resTours = await fetch(`/api/tours?tipo=${encodeURIComponent(tipo)}&limit=5&lang=${lang}&allLangs=true&compact=true`);
+        let toursData = [];
+        if (resTours.ok) {
+            const data = await resTours.json();
+            if (data.success && data.data) {
+                toursData = data.data.filter(t => {
+                    const tId = t._id || t.id;
+                    return tId !== currentId && (t.categoria === currentTour.categoria || t.tipo === currentTour.tipo);
                 });
-                
-                if (res.ok) {
-                    const data = await res.json();
-                    const favs = data.data.experienciasFavoritas || [];
-                    const fav = favs.find(f => f.tourId === currentTourId);
-                    
-                    if (fav) {
-                        setLikeButtonState(true);
-                    }
-                }
-            } else {
-               if (btnToggleLike) {
-                   btnToggleLike.style.display = 'none';
-               }
             }
-        } catch(e) { console.error('Error setup auth', e); }
-    } else {
-        if (btnToggleLike) {
-            btnToggleLike.style.display = 'none';
         }
-    }
-    
-    // Setup Review Form Toggle
-    if (btnWriteReview) {
-        btnWriteReview.addEventListener('click', () => {
-            const token = localStorage.getItem('authToken');
-            if (token) {
-                formContainer.style.display = formContainer.style.display === 'none' ? 'block' : 'none';
-            } else {
-                window.location.href = '/login.html';
-            }
-        });
-    }
-    
-    const btnCancel = document.getElementById('btn-cancel-review');
-    if (btnCancel) {
-        btnCancel.addEventListener('click', () => {
-            formContainer.style.display = 'none';
-        });
-    }
-    
-    // ===== Photo upload preview logic =====
-    let reviewPhotos = [];
-    const photoInput = document.getElementById('review-photo-input');
-    const photoPreview = document.getElementById('review-photo-preview');
-    const photoZone = document.getElementById('review-photo-zone');
-    
-    function addReviewPhotos(files) {
-        const remaining = 5 - reviewPhotos.length;
-        const toAdd = Array.from(files).filter(f => f.type.startsWith('image/')).slice(0, remaining);
         
-        toAdd.forEach(file => {
-            if (file.size > 5 * 1024 * 1024) {
-                alert(`"${file.name}" supera los 5MB.`);
-                return;
+        // Cargar restaurantes cercanos
+        const resRests = await fetch(`/api/restaurants?limit=5&sort=-calificacion&lang=${lang}&compact=true`);
+        let restsData = [];
+        if (resRests.ok) {
+            const data = await resRests.json();
+            if (data.success && data.data && data.data.restaurantes) {
+                restsData = data.data.restaurantes.filter(r => r.activo !== false);
+                
+                const tourLat = currentTour.direccion?.coordenadas?.lat;
+                const tourLng = currentTour.direccion?.coordenadas?.lng;
+                
+                if (tourLat && tourLng) {
+                    restsData = restsData.map(r => {
+                        const rLat = r.direccion?.coordenadas?.lat;
+                        const rLng = r.direccion?.coordenadas?.lng;
+                        r._distance = (rLat && rLng) ? haversineDistance(tourLat, tourLng, rLat, rLng) : 9999;
+                        return r;
+                    }).sort((a, b) => a._distance - b._distance);
+                } else {
+                    restsData = restsData.sort(() => Math.random() - 0.5);
+                }
             }
-            reviewPhotos.push(file);
-        });
+        }
         
-        renderPhotoPreview();
-    }
-    
-    function renderPhotoPreview() {
-        if (!photoPreview || !photoZone) return;
-        photoPreview.innerHTML = reviewPhotos.map((file, i) => {
-            const url = URL.createObjectURL(file);
+        // Mezclar y tomar hasta 8
+        const combined = [...toursData, ...restsData].sort(() => Math.random() - 0.5).slice(0, 8);
+        
+        const container = document.getElementById('recomendaciones-container');
+        const scroll = document.getElementById('recomendaciones-scroll');
+        
+        if (combined.length === 0) {
+            if (container) container.style.display = 'none';
+            return;
+        }
+
+        if (container) container.style.display = 'block';
+        if (!scroll) return;
+        
+        scroll.innerHTML = combined.map(item => {
+            const isTour = item.hasOwnProperty('dificultad') || item.hasOwnProperty('incluye');
+            const id = item._id || item.id;
+            const url = isTour ? `/experiencia.html?id=${id}` : `/restaurante.html?id=${id}`;
+            const cleanTitle = getL(item.nombre) || (isTour ? 'Experiencia' : 'Restaurante');
+            
+            let img = '/images/PueblosMágicos.svg.png';
+            if (item.imagenPrincipal && item.imagenPrincipal.url) {
+                img = item.imagenPrincipal.url;
+            } else if (item.imagenes && item.imagenes.length > 0 && item.imagenes[0].url) {
+                img = item.imagenes[0].url;
+            }
+            
+            const badgeText = isTour ? translateCategoria(item.categoria) : '<i class="fas fa-star" style="color:white; margin-right:4px;"></i>' + (item.calificacionPromedio || 'N/A');
+            const badgeColor = isTour ? 'var(--primary)' : '#eab308';
+            
+            const bottomLeft = isTour 
+                ? `${item.precio?.amount || 0} ${item.precio?.moneda || 'MXN'}`
+                : (item._distance && item._distance < 9999 ? `<i class="fas fa-map-marker-alt"></i> ${item._distance.toFixed(1)} km` : 'Restaurante');
+                
+            const bottomColor = isTour ? '#10b981' : 'var(--gray-500)';
+            const bottomWeight = isTour ? '700' : '500';
+
             return `
-                <div style="position:relative; width:70px; height:70px; border-radius:0.4rem; overflow:hidden; border:2px solid var(--primary);">
-                    <img src="${url}" style="width:100%; height:100%; object-fit:cover;">
-                    <button type="button" onclick="removeReviewPhoto(${i})" style="position:absolute; top:2px; right:2px; width:20px; height:20px; border-radius:50%; background:rgba(239,68,68,0.9); color:white; border:none; cursor:pointer; font-size:0.6rem; display:flex; align-items:center; justify-content:center;"><i class="fas fa-times"></i></button>
-                </div>
+                <a href="${url}" class="recomendacion-card" style="min-width: 200px; max-width: 220px; flex-shrink: 0; scroll-snap-align: start; text-decoration: none; display: flex; flex-direction: column; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--gray-200); background: var(--white); transition: transform 0.2s, box-shadow 0.2s;">
+                    <div style="height: 140px; position: relative; overflow: hidden; background: #f1f5f9;">
+                        <img src="${img}" alt="${cleanTitle}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;">
+                        <span style="position: absolute; top: 0.5rem; left: 0.5rem; background: ${badgeColor}; color: white; padding: 0.2rem 0.5rem; border-radius: 999px; font-size: 0.7rem; font-weight: 600; z-index: 2;">
+                            ${badgeText}
+                        </span>
+                    </div>
+                    <div style="padding: 0.75rem; display: flex; flex-direction: column; flex-grow: 1;">
+                        <h4 style="margin: 0 0 0.25rem 0; font-size: 0.95rem; font-weight: 600; color: #1e293b; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                            ${cleanTitle}
+                        </h4>
+                        <div style="margin-top: auto; padding-top: 0.5rem; font-size: 0.85rem; color: ${bottomColor}; font-weight: ${bottomWeight}; display: flex; align-items: center; gap: 0.3rem;">
+                            ${bottomLeft}
+                        </div>
+                    </div>
+                </a>
             `;
         }).join('');
-        
-        if (reviewPhotos.length >= 5) {
-            photoZone.style.display = 'none';
-        } else {
-            photoZone.style.display = 'block';
-        }
+    } catch (err) {
+        console.error('Error loading recomendaciones:', err);
     }
+}
+
+// ===== REVIEW INTERACTION FUNCTIONS (Google-style) =====
+
+window.handleEscribirOpinion = function() {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+        openReviewModal();
+    } else {
+        window.location.href = '/login.html';
+    }
+};
+
+function openReviewModal() {
+    const form = document.getElementById('write-review-form');
+    if (form) form.reset();
+    selectStar(0);
+    window._reviewPhotosFiles = [];
+    const preview = document.getElementById('review-photo-preview-rest');
+    if (preview) preview.innerHTML = '';
     
-    // Make removeReviewPhoto global
-    window.removeReviewPhoto = function(index) {
-        reviewPhotos.splice(index, 1);
-        renderPhotoPreview();
-    };
+    try {
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        const authorEl = document.getElementById('review-author-name');
+        if (user && authorEl) authorEl.textContent = user.nombre || 'Usuario';
+    } catch(e){}
+
+    const container = document.getElementById('review-form-container');
+    if (container) container.style.display = 'block';
+    const writeBtn = document.getElementById('btn-write-review');
+    if (writeBtn) writeBtn.style.display = 'none';
     
+    setTimeout(() => {
+        if (container) container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
+}
+
+function closeReviewModal() {
+    const container = document.getElementById('review-form-container');
+    if (container) container.style.display = 'none';
+    const writeBtn = document.getElementById('btn-write-review');
+    if (writeBtn) writeBtn.style.display = 'inline-block';
+    
+    const form = document.getElementById('write-review-form');
+    if (form) form.reset();
+    window._reviewPhotosFiles = [];
+    const preview = document.getElementById('review-photo-preview-rest');
+    if (preview) preview.innerHTML = '';
+}
+
+window.selectStar = function(val) {
+    const hidden = document.getElementById('review-rating-value');
+    if (hidden) hidden.value = val;
+    document.querySelectorAll('#star-rating-selector i').forEach((s, idx) => {
+        s.style.color = idx < val ? '#f59e0b' : 'var(--gray-300)';
+    });
+};
+
+async function submitReview(e) {
+    e.preventDefault();
+    const token = localStorage.getItem('authToken');
+    if (!token) { alert('Debes iniciar sesión primero'); return; }
+
+    const rating = document.getElementById('review-rating-value').value;
+    const comentario = document.getElementById('review-comment').value;
+    if (!rating) { alert('Por favor, selecciona una calificación (estrellas)'); return; }
+
+    const formData = new FormData();
+    formData.append('rating', rating);
+    formData.append('comentario', comentario);
+    if (window._reviewPhotosFiles && window._reviewPhotosFiles.length > 0) {
+        window._reviewPhotosFiles.forEach(file => formData.append('fotos', file));
+    }
+
+    try {
+        const res = await fetch(`/api/tours/${currentTourId}/reviews`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` },
+            body: formData
+        });
+        const data = await res.json();
+        if (data.success) {
+            alert('¡Reseña enviada! Aparecerá cuando sea aprobada.');
+            closeReviewModal();
+            window._reviewPhotosFiles = [];
+            loadExperienceData(currentTourId);
+        } else {
+            alert(data.message || 'Error al enviar la reseña');
+        }
+    } catch (error) {
+        alert('Error de conexión');
+    }
+}
+
+window.likeReview = async function(reviewId, btnElement) {
+    const token = localStorage.getItem('authToken');
+    if (!token) { alert('Debes iniciar sesión para dar me gusta.'); return; }
+
+    try {
+        const res = await fetch(`/api/tours/${currentTourId}/reviews/${reviewId}/like`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+            const countSpan = document.getElementById(`like-count-${reviewId}`);
+            if (countSpan) countSpan.textContent = data.likes;
+            const icon = btnElement.querySelector('i');
+            if (data.isLiked) {
+                icon.classList.remove('far'); icon.classList.add('fas');
+                btnElement.style.color = '#3b82f6';
+            } else {
+                icon.classList.remove('fas'); icon.classList.add('far');
+                btnElement.style.color = 'var(--gray-500)';
+            }
+        }
+    } catch (e) { console.error('Error toggling like', e); }
+};
+
+window.toggleReplyForm = function(reviewId) {
+    const form = document.getElementById(`reply-form-${reviewId}`);
+    if (form) {
+        form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        if (form.style.display === 'block') form.querySelector('textarea').focus();
+    }
+};
+
+window.submitReply = async function(reviewId) {
+    const token = localStorage.getItem('authToken');
+    const text = document.getElementById(`reply-text-${reviewId}`)?.value?.trim();
+    if (!text) { alert('Escribe una respuesta'); return; }
+    try {
+        const res = await fetch(`/api/tours/${currentTourId}/reviews/${reviewId}/reply`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ respuesta: text })
+        });
+        const data = await res.json();
+        if (data.success) { alert('Respuesta publicada'); loadExperienceData(currentTourId); }
+        else { alert(data.message || 'Error'); }
+    } catch(e) { alert('Error de conexión'); }
+};
+
+// Photo upload for review form
+function setupReviewPhotoUpload() {
+    window._reviewPhotosFiles = [];
+    const photoInput = document.getElementById('review-photo-input-rest');
+    const photoZone = document.getElementById('review-photo-zone-rest');
+    const photoPreview = document.getElementById('review-photo-preview-rest');
+
     if (photoInput) {
         photoInput.addEventListener('change', (e) => {
-            addReviewPhotos(e.target.files);
+            addReviewPhotosRest(e.target.files);
             e.target.value = '';
         });
     }
-    
     if (photoZone) {
-        // Drag and drop
-        photoZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            photoZone.style.borderColor = 'var(--primary)';
-            photoZone.style.background = 'var(--gray-50)';
-        });
-        photoZone.addEventListener('dragleave', () => {
-            photoZone.style.borderColor = 'var(--gray-300)';
-            photoZone.style.background = 'transparent';
-        });
-        photoZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            photoZone.style.borderColor = 'var(--gray-300)';
-            photoZone.style.background = 'transparent';
-            addReviewPhotos(e.dataTransfer.files);
-        });
+        photoZone.addEventListener('dragover', (e) => { e.preventDefault(); photoZone.style.borderColor = 'var(--primary)'; });
+        photoZone.addEventListener('dragleave', () => { photoZone.style.borderColor = 'var(--gray-300)'; });
+        photoZone.addEventListener('drop', (e) => { e.preventDefault(); photoZone.style.borderColor = 'var(--gray-300)'; addReviewPhotosRest(e.dataTransfer.files); });
+    }
+}
+
+function addReviewPhotosRest(files) {
+    if (!window._reviewPhotosFiles) window._reviewPhotosFiles = [];
+    const remaining = 5 - window._reviewPhotosFiles.length;
+    const toAdd = Array.from(files).filter(f => f.type.startsWith('image/')).slice(0, remaining);
+    toAdd.forEach(file => {
+        if (file.size > 5 * 1024 * 1024) { alert(`"${file.name}" supera los 5MB.`); return; }
+        window._reviewPhotosFiles.push(file);
+    });
+    renderReviewPhotoPreview();
+}
+
+function renderReviewPhotoPreview() {
+    const photoPreview = document.getElementById('review-photo-preview-rest');
+    const photoZone = document.getElementById('review-photo-zone-rest');
+    if (!photoPreview) return;
+    photoPreview.innerHTML = (window._reviewPhotosFiles || []).map((file, i) => {
+        const url = URL.createObjectURL(file);
+        return `<div style="position:relative; width:70px; height:70px; border-radius:0.4rem; overflow:hidden; border:2px solid var(--primary);">
+            <img src="${url}" style="width:100%; height:100%; object-fit:cover;">
+            <button type="button" onclick="removeReviewPhotoRest(${i})" style="position:absolute; top:2px; right:2px; width:20px; height:20px; border-radius:50%; background:rgba(239,68,68,0.9); color:white; border:none; cursor:pointer; font-size:0.6rem; display:flex; align-items:center; justify-content:center;"><i class="fas fa-times"></i></button>
+        </div>`;
+    }).join('');
+    if (photoZone) photoZone.style.display = (window._reviewPhotosFiles || []).length >= 5 ? 'none' : 'block';
+}
+
+window.removeReviewPhotoRest = function(index) {
+    window._reviewPhotosFiles.splice(index, 1);
+    renderReviewPhotoPreview();
+};
+
+// Favorite toggle for tours
+async function setupFavoriteToggle() {
+    const token = localStorage.getItem('authToken');
+    const btnToggleLike = document.getElementById('btn-toggle-like');
+    
+    if (!token || !btnToggleLike) {
+        if (btnToggleLike) btnToggleLike.style.display = 'none';
+        return;
     }
     
-    const reviewForm = document.getElementById('form-nueva-resena');
-    if (reviewForm) {
-        // Setup Review Submit (with FormData for photos)
-        reviewForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const rating = document.getElementById('review-rating').value;
-            const comentario = document.getElementById('review-comment').value;
-            
-            try {
-                const btn = e.target.querySelector('button[type="submit"]');
-                if (btn) {
-                    btn.disabled = true;
-                    btn.textContent = 'Enviando...';
-                }
-                
-                const formData = new FormData();
-                formData.append('rating', rating);
-                formData.append('comentario', comentario);
-                reviewPhotos.forEach(file => formData.append('fotos', file));
-                
-                const res = await fetch(`/api/tours/${currentTourId}/reviews`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': 'Bearer ' + token
-                    },
-                    body: formData
-                });
-                
+    try {
+        const stored = localStorage.getItem('currentUser');
+        if (stored) currentUser = JSON.parse(stored);
+        if (currentUser && currentUser.rol === 'turista') {
+            btnToggleLike.style.display = 'inline-flex';
+            const res = await fetch('/api/auth/user/profile', { headers: { 'Authorization': 'Bearer ' + token } });
+            if (res.ok) {
                 const data = await res.json();
-                if (data.success) {
-                    alert('¡Reseña enviada con éxito!');
-                    reviewPhotos = [];
-                    renderPhotoPreview();
-                    loadExperienceData(currentTourId);
-                    if (formContainer) formContainer.style.display = 'none';
-                    e.target.reset();
-                } else {
-                    alert(data.message || 'Error al enviar la reseña');
-                }
-            } catch (error) {
-                console.error(error);
-                alert('Error al enviar la reseña');
-            } finally {
-                const btn = e.target.querySelector('button[type="submit"]');
-                if (btn) {
-                    btn.disabled = false;
-                    btn.textContent = 'Enviar Reseña';
-                }
+                const favs = data.data.experienciasFavoritas || [];
+                const fav = favs.find(f => f.tourId === currentTourId);
+                if (fav) setLikeButtonState(true);
             }
-        });
-    }
+        } else {
+            btnToggleLike.style.display = 'none';
+        }
+    } catch(e) { console.error('Error setup auth', e); }
 
-    // Setup Like Toggle
-    if (btnToggleLike && !btnToggleLike.disabled) {
-        btnToggleLike.addEventListener('click', async (e) => {
-            e.preventDefault();
-            if (!token || !currentUser || currentUser.rol !== 'turista') return;
-            
-            try {
-                const res = await fetch(`/api/user/tour-favorites/${currentTourId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + token
-                    },
-                    body: JSON.stringify({ tipoMeGusta: 'Favorito general' })
-                });
-                
-                const data = await res.json();
-                if (data.success) {
-                    setLikeButtonState(data.isFavorite);
-                }
-            } catch(err) {
-                console.error('Error toggling like:', err);
-            }
-        });
-    }
+    btnToggleLike.addEventListener('click', async (e) => {
+        e.preventDefault();
+        if (!token || !currentUser || currentUser.rol !== 'turista') return;
+        try {
+            const res = await fetch(`/api/user/tour-favorites/${currentTourId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                body: JSON.stringify({ tipoMeGusta: 'Favorito general' })
+            });
+            const data = await res.json();
+            if (data.success) setLikeButtonState(data.isFavorite);
+        } catch(err) { console.error('Error toggling like:', err); }
+    });
 }
 
 function setLikeButtonState(isFavorite) {
     const cb = document.getElementById('favorite-checkbox');
-    if (cb) {
-        cb.checked = isFavorite;
-    }
+    if (cb) cb.checked = isFavorite;
 }
+
+
 
 // ===== PHOTO LIGHTBOX =====
 function openPhotoLightbox(url) {

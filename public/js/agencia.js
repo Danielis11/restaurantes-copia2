@@ -132,14 +132,21 @@ function renderAgenciaData(agencia, lang) {
         if (lat && lng) {
             mapSection.style.display = 'block';
             if (window._agenciaPublicMap) { window._agenciaPublicMap.remove(); window._agenciaPublicMap = null; }
-            mapboxgl.accessToken = 'YOUR_MAPBOX_ACCESS_TOKEN';
-            const publicMap = new mapboxgl.Map({
-                container: 'agency-mapbox-map',
-                style: 'mapbox://styles/mapbox/streets-v11',
-                center: [lng, lat], zoom: 15, interactive: false
-            });
-            new mapboxgl.Marker({ color: '#ef4444' }).setLngLat([lng, lat]).addTo(publicMap);
-            window._agenciaPublicMap = publicMap;
+            setTimeout(async () => {
+                try {
+                    const res = await fetch('/api/config/mapbox');
+                    const data = await res.json();
+                    if (data.success && data.token) mapboxgl.accessToken = data.token;
+                    else return;
+                } catch(err) { return; }
+                const publicMap = new mapboxgl.Map({
+                    container: 'agency-mapbox-map',
+                    style: 'mapbox://styles/mapbox/streets-v11',
+                    center: [lng, lat], zoom: 15, interactive: false
+                });
+                new mapboxgl.Marker({ color: '#ef4444' }).setLngLat([lng, lat]).addTo(publicMap);
+                window._agenciaPublicMap = publicMap;
+            }, 0);
         } else {
             mapSection.style.display = 'none';
         }
