@@ -3,9 +3,14 @@ const router = express.Router();
 const Hotel = require('../models/Hotel');
 const Cabana = require('../models/Cabana');
 const Airbnb = require('../models/Airbnb');
+const hospedajesDb = require('../config/hospedajesDb');
 
 // GET /api/hospedajes — Devuelve hoteles, cabañas y airbnbs que tengan coordenadas
 router.get('/', async (req, res) => {
+    // BD de hospedajes no conectada: responder vacío al instante (el frontend oculta la sección)
+    if (hospedajesDb.readyState !== 1) {
+        return res.json({ success: true, disponible: false, total: 0, desglose: { hoteles: 0, cabanas: 0, airbnbs: 0 }, data: [] });
+    }
     try {
         // Filtro: solo los activos y que tengan coordenadas (ya sea en ubicacion.coordenadas o directo en ubicacion)
         const filtroConCoordenadas = {
@@ -80,8 +85,7 @@ router.get('/', async (req, res) => {
         console.error('Error obteniendo hospedajes:', error);
         res.status(500).json({
             success: false,
-            message: 'Error al obtener hospedajes',
-            error: error.message
+            message: 'Error al obtener hospedajes'
         });
     }
 });

@@ -53,7 +53,7 @@ function renderGuiaProfile(guia, lang) {
     const container = document.getElementById('profile-container');
     
     // Fallback info
-    const foto = guia.fotoPerfil && guia.fotoPerfil.url ? guia.fotoPerfil.url : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=1000';
+    const foto = guia.fotoPerfil && guia.fotoPerfil.url ? guia.fotoPerfil.url : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=70&w=600&auto=format';
     
     // Extraer Bio correcta basada en Multi-Lenguaje
     let bioText = "";
@@ -134,7 +134,7 @@ function renderGuiaProfile(guia, lang) {
                 <div style="display:flex; overflow-x:auto; gap:1rem; margin-top:1.5rem; padding-bottom:1rem; scroll-snap-type: x mandatory; scrollbar-width: thin;">
                     ${guia.galeria.map(img => `
                         <div style="flex: 0 0 auto; width: 250px; aspect-ratio: 4/3; border-radius: var(--radius-md); overflow:hidden; box-shadow:var(--shadow-sm); scroll-snap-align: start; cursor:pointer;" onclick="abrirModalGaleria('${img.url}')">
-                            <img src="${img.url}" style="width:100%; height:100%; object-fit:cover; transition:transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                            <img loading="lazy" decoding="async" src="${img.url}" style="width:100%; height:100%; object-fit:cover; transition:transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
                         </div>
                     `).join('')}
                 </div>
@@ -147,7 +147,7 @@ function renderGuiaProfile(guia, lang) {
         <!-- SIDEBAR DE CONTRATACIÓN Y PERFIL RPIDIO -->
         <aside class="sidebar">
             <div class="widget">
-                <img src="${foto}" alt="${guia.nombreCompleto}" class="guide-photo" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=1000'">
+                <img loading="lazy" decoding="async" src="${foto}" alt="${guia.nombreCompleto}" class="guide-photo" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=70&w=600&auto=format'">
                 <h1 class="guide-name">${guia.nombreCompleto}</h1>
                 <div class="guide-badge">
                     <i class="fas fa-check-circle"></i> Guía Certificado
@@ -244,7 +244,7 @@ async function cargarToursGuia(guiaId, lang) {
                     html += `
                         <a href="/experiencia.html?id=${tour._id}" style="text-decoration:none; color:inherit; display:flex; flex-direction:column; background:white; border-radius:var(--radius-lg); overflow:hidden; border:1px solid var(--gray-200); box-shadow:var(--shadow-sm); transition:transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='var(--shadow-md)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)'">
                             <div style="height: 160px; overflow:hidden;">
-                                <img src="${img}" style="width:100%; height:100%; object-fit:cover;">
+                                <img loading="lazy" decoding="async" src="${img}" style="width:100%; height:100%; object-fit:cover;">
                             </div>
                             <div style="padding:1.25rem; flex:1; display:flex; flex-direction:column;">
                                 <span style="font-size:0.75rem; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:1px; margin-bottom:0.5rem;"><i class="fas fa-route"></i> ${tour.categoria || 'Aventura'}</span>

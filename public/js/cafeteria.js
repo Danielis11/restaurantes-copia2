@@ -480,7 +480,7 @@ function renderMenuPage() {
                 ${(cat.items || []).map((item, iIdx) => `
                     <div class="menu-item">
                         ${item.imagen 
-                           ? `<img src="${item.imagen.url}" class="menu-item-img" alt="${getL(item.nombre)}" style="cursor: pointer; transition: transform 0.2s;" onclick="openMenuLightbox(${cIdx}, ${iIdx})" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">`
+                           ? `<img loading="lazy" decoding="async" src="${item.imagen.url}" class="menu-item-img" alt="${getL(item.nombre)}" style="cursor: pointer; transition: transform 0.2s;" onclick="openMenuLightbox(${cIdx}, ${iIdx})" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">`
                            : `<div class="menu-item-img" style="display:flex; align-items:center; justify-content:center; color:var(--gray-400); font-size:3rem; background: var(--gray-100);"><i class="fas fa-utensils"></i></div>`
                         }
                         <div class="menu-item-content">
@@ -672,7 +672,7 @@ function renderPromociones(promociones) {
     if (sidebarCard && sidebarBody) {
         sidebarCard.style.display = 'block';
         sidebarBody.innerHTML = activas.map(p => {
-            const imgHtml = p.imagen ? `<img src="${p.imagen}" alt="${getL(p.titulo)}" style="width:100%; max-height:160px; object-fit:cover;">` : '';
+            const imgHtml = p.imagen ? `<img loading="lazy" decoding="async" src="${p.imagen}" alt="${getL(p.titulo)}" style="width:100%; max-height:160px; object-fit:cover;">` : '';
             let fechaText = '';
             if (p.fechaFin) {
                 fechaText = `<div style="font-size: 0.72rem; color: #b91c1c; margin-top: 0.4rem;"><i class="fas fa-clock"></i> Hasta: ${new Date(p.fechaFin).toLocaleDateString('es-MX', {timeZone: 'UTC'})}</div>`;
@@ -1274,7 +1274,7 @@ function buildEditForm(section) {
                     <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:0.5rem;" id="current-images">
                         ${imgs.map((img, i) => `
                             <div style="position:relative; aspect-ratio:1; border-radius:var(--radius-md); overflow:hidden; border:1px solid var(--gray-200);">
-                                <img src="${img.url}" style="width:100%; height:100%; object-fit:cover;" onerror="this.parentElement.style.display='none'">
+                                <img loading="lazy" decoding="async" src="${img.url}" style="width:100%; height:100%; object-fit:cover;" onerror="this.parentElement.style.display='none'">
                                 <button onclick="deleteImage('${img._id}', this)" style="position:absolute; top:4px; right:4px; background:rgba(239,68,68,0.9); color:white; border:none; border-radius:50%; width:24px; height:24px; cursor:pointer; font-size:0.7rem; display:flex; align-items:center; justify-content:center;">
                                     <i class="fas fa-times"></i>
                                 </button>
@@ -2537,7 +2537,7 @@ async function cargarRecomendaciones(restaurantId) {
             scroll.innerHTML = data.data.map(item => `
                 <a href="${item.enlace}" class="recomendacion-card">
                     <div style="height: 140px; background: #cbd5e1; position: relative;">
-                        <img src="${item.imagen}" alt="${item.nombre}" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img loading="lazy" decoding="async" src="${item.imagen}" alt="${item.nombre}" style="width: 100%; height: 100%; object-fit: cover;">
                         <div style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); color: white; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-size: 0.7rem; font-weight: bold; backdrop-filter: blur(4px);">
                             ${item.tipo}
                         </div>

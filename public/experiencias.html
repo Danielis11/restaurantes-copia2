@@ -1088,7 +1088,7 @@
                 return `
                 <div class="restaurant-card agencia-card" data-id="${agencia._id}">
                     <div class="card-image" onclick="window.location.href='/agencia.html?id=${agencia._id}'" style="cursor: pointer;">
-                        <img src="${logoUrl}" alt="${agencia.nombre}" onerror="this.src='/images/PueblosMágicos.svg.png'">
+                        <img loading="lazy" decoding="async" src="${logoUrl}" alt="${agencia.nombre}" onerror="this.src='/images/PueblosMágicos.svg.png'">
                         ${agencia.rnt ? `<div class="guia-badge" style="background:var(--primary); color:white;"><i class="fas fa-certificate"></i> RNT: ${agencia.rnt}</div>` : ''}
                     </div>
                     <div class="card-content">
@@ -1432,7 +1432,7 @@
             grid.innerHTML = guias.map(guia => `
                 <div class="restaurant-card guia-card" data-id="${guia._id}">
                     <div class="card-image" onclick="window.location.href='/guia.html?id=${guia._id}'" style="cursor: pointer;">
-                        <img src="${guia.fotoPerfil?.url || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=1000'}" alt="${guia.nombreCompleto}" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=1000'">
+                        <img loading="lazy" decoding="async" src="${guia.fotoPerfil?.url || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=70&w=600&auto=format'}" alt="${guia.nombreCompleto}" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=70&w=600&auto=format'">
                         <div class="guia-badge"><i class="fas fa-star"></i> ${parseFloat(guia.calificacionPromedio).toFixed(1) || 'Nuevo'}</div>
                     </div>
                     <div class="card-content">

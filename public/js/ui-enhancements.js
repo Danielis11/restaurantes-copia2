@@ -143,9 +143,39 @@
     // ============================================================
     // BOOTSTRAP
     // ============================================================
+    // ============================================================
+    // 3) OCULTAR "HOSPEDAJE" SI NO HAY DATOS
+    // ------------------------------------------------------------
+    // La BD de hospedajes es externa; si no responde, escondemos los
+    // enlaces para no mandar al visitante a una página vacía o rota.
+    // El resultado se recuerda durante la sesión para no repetir la consulta.
+    // ============================================================
+    function initHospedajeLinks() {
+        const links = document.querySelectorAll('a[href*="hospedaje" i], a[href*="hoteles" i]');
+        if (!links.length) return;
+
+        // 'important' porque la barra inferior móvil fuerza display con !important en el CSS
+        const ocultar = function () { links.forEach(function (a) { a.style.setProperty('display', 'none', 'important'); }); };
+        const KEY = 'hospedajesDisponibles';
+        let cached = null;
+        try { cached = sessionStorage.getItem(KEY); } catch (e) { /* almacenamiento bloqueado */ }
+        if (cached === '0') return ocultar();
+        if (cached === '1') return;
+
+        fetch('/api/hospedajes')
+            .then(function (r) { return r.ok ? r.json() : { total: 0 }; })
+            .catch(function () { return { total: 0 }; })
+            .then(function (json) {
+                const hay = json && json.total > 0;
+                try { sessionStorage.setItem(KEY, hay ? '1' : '0'); } catch (e) { /* ignorar */ }
+                if (!hay) ocultar();
+            });
+    }
+
     function boot() {
         try { initBackToTop(); } catch (e) { console.warn('back-to-top init failed', e); }
         try { initLqip(); } catch (e) { console.warn('lqip init failed', e); }
+        try { initHospedajeLinks(); } catch (e) { console.warn('hospedaje links init failed', e); }
     }
 
     if (document.readyState === 'loading') {

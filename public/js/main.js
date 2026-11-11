@@ -387,7 +387,7 @@ function openImageModal(imageUrl, restaurantName) {
     modal.innerHTML = `
         <div class="image-modal-content">
             <span class="image-modal-close">&times;</span>
-            <img src="${imageUrl}" alt="${restaurantName}">
+            <img loading="lazy" decoding="async" src="${imageUrl}" alt="${restaurantName}">
             <div class="image-modal-info">
                 <h3>${restaurantName}</h3>
             </div>
@@ -476,7 +476,7 @@ function renderTours(tours) {
     elements.toursGrid.innerHTML = tours.map(tour => `
         <div class="restaurant-card tour-card" data-id="${tour._id}">
             <div class="card-image">
-                <img src="${tour.imagenPrincipal?.url || 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1000'}" alt="${tour.nombre}" onerror="this.src='https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1000'">
+                <img loading="lazy" decoding="async" src="${tour.imagenPrincipal?.url || 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=70&w=600&auto=format'}" alt="${tour.nombre}" onerror="this.src='https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=70&w=600&auto=format'">
                 <div class="tour-price-badge">$${tour.precio.amount} ${tour.precio.moneda}</div>
             </div>
             <div class="card-content">
@@ -559,7 +559,7 @@ function renderGuias(guias) {
     elements.guiasGrid.innerHTML = guias.map(guia => `
         <div class="restaurant-card guia-card" data-id="${guia._id}">
             <div class="card-image">
-                <img src="${guia.fotoPerfil?.url || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=1000'}" alt="${guia.nombreCompleto}" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=1000'">
+                <img loading="lazy" decoding="async" src="${guia.fotoPerfil?.url || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=70&w=600&auto=format'}" alt="${guia.nombreCompleto}" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=70&w=600&auto=format'">
                 <div class="guia-badge">
                     <i class="fas fa-star"></i> ${guia.calificacionPromedio || 'Nuevo'}
                 </div>
@@ -677,7 +677,7 @@ function renderNoticias(noticias, currentLang = 'es') {
 
         return `
             <div class="noticia-card">
-                <img src="${imagenUrl}" alt="${titulo}" class="noticia-imagen" onerror="this.src='https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=800&q=80'">
+                <img loading="lazy" decoding="async" src="${imagenUrl}" alt="${titulo}" class="noticia-imagen" onerror="this.src='https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=800&q=80'">
                 <div class="noticia-contenido">
                     <div class="noticia-fecha">${fecha}</div>
                     <h3 class="noticia-titulo">${titulo}</h3>

@@ -229,7 +229,7 @@ function renderExperience(tour) {
 
     const heroItems = currentTourImages.map((img, index) => `
         <div class="tour-carousel-item ${index === 0 ? 'active' : ''}" id="tour-slide-${index}">
-            <img src="${img.url}" alt="${getL(tour.nombre) || xpTxt}" onclick="openTourLightbox('${img.url}')">
+            <img loading="lazy" decoding="async" src="${img.url}" alt="${getL(tour.nombre) || xpTxt}" onclick="openTourLightbox('${img.url}')">
         </div>
     `).join('');
     document.getElementById('hero-carousel-items').innerHTML = heroItems;
@@ -299,7 +299,7 @@ function renderRutas(tour) {
 
         return `
             <div class="sub-cabana-slide">
-                <img src="${imgUrl}" alt="${titulo}" class="sub-cabana-img">
+                <img loading="lazy" decoding="async" src="${imgUrl}" alt="${titulo}" class="sub-cabana-img">
                 <div class="sub-cabana-info">
                     <h4>${titulo}</h4>
                     <p>${desc}</p>
@@ -373,7 +373,7 @@ function renderGuides(tour) {
             <div style="background:var(--white); border:1px solid var(--gray-200); border-radius:12px; padding:1.25rem; display:flex; flex-direction:column; align-items:center; text-align:center; box-shadow:var(--shadow-sm); transition:transform 0.2s; height: 100%;">
                 <div style="width:100px; height:100px; overflow:hidden; border-radius:12px; margin-bottom:1rem; border:2px solid var(--primary-light); background:var(--gray-50); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
                     ${profileImg 
-                        ? `<img src="${profileImg}" alt="${g.nombreCompleto}" style="width:100%; height:100%; object-fit:cover;">`
+                        ? `<img loading="lazy" decoding="async" src="${profileImg}" alt="${g.nombreCompleto}" style="width:100%; height:100%; object-fit:cover;">`
                         : `<i class="fas fa-user" style="font-size:2rem; color:var(--gray-400);"></i>`
                     }
                 </div>
@@ -640,7 +640,7 @@ function renderNativeReviews(reviews) {
         let fotosHtml = '';
         if (r.fotos && r.fotos.length > 0) {
             fotosHtml = `<div style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:0.75rem;">
-                ${r.fotos.map(f => `<img src="${f.url}" alt="Foto" style="width:64px; height:64px; object-fit:cover; border-radius:0.4rem; cursor:pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'" onclick="openPhotoLightbox('${f.url}')">`).join('')}
+                ${r.fotos.map(f => `<img loading="lazy" decoding="async" src="${f.url}" alt="Foto" style="width:64px; height:64px; object-fit:cover; border-radius:0.4rem; cursor:pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'" onclick="openPhotoLightbox('${f.url}')">`).join('')}
             </div>`;
         }
 

@@ -10,7 +10,11 @@ if (!uri) {
 
 const hospedajesDb = mongoose.createConnection(uri, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    // Si la BD no está disponible, las consultas fallan al instante
+    // en lugar de quedarse esperando 10 segundos
+    bufferCommands: false,
+    serverSelectionTimeoutMS: 5000
 });
 
 hospedajesDb.on('connected', () => {

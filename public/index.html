@@ -3551,7 +3551,7 @@
                     return `
                         <div class="noticia-slide">
                             <div class="noticia-card">
-                                <img src="${imagenUrl}" alt="${titulo}" class="noticia-imagen" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=800&q=80'">
+                                <img loading="lazy" decoding="async" src="${imagenUrl}" alt="${titulo}" class="noticia-imagen" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=800&q=80'">
                                 <div class="noticia-meta-top">${currentLang === 'en' ? 'Local News' : currentLang === 'fr' ? 'Actualité locale' : 'Noticia local'}</div>
                                 <div class="noticia-contenido">
                                     <div class="noticia-fecha">${fecha}</div>
@@ -3799,7 +3799,7 @@
             <div class="footer-grid">
                 <div class="footer-brand">
                     <a href="/" class="logo">
-                        <img src="/images/PueblosMágicos.svg.png" alt="Logo">
+                        <img loading="lazy" decoding="async" src="/images/PueblosMágicos.svg.png" alt="Logo">
                         RestauranteWeb
                     </a>
                     <p>La plataforma líder que conecta a locales y turistas con la mejor oferta gastronómica del Corazón

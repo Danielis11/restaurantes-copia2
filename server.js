@@ -155,7 +155,7 @@ app.use(express.static(path.join(__dirname, 'public'), {
     } else if (['.jpg', '.jpeg', '.png', '.webp', '.avif', '.gif', '.svg', '.ico', '.woff', '.woff2', '.ttf', '.mp4', '.webm'].includes(ext)) {
       res.setHeader('Cache-Control', 'public, max-age=2592000'); // 30 días
     } else if (ext === '.css' || ext === '.js') {
-      res.setHeader('Cache-Control', 'public, max-age=3600, must-revalidate'); // 1 hora
+      res.setHeader('Cache-Control', 'no-cache'); // revalida con ETag (304 si no cambió) para que los cambios se vean al instante
     }
   }
 }));
