@@ -21,7 +21,7 @@ const verificarAdminTurismo = async (req, res, next) => {
        return res.status(401).json({ success: false, message: 'No autorizado - Token no proporcionado' });
      }
  
-     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'mi_secreto_jwt_super_seguro_2024');
+     const decoded = jwt.verify(token, process.env.JWT_SECRET);
      const admin = await Admin.findById(decoded.id).select('-password');
      
      if (!admin || !admin.activo || (admin.rol !== 'super-admin' && admin.rol !== 'admin-turismo')) {

@@ -140,7 +140,7 @@ const verificarTokenUsuario = async (req, res, next) => {
       return res.status(401).json({ success: false, message: 'No autorizado - Token no proporcionado' });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'mi_secreto_jwt_super_seguro_2024');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.id).select('-password');
     
     if (!user) {

@@ -4,7 +4,7 @@ const Restaurant = require('../models/Restaurant');
 
 class WebSocketServer {
   constructor(server) {
-    this.wss = new WebSocket.Server({ server });
+    this.wss = new WebSocket.Server({ server, maxPayload: 64 * 1024 });
     this.clients = new Set();
     this.init();
   }

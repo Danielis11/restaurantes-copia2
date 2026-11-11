@@ -556,9 +556,20 @@ async function saveTour() {
     const restriccionesEs = document.getElementById('tour-restricciones-es').value.trim();
     const politicasEs = document.getElementById('tour-politicas-es').value.trim();
 
-    if (!nombreEs || !categoria || !precio || !duracion || !dificultad || !capacidad || !descCortaEs || !descEs) {
-        showNotification('Por favor completa todos los campos obligatorios', 'error');
-        return;
+    if (!nombreEs) return showNotification('Falta el campo obligatorio: Nombre del Tour', 'error');
+    if (!categoria) return showNotification('Falta el campo obligatorio: Categoría', 'error');
+    if (!precio) return showNotification('Falta el campo obligatorio: Precio Base', 'error');
+    if (!duracion) return showNotification('Falta el campo obligatorio: Duración en horas', 'error');
+    if (!dificultad) return showNotification('Falta el campo obligatorio: Nivel de Dificultad', 'error');
+    if (!capacidad) return showNotification('Falta el campo obligatorio: Capacidad Máxima', 'error');
+    if (!descCortaEs) return showNotification('Falta el campo obligatorio: Descripción Corta', 'error');
+    if (!descEs) return showNotification('Falta el campo obligatorio: Descripción Completa', 'error');
+    
+    // Validar título de Rutas Adicionales si existen
+    for (let i = 0; i < tourRutasAdicionales.length; i++) {
+        if (!tourRutasAdicionales[i].titulo.trim()) {
+            return showNotification(`Falta el Título en la Ruta Adicional #${i + 1}`, 'error');
+        }
     }
 
     const formData = new FormData();

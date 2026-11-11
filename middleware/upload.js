@@ -15,19 +15,25 @@ const localStorage_m = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadsDir),
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const ext = path.extname(file.originalname);
-    const name = file.originalname.replace(ext, '').replace(/[^a-zA-Z0-9]/g, '_');
+    const ext = path.extname(file.originalname).toLowerCase();
+    const name = path.basename(file.originalname, path.extname(file.originalname)).replace(/[^a-zA-Z0-9]/g, '_').slice(0, 60);
     cb(null, `${uniqueSuffix}-${name}${ext}`);
   }
 });
 
+// Lista blanca de extensiones Y tipos MIME. Antes solo se revisaba el MIME (lo manda el navegador
+// y se puede falsificar), así que se podía subir un .html con JavaScript y servirlo desde el sitio.
+const EXTENSIONES_PERMITIDAS = ['.jpg', '.jpeg', '.png', '.webp', '.avif', '.gif'];
+const MIMES_PERMITIDOS = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/avif', 'image/gif'];
+
 const localUpload = multer({
   storage: localStorage_m,
   fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith('image/')) cb(null, true);
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (EXTENSIONES_PERMITIDAS.includes(ext) && MIMES_PERMITIDOS.includes(file.mimetype)) cb(null, true);
     else cb(new Error('Solo se permiten archivos de imagen'), false);
   },
-  limits: { fileSize: 50 * 1024 * 1024, files: 10 }
+  limits: { fileSize: 15 * 1024 * 1024, files: 10 }
 });
 
 // Selector dinámico de middleware

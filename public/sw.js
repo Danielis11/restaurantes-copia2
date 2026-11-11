@@ -1,5 +1,5 @@
 // Service Worker básico para RestauranteWeb
-const CACHE_NAME = 'restauranteweb-v1';
+const CACHE_NAME = 'restauranteweb-v2';
 const ASSETS_TO_CACHE = [
     '/',
     '/css/style.css',

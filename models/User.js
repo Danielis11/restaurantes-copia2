@@ -95,7 +95,7 @@ userSchema.methods.compararPassword = async function(passwordIngresada) {
 
 // Método para generar código de recuperación
 userSchema.methods.crearResetToken = function() {
-  const code = Math.floor(100000 + Math.random() * 900000).toString(); // código de 6 dígitos
+  const code = require('crypto').randomInt(100000, 1000000).toString(); // código de 6 dígitos
   this.resetPasswordToken = code;
   this.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // 15 minutos
   return code;

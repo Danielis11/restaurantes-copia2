@@ -39,3 +39,15 @@ debugServer.js
 # Uploads
 public/uploads/
 uploads/
+
+# Reportes / auditorías locales (pueden contener secretos)
+*audit*.txt
+*_push_*.txt
+push_error.txt
+roles-output.txt
+public/puppeteer-log.txt
+public/debug_*.png
+/restaurante-web/
+
+# Respaldo de imágenes originales (sin optimizar)
+/imagenes-originales/

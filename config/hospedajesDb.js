@@ -22,3 +22,8 @@ hospedajesDb.on('error', (err) => {
 });
 
 module.exports = hospedajesDb;
+
+// Si la BD de hospedajes no responde, NO tumbar todo el servidor (antes era un rechazo sin manejar)
+hospedajesDb.asPromise().catch((err) => {
+    console.error('⚠️  BD de Hospedajes no disponible, el resto del sitio sigue funcionando:', err.message);
+});

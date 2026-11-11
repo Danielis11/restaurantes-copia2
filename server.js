@@ -25,6 +25,17 @@ const { ReviewTurismo, HotelTurismo, AirbnbTurismo, CabanaTurismo } = require('.
 
 const app = express();
 const PORT = process.env.PORT || 3003;
+const IS_PROD = process.env.NODE_ENV === 'production';
+
+// JWT_SECRET es obligatorio: sin él cualquiera podría firmar tokens con un secreto conocido
+if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
+  console.error('❌ JWT_SECRET no está definido o es demasiado corto (mínimo 32 caracteres). Configúralo en .env');
+  process.exit(1);
+}
+
+// Detrás de un proxy/hosting (Render, Railway, Nginx...) para que rate-limit vea la IP real
+app.set('trust proxy', 1);
+app.disable('x-powered-by');
 
 // ===== MIDDLEWARES =====
 
@@ -39,21 +50,60 @@ app.use(compression());
 
 // Logs de peticiones HTTP
 if (process.env.NODE_ENV !== 'test') {
-  app.use(morgan('dev'));
+  app.use(morgan(IS_PROD ? 'combined' : 'dev'));
 }
 
 // Rate limiting para rutas de autenticación (máx 20 intentos en 15 min)
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
   message: { success: false, message: 'Demasiados intentos. Intenta de nuevo en 15 minutos.' }
 });
 app.use('/api/auth/login', authLimiter);
 app.use('/api/auth/register', authLimiter);
+app.use('/api/auth/google', authLimiter);
+app.use('/api/auth/user/login', authLimiter);
+app.use('/api/auth/user/register', authLimiter);
 
-app.use(cors());
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+// Límite general de la API (protege contra abuso / scraping masivo)
+const apiLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 600,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: (req) => req.path.startsWith('/img-proxy'),
+  message: { success: false, message: 'Demasiadas peticiones. Intenta en un momento.' }
+});
+app.use('/api', apiLimiter);
+
+// CORS: si defines CORS_ORIGINS (separados por coma) solo esos dominios podrán llamar a la API
+const corsOrigins = (process.env.CORS_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
+app.use(cors(corsOrigins.length ? { origin: corsOrigins } : undefined));
+
+// Las imágenes se suben con multer (multipart), así que el JSON no necesita ser enorme
+app.use(express.json({ limit: '2mb' }));
+app.use(express.urlencoded({ extended: true, limit: '2mb' }));
+
+// Anti inyección NoSQL: elimina claves que empiezan con "$"
+// (evita ataques tipo { "email": "x", "code": { "$ne": null } })
+const limpiarOperadoresMongo = (obj) => {
+  if (!obj || typeof obj !== 'object') return;
+  for (const key of Object.keys(obj)) {
+    if (key.startsWith("$")) {
+      delete obj[key];
+    } else {
+      limpiarOperadoresMongo(obj[key]);
+    }
+  }
+};
+app.use((req, res, next) => {
+  limpiarOperadoresMongo(req.body);
+  limpiarOperadoresMongo(req.query);
+  limpiarOperadoresMongo(req.params);
+  next();
+});
 
 // Configurar cabeceras COOP y COEP para permitir popups de Google (Cross-Origin-Opener-Policy)
 app.use((req, res, next) => {
@@ -75,7 +125,9 @@ app.use('/api', (req, res, next) => {
       jsonStr = jsonStr.replace(/https?:\/\/res\.cloudinary\.com\/[^"\\]+/g, (match) => {
         return `/api/img-proxy?url=${encodeURIComponent(match)}`;
       });
-      return originalJson(JSON.parse(jsonStr));
+      // Enviar el string directamente (antes se hacía stringify → parse → stringify en cada respuesta)
+      if (!res.get('Content-Type')) res.set('Content-Type', 'application/json; charset=utf-8');
+      return res.send(jsonStr);
     } catch (e) {
       return originalJson(data);
     }
@@ -83,7 +135,30 @@ app.use('/api', (req, res, next) => {
   next();
 });
 
-app.use(express.static(path.join(__dirname, 'public')));
+// Archivos que no deben servirse públicamente aunque estén en /public
+app.use((req, res, next) => {
+  if (/\.(txt|log|bak|old)$/i.test(req.path) && !/^\/robots\.txt$/i.test(req.path)) {
+    return res.status(404).end();
+  }
+  next();
+});
+
+// Archivos estáticos con caché del navegador (cargas mucho más rápidas en visitas repetidas)
+app.use(express.static(path.join(__dirname, 'public'), {
+  etag: true,
+  lastModified: true,
+  setHeaders: (res, filePath) => {
+    const ext = path.extname(filePath).toLowerCase();
+    if (ext === '.html' || filePath.endsWith('sw.js')) {
+      // HTML y service worker: siempre revalidar para que los cambios se vean al instante
+      res.setHeader('Cache-Control', 'no-cache');
+    } else if (['.jpg', '.jpeg', '.png', '.webp', '.avif', '.gif', '.svg', '.ico', '.woff', '.woff2', '.ttf', '.mp4', '.webm'].includes(ext)) {
+      res.setHeader('Cache-Control', 'public, max-age=2592000'); // 30 días
+    } else if (ext === '.css' || ext === '.js') {
+      res.setHeader('Cache-Control', 'public, max-age=3600, must-revalidate'); // 1 hora
+    }
+  }
+}));
 // ===== RUTAS EXTERNAS =====
 app.use('/api/guias', require('./routes/guiaRoutes'));
 app.use('/api/tours', require('./routes/tourRoutes'));
@@ -127,29 +202,47 @@ app.get('/api/img-proxy', async (req, res) => {
     }
     imageUrl = cloudMatch[1];
 
+    // Optimización automática: formato moderno (WebP/AVIF), calidad automática y ancho máx. 1600px.
+    // Solo si la URL aún no trae transformaciones propias (ej. w_300,c_fill).
+    imageUrl = imageUrl.replace(/\/image\/upload\/(?![a-z]{1,3}_[^/]*\/)/, '/image/upload/f_auto,q_auto,c_limit,w_1600/');
+
     const https = require('https');
-    https.get(imageUrl, (imgRes) => {
-      if (imgRes.statusCode >= 300 && imgRes.statusCode < 400 && imgRes.headers.location) {
-        // Manejar redirects
-        https.get(imgRes.headers.location, (redirectRes) => {
-          res.set({
-            'Content-Type': redirectRes.headers['content-type'] || 'image/jpeg',
-            'Cache-Control': 'public, max-age=86400',
-            'Access-Control-Allow-Origin': '*'
-          });
-          redirectRes.pipe(res);
-        }).on('error', () => res.status(502).end());
-        return;
-      }
+    const reqOpts = {
+      headers: {
+        // Reenviar Accept del navegador para que f_auto elija WebP/AVIF cuando sea compatible
+        'Accept': req.headers.accept || 'image/webp,image/*,*/*;q=0.8',
+        'User-Agent': 'restaurante-web-img-proxy'
+      },
+      timeout: 15000
+    };
+
+    const enviar = (imgRes) => {
+      const ok = imgRes.statusCode === 200;
+      res.status(imgRes.statusCode || 502);
       res.set({
         'Content-Type': imgRes.headers['content-type'] || 'image/jpeg',
-        'Cache-Control': 'public, max-age=86400',
+        // Las URLs de Cloudinary son inmutables (llevan versión), se pueden cachear 1 año
+        'Cache-Control': ok ? 'public, max-age=31536000, immutable' : 'no-store',
+        'Vary': 'Accept',
         'Access-Control-Allow-Origin': '*'
       });
+      if (imgRes.headers['content-length']) res.set('Content-Length', imgRes.headers['content-length']);
       imgRes.pipe(res);
+    };
+
+    https.get(imageUrl, reqOpts, (imgRes) => {
+      const loc = imgRes.headers.location;
+      if (imgRes.statusCode >= 300 && imgRes.statusCode < 400 && loc) {
+        imgRes.resume();
+        // Solo seguir redirecciones dentro de Cloudinary (evita SSRF)
+        if (!/^https:\/\/res\.cloudinary\.com\//.test(loc)) return res.status(502).end();
+        https.get(loc, reqOpts, enviar).on('error', () => res.status(502).end());
+        return;
+      }
+      enviar(imgRes);
     }).on('error', (err) => {
       console.error('Error proxy imagen:', err.message);
-      res.status(502).json({ success: false, message: 'Error al obtener imagen' });
+      if (!res.headersSent) res.status(502).json({ success: false, message: 'Error al obtener imagen' });
     });
   } catch (error) {
     console.error('Error proxy:', error);
@@ -218,7 +311,7 @@ app.get('/admin-ranking', (req, res) => {
 
 // Generar JWT
 const generarToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET || 'mi_secreto_jwt_super_seguro_2024', {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: '7d'
   });
 };
@@ -245,7 +338,7 @@ const verificarToken = async (req, res, next) => {
       });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'mi_secreto_jwt_super_seguro_2024');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const admin = await Admin.findById(decoded.id).select('-password');
     
     if (!admin) {
@@ -369,7 +462,7 @@ app.post('/api/auth/google', async (req, res) => {
 // POST /api/auth/login
 app.post('/api/auth/login', async (req, res) => {
   try {
-    console.log('🔐 Intento de login:', req.body);
+    console.log('🔐 Intento de login:', typeof req.body.email === 'string' ? req.body.email : '(email inválido)');
     
     const { email, password } = req.body;
 
@@ -467,6 +560,14 @@ app.post('/api/auth/login', async (req, res) => {
 
 // POST /api/auth/register
 app.post('/api/auth/register', async (req, res) => {
+  // Antes cualquiera podía crearse una cuenta de ADMIN y publicar un restaurante.
+  // Ahora los admins los crea el super-admin desde su panel, salvo que se active explícitamente.
+  if (process.env.ALLOW_ADMIN_SELF_REGISTER !== 'true') {
+    return res.status(403).json({
+      success: false,
+      message: 'El registro de administradores está deshabilitado. Contacta al administrador del sitio.'
+    });
+  }
   try {
     const { nombre, apellido, email, password, telefono } = req.body;
 
@@ -725,7 +826,7 @@ app.post('/api/auth/forgot-password', authLimiter, async (req, res) => {
       resetCode = user.crearResetToken();
     } else {
       // Para admin, generar código manual
-      resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+      resetCode = require('crypto').randomInt(100000, 1000000).toString();
       user.resetPasswordToken = resetCode;
       user.resetPasswordExpires = Date.now() + 15 * 60 * 1000;
     }
@@ -884,92 +985,9 @@ app.post('/api/admins/turismo', verificarToken, verificarSuperAdmin, async (req,
 
 // Test básico
 app.get('/test', (req, res) => {
-  res.json({
-    success: true,
-    message: '🎉 Servidor funcionando correctamente',
-    timestamp: new Date().toISOString(),
-    database: {
-      connected: mongoose.connection.readyState === 1,
-      name: mongoose.connection.name || 'No conectado',
-      host: mongoose.connection.host || 'No disponible'
-    },
-    routes: {
-      available: [
-        'GET / - Página principal',
-        'GET /admin - Panel de administración',
-        'GET /login.html - Login',
-        'GET /setup - Crear admin de prueba',
-        'POST /api/auth/login - API Login ✅',
-        'POST /api/auth/register - API Registro ✅',
-        'GET /api/auth/profile - Perfil del usuario ✅'
-      ]
-    }
-  });
+  // Diagnóstico mínimo (sin exponer host ni rutas internas)
+  res.json({ success: true, database: { connected: mongoose.connection.readyState === 1 } });
 });
-
-// Setup admin de prueba
-app.get('/setup', async (req, res) => {
-  try {
-    if (mongoose.connection.readyState !== 1) {
-      return res.send(`
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px;">
-          <h1 style="color: #ef4444;">❌ MongoDB no conectado</h1>
-          <p>Verifica tu archivo .env</p>
-          <a href="/test">Ver diagnóstico</a>
-        </div>
-      `);
-    }
-
-    const existingAdmin = await Admin.findOne({ email: 'admin@test.com' });
-    
-    if (existingAdmin) {
-      return res.send(`
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; border: 2px solid #10b981; border-radius: 10px; background: #f0fdf4;">
-          <h1 style="color: #10b981;">✅ Admin de prueba ya existe</h1>
-          <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <p><strong>Email:</strong> admin@test.com</p>
-            <p><strong>Password:</strong> password123</p>
-          </div>
-          <a href="/login.html" style="background: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin-right: 10px;">🔐 Ir al Login</a>
-          <a href="/admin.html" style="background: #059669; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">🎛️ Panel Admin</a>
-        </div>
-      `);
-    }
-
-    const nuevoAdmin = new Admin({
-      nombre: 'Admin',
-      apellido: 'Prueba',
-      email: 'admin@test.com',
-      password: 'password123',
-      telefono: '4441234567'
-    });
-
-    await nuevoAdmin.save();
-
-    res.send(`
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; border: 2px solid #10b981; border-radius: 10px; background: #f0fdf4;">
-        <h1 style="color: #10b981;">🎉 Admin creado exitosamente</h1>
-        <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <p><strong>Email:</strong> admin@test.com</p>
-          <p><strong>Password:</strong> password123</p>
-        </div>
-        <a href="/login.html" style="background: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">🔐 Probar Login</a>
-      </div>
-    `);
-
-  } catch (error) {
-    console.error('Error en setup:', error);
-    res.send(`
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px;">
-        <h1 style="color: #ef4444;">❌ Error: ${error.message}</h1>
-        <a href="/test">Ver diagnóstico</a>
-      </div>
-    `);
-  }
-});
-
-
-
 
 // Modelos importados al inicio del archivo
 
@@ -984,7 +1002,7 @@ const verificarTokenUsuario = async (req, res, next) => {
       return res.status(401).json({ success: false, message: 'No autorizado - Token no proporcionado' });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'mi_secreto_jwt_super_seguro_2024');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     // Buscamos en la colección User
     const user = await User.findById(decoded.id).select('-password');
     
@@ -3050,7 +3068,7 @@ app.use((error, req, res, next) => {
     if (error.code === 'LIMIT_FILE_SIZE') {
       return res.status(400).json({
         success: false,
-        message: 'Archivo demasiado grande. Máximo 5MB por imagen.'
+        message: 'Archivo demasiado grande. Máximo 15MB por imagen.'
       });
     }
     if (error.code === 'LIMIT_FILE_COUNT') {
@@ -3071,102 +3089,6 @@ app.use((error, req, res, next) => {
   next(error);
 });
 
-
-
-// 🧪 Ruta de prueba para verificar imágenes
-app.get('/test-images', async (req, res) => {
-  try {
-    const restaurants = await Restaurant.find({ 
-      activo: true,
-      imagenes: { $exists: true, $ne: [] }
-    }).limit(5);
-
-    let html = '<h1>🖼️ Test de Imágenes</h1>';
-    
-    if (restaurants.length === 0) {
-      html += '<p>❌ No hay restaurantes con imágenes</p>';
-    } else {
-      html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">';
-      
-      restaurants.forEach(restaurant => {
-        html += `
-          <div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px;">
-            <h3>${restaurant.nombre}</h3>
-            <p><strong>Total imágenes:</strong> ${restaurant.imagenes.length}</p>
-        `;
-        
-        restaurant.imagenes.forEach((imagen, index) => {
-          const exists = fs.existsSync(imagen.path);
-          html += `
-            <div style="margin: 10px 0; padding: 10px; background: ${exists ? '#f0f9ff' : '#fef2f2'};">
-              <p><strong>Imagen ${index + 1}:</strong></p>
-              <p>URL: <code>${imagen.url}</code></p>
-              <p>Archivo: ${exists ? '✅ Existe' : '❌ No existe'}</p>
-              <p>Path: <code>${imagen.path}</code></p>
-              <p>Tamaño: ${imagen.size ? (imagen.size / 1024).toFixed(2) + ' KB' : 'No definido'}</p>
-              ${exists ? `<img src="${imagen.url}" style="max-width: 200px; max-height: 150px; object-fit: cover;" />` : ''}
-            </div>
-          `;
-        });
-        
-        html += '</div>';
-      });
-      
-      html += '</div>';
-    }
-    
-    html += `
-      <div style="margin-top: 30px; padding: 20px; background: #f9fafb; border-radius: 8px;">
-        <h3>📋 Información del Sistema</h3>
-        <p><strong>Carpeta de uploads:</strong> <code>${uploadsDir}</code></p>
-        <p><strong>Carpeta existe:</strong> ${fs.existsSync(uploadsDir) ? '✅ Sí' : '❌ No'}</p>
-        <p><strong>Archivos en carpeta:</strong></p>
-        <ul>
-    `;
-    
-    try {
-      const files = fs.readdirSync(uploadsDir);
-      files.forEach(file => {
-        html += `<li><code>${file}</code></li>`;
-      });
-    } catch (error) {
-      html += `<li>❌ Error leyendo carpeta: ${error.message}</li>`;
-    }
-    
-    html += `
-        </ul>
-      </div>
-      <p style="margin-top: 20px;"><a href="/admin.html">← Volver al Admin</a></p>
-    `;
-    
-    res.send(html);
-    
-  } catch (error) {
-    res.send(`<h1>❌ Error</h1><pre>${error.message}</pre>`);
-  }
-});
-
-// 🔧 Ruta para verificar imagen específica
-app.get('/check-image/:filename', (req, res) => {
-  const { filename } = req.params;
-  const imagePath = path.join(uploadsDir, filename);
-  
-  if (fs.existsSync(imagePath)) {
-    res.json({
-      success: true,
-      exists: true,
-      path: imagePath,
-      url: `/uploads/restaurants/${filename}`,
-      size: fs.statSync(imagePath).size
-    });
-  } else {
-    res.status(404).json({
-      success: false,
-      exists: false,
-      path: imagePath
-    });
-  }
-});
 
 
 // GET /api/reviews/gallery - Fotos recientes de viajeros (público)
@@ -4264,62 +4186,6 @@ app.get('/api/super-admin/stats', verificarToken, verificarSuperAdmin, async (re
 
 //<!-- PASO 4: CREAR SUPER ADMIN -->
 //<!-- Agrega esta ruta especial para crear el primer super admin: -->
-
-// Crear super admin (solo si no existe ninguno)
-app.get('/create-super-admin', async (req, res) => {
-  try {
-    // Verificar si ya existe un super admin
-    const existingSuperAdmin = await Admin.findOne({ rol: 'super-admin' });
-    
-    if (existingSuperAdmin) {
-      return res.send(`
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; border: 2px solid #f59e0b; border-radius: 10px; background: #fffbeb;">
-          <h1 style="color: #f59e0b;">⚠️ Super Admin ya existe</h1>
-          <p><strong>Email:</strong> ${existingSuperAdmin.email}</p>
-          <p>Ya existe un Super Administrador en el sistema.</p>
-          <a href="/login.html" style="background: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">🔐 Ir al Login</a>
-        </div>
-      `);
-    }
-
-    // Crear el primer super admin
-    const superAdmin = new Admin({
-      nombre: 'Super',
-      apellido: 'Admin',
-      email: 'superadmin@restauranteweb.com',
-      password: 'SuperAdmin123!',
-      telefono: '4441234567',
-      rol: 'super-admin'
-    });
-
-    await superAdmin.save();
-
-    res.send(`
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; border: 2px solid #10b981; border-radius: 10px; background: #f0fdf4;">
-        <h1 style="color: #10b981;">🎉 Super Admin creado exitosamente</h1>
-        <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <p><strong>Email:</strong> superadmin@restauranteweb.com</p>
-          <p><strong>Password:</strong> SuperAdmin123!</p>
-          <p><strong>Rol:</strong> super-admin</p>
-        </div>
-        <p style="color: #059669; font-weight: bold;">⚠️ IMPORTANTE: Cambia la contraseña después del primer login</p>
-        <div style="margin-top: 20px;">
-          <a href="/login.html" style="background: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin-right: 10px;">🔐 Ir al Login</a>
-          <a href="/super-admin.html" style="background: #059669; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">👑 Panel Super Admin</a>
-        </div>
-      </div>
-    `);
-
-  } catch (error) {
-    console.error('Error creando super admin:', error);
-    res.send(`
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px;">
-        <h1 style="color: #ef4444;">❌ Error: ${error.message}</h1>
-        <a href="/test">Ver diagnóstico</a>
-      </div>
-    `);
-  }
-});
 
 // ===== ESTADÍSTICAS AVANZADAS DE PRECIOS =====
 
@@ -5764,7 +5630,7 @@ let wsServer = null;
 
 try {
   // Intentar importar el WebSocket Server
-  const WebSocketServer = require('./websocket/websocketServer');
+  const { WebSocketServer } = require('./websocket/websocketServer');
   const server = http.createServer(app);
   wsServer = new WebSocketServer(server);
   global.wsServer = wsServer;
