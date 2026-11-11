@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const mongoose = require('mongoose');
+// Anti-XSS: limpia HTML de todo texto que se guarde. Debe registrarse ANTES de cargar los modelos.
+mongoose.plugin(require('./utils/sanitizePlugin'));
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const http = require('http');

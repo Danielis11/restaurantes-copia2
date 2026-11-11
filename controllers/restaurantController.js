@@ -205,7 +205,7 @@ const obtenerRestaurantePorId = async (req, res) => {
     const restaurant = await Restaurant.findOne({ 
       _id: id, 
       activo: true 
-    }).populate('adminId', 'nombre apellido email telefono').lean();
+    }).populate('adminId', 'nombre').lean(); // solo el nombre: el email/teléfono personal del dueño no es público
 
     if (!restaurant) {
       return res.status(404).json({
@@ -236,6 +236,11 @@ const obtenerRestaurantePorId = async (req, res) => {
           promociones: restaurant.promociones,
           opcionesPago: restaurant.opcionesPago,
           precioPromedio: restaurant.precioPromedio,
+          rangoPrecio: restaurant.rangoPrecio,
+          // La ficha pública ya tenía código para estos campos, pero la API no los enviaba
+          instagramEmbeds: restaurant.instagramEmbeds || [],
+          googleReviews: restaurant.googleReviews,
+          googleReviewsUrl: restaurant.googleReviewsUrl,
           activo: restaurant.activo,
           admin: restaurant.adminId,
           estadisticas: restaurant.estadisticas,

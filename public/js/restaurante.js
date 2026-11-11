@@ -1598,16 +1598,19 @@ function initReviewWidgets() {
     if (r.instagramEmbeds && r.instagramEmbeds.length > 0) {
         // Wrap each embed in a container for the horizontal css carousel
         const processedEmbeds = r.instagramEmbeds.map(embedStr => {
-            const trimmed = embedStr.trim();
-            // Si el admin pegó solo le enlace, generamos el html
-            let embedHtml = trimmed;
-            if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+            // Seguridad: nunca insertar el HTML pegado tal cual (podría traer <script>).
+            // Solo se toma la URL pública de Instagram y el embed se arma aquí.
+            const match = String(embedStr || '').match(/https:\/\/(?:www\.)?instagram\.com\/(?:p|reel|tv)\/[A-Za-z0-9_-]+\/?/i);
+            if (!match) return '';
+            const trimmed = match[0];
+            let embedHtml = '';
+            {
                 embedHtml = `<blockquote class="instagram-media" data-instgrm-permalink="${trimmed}" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:auto; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>`;
             }
             return `<div class="instagram-carousel-item" style="scroll-snap-align: center; flex: 0 0 auto; width: 330px; max-width: 85vw; min-width: 0; overflow: hidden; display: flex; flex-direction: column;">${embedHtml}</div>`;
         });
 
-        igContainer.innerHTML = processedEmbeds.join('');
+        igContainer.innerHTML = processedEmbeds.filter(Boolean).join('');
         igWrapper.style.display = 'block';
         hasIG = true;
 
