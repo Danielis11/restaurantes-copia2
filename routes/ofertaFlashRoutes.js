@@ -27,6 +27,35 @@ router.get('/activas', async (req, res) => {
   }
 });
 
+// ===== GET /api/ofertas-flash/activas/:restaurantId — Público: ofertas vigentes de un restaurante =====
+// La ficha de cada restaurante llama a esta ruta; antes no existía y el banner nunca aparecía.
+router.get('/activas/:restaurantId', async (req, res) => {
+  try {
+    const { restaurantId } = req.params;
+    if (!/^[a-f0-9]{24}$/i.test(restaurantId)) {
+      return res.json({ success: true, data: [] });
+    }
+    const ahora = new Date();
+    const hoy = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
+
+    const ofertas = await OfertaFlash.find({
+      restaurante: restaurantId,
+      activa: true,
+      fechaInicio: { $lte: new Date(hoy.getTime() + 24 * 60 * 60 * 1000) },
+      fechaFin: { $gte: hoy }
+    })
+      .select('titulo descripcion horasDuracion fechaInicio fechaFin')
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .lean();
+
+    res.json({ success: true, data: ofertas });
+  } catch (error) {
+    console.error('Error al obtener ofertas del restaurante:', error);
+    res.status(500).json({ success: false, message: 'Error al obtener ofertas' });
+  }
+});
+
 // ===== Rutas protegidas (admin) =====
 
 // GET /api/ofertas-flash/mis-ofertas — Ofertas del restaurante del admin

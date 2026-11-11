@@ -135,6 +135,17 @@ app.use('/api', (req, res, next) => {
   next();
 });
 
+// ===== SEO: sitemap y robots dinámicos + metadatos en el HTML de cada ficha =====
+const { seoMiddleware, sitemapHandler, robotsHandler } = require('./utils/seo');
+app.get('/sitemap.xml', sitemapHandler);
+app.get('/robots.txt', robotsHandler);
+// Los navegadores piden /favicon.ico en la raíz aunque el HTML apunte a /icons/
+app.get('/favicon.ico', (req, res) => {
+  res.set('Cache-Control', 'public, max-age=2592000');
+  res.sendFile(path.join(__dirname, 'public', 'icons', 'favicon.ico'));
+});
+app.use(seoMiddleware);
+
 // Archivos que no deben servirse públicamente aunque estén en /public
 app.use((req, res, next) => {
   if (/\.(txt|log|bak|old)$/i.test(req.path) && !/^\/robots\.txt$/i.test(req.path)) {
