@@ -15,7 +15,7 @@ const Guia = require('../models/Guia');
 const Agencia = require('../models/Agencia');
 
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
-const SITE_NAME = 'RestauranteWeb';
+const SITE_NAME = 'Jalpan de Serra';
 const LOGO = '/images/PueblosMágicos.svg.png';
 const IS_PROD = process.env.NODE_ENV === 'production';
 
@@ -159,7 +159,7 @@ async function seoRestaurante(id, base) {
   }
 
   return {
-    title: `${r.nombre} - ${tipoTxt} en ${ciudad} | ${SITE_NAME}`,
+    title: /jalpan/i.test(ciudad) ? `${r.nombre} - ${tipoTxt} | ${SITE_NAME}, Pueblo Mágico` : `${r.nombre} - ${tipoTxt} en ${ciudad} | ${SITE_NAME}`,
     description,
     image: imagenPreview(principal && principal.url, base),
     url,
@@ -192,7 +192,7 @@ async function seoTour(id, base) {
       : undefined
   };
   return {
-    title: `${nombre} - Experiencia en Jalpan de Serra | ${SITE_NAME}`,
+    title: `${nombre} - Experiencia | ${SITE_NAME}, Pueblo Mágico`,
     description,
     image: imagenPreview(img, base),
     url,
@@ -209,7 +209,7 @@ async function seoGuia(id, base) {
   const description = recortar(txt(g.biografia)) ||
     `${g.nombreCompleto}, guía de turistas certificado en Jalpan de Serra y la Sierra Gorda.`;
   return {
-    title: `${g.nombreCompleto} - Guía de turistas en Jalpan de Serra | ${SITE_NAME}`,
+    title: `${g.nombreCompleto} - Guía de turistas | ${SITE_NAME}, Pueblo Mágico`,
     description,
     image: imagenPreview(g.fotoPerfil && g.fotoPerfil.url, base),
     url,
@@ -249,7 +249,7 @@ async function seoAgencia(id, base) {
     jsonLd.aggregateRating = { '@type': 'AggregateRating', ratingValue: a.calificacionPromedio, reviewCount: a.numeroResenas };
   }
   return {
-    title: `${a.nombre} - Agencia de turismo en Jalpan de Serra | ${SITE_NAME}`,
+    title: `${a.nombre} - Agencia de turismo | ${SITE_NAME}, Pueblo Mágico`,
     description,
     image: imagenPreview(a.logo && a.logo.url, base),
     url,
