@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="robots" content="noindex">
+    <title>Sin conexión — RestauranteWeb</title>
+    <link rel="icon" href="/icons/favicon.ico">
+    <style>
+        :root { --primary: #2563eb; --text: #1e293b; --muted: #64748b; --bg: #f8fafc; --card: #ffffff; }
+        @media (prefers-color-scheme: dark) {
+            :root { --text: #e2e8f0; --muted: #94a3b8; --bg: #0f172a; --card: #1e293b; }
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Outfit', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg); color: var(--text);
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            padding: 1.5rem;
+        }
+        .card {
+            background: var(--card); border-radius: 20px; padding: 2.5rem 1.75rem;
+            max-width: 420px; width: 100%; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+        img { width: 72px; height: 72px; margin-bottom: 1.25rem; }
+        h1 { font-size: 1.5rem; margin-bottom: 0.75rem; }
+        p { color: var(--muted); line-height: 1.6; margin-bottom: 1.5rem; }
+        .acciones { display: flex; flex-direction: column; gap: 0.75rem; }
+        button, a {
+            display: block; width: 100%; padding: 0.9rem 1rem; border-radius: 12px;
+            font: inherit; font-weight: 600; cursor: pointer; text-decoration: none; border: 0;
+        }
+        button { background: var(--primary); color: #fff; }
+        a { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
+        .estado { margin-top: 1.25rem; font-size: 0.85rem; color: var(--muted); }
+    </style>
+</head>
+<body>
+    <main class="card">
+        <img src="/icons/icon-192.png" alt="RestauranteWeb">
+        <h1>Sin conexión a internet</h1>
+        <p>No pudimos cargar esta página. Las páginas que ya visitaste siguen disponibles sin señal.</p>
+        <div class="acciones">
+            <button type="button" onclick="location.reload()">Reintentar</button>
+            <a href="/">Ir al inicio</a>
+        </div>
+        <div class="estado" id="estado">Esperando conexión…</div>
+    </main>
+    <script>
+        // Recargar sola cuando vuelva la señal
+        window.addEventListener('online', function () {
+            document.getElementById('estado').textContent = 'Conexión recuperada, cargando…';
+            location.reload();
+        });
+    </script>
+</body>
+</html>

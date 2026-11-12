@@ -1,0 +1,45 @@
+{
+    "id": "/",
+    "name": "RestauranteWeb — Jalpan de Serra",
+    "short_name": "Jalpan",
+    "description": "Descubre restaurantes, bares, cafeterías, tours y experiencias en Jalpan de Serra, Sierra Gorda de Querétaro.",
+    "start_url": "/?source=pwa",
+    "scope": "/",
+    "display": "standalone",
+    "display_override": ["standalone", "minimal-ui"],
+    "background_color": "#ffffff",
+    "theme_color": "#2563eb",
+    "orientation": "any",
+    "lang": "es-MX",
+    "dir": "ltr",
+    "categories": ["food", "travel", "lifestyle"],
+    "icons": [
+        { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+        { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+        { "src": "/icons/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+        { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    ],
+    "shortcuts": [
+        {
+            "name": "Mapa",
+            "short_name": "Mapa",
+            "description": "Ver restaurantes y lugares en el mapa",
+            "url": "/mapa.html?source=pwa",
+            "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+        },
+        {
+            "name": "Restaurantes",
+            "short_name": "Comer",
+            "description": "Restaurantes, bares y cafeterías",
+            "url": "/?source=pwa#restaurantes",
+            "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+        },
+        {
+            "name": "Experiencias",
+            "short_name": "Tours",
+            "description": "Tours, guías y agencias",
+            "url": "/experiencias.html?source=pwa",
+            "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+        }
+    ]
+}

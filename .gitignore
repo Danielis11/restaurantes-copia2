@@ -11,6 +11,9 @@ node_modules/
 *.json
 !package.json
 !package-lock.json
+# Archivos JSON que SÍ son parte del sitio (traducciones y manifest de la app)
+!public/manifest.json
+!public/locales/*.json
 
 # Logs
 *.log
