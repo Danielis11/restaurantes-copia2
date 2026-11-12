@@ -1561,6 +1561,8 @@ body {
     color: var(--text-dark);
     font-weight: 700;
     font-size: 1.25rem;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .logo img {

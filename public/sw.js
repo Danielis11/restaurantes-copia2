@@ -1,11 +1,11 @@
 // ===== Service Worker — RestauranteWeb (PWA) =====
 // Estrategias:
 //  - Páginas HTML ........ red primero → copia guardada → página offline
-//  - CSS / JS ............ copia guardada al instante y se actualiza en segundo plano
+//  - CSS / JS ............ red primero (304 rápido) → copia guardada sin señal
 //  - Imágenes ............ copia guardada primero (máx. 120, las más viejas se borran)
 //  - API pública (GET) ... red primero → última respuesta guardada (para ver datos sin señal)
 //  - API privada / POST .. nunca se guarda (datos de sesión, paneles de admin)
-const VERSION = 'v3';
+const VERSION = 'v4';
 const CACHE_CORE = `rw-core-${VERSION}`;
 const CACHE_PAGES = `rw-pages-${VERSION}`;
 const CACHE_ASSETS = `rw-assets-${VERSION}`;
@@ -63,8 +63,14 @@ async function recortar(nombre, max) {
     for (let i = 0; i < keys.length - max; i++) await cache.delete(keys[i]);
 }
 
+// Los archivos del precache viven en CACHE_CORE: actualizarlos ahí para que
+// caches.match() no siga devolviendo la copia de la instalación
+const RUTAS_CORE = new Set(PRECACHE.map((u) => new URL(u, self.location.origin).href));
+
 async function guardar(nombre, request, response, max) {
     if (!response || (response.status !== 200 && response.type !== 'opaque')) return;
+    const url = typeof request === 'string' ? new URL(request, self.location.origin).href : request.url;
+    if (RUTAS_CORE.has(url)) { nombre = CACHE_CORE; max = 0; }
     const cache = await caches.open(nombre);
     await cache.put(request, response);
     if (max) recortar(nombre, max);
@@ -89,19 +95,6 @@ async function cachePrimero(request, nombre, max) {
     const resp = await fetch(request);
     guardar(nombre, request, resp.clone(), max);
     return resp;
-}
-
-async function cacheYActualizar(event, request, nombre) {
-    const cached = await caches.match(request);
-    const red = fetch(request).then((resp) => {
-        if (resp.ok) guardar(nombre, request, resp.clone());
-        return resp;
-    }).catch(() => cached);
-    if (cached) {
-        event.waitUntil(red);
-        return cached;
-    }
-    return red;
 }
 
 self.addEventListener('fetch', (event) => {
@@ -142,7 +135,7 @@ self.addEventListener('fetch', (event) => {
 
     // CSS, JS, traducciones, manifest
     if (['style', 'script', 'manifest'].includes(request.destination) || /\.(css|js|json)$/.test(url.pathname)) {
-        event.respondWith(cacheYActualizar(event, request, CACHE_ASSETS));
+        event.respondWith(redPrimero(request, CACHE_ASSETS));
     }
 });
 

@@ -180,6 +180,21 @@ body {
     }
 }
 
+/* ===== MARCA "Jalpan de Serra" EN UNA SOLA LÍNEA ===== */
+@media (min-width: 769px) and (max-width: 1100px) {
+    .nav-container .logo { font-size: 1.1rem; margin-right: 1rem; }
+    .nav-container .nav-menu { gap: 1.25rem; }
+}
+@media (max-width: 768px) {
+    .nav-container .logo { margin-right: 0.5rem; }
+}
+@media (max-width: 400px) {
+    .nav-container .logo { font-size: 0.95rem !important; gap: 0.4rem; }
+}
+@media (max-width: 340px) {
+    .nav-container .logo { font-size: 0.85rem !important; }
+}
+
 /* ===== CORRECCIONES ADICIONALES PARA MÓVIL ===== */
 
 @media (max-width: 480px) {
