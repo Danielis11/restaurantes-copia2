@@ -446,6 +446,116 @@
             .antojo-chip:hover { transform: none; }
         }
 
+        /* ===== Sección de búsqueda más limpia ===== */
+        .filters {
+            padding-top: 2.5rem !important;
+        }
+
+        .filtros-fila {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .filtros-fila .filter-tabs {
+            margin: 0 !important;
+            padding: 0.3rem;
+            gap: 0.25rem;
+        }
+
+        .filtros-fila .filter-tab {
+            padding: 0.55rem 1.1rem;
+            font-size: 0.92rem;
+        }
+
+        .btn-mas-filtros {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.7rem 1.1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 999px;
+            background: #fff;
+            color: #334155;
+            font: inherit;
+            font-size: 0.92rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: border-color 0.15s, color 0.15s;
+        }
+
+        .btn-mas-filtros:hover,
+        .btn-mas-filtros[aria-expanded="true"] {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .mas-filtros-punto {
+            display: none;
+            position: absolute;
+            top: 6px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ea580c;
+        }
+
+        .btn-mas-filtros.con-filtros .mas-filtros-punto {
+            display: block;
+        }
+
+        .filters .advanced-filters {
+            margin: -0.5rem auto 1.5rem;
+            max-width: 760px;
+        }
+
+        .filters .advanced-filters[hidden] {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .filtros-fila {
+                flex-wrap: nowrap;
+                gap: 0.5rem;
+                padding: 0 12px;
+            }
+
+            .filtros-fila .filter-tabs {
+                display: flex !important;
+                flex: 1 1 auto;
+                min-width: 0;
+                width: auto !important;
+                overflow-x: auto;
+                scrollbar-width: none;
+                justify-content: flex-start;
+            }
+
+            .filtros-fila .filter-tabs::-webkit-scrollbar {
+                display: none;
+            }
+
+            .filtros-fila .filter-tab {
+                width: auto !important;
+                flex: 0 0 auto;
+                padding: 0.5rem 0.8rem;
+                font-size: 0.85rem;
+            }
+
+            .btn-mas-filtros {
+                flex: 0 0 auto;
+                padding: 0.6rem 0.8rem;
+            }
+
+            .btn-mas-filtros span[data-i18n] {
+                display: none;
+            }
+        }
+
         /* Buscador dentro de la sección de restaurantes */
         .buscador-lugares {
             max-width: 620px;
@@ -2026,6 +2136,7 @@
                     </div>
                 </div>
 
+                <div class="filtros-fila">
                 <div class="filter-tabs">
                     <button class="filter-tab active" data-type="todos">
                         <i class="fas fa-th-large"></i>
@@ -2044,10 +2155,15 @@
                         <span data-i18n="filters.cafes">Cafeterías</span>
                     </button>
                 </div>
+                <button type="button" class="btn-mas-filtros" id="btn-mas-filtros" aria-expanded="false" aria-controls="advanced-filters">
+                    <i class="fas fa-sliders-h" aria-hidden="true"></i>
+                    <span data-i18n="home.mas_filtros">Filtros</span>
+                    <span class="mas-filtros-punto" aria-hidden="true"></span>
+                </button>
+                </div>
 
-                <!-- Advanced Filters -->
-                <div class="advanced-filters">
-                    <span style="font-size: 0.85rem; color: var(--gray-600); font-weight: 700; margin-right: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fas fa-sliders-h" style="color: var(--primary);"></i> Filtros:</span>
+                <!-- Calificación y precio: se abren con el botón "Filtros" -->
+                <div class="advanced-filters" id="advanced-filters" hidden>
                     
                     <!-- Rating filters -->
                     <button class="adv-filter-chip" data-filter="rating" data-value="3" title="3 estrellas o más">
@@ -4073,9 +4189,9 @@
                 const cont = document.getElementById('antojo-chips');
                 if (!cont) return;
                 const lang = localStorage.getItem('appLang') || 'es';
-                const visibles = ANTOJOS.filter(a => cuentas[a.q] > 0).slice(0, 9);
+                const visibles = ANTOJOS.filter(a => cuentas[a.q] >= 4).slice(0, 6);
                 cont.innerHTML = visibles.map(a => `<button type="button" class="antojo-chip${activo === a.q ? ' activo' : ''}" data-q="${a.q}" aria-pressed="${activo === a.q}">
-                        <i class="fas ${a.icon}" aria-hidden="true"></i>${a.txt[lang] || a.txt.es} <small>${cuentas[a.q]}</small></button>`).join('');
+                        <i class="fas ${a.icon}" aria-hidden="true"></i>${a.txt[lang] || a.txt.es}</button>`).join('');
                 cont.closest('.antojo').style.display = visibles.length ? '' : 'none';
             }
 
@@ -4095,6 +4211,21 @@
 
             document.addEventListener('languageChanged', pintar);
             contar().then(pintar);
+        })();
+
+        // ===== Botón "Filtros": abre/cierra calificación y precio =====
+        (function () {
+            const btn = document.getElementById('btn-mas-filtros');
+            const panel = document.getElementById('advanced-filters');
+            if (!btn || !panel) return;
+            btn.addEventListener('click', () => {
+                const abrir = panel.hidden;
+                panel.hidden = !abrir;
+                btn.setAttribute('aria-expanded', abrir);
+            });
+            // Punto naranja cuando hay calificación o precio elegido
+            const marcar = () => btn.classList.toggle('con-filtros', !!panel.querySelector('.adv-filter-chip.active'));
+            panel.addEventListener('click', () => setTimeout(marcar, 0));
         })();
 
         function quickSearch(term) {
