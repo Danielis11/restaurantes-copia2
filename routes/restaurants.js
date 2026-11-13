@@ -164,6 +164,9 @@ if (verificarToken) {
         return res.status(404).json({ success: false, message: 'Restaurante no encontrado' });
       }
 
+      if (!restaurant.imagenes || !restaurant.imagenes.id(req.params.imageId)) {
+        return res.status(404).json({ success: false, message: 'Imagen no encontrada' });
+      }
       await restaurant.establecerImagenPrincipal(req.params.imageId);
       res.json({ success: true, message: 'Imagen principal actualizada' });
     } catch (error) {

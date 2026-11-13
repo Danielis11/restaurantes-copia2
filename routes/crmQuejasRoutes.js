@@ -121,11 +121,19 @@ router.get('/mis-mensajes', verificarToken, async (req, res) => {
 router.patch('/mis-mensajes/:id/leido', verificarToken, async (req, res) => {
     try {
         const mensajePrivadoId = req.params.id;
-        const mensajeUpdate = await MensajePrivado.findByIdAndUpdate(
-            mensajePrivadoId,
+        // Solo mensajes del restaurante de este administrador (antes cualquiera podía marcar los de otros)
+        const restaurante = await Restaurant.findOne({ adminId: req.admin._id }).select('_id').lean();
+        if (!restaurante) {
+            return res.status(404).json({ msg: 'No tienes un restaurante asignado' });
+        }
+        const mensajeUpdate = await MensajePrivado.findOneAndUpdate(
+            { _id: mensajePrivadoId, restaurantId: restaurante._id },
             { leido: true },
             { new: true }
         );
+        if (!mensajeUpdate) {
+            return res.status(404).json({ msg: 'Mensaje no encontrado' });
+        }
         res.json(mensajeUpdate);
     } catch(error) {
         res.status(500).json({ msg: 'Error al marcar como leído' });

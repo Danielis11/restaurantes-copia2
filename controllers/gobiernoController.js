@@ -154,17 +154,19 @@ exports.getDashboardStats = async (req, res) => {
       .lean();
 
     // ─── Estadísticas de Hospedajes (Hoteles, Cabañas, Airbnbs) ───
+    // Viven en otra base de datos: si no está disponible, el tablero sigue funcionando con ceros
+    const seguro = async (fn, porDefecto) => { try { return await fn(); } catch (e) { return porDefecto; } };
     const [hotelesTotal, hotelesActivos, cabanasTotal, cabanasActivas, airbnbTotal, airbnbActivos] = await Promise.all([
-      Hotel.countDocuments(), Hotel.countDocuments({ activo: { $ne: false } }),
-      Cabana.countDocuments(), Cabana.countDocuments({ activo: { $ne: false } }),
-      Airbnb.countDocuments(), Airbnb.countDocuments({ activo: { $ne: false } })
+      seguro(() => Hotel.countDocuments(), 0), seguro(() => Hotel.countDocuments({ activo: { $ne: false } }), 0),
+      seguro(() => Cabana.countDocuments(), 0), seguro(() => Cabana.countDocuments({ activo: { $ne: false } }), 0),
+      seguro(() => Airbnb.countDocuments(), 0), seguro(() => Airbnb.countDocuments({ activo: { $ne: false } }), 0)
     ]);
 
-    const [hotelAgg, cabanaAgg, airbnbAgg] = await Promise.all([
+    const [hotelAgg, cabanaAgg, airbnbAgg] = (await seguro(() => Promise.all([
       Hotel.aggregate([{ $match: { 'calificacion.promedio': { $gt: 0 } } }, { $group: { _id: null, avg: { $avg: '$calificacion.promedio' } } }]),
       Cabana.aggregate([{ $match: { 'calificacion.promedio': { $gt: 0 } } }, { $group: { _id: null, avg: { $avg: '$calificacion.promedio' } } }]),
       Airbnb.aggregate([{ $match: { 'calificacion.promedio': { $gt: 0 } } }, { $group: { _id: null, avg: { $avg: '$calificacion.promedio' } } }])
-    ]);
+    ]), null)) || [[], [], []];
 
     const statsHospedajes = {
       hoteles: { total: hotelesTotal, activos: hotelesActivos, promedio: hotelAgg[0]?.avg ? parseFloat(hotelAgg[0].avg.toFixed(1)) : 0 },
@@ -193,12 +195,12 @@ exports.getDashboardStats = async (req, res) => {
         });
         return restaurantes;
       })(),
-        Hotel.find({ $or: [{ 'ubicacion.coordenadas.lat': { $exists: true } }, { 'ubicacion.lat': { $exists: true } }, { 'latitud': { $exists: true } }] })
-            .select('nombre ubicacion latitud longitud calificacion activo').lean(),
-        Cabana.find({ $or: [{ 'ubicacion.coordenadas.lat': { $exists: true } }, { 'ubicacion.lat': { $exists: true } }, { 'latitud': { $exists: true } }] })
-            .select('nombre ubicacion latitud longitud calificacion activo').lean(),
-        Airbnb.find({ $or: [{ 'ubicacion.coordenadas.lat': { $exists: true } }, { 'ubicacion.lat': { $exists: true } }, { 'latitud': { $exists: true } }] })
-            .select('nombre ubicacion latitud longitud calificacion activo').lean()
+        seguro(() => Hotel.find({ $or: [{ 'ubicacion.coordenadas.lat': { $exists: true } }, { 'ubicacion.lat': { $exists: true } }, { 'latitud': { $exists: true } }] })
+            .select('nombre ubicacion latitud longitud calificacion activo').lean(), []),
+        seguro(() => Cabana.find({ $or: [{ 'ubicacion.coordenadas.lat': { $exists: true } }, { 'ubicacion.lat': { $exists: true } }, { 'latitud': { $exists: true } }] })
+            .select('nombre ubicacion latitud longitud calificacion activo').lean(), []),
+        seguro(() => Airbnb.find({ $or: [{ 'ubicacion.coordenadas.lat': { $exists: true } }, { 'ubicacion.lat': { $exists: true } }, { 'latitud': { $exists: true } }] })
+            .select('nombre ubicacion latitud longitud calificacion activo').lean(), [])
     ]);
 
     const formatHospUbicacion = (docs, fallbackTipo) => docs.map((d) => {
