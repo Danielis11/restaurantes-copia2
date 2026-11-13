@@ -2585,3 +2585,28 @@ a.btn-login[href="/login.html"]:hover {
         navigation: none;
     }
 }
+
+/* ===== Barra superior fija entre páginas =====
+   Con "space-between" el menú se movía unos píxeles según el ancho del logo y de los botones
+   de cada página. Con 3 columnas el menú queda siempre centrado en el mismo lugar. */
+@media (min-width: 769px) {
+    .global-nav .nav-container:has(> .nav-menu) {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+    }
+
+    .global-nav .nav-container:has(> .nav-menu) > :first-child {
+        justify-self: start;
+    }
+
+    .global-nav .nav-container:has(> .nav-menu) > :last-child {
+        justify-self: end;
+    }
+}
+
+/* Reserva siempre el espacio de la barra de desplazamiento: así las páginas sin scroll
+   (como el mapa) no desplazan la barra superior unos píxeles al entrar. */
+html {
+    scrollbar-gutter: stable;
+}
