@@ -1,6 +1,13 @@
 const jwt = require('jsonwebtoken');
 const Admin = require('../models/Admin');
 
+// Generar JWT (7 días)
+const generarToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: '7d'
+  });
+};
+
 // Middleware para verificar token JWT
 const verificarToken = async (req, res, next) => {
   try {
@@ -9,6 +16,12 @@ const verificarToken = async (req, res, next) => {
     // Verificar si el token viene en el header Authorization
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
       token = req.headers.authorization.split(' ')[1];
+      if (token) {
+        // Eliminar comillas dobles si el token fue stringificado por accidente en localStorage
+        token = token.replace(/^"|"$/g, '');
+        // Evitar que el string "null" o "undefined" pase como token válido
+        if (token === 'null' || token === 'undefined') token = '';
+      }
     }
 
     // Si no hay token
@@ -35,7 +48,8 @@ const verificarToken = async (req, res, next) => {
     if (!admin.activo) {
       return res.status(401).json({
         success: false,
-        message: 'No autorizado - Cuenta inactiva'
+        message: 'No autorizado - Cuenta inactiva',
+        code: 'ACCOUNT_INACTIVE'
       });
     }
 
@@ -180,6 +194,7 @@ const verificarAdminRanking = (req, res, next) => {
 };
 
 module.exports = {
+  generarToken,
   verificarToken,
   verificarSuperAdmin,
   verificarAdminTurismo,
