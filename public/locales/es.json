@@ -236,5 +236,16 @@
         "faq_3_a": "Sí, una vez registrado tu establecimiento, tendrás acceso a un panel personal donde podrás actualizar toda la información, incluyendo menú, horarios, fotos y datos de contacto en tiempo real.",
         "faq_4_q": "¿Cómo pueden los clientes encontrar mi establecimiento?",
         "faq_4_a": "Los clientes pueden encontrar tu establecimiento a través de la búsqueda por nombre, tipo de comida, ubicación o utilizando los filtros disponibles en la página de inicio."
+    },
+    "mapa": {
+        "titulo": "Explorar Jalpan",
+        "descripcion": "Descubre los mejores sabores de la Sierra Gorda. Filtra por tipo o explora en el mapa.",
+        "filtrar": "Filtrar por categoría",
+        "cerca": "Cerca de ti",
+        "obradores": "Obradores",
+        "agencias": "Agencias",
+        "hoteles": "Hoteles",
+        "cabanas": "Cabañas",
+        "airbnb": "Airbnbs"
     }
 }

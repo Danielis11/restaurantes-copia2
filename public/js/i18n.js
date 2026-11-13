@@ -5,6 +5,24 @@
  *  - Contenido dinámico bilingüe de la BD mediante window.getL(obj)
  */
 
+// Las traducciones se guardan en el navegador: así cada página se pinta ya traducida
+// (sin esperar a /locales/*.json) y no "parpadea" el texto al cambiar de página.
+const I18N_CACHE = 'i18nCache_';
+function leerTraduccionesGuardadas(lang) {
+  try { const t = localStorage.getItem(I18N_CACHE + lang); return t ? JSON.parse(t) : null; } catch (e) { return null; }
+}
+
+// Este script se carga con "defer": aquí el HTML ya existe, así que se aplica antes de pintar
+(function aplicarAlInicio() {
+  let lang = 'es';
+  try { lang = localStorage.getItem('appLang') || 'es'; } catch (e) { /* almacenamiento bloqueado */ }
+  document.documentElement.lang = lang;
+  const guardadas = leerTraduccionesGuardadas(lang);
+  if (guardadas) applyTranslations(guardadas);
+  const sel = document.getElementById('language-selector');
+  if (sel) sel.value = lang;
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
   // 1. Determinar el idioma inicial y fijarlo en localStorage si no existe
   let savedLang = localStorage.getItem('appLang');
@@ -34,6 +52,8 @@ async function loadTranslations(lang) {
     if (!response.ok) throw new Error(`Error loading ${lang}.json`);
     
     const translations = await response.json();
+    try { localStorage.setItem(I18N_CACHE + lang, JSON.stringify(translations)); } catch (e) { /* sin espacio */ }
+    document.documentElement.lang = lang;
     applyTranslations(translations);
     
     // Disparar evento para que otros scripts re-rendericen el contenido dinámico

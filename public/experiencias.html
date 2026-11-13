@@ -323,7 +323,7 @@
             width: 100%;
             max-width: 720px;
             margin: 0 auto 1.25rem;
-            min-height: 64px;
+            min-height: 136px; /* 2 filas: evita que la página salte cuando llegan las tarjetas */
         }
 
         .exp-cat {
@@ -394,6 +394,7 @@
             .exp-categorias {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
                 gap: 0.5rem;
+                min-height: 176px;
             }
 
             .exp-cat {
@@ -1023,15 +1024,28 @@
             return todosLosTours;
         }
 
+        let cuentasGrupos = null;
+        try { cuentasGrupos = JSON.parse(sessionStorage.getItem('conteosExperiencias') || 'null'); } catch (e) { }
+
         async function pintarCategorias() {
             const cont = document.getElementById('exp-categorias');
             if (!cont) return;
+            // 1) Al instante con las cifras de la visita anterior; 2) con los datos reales
+            if (cuentasGrupos) dibujarCategorias(cont, cuentasGrupos);
             let tours = [];
             try { tours = await cargarTodosLosTours(); } catch (e) { console.error(e); }
+            if (!tours.length && cuentasGrupos) return;
+            cuentasGrupos = {};
+            EXP_GRUPOS.forEach(g => { cuentasGrupos[g.id] = tours.filter(t => tourEnGrupo(t, g)).length; });
+            try { sessionStorage.setItem('conteosExperiencias', JSON.stringify(cuentasGrupos)); } catch (e) { }
+            dibujarCategorias(cont, cuentasGrupos);
+        }
+
+        function dibujarCategorias(cont, cuentas) {
             const lang = localStorage.getItem('appLang') || 'es';
             const unidad = { es: ['experiencia', 'experiencias'], en: ['experience', 'experiences'], fr: ['expérience', 'expériences'] }[lang] || ['experiencia', 'experiencias'];
             cont.innerHTML = EXP_GRUPOS.map(g => {
-                const n = tours.filter(t => tourEnGrupo(t, g)).length;
+                const n = cuentas[g.id] || 0;
                 if (!n) return '';
                 const titulo = g.txt[lang] || g.txt.es;
                 return `<button type="button" class="exp-cat${categoriaActiva === g.id ? ' activa' : ''}" data-grupo="${g.id}"

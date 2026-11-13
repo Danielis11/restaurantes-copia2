@@ -2557,3 +2557,31 @@ a.btn-login[href="/login.html"]:hover {
 .card-action-btn.delete:hover {
     color: #b91c1c;
 }
+
+/* ===== Transición suave entre páginas (sin destello blanco) =====
+   La barra superior se queda quieta y el contenido cambia con un fundido corto.
+   Navegadores sin soporte simplemente cambian de página como siempre. */
+@view-transition {
+    navigation: auto;
+}
+
+.global-nav {
+    view-transition-name: barra-sitio;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation-duration: 0.18s;
+}
+
+@media (max-width: 768px) {
+    .global-nav .nav-menu {
+        view-transition-name: menu-inferior;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    @view-transition {
+        navigation: none;
+    }
+}

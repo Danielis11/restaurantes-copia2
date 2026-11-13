@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="/css/responsive.css">
     <link rel="stylesheet" href="/css/ui-enhancements.css">
     <script src="/js/ui-enhancements.js" defer></script>
+    <script src="/js/i18n.js" defer></script>
 
     <!-- Font Awesome para iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -369,24 +370,28 @@
                 Jalpan de Serra
             </a>
             <div class="nav-menu" id="nav-menu">
-                <a href="/" class="nav-link">Inicio</a>
-                <a href="/mapa.html" class="nav-link">Mapa</a>
-                <a href="/#restaurantes" class="nav-link">Restaurantes</a>
-                <a href="/#hospedaje" class="nav-link">Hospedaje</a>
-                <a href="/experiencias.html" class="nav-link">Experiencias</a>
-                <a href="/Contactos.html" class="nav-link">Contacto</a>
+                <a href="/" class="nav-link" data-i18n="navbar.inicio">Inicio</a>
+                <a href="/mapa.html" class="nav-link" data-i18n="navbar.mapa">Mapa</a>
+                <a href="/#restaurantes" class="nav-link" data-i18n="navbar.guia">Restaurantes</a>
+                <a href="/#hospedaje" class="nav-link" data-i18n="navbar.hospedaje">Hospedaje</a>
+                <a href="/experiencias.html" class="nav-link" data-i18n="navbar.tours">Experiencias</a>
+                <a href="/Contactos.html" class="nav-link" data-i18n="footer.contacto">Contacto</a>
             </div>
-            <div class="nav-actions" id="navbar-actions">
-                <select id="language-selector" class="language-selector"
-                    style="background: transparent; color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; padding: 0.2rem 0.5rem; font-size: 0.85rem; cursor: pointer; outline: none;">
-                    <option value="es" style="color: #000;">ES</option>
-                    <option value="en" style="color: #000;">EN</option>
-                    <option value="fr" style="color: #000;">FR</option>
+            <!-- El selector va FUERA de #navbar-actions: ese bloque se reconstruye al revisar la sesión -->
+            <div class="nav-actions-wrapper" style="display: flex; align-items: center;">
+                <select id="language-selector" aria-label="Idioma"
+                    style="margin-right: 15px; padding: 5px; border-radius: 5px; border: 1px solid #ddd; background: white; font-family: var(--font-family);">
+                    <option value="es" data-i18n="lang.switch_es">Español</option>
+                    <option value="en" data-i18n="lang.switch_en">Inglés</option>
+                    <option value="fr" data-i18n="lang.switch_fr">Français</option>
                 </select>
-                <a href="/login.html" class="btn-login"><i class="fas fa-user-circle"></i> Iniciar Sesión</a>
-                <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú">
-                    <i class="fas fa-bars"></i>
-                </button>
+                <div class="nav-actions" id="navbar-actions" style="display: flex; align-items: center;">
+                    <a href="/login.html" class="btn-login" title="Iniciar sesión"><i class="fas fa-user-circle"></i> <span
+                            data-i18n="navbar.iniciar_sesion">Iniciar Sesión</span></a>
+                    <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
             </div>
         </nav>
     </header>
@@ -397,26 +402,26 @@
             <div id="public-map"></div>
 
             <div class="map-sidebar">
-                <h2>Explorar Jalpan</h2>
-                <p>Descubre los mejores sabores de la Sierra Gorda. Filtra por tipo o explora en el mapa.</p>
+                <h2 data-i18n="mapa.titulo">Explorar Jalpan</h2>
+                <p data-i18n="mapa.descripcion">Descubre los mejores sabores de la Sierra Gorda. Filtra por tipo o explora en el mapa.</p>
 
                 <div class="filter-group">
-                    <div class="filter-title">Filtrar por categoría</div>
+                    <div class="filter-title" data-i18n="mapa.filtrar">Filtrar por categoría</div>
                     <div class="filter-buttons" id="map-filters">
-                        <button class="filter-btn active" data-filter="all">Todos</button>
-                        <button class="filter-btn" data-filter="restaurante">Restaurantes</button>
-                        <button class="filter-btn" data-filter="cafeteria">Cafeterías</button>
-                        <button class="filter-btn" data-filter="bar">Bares</button>
-                        <button class="filter-btn" data-filter="obrador-artesanal">Obradores</button>
-                        <button class="filter-btn" data-filter="agencia">Agencias</button>
-                        <button class="filter-btn" data-filter="hotel">Hoteles</button>
-                        <button class="filter-btn" data-filter="cabana">Cabañas</button>
-                        <button class="filter-btn" data-filter="airbnb">Airbnbs</button>
+                        <button class="filter-btn active" data-filter="all" data-i18n="filters.all">Todos</button>
+                        <button class="filter-btn" data-filter="restaurante" data-i18n="filters.restaurants">Restaurantes</button>
+                        <button class="filter-btn" data-filter="cafeteria" data-i18n="filters.cafes">Cafeterías</button>
+                        <button class="filter-btn" data-filter="bar" data-i18n="filters.bars">Bares</button>
+                        <button class="filter-btn" data-filter="obrador-artesanal" data-i18n="mapa.obradores">Obradores</button>
+                        <button class="filter-btn" data-filter="agencia" data-i18n="mapa.agencias">Agencias</button>
+                        <button class="filter-btn" data-filter="hotel" data-i18n="mapa.hoteles">Hoteles</button>
+                        <button class="filter-btn" data-filter="cabana" data-i18n="mapa.cabanas">Cabañas</button>
+                        <button class="filter-btn" data-filter="airbnb" data-i18n="mapa.airbnb">Airbnbs</button>
                     </div>
                 </div>
 
                 <div class="filter-group">
-                    <div class="filter-title">Cerca de ti</div>
+                    <div class="filter-title" data-i18n="mapa.cerca">Cerca de ti</div>
                     <div class="restaurant-list" id="sidebar-list">
                         <!-- Lista generada por JS -->
                     </div>

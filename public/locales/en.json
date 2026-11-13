@@ -236,5 +236,16 @@
         "faq_3_a": "Yes, once your establishment is registered, you will have access to a personal panel where you can update all information, including menu, hours, photos, and contact details in real-time.",
         "faq_4_q": "How can customers find my establishment?",
         "faq_4_a": "Customers can find your establishment through a search by name, type of food, location, or by using the filters available on the home page."
+    },
+    "mapa": {
+        "titulo": "Explore Jalpan",
+        "descripcion": "Discover the best flavors of the Sierra Gorda. Filter by type or explore the map.",
+        "filtrar": "Filter by category",
+        "cerca": "Near you",
+        "obradores": "Artisan workshops",
+        "agencias": "Agencies",
+        "hoteles": "Hotels",
+        "cabanas": "Cabins",
+        "airbnb": "Airbnbs"
     }
 }

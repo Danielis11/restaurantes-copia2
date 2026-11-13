@@ -400,6 +400,10 @@
             min-height: 42px;
         }
 
+        @media (max-width: 640px) {
+            .antojo-chips { min-height: 84px; }
+        }
+
         .antojo-chip {
             display: inline-flex;
             align-items: center;
@@ -4147,7 +4151,9 @@
         // ===== B�aSQUEDA RÁPIDA POR CHIPS =====
         // ===== CONTADORES REALES EN LOS ACCESOS DIRECTOS DE LA PORTADA =====
         (function () {
-            const conteos = { comer: null, experiencias: null };
+            let conteos = { comer: null, experiencias: null };
+            // Cifras de la visita anterior: se pintan al instante y luego se actualizan
+            try { conteos = Object.assign(conteos, JSON.parse(sessionStorage.getItem('conteosPortada') || '{}')); } catch (e) { }
             let textos = null;
             const pintar = () => {
                 const home = (textos && textos.home) || {};
@@ -4158,11 +4164,19 @@
                 poner('atajo-comer-detalle', 'atajo_comer_count', conteos.comer, '{n} lugares');
                 poner('atajo-experiencias-detalle', 'atajo_experiencias_count', conteos.experiencias, '{n} tours');
             };
+            // Textos del idioma guardados por i18n.js, para no esperar a /locales/*.json
+            try { textos = JSON.parse(localStorage.getItem('i18nCache_' + (localStorage.getItem('appLang') || 'es')) || 'null'); } catch (e) { }
             document.addEventListener('languageChanged', (e) => { textos = e.detail && e.detail.translations; pintar(); });
+            // i18n.js (defer) repone el texto por defecto antes de DOMContentLoaded: volver a poner la cifra
+            document.addEventListener('DOMContentLoaded', () => pintar());
             Promise.allSettled([
                 fetch('/api/restaurants/stats').then(r => r.json()).then(j => { conteos.comer = j && j.data && j.data.general && j.data.general.totalRestaurantes; }),
                 fetch('/api/tours').then(r => r.json()).then(j => { conteos.experiencias = j && (j.count || (Array.isArray(j.data) ? j.data.length : 0)); })
-            ]).then(pintar);
+            ]).then(() => {
+                try { sessionStorage.setItem('conteosPortada', JSON.stringify(conteos)); } catch (e) { }
+                pintar();
+            });
+            pintar();
         })();
 
         // ===== ¿QUÉ SE TE ANTOJA? =====
@@ -4182,7 +4196,8 @@
                 { q: 'postre', icon: 'fa-ice-cream', txt: { es: 'Postres', en: 'Desserts', fr: 'Desserts' } },
                 { q: 'pan', icon: 'fa-bread-slice', txt: { es: 'Pan', en: 'Bakery', fr: 'Pain' } }
             ];
-            const cuentas = {};
+            let cuentas = {};
+            try { cuentas = JSON.parse(sessionStorage.getItem('conteosAntojos') || '{}'); } catch (e) { }
             let activo = null;
 
             async function contar() {
@@ -4219,7 +4234,11 @@
             });
 
             document.addEventListener('languageChanged', pintar);
-            contar().then(pintar);
+            if (Object.keys(cuentas).length) pintar();   // visita anterior: al instante
+            contar().then(() => {
+                try { sessionStorage.setItem('conteosAntojos', JSON.stringify(cuentas)); } catch (e) { }
+                pintar();
+            });
         })();
 
         // ===== Botón "Filtros": abre/cierra calificación y precio =====
