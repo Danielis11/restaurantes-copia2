@@ -41,7 +41,7 @@
     <!-- Google Fonts: Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
 
     <!-- Estilos coherentes del sistema -->
     <style>
@@ -235,30 +235,12 @@
         }
 
         /* ===== PORTADA: MARCA JALPAN DE SERRA + ACCESOS DIRECTOS ===== */
-        .hero-eyebrow {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 16px;
-            margin-bottom: 18px;
-            border-radius: 999px;
-            border: 1px solid rgba(251, 191, 36, 0.55);
-            background: rgba(0, 0, 0, 0.25);
-            color: #fcd34d;
-            font-size: 0.8rem;
-            font-weight: 500;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-        }
-
         .hero-title.hero-marca {
-            font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
-            font-size: clamp(3rem, 9vw, 6.25rem);
-            font-weight: 600;
-            line-height: 1;
-            letter-spacing: -0.02em;
+            font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+            font-size: clamp(3.4rem, 10vw, 7rem);
+            font-weight: 700;
+            line-height: 0.95;
+            letter-spacing: 0.005em;
             margin-bottom: 16px;
             color: #fff;
             text-shadow: 0 6px 30px rgba(0, 0, 0, 0.45);
@@ -358,7 +340,6 @@
         }
 
         @media (max-width: 640px) {
-            .hero-eyebrow { font-size: 0.7rem; padding: 5px 12px; letter-spacing: 0.05em; }
             .hero-atajos { gap: 10px; }
             .hero-atajo { flex: 1 1 calc(50% - 10px); max-width: none; padding: 14px 8px 12px; }
             .atajo-icono { width: 42px; height: 42px; font-size: 1rem; }
@@ -375,8 +356,9 @@
         }
 
         .antojo-titulo {
-            font-family: 'Fraunces', Georgia, serif;
-            font-size: 1.6rem;
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 2rem;
+            font-weight: 700;
             font-weight: 600;
             color: #1f2937;
             margin: 0 0 0.75rem;
@@ -1675,7 +1657,7 @@
                     <option value="fr" data-i18n="lang.switch_fr">Français</option>
                 </select>
                 <div class="nav-actions" id="navbar-actions" style="display: flex; align-items: center;">
-                    <a href="/login.html" class="btn-login"><i class="fas fa-user-circle"></i> <span
+                    <a href="/login.html" class="btn-login" title="Iniciar sesión"><i class="fas fa-user-circle"></i> <span
                             data-i18n="navbar.iniciar_sesion">Iniciar Sesión</span></a>
                     <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú">
                         <i class="fas fa-bars"></i>
@@ -1935,7 +1917,6 @@
 
             <div class="hero-container">
                 <div class="hero-content">
-                    <span class="hero-eyebrow" data-i18n="home.hero_eyebrow">Pueblo Mágico · Sierra Gorda de Querétaro</span>
                     <h1 class="hero-title hero-marca" data-i18n="home.hero_brand">Jalpan de Serra</h1>
                     <p class="hero-subtitle" data-i18n="home.hero_tagline">Come, recorre y descansa en el corazón de la Sierra Gorda.</p>
 

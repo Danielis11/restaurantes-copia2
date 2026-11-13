@@ -1627,6 +1627,43 @@ body {
     filter: brightness(1.1);
 }
 
+/* Acceso discreto: el turista no necesita cuenta para usar el sitio.
+   Sin sesión se ve solo el ícono; con sesión, un botón sencillo con el nombre. */
+.btn-login {
+    background: transparent;
+    color: var(--gray-600, #475569);
+    box-shadow: none;
+    border: 1px solid var(--gray-200, #e2e8f0);
+    padding: 0.45rem 0.9rem;
+}
+
+.btn-login:hover {
+    transform: none;
+    filter: none;
+    box-shadow: none;
+    color: var(--brand-color);
+    border-color: currentColor;
+}
+
+a.btn-login[href="/login.html"] {
+    font-size: 0;
+    gap: 0;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    justify-content: center;
+    border-color: transparent;
+    border-radius: 50%;
+}
+
+a.btn-login[href="/login.html"] i {
+    font-size: 1.35rem;
+}
+
+a.btn-login[href="/login.html"]:hover {
+    background: rgba(15, 23, 42, 0.06);
+}
+
 .nav-toggle {
     display: none;
     background: none;
