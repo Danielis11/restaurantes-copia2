@@ -296,6 +296,131 @@
             transform: scale(0.96);
         }
 
+        /* ===== ¿Qué quieres vivir? (tarjetas de categoría) ===== */
+        .exp-eyebrow {
+            display: inline-block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.85);
+            text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+            margin-bottom: 0.4rem;
+        }
+
+        .exp-pregunta {
+            color: #fff;
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin: 0 0 0.9rem;
+            text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .exp-categorias {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.75rem;
+            width: 100%;
+            max-width: 720px;
+            margin: 0 auto 1.25rem;
+            min-height: 64px;
+        }
+
+        .exp-cat {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.75rem 0.9rem;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.14);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            color: #fff;
+            text-align: left;
+            cursor: pointer;
+            font: inherit;
+            transition: transform 0.2s, background 0.2s, border-color 0.2s;
+        }
+
+        .exp-cat:hover,
+        .exp-cat:focus-visible {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.24);
+            border-color: rgba(255, 255, 255, 0.55);
+            outline: none;
+        }
+
+        .exp-cat.activa {
+            background: #fff;
+            color: #1f2937;
+            border-color: #fff;
+        }
+
+        .exp-cat-icono {
+            flex-shrink: 0;
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            background: rgba(255, 255, 255, 0.2);
+            font-size: 1rem;
+        }
+
+        .exp-cat.activa .exp-cat-icono {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+        }
+
+        .exp-cat-texto {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .exp-cat-titulo {
+            font-weight: 700;
+            font-size: 0.92rem;
+            line-height: 1.2;
+        }
+
+        .exp-cat-detalle {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .exp-categorias {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 0.5rem;
+            }
+
+            .exp-cat {
+                padding: 0.6rem 0.7rem;
+                gap: 0.5rem;
+            }
+
+            .exp-cat-icono {
+                width: 32px;
+                height: 32px;
+                font-size: 0.9rem;
+            }
+
+            .exp-cat-titulo {
+                font-size: 0.85rem;
+            }
+
+            .hero.exp-hero .hero-subtitle {
+                margin-bottom: 1.2rem;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .exp-cat { transition: none; }
+            .exp-cat:hover { transform: none; }
+        }
+
         /* Filtros pill pequeños debajo del buscador */
         .exp-filter-pills {
             display: flex;
@@ -707,23 +832,17 @@
             <div class="hero-slide-dots" id="hero-slide-dots"></div>
             <div class="hero-container">
                 <div class="hero-content">
+                    <span class="exp-eyebrow" data-i18n="experiencias.hero_eyebrow">Sierra Gorda · Jalpan de Serra</span>
                     <h1 class="hero-title" data-i18n="experiencias.hero_title">Experiencias</h1>
                     <p class="hero-subtitle" data-i18n="experiencias.hero_subtitle">Descubre el turismo comunitario y
                         los tesoros ocultos de Jalpan de Serra.
                     </p>
 
-                    <!-- Buscador pill sobre la imagen -->
-                    <div class="hero-search">
-                        <div class="search-wrapper">
-                            <div class="search-box">
-                                <i class="fas fa-search search-icon-left"></i>
-                                <input type="text" id="filter-search" class="search-input"
-                                    placeholder="Buscar experiencia..." data-i18n="experiencias.search_placeholder"
-                                    oninput="applyFilters()">
-                                <button type="button" class="search-btn"><i class="fas fa-arrow-right"></i></button>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- ¿Qué quieres vivir? (categorías reales de los tours) -->
+                    <p class="exp-pregunta" data-i18n="experiencias.que_vivir">¿Qué quieres vivir?</p>
+                    <div class="exp-categorias" id="exp-categorias" role="group" aria-label="Tipos de experiencia"></div>
+                    <!-- La búsqueda por nombre vive en la barra fija de abajo -->
+                    <input type="hidden" id="filter-search" value="">
 
                     <!-- Filtros pill pequeños -->
                     <div class="exp-filter-pills">
@@ -873,6 +992,90 @@
         let allGuias = []; // Store all currently loaded guides
         const experiencesCache = {}; // Cache to avoid refetching tabs
         let experiencesFetched = false;
+
+        // ===== ¿QUÉ QUIERES VIVIR? Agrupa las categorías reales de los tours =====
+        const EXP_GRUPOS = [
+            { id: 'senderismo', icon: 'fa-person-hiking', cats: ['Senderismo', 'Trail Running'],
+              txt: { es: 'Senderismo y miradores', en: 'Hiking & viewpoints', fr: 'Randonnée et belvédères' } },
+            { id: 'agua', icon: 'fa-water', cats: ['Ruta del Agua', 'Kayak'],
+              txt: { es: 'Agua y kayak', en: 'Water & kayak', fr: 'Eau et kayak' } },
+            { id: 'cultura', icon: 'fa-landmark', cats: ['Turismo Cultural', 'Rutas Bioculturales', 'Ruta Herbolaria', 'Ruta del Pulque'],
+              txt: { es: 'Cultura y tradiciones', en: 'Culture & traditions', fr: 'Culture et traditions' } },
+            { id: 'aventura', icon: 'fa-car-side', cats: ['RZR', 'Espeleismo', 'Ciclismo de Montaña', 'MTB y Gravel'],
+              txt: { es: 'Aventura extrema', en: 'Adventure', fr: 'Aventure' } },
+            { id: 'aves', icon: 'fa-dove', cats: ['Aviturismo'],
+              txt: { es: 'Aves y naturaleza', en: 'Birds & nature', fr: 'Oiseaux et nature' } },
+            { id: 'comunitario', icon: 'fa-users', tipo: 'Turismo Comunitario',
+              txt: { es: 'Con comunidades locales', en: 'With local communities', fr: 'Avec les communautés' } }
+        ];
+        let categoriaActiva = null;   // id del grupo elegido (o null)
+        let todosLosTours = null;     // todos los tours, para contar y filtrar por grupo
+
+        function textoCat(c) { return typeof c === 'string' ? c : (c?.es || c?.en || ''); }
+        function tourEnGrupo(t, g) { return g.tipo ? textoCat(t.tipo) === g.tipo : g.cats.includes(textoCat(t.categoria)); }
+
+        async function cargarTodosLosTours() {
+            if (todosLosTours) return todosLosTours;
+            const lang = localStorage.getItem('appLang') || 'es';
+            const res = await fetch(`/api/tours?lang=${lang}&allLangs=true`);
+            const data = await res.json();
+            todosLosTours = data.success ? data.data : [];
+            return todosLosTours;
+        }
+
+        async function pintarCategorias() {
+            const cont = document.getElementById('exp-categorias');
+            if (!cont) return;
+            let tours = [];
+            try { tours = await cargarTodosLosTours(); } catch (e) { console.error(e); }
+            const lang = localStorage.getItem('appLang') || 'es';
+            const unidad = { es: ['experiencia', 'experiencias'], en: ['experience', 'experiences'], fr: ['expérience', 'expériences'] }[lang] || ['experiencia', 'experiencias'];
+            cont.innerHTML = EXP_GRUPOS.map(g => {
+                const n = tours.filter(t => tourEnGrupo(t, g)).length;
+                if (!n) return '';
+                const titulo = g.txt[lang] || g.txt.es;
+                return `<button type="button" class="exp-cat${categoriaActiva === g.id ? ' activa' : ''}" data-grupo="${g.id}"
+                        aria-pressed="${categoriaActiva === g.id}" onclick="elegirCategoria('${g.id}')">
+                        <span class="exp-cat-icono"><i class="fas ${g.icon}" aria-hidden="true"></i></span>
+                        <span class="exp-cat-texto"><span class="exp-cat-titulo">${titulo}</span>
+                        <span class="exp-cat-detalle">${n} ${unidad[n === 1 ? 0 : 1]}</span></span>
+                    </button>`;
+            }).join('');
+            cont.style.display = cont.innerHTML.trim() ? '' : 'none';
+        }
+
+        function marcarCategorias() {
+            document.querySelectorAll('.exp-cat').forEach(b => {
+                const on = b.dataset.grupo === categoriaActiva;
+                b.classList.toggle('activa', on);
+                b.setAttribute('aria-pressed', on);
+            });
+        }
+
+        // Vuelve a mostrar la pestaña del tipo actual (al quitar la categoría)
+        function reactivarPestana() {
+            const claves = { 'Turismo Convencional': 'turismo-convencional', 'Turismo Comunitario': 'turismo-comunitario', 'Turismo Religioso/Espiritual': 'turismo-religioso' };
+            document.querySelectorAll('.exp-tab').forEach(b => {
+                b.classList.toggle('active', (b.getAttribute('onclick') || '').includes(`'${claves[currentType]}'`));
+            });
+        }
+
+        async function elegirCategoria(id) {
+            if (categoriaActiva === id) {
+                // Segundo clic: quitar la categoría y volver a la pestaña
+                categoriaActiva = null;
+                marcarCategorias();
+                reactivarPestana();
+                loadExperiences(currentType);
+                return;
+            }
+            categoriaActiva = id;
+            marcarCategorias();
+            document.querySelectorAll('.exp-tab').forEach(b => b.classList.remove('active'));
+            try { allExperiences = await cargarTodosLosTours(); } catch (e) { allExperiences = []; }
+            applyFilters();
+            document.querySelector('.results')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
         let guiasFetched = false;
 
         // ===== MAPA DE ÍCONOS POR CATEGORÍA =====
@@ -971,6 +1174,7 @@
             startHeroRotation();
             setupStickyBar();
             loadExperiences('Turismo Convencional');
+            pintarCategorias();
 
             // Preload the other tabs in background for instant switching
             setTimeout(() => {
@@ -991,6 +1195,15 @@
         // Clear all active filters
         function clearAllFilters() {
             resetFilters();
+            if (categoriaActiva) {
+                categoriaActiva = null;
+                marcarCategorias();
+                reactivarPestana();
+                const sticky = document.getElementById('sticky-filter-search');
+                if (sticky) sticky.value = '';
+                loadExperiences(currentType);
+                return;
+            }
             const sticky = document.getElementById('sticky-filter-search');
             if (sticky) sticky.value = '';
             applyFilters();
@@ -1023,6 +1236,8 @@
             };
 
             currentType = internalTypes[type];
+            categoriaActiva = null;
+            marcarCategorias();
             resetFilters();
             loadExperiences(currentType);
         }
@@ -1193,7 +1408,11 @@
                     else if (duration === 'long') durMatch = hours > 8;
                 }
 
-                return nameMatch && diffMatch && durMatch;
+                // Categoría elegida en «¿Qué quieres vivir?»
+                const grupo = categoriaActiva && EXP_GRUPOS.find(g => g.id === categoriaActiva);
+                const catMatch = !grupo || tourEnGrupo(tour, grupo);
+
+                return nameMatch && diffMatch && durMatch && catMatch;
             });
 
             renderExperiences(filtered);
@@ -1222,6 +1441,7 @@
 
                 if (data.success) {
                     experiencesCache[cacheKey] = data.data; // Store in cache
+                    if (categoriaActiva) return; // el usuario ya eligió una categoría
                     allExperiences = data.data; // Save all to filter later
                     applyFilters(); // Apply initial empty filters to render
                 } else {
@@ -1241,7 +1461,7 @@
             const search = (document.getElementById('filter-search')?.value || '').trim();
             const diff = document.getElementById('filter-difficulty')?.value || 'all';
             const dur = document.getElementById('filter-duration')?.value || 'all';
-            return search !== '' || diff !== 'all' || dur !== 'all';
+            return search !== '' || diff !== 'all' || dur !== 'all' || !!categoriaActiva;
         }
 
         // Renderiza estrellas según rating (0-5)
@@ -1400,6 +1620,7 @@
         // Re-renderizar cuando cambie el idioma
         document.addEventListener('languageChanged', () => {
             if (experiencesFetched) applyFilters();
+            pintarCategorias();
             if (guiasFetched) renderGuias(allGuias);
         });
 

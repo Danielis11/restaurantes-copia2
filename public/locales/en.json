@@ -30,12 +30,13 @@
         "cerrar": "Close"
     },
     "home": {
+        "antojo_titulo": "What are you craving?",
         "hero_title": "Discover Jalpan through Gastronomy",
         "hero_title_1": "Discover Jalpan through ",
         "hero_title_2": "Gastronomy",
         "hero_subtitle": "Discover unique restaurants, bars, and cafes that Jalpan de Serra offers. Explore menus, schedules, and the rich mountain gastronomy.",
         "hero_btn": "Explore Experiences",
-        "search_placeholder": "Search for restaurants, bars or cafes...",
+        "search_placeholder": "Search a dish or a place: enchiladas, coffee, mezcal...",
         "available_places": "Available Establishments",
         "no_results_title": "No results found",
         "no_results_desc": "Try with other search terms or filters",
@@ -65,7 +66,8 @@
         "atajo_hospedaje_detalle": "Where to sleep",
         "atajo_mapa": "Near me",
         "atajo_mapa_detalle": "Everything on the map",
-        "hero_scroll": "See what's on today"
+        "hero_scroll": "See what's on today",
+        "clima_ahora": "Jalpan now"
     },
     "filters": {
         "all": "All",
@@ -113,6 +115,8 @@
         "informacion_adicional": "Additional Information"
     },
     "experiencias": {
+        "hero_eyebrow": "Sierra Gorda · Jalpan de Serra",
+        "que_vivir": "What do you want to experience?",
         "hero_title": "Experiences",
         "hero_subtitle": "Discover community tourism and the hidden treasures of Jalpan de Serra.",
         "search_placeholder": "Search experience...",

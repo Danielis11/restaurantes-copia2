@@ -226,6 +226,14 @@
             transform: translateY(-1px);
         }
 
+        .weather-lugar {
+            font-size: 0.68rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.2;
+        }
+
         /* ===== PORTADA: MARCA JALPAN DE SERRA + ACCESOS DIRECTOS ===== */
         .hero-eyebrow {
             display: inline-flex;
@@ -357,6 +365,85 @@
             .atajo-titulo { font-size: 0.95rem; }
             .atajo-detalle { font-size: 0.75rem; }
             .hero-scroll { margin-top: 24px; }
+        }
+
+        /* ===== ¿Qué se te antoja? (chips de comida) ===== */
+        .antojo {
+            text-align: center;
+            margin: 0 auto 1rem;
+            max-width: 820px;
+        }
+
+        .antojo-titulo {
+            font-family: 'Fraunces', Georgia, serif;
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0 0 0.75rem;
+        }
+
+        .antojo-chips {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            min-height: 42px;
+        }
+
+        .antojo-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.5rem 0.95rem;
+            border-radius: 999px;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            color: #1f2937;
+            font: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+            transition: transform 0.15s, box-shadow 0.15s, background 0.15s, border-color 0.15s;
+        }
+
+        .antojo-chip i {
+            color: #ea580c;
+        }
+
+        .antojo-chip small {
+            font-size: 0.72rem;
+            font-weight: 500;
+            color: #64748b;
+        }
+
+        .antojo-chip:hover,
+        .antojo-chip:focus-visible {
+            transform: translateY(-1px);
+            border-color: #fdba74;
+            box-shadow: 0 4px 12px rgba(234, 88, 12, 0.15);
+            outline: none;
+        }
+
+        .antojo-chip.activo {
+            background: #ea580c;
+            border-color: #ea580c;
+            color: #fff;
+        }
+
+        .antojo-chip.activo i,
+        .antojo-chip.activo small {
+            color: #fff;
+        }
+
+        @media (max-width: 640px) {
+            .antojo-titulo { font-size: 1.3rem; }
+            .antojo-chip { font-size: 0.82rem; padding: 0.45rem 0.8rem; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .antojo-chip { transition: none; }
+            .antojo-chip:hover { transform: none; }
         }
 
         /* Buscador dentro de la sección de restaurantes */
@@ -1723,21 +1810,12 @@
             <!-- Widget reloj y clima � fijo en la esquina inferior derecha del hero -->
             <div class="floating-clock-weather">
                 <div class="clock-weather-container">
-                    <div class="clock-section">
-                        <div class="clock-icon">
-                            <i class="far fa-clock"></i>
-                        </div>
-                        <div class="clock-content">
-                            <div class="current-time" id="current-time">--:--</div>
-                            <div class="current-date" id="current-date">---</div>
-                        </div>
-                    </div>
-                    <div class="cw-divider"></div>
                     <div class="weather-section">
                         <div class="weather-icon" id="weather-icon">
                             <i class="fas fa-cloud-sun"></i>
                         </div>
                         <div class="weather-content">
+                            <div class="weather-lugar" data-i18n="home.clima_ahora">Jalpan ahora</div>
                             <div class="current-temperature" id="current-temperature">--°</div>
                             <div class="weather-desc" id="weather-desc">Jalpan</div>
                         </div>
@@ -1927,13 +2005,19 @@
         <!-- Filters Section -->
         <section class="filters">
             <div class="container">
+                <!-- ¿Qué se te antoja? Atajos por comida (se ocultan los que no tienen lugares) -->
+                <div class="antojo">
+                    <h2 class="antojo-titulo" data-i18n="home.antojo_titulo">¿Qué se te antoja?</h2>
+                    <div class="antojo-chips" id="antojo-chips" role="group" aria-label="Buscar por comida"></div>
+                </div>
+
                 <!-- Búsqueda de lugares para comer -->
                 <div class="hero-search buscador-lugares">
                     <div class="search-wrapper">
                         <div class="search-box">
                             <i class="fas fa-search search-icon-left"></i>
                             <input type="text" id="search-input" data-i18n="home.search_placeholder"
-                                placeholder="Buscar restaurantes, bares o cafeterías..." class="search-input"
+                                placeholder="Busca un platillo o un lugar: enchiladas, café, mezcal..." class="search-input"
                                 autocomplete="off" aria-label="Buscar restaurantes, bares o cafeterías">
                             <button class="search-btn" id="search-btn" aria-label="Buscar">
                                 <i class="fas fa-arrow-right"></i>
@@ -3954,6 +4038,63 @@
                 fetch('/api/restaurants/stats').then(r => r.json()).then(j => { conteos.comer = j && j.data && j.data.general && j.data.general.totalRestaurantes; }),
                 fetch('/api/tours').then(r => r.json()).then(j => { conteos.experiencias = j && (j.count || (Array.isArray(j.data) ? j.data.length : 0)); })
             ]).then(pintar);
+        })();
+
+        // ===== ¿QUÉ SE TE ANTOJA? =====
+        // El término se busca en nombres, descripciones y platillos del menú.
+        (function () {
+            const ANTOJOS = [
+                { q: 'cafe', icon: 'fa-mug-hot', txt: { es: 'Café', en: 'Coffee', fr: 'Café' } },
+                { q: 'enchiladas', icon: 'fa-pepper-hot', txt: { es: 'Enchiladas', en: 'Enchiladas', fr: 'Enchiladas' } },
+                { q: 'gorditas', icon: 'fa-bread-slice', txt: { es: 'Gorditas', en: 'Gorditas', fr: 'Gorditas' } },
+                { q: 'antojitos', icon: 'fa-utensils', txt: { es: 'Antojitos', en: 'Mexican snacks', fr: 'Antojitos' } },
+                { q: 'tacos', icon: 'fa-utensils', txt: { es: 'Tacos', en: 'Tacos', fr: 'Tacos' } },
+                { q: 'mariscos', icon: 'fa-fish', txt: { es: 'Mariscos', en: 'Seafood', fr: 'Fruits de mer' } },
+                { q: 'desayuno', icon: 'fa-egg', txt: { es: 'Desayunos', en: 'Breakfast', fr: 'Petit-déjeuner' } },
+                { q: 'pizza', icon: 'fa-pizza-slice', txt: { es: 'Pizza', en: 'Pizza', fr: 'Pizza' } },
+                { q: 'cerveza', icon: 'fa-beer-mug-empty', txt: { es: 'Cerveza', en: 'Beer', fr: 'Bière' } },
+                { q: 'mezcal', icon: 'fa-wine-glass', txt: { es: 'Mezcal', en: 'Mezcal', fr: 'Mezcal' } },
+                { q: 'postre', icon: 'fa-ice-cream', txt: { es: 'Postres', en: 'Desserts', fr: 'Desserts' } },
+                { q: 'pan', icon: 'fa-bread-slice', txt: { es: 'Pan', en: 'Bakery', fr: 'Pain' } }
+            ];
+            const cuentas = {};
+            let activo = null;
+
+            async function contar() {
+                await Promise.all(ANTOJOS.map(async (a) => {
+                    try {
+                        const r = await fetch('/api/restaurants?limite=1&buscar=' + encodeURIComponent(a.q)).then(x => x.json());
+                        cuentas[a.q] = r?.data?.pagination?.total || 0;
+                    } catch (e) { cuentas[a.q] = 0; }
+                }));
+            }
+
+            function pintar() {
+                const cont = document.getElementById('antojo-chips');
+                if (!cont) return;
+                const lang = localStorage.getItem('appLang') || 'es';
+                const visibles = ANTOJOS.filter(a => cuentas[a.q] > 0).slice(0, 9);
+                cont.innerHTML = visibles.map(a => `<button type="button" class="antojo-chip${activo === a.q ? ' activo' : ''}" data-q="${a.q}" aria-pressed="${activo === a.q}">
+                        <i class="fas ${a.icon}" aria-hidden="true"></i>${a.txt[lang] || a.txt.es} <small>${cuentas[a.q]}</small></button>`).join('');
+                cont.closest('.antojo').style.display = visibles.length ? '' : 'none';
+            }
+
+            document.addEventListener('click', (e) => {
+                const chip = e.target.closest('.antojo-chip');
+                if (!chip) return;
+                const q = chip.dataset.q;
+                activo = activo === q ? null : q;   // segundo clic: quitar
+                pintar();
+                quickSearch(activo || '');
+            });
+
+            // Si el turista escribe a mano, se apaga el chip
+            document.addEventListener('input', (e) => {
+                if (e.target.id === 'search-input' && activo && e.target.value !== activo) { activo = null; pintar(); }
+            });
+
+            document.addEventListener('languageChanged', pintar);
+            contar().then(pintar);
         })();
 
         function quickSearch(term) {

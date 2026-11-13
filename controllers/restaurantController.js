@@ -1,6 +1,29 @@
 // ===== CONTROLLERS/restaurantController.js =====
 const Restaurant = require('../models/Restaurant');
 
+// Búsqueda segura y sin acentos: escapa caracteres especiales y hace que "cafe" encuentre "Café"
+const regexBusqueda = (texto) => {
+  const sinAcentos = String(texto).trim().slice(0, 60).normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const escapado = sinAcentos.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const acentos = { a: '[aáàä]', e: '[eéèë]', i: '[iíìï]', o: '[oóòö]', u: '[uúùü]', n: '[nñ]' };
+  const patron = escapado.replace(/[aeioun]/gi, (c) => acentos[c.toLowerCase()]);
+  return new RegExp(patron, "i");
+};
+
+// Dónde busca el turista: nombre, tipo, descripción, tipo de comida y platillos del menú
+const camposBusqueda = (texto) => {
+  const re = regexBusqueda(texto);
+  return [
+    { nombre: re },
+    { tipo: re },
+    { tipoComida: re },
+    { "descripcion.es": re },
+    { "descripcion.en": re },
+    { "menu.items.nombre": re },
+    { "menu.items.descripcion": re }
+  ];
+};
+
 // Función helper para mes actual (formato YYYY-MM)
 const obtenerMesActual = () => {
   const ahora = new Date();
@@ -37,11 +60,7 @@ const obtenerRestaurantes = async (req, res) => {
     }
     
     if (buscar) {
-      filtros.$or = [
-        { nombre: { $regex: buscar, $options: 'i' } },
-        { 'descripcion.es': { $regex: buscar, $options: 'i' } },
-        { 'descripcion.en': { $regex: buscar, $options: 'i' } }
-      ];
+      filtros.$or = camposBusqueda(buscar);
     }
 
     // Configurar ordenamiento
@@ -332,11 +351,7 @@ const buscarRestaurantes = async (req, res) => {
     // Construir filtros de búsqueda
     const filtros = {
       activo: true,
-      $or: [
-        { nombre: { $regex: termino, $options: 'i' } },
-        { descripcion: { $regex: termino, $options: 'i' } },
-        { 'direccion.ciudad': { $regex: termino, $options: 'i' } }
-      ]
+      $or: [...camposBusqueda(termino), { 'direccion.ciudad': regexBusqueda(termino) }]
     };
 
     if (tipo) filtros.tipo = tipo;

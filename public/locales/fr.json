@@ -30,12 +30,13 @@
         "cerrar": "Fermer"
     },
     "home": {
+        "antojo_titulo": "Qu’est-ce qui vous fait envie ?",
         "hero_title": "Découvrez Jalpan à travers la Gastronomie",
         "hero_title_1": "Découvrez Jalpan à ",
         "hero_title_2": "travers la Gastronomie",
         "hero_subtitle": "Découvrez les restaurants, bars et cafés uniques qu'offre Jalpan de Serra. Explorez les menus, les horaires et la riche gastronomie de la sierra.",
         "hero_btn": "Explorer les Expériences",
-        "search_placeholder": "Rechercher des restaurants, bars ou cafés...",
+        "search_placeholder": "Cherchez un plat ou un lieu : enchiladas, café, mezcal...",
         "available_places": "Établissements Disponibles",
         "no_results_title": "Aucun résultat trouvé",
         "no_results_desc": "Essayez d'autres termes de recherche ou filtres",
@@ -65,7 +66,8 @@
         "atajo_hospedaje_detalle": "Où dormir",
         "atajo_mapa": "Près de moi",
         "atajo_mapa_detalle": "Tout sur la carte",
-        "hero_scroll": "Voir ce qu'il y a aujourd'hui"
+        "hero_scroll": "Voir ce qu'il y a aujourd'hui",
+        "clima_ahora": "Jalpan maintenant"
     },
     "filters": {
         "all": "Tous",
@@ -113,6 +115,8 @@
         "informacion_adicional": "Informations Supplémentaires"
     },
     "experiencias": {
+        "hero_eyebrow": "Sierra Gorda · Jalpan de Serra",
+        "que_vivir": "Que voulez-vous vivre ?",
         "hero_title": "Expériences",
         "hero_subtitle": "Découvrez le tourisme communautaire et les trésors cachés de Jalpan de Serra.",
         "search_placeholder": "Rechercher une expérience...",
