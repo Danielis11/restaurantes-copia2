@@ -41,7 +41,7 @@
     <!-- Google Fonts: Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
 
     <!-- Estilos coherentes del sistema -->
     <style>
@@ -224,6 +224,150 @@
             border-color: rgba(102, 126, 234, 0.4);
             color: #667eea;
             transform: translateY(-1px);
+        }
+
+        /* ===== PORTADA: MARCA JALPAN DE SERRA + ACCESOS DIRECTOS ===== */
+        .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            margin-bottom: 18px;
+            border-radius: 999px;
+            border: 1px solid rgba(251, 191, 36, 0.55);
+            background: rgba(0, 0, 0, 0.25);
+            color: #fcd34d;
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+        }
+
+        .hero-title.hero-marca {
+            font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+            font-size: clamp(3rem, 9vw, 6.25rem);
+            font-weight: 600;
+            line-height: 1;
+            letter-spacing: -0.02em;
+            margin-bottom: 16px;
+            color: #fff;
+            text-shadow: 0 6px 30px rgba(0, 0, 0, 0.45);
+        }
+
+        .hero-content .hero-subtitle {
+            margin-bottom: 36px;
+            font-size: clamp(1.05rem, 2.2vw, 1.35rem);
+        }
+
+        .hero-atajos {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 14px;
+            width: 100%;
+            max-width: 760px;
+        }
+
+        .hero-atajo {
+            --atajo: #f97316;
+            flex: 1 1 160px;
+            max-width: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 18px 12px 16px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.14);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            color: #fff;
+            text-decoration: none;
+            transition: transform 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+        }
+
+        .hero-atajo:hover,
+        .hero-atajo:focus-visible {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.24);
+            border-color: var(--atajo);
+            outline: none;
+        }
+
+        .atajo-icono {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 6px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--atajo);
+            color: #fff;
+            font-size: 1.15rem;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+        }
+
+        .atajo-titulo { font-weight: 600; font-size: 1.05rem; }
+        .atajo-detalle { font-size: 0.8rem; color: rgba(255, 255, 255, 0.82); line-height: 1.3; }
+
+        .atajo-comer { --atajo: #f97316; }
+        .atajo-experiencias { --atajo: #10b981; }
+        .atajo-hospedaje { --atajo: #8b5cf6; }
+        .atajo-mapa { --atajo: #ec4899; }
+
+        .hero-scroll {
+            margin-top: 34px;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+            text-decoration: none;
+        }
+
+        .hero-scroll i { animation: heroRebote 1.8s ease-in-out infinite; }
+
+        @keyframes heroRebote {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(6px); }
+        }
+
+        /* Zoom lento de la foto de fondo */
+        .hero::before { animation: heroZoom 24s ease-in-out infinite alternate; transform-origin: center; }
+
+        @keyframes heroZoom {
+            from { transform: scale(1); }
+            to { transform: scale(1.08); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .hero::before, .hero-scroll i { animation: none; }
+        }
+
+        @media (max-width: 640px) {
+            .hero-eyebrow { font-size: 0.7rem; padding: 5px 12px; letter-spacing: 0.05em; }
+            .hero-atajos { gap: 10px; }
+            .hero-atajo { flex: 1 1 calc(50% - 10px); max-width: none; padding: 14px 8px 12px; }
+            .atajo-icono { width: 42px; height: 42px; font-size: 1rem; }
+            .atajo-titulo { font-size: 0.95rem; }
+            .atajo-detalle { font-size: 0.75rem; }
+            .hero-scroll { margin-top: 24px; }
+        }
+
+        /* Buscador dentro de la sección de restaurantes */
+        .buscador-lugares {
+            max-width: 620px;
+            margin: 0 auto 1.25rem !important;
+        }
+
+        .buscador-lugares .search-box {
+            background: #fff;
+            border-color: #e2e8f0;
         }
 
         /* ===== WIDGET RELOJ Y CLIMA � FIJO INFERIOR DERECHO ===== */
@@ -1603,43 +1747,38 @@
 
             <div class="hero-container">
                 <div class="hero-content">
-                    <h1 class="hero-title">
-                        <span data-i18n="home.hero_title_1">Descubre Jalpan a</span>
-                        <span class="highlight" data-i18n="home.hero_title_2">través de la Gastronomía</span>
-                    </h1>
-                    <p class="hero-subtitle" data-i18n="home.hero_subtitle">
-                        Descubre restaurantes, bares y cafeterías únicos que ofrece Jalpan de Serra. Explora menús,
-                        horarios y la rica gastronomía serrana.
-                    </p>
-                    <!-- Barra de búsqueda  centrada -->
-                    <div class="hero-search">
-                        <div class="search-wrapper">
-                            <div class="search-box">
-                                <i class="fas fa-search search-icon-left"></i>
-                                <input type="text" id="search-input" data-i18n="home.search_placeholder"
-                                    placeholder="Buscar restaurantes, bares o cafeterías..." class="search-input"
-                                    autocomplete="off">
-                                <button class="search-btn" id="search-btn" aria-label="Buscar">
-                                    <i class="fas fa-arrow-right"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <!-- Chips de búsqueda rápida con iconos Font Awesome -->
-                        <div class="search-hints">
-                            <a href="/hoteles.html" class="search-hint-chip" style="text-decoration:none;">
-                                <i class="fas fa-bed"></i> <span>Hospedaje</span>
-                            </a>
-                            <a href="#restaurantes" class="search-hint-chip" style="text-decoration:none;">
-                                <i class="fas fa-utensils"></i> <span>Alimentos</span>
-                            </a>
-                            <a href="/experiencias.html" class="search-hint-chip" style="text-decoration:none;">
-                                <i class="fas fa-hiking"></i> <span>Experiencias</span>
-                            </a>
-                            <a href="/mapa.html" class="search-hint-chip" style="text-decoration:none; border-color: #8b5cf6; color: #8b5cf6; background: rgba(139, 92, 246, 0.1);">
-                                <i class="fas fa-map-marker-alt"></i> <span>Cerca de Mí</span>
-                            </a>
-                        </div>
-                    </div>
+                    <span class="hero-eyebrow" data-i18n="home.hero_eyebrow">Pueblo Mágico · Sierra Gorda de Querétaro</span>
+                    <h1 class="hero-title hero-marca" data-i18n="home.hero_brand">Jalpan de Serra</h1>
+                    <p class="hero-subtitle" data-i18n="home.hero_tagline">Come, recorre y descansa en el corazón de la Sierra Gorda.</p>
+
+                    <!-- Accesos directos -->
+                    <nav class="hero-atajos" aria-label="Accesos directos">
+                        <a href="#restaurantes" class="hero-atajo atajo-comer">
+                            <span class="atajo-icono"><i class="fas fa-utensils"></i></span>
+                            <span class="atajo-titulo" data-i18n="home.atajo_comer">Comer</span>
+                            <span class="atajo-detalle" id="atajo-comer-detalle" data-i18n="home.atajo_comer_detalle">Restaurantes, bares y cafés</span>
+                        </a>
+                        <a href="/experiencias.html" class="hero-atajo atajo-experiencias">
+                            <span class="atajo-icono"><i class="fas fa-hiking"></i></span>
+                            <span class="atajo-titulo" data-i18n="home.atajo_experiencias">Experiencias</span>
+                            <span class="atajo-detalle" id="atajo-experiencias-detalle" data-i18n="home.atajo_experiencias_detalle">Tours y guías locales</span>
+                        </a>
+                        <a href="/hoteles.html" class="hero-atajo atajo-hospedaje">
+                            <span class="atajo-icono"><i class="fas fa-bed"></i></span>
+                            <span class="atajo-titulo" data-i18n="home.atajo_hospedaje">Hospedaje</span>
+                            <span class="atajo-detalle" data-i18n="home.atajo_hospedaje_detalle">Dónde dormir</span>
+                        </a>
+                        <a href="/mapa.html" class="hero-atajo atajo-mapa">
+                            <span class="atajo-icono"><i class="fas fa-map-marker-alt"></i></span>
+                            <span class="atajo-titulo" data-i18n="home.atajo_mapa">Cerca de mí</span>
+                            <span class="atajo-detalle" data-i18n="home.atajo_mapa_detalle">Todo en el mapa</span>
+                        </a>
+                    </nav>
+
+                    <a href="#restaurantes" class="hero-scroll">
+                        <span data-i18n="home.hero_scroll">Mira qué hay hoy</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </a>
                 </div>
             </div>
         </section>
@@ -1788,6 +1927,21 @@
         <!-- Filters Section -->
         <section class="filters">
             <div class="container">
+                <!-- Búsqueda de lugares para comer -->
+                <div class="hero-search buscador-lugares">
+                    <div class="search-wrapper">
+                        <div class="search-box">
+                            <i class="fas fa-search search-icon-left"></i>
+                            <input type="text" id="search-input" data-i18n="home.search_placeholder"
+                                placeholder="Buscar restaurantes, bares o cafeterías..." class="search-input"
+                                autocomplete="off" aria-label="Buscar restaurantes, bares o cafeterías">
+                            <button class="search-btn" id="search-btn" aria-label="Buscar">
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="filter-tabs">
                     <button class="filter-tab active" data-type="todos">
                         <i class="fas fa-th-large"></i>
@@ -3782,6 +3936,26 @@
         });
 
         // ===== B�aSQUEDA RÁPIDA POR CHIPS =====
+        // ===== CONTADORES REALES EN LOS ACCESOS DIRECTOS DE LA PORTADA =====
+        (function () {
+            const conteos = { comer: null, experiencias: null };
+            let textos = null;
+            const pintar = () => {
+                const home = (textos && textos.home) || {};
+                const poner = (id, clave, n, defecto) => {
+                    const el = document.getElementById(id);
+                    if (el && n > 0) el.textContent = (home[clave] || defecto).replace('{n}', n);
+                };
+                poner('atajo-comer-detalle', 'atajo_comer_count', conteos.comer, '{n} lugares');
+                poner('atajo-experiencias-detalle', 'atajo_experiencias_count', conteos.experiencias, '{n} tours');
+            };
+            document.addEventListener('languageChanged', (e) => { textos = e.detail && e.detail.translations; pintar(); });
+            Promise.allSettled([
+                fetch('/api/restaurants/stats').then(r => r.json()).then(j => { conteos.comer = j && j.data && j.data.general && j.data.general.totalRestaurantes; }),
+                fetch('/api/tours').then(r => r.json()).then(j => { conteos.experiencias = j && (j.count || (Array.isArray(j.data) ? j.data.length : 0)); })
+            ]).then(pintar);
+        })();
+
         function quickSearch(term) {
             const inputEl = document.getElementById('search-input');
             if (inputEl) {

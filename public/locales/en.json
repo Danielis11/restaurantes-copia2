@@ -51,7 +51,21 @@
         "tradition_desc": "The heritage of the Franciscan missions is reflected in traditional dishes that have been passed down from generation to generation for more than 250 years.",
         "conoce_jalpan_cta": "Do you want to know more about our mountain gastronomy?",
         "conoce_jalpan_desc_cta": "Discover the traditional recipes, local ingredients, and the history behind the dishes that make our region unique.",
-        "conoce_jalpan_btn": "Learn more about Jalpan"
+        "conoce_jalpan_btn": "Learn more about Jalpan",
+        "hero_eyebrow": "Pueblo Mágico · Sierra Gorda of Querétaro",
+        "hero_brand": "Jalpan de Serra",
+        "hero_tagline": "Eat, explore and unwind in the heart of the Sierra Gorda.",
+        "atajo_comer": "Eat",
+        "atajo_comer_detalle": "Restaurants, bars and cafés",
+        "atajo_comer_count": "{n} places",
+        "atajo_experiencias": "Experiences",
+        "atajo_experiencias_detalle": "Tours and local guides",
+        "atajo_experiencias_count": "{n} tours",
+        "atajo_hospedaje": "Stay",
+        "atajo_hospedaje_detalle": "Where to sleep",
+        "atajo_mapa": "Near me",
+        "atajo_mapa_detalle": "Everything on the map",
+        "hero_scroll": "See what's on today"
     },
     "filters": {
         "all": "All",
