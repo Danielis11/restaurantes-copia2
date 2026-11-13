@@ -346,6 +346,34 @@
             .atajo-titulo { font-size: 0.95rem; }
             .atajo-detalle { font-size: 0.75rem; }
             .hero-scroll { margin-top: 24px; }
+
+            /* Con 3 accesos (sin hospedaje), «Cerca de mí» queda como fila delgada bajo los otros dos */
+            .hero-atajos:not(:has(.atajo-hospedaje:not([style*="none"]))) .atajo-mapa {
+                flex: 1 1 100%;
+                flex-direction: row;
+                justify-content: flex-start;
+                gap: 10px;
+                padding: 10px 16px;
+                border-radius: 14px;
+            }
+            .hero-atajos:not(:has(.atajo-hospedaje:not([style*="none"]))) .atajo-mapa .atajo-icono {
+                width: 32px;
+                height: 32px;
+                margin: 0;
+                font-size: 0.85rem;
+                box-shadow: none;
+            }
+            .hero-atajos:not(:has(.atajo-hospedaje:not([style*="none"]))) .atajo-mapa .atajo-detalle::before {
+                content: '· ';
+            }
+            .hero-atajos:not(:has(.atajo-hospedaje:not([style*="none"]))) .atajo-mapa::after {
+                content: '\f054';
+                font-family: 'Font Awesome 6 Free';
+                font-weight: 900;
+                font-size: 0.75rem;
+                margin-left: auto;
+                opacity: 0.7;
+            }
         }
 
         /* ===== ¿Qué se te antoja? (chips de comida) ===== */
