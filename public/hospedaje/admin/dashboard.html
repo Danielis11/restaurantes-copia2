@@ -12,7 +12,7 @@
             box-sizing: border-box;
         }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
             color: #333;
             background: #f0f2f5;
@@ -22,7 +22,7 @@
         /* Sidebar */
         .sidebar {
             width: 280px;
-            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            background: linear-gradient(135deg, #1f2937 0%, #2563eb 100%);
             color: white;
             position: fixed;
             height: 100vh;
@@ -56,7 +56,7 @@
         .user-avatar {
             width: 60px;
             height: 60px;
-            background: linear-gradient(135deg, #4CAF50, #45a049);
+            background: linear-gradient(135deg, #2563eb, #1e40af);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -110,7 +110,7 @@
         }
         .menu-link.active {
             background: rgba(255,255,255,0.15);
-            border-left: 4px solid #4CAF50;
+            border-left: 4px solid #2563eb;
         }
         .menu-link i {
             width: 20px;
@@ -141,14 +141,14 @@
         }
         .submenu-link:hover {
             background: rgba(255, 255, 255, 0.15);
-            border-left-color: #4CAF50;
+            border-left-color: #2563eb;
             transform: translateX(2px);
             padding-left: 3.5rem !important;
         }
         .submenu-link.active {
             background: rgba(255, 255, 255, 0.2);
-            border-left-color: #4CAF50;
-            color: #4CAF50;
+            border-left-color: #2563eb;
+            color: #2563eb;
         }
         .submenu-link i {
             color: rgba(255, 255, 255, 0.8);
@@ -157,7 +157,7 @@
         }
         .submenu-link.active i,
         .submenu-link:hover i {
-            color: #4CAF50;
+            color: #2563eb;
         }
         /* Indicador visual para mostrar que es un submenu */
         .submenu-item::before {
@@ -172,7 +172,7 @@
             transition: all 0.3s ease;
         }
         .submenu-item:hover::before {
-            background: #4CAF50;
+            background: #2563eb;
             width: 12px;
         }
         /* Main Content */
@@ -194,7 +194,7 @@
         }
         .page-title {
             font-size: 1.8rem;
-            color: #2c3e50;
+            color: #1f2937;
             font-weight: 600;
         }
         .top-bar-actions {
@@ -214,7 +214,7 @@
         }
         .search-input:focus {
             outline: none;
-            border-color: #3498db;
+            border-color: #2563eb;
             width: 300px;
         }
         .search-icon {
@@ -320,7 +320,7 @@
         .stat-number {
             font-size: 2.5rem;
             font-weight: bold;
-            color: #2c3e50;
+            color: #1f2937;
             margin-bottom: 0.5rem;
         }
         .stat-label {
@@ -339,7 +339,7 @@
             font-weight: 600;
         }
         .stat-change.positive {
-            color: #27ae60;
+            color: #2563eb;
         }
         .stat-change.negative {
             color: #e74c3c;
@@ -360,18 +360,18 @@
         }
         .section-title {
             font-size: 1.3rem;
-            color: #2c3e50;
+            color: #1f2937;
             font-weight: 600;
         }
         .view-all-btn {
-            color: #3498db;
+            color: #2563eb;
             text-decoration: none;
             font-size: 0.9rem;
             font-weight: 500;
             transition: color 0.3s ease;
         }
         .view-all-btn:hover {
-            color: #2980b9;
+            color: #1e40af;
             text-decoration: underline;
         }
         .actions-grid {
@@ -450,7 +450,7 @@
         }
         .activity-title {
             font-weight: 600;
-            color: #2c3e50;
+            color: #1f2937;
             margin-bottom: 0.3rem;
         }
         .activity-description {
@@ -469,7 +469,7 @@
             top: 1rem;
             left: 1rem;
             z-index: 1001;
-            background: #2c3e50;
+            background: #1f2937;
             color: white;
             border: none;
             padding: 0.8rem;
@@ -529,6 +529,9 @@
             display: block;
         }
     </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <style>body, button, input, select, textarea { font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }</style>
 </head>
 <body>
     <!-- Mobile Menu Toggle -->
@@ -540,7 +543,7 @@
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <a href="../index.html" class="logo">
+            <a href="/" class="logo">
                 <i class="fas fa-compass"></i>
                 <span>Dirección de Turismo</span>
             </a>
@@ -1044,7 +1047,7 @@ function createManageImagesFunction() {
                     document.getElementById('warningText').textContent = 'Recuerda mantener actualizados los detalles de tus hoteles';
                     
                     statsHTML = `
-                        <div class="stat-card" style="--stat-color: #3498db;">
+                        <div class="stat-card" style="--stat-color: #2563eb;">
                             <div class="stat-icon">
                                 <i class="fas fa-hotel"></i>
                             </div>
@@ -1058,11 +1061,11 @@ function createManageImagesFunction() {
                     `;
                     
                     actionsHTML = `
-                        <a href="actualizar-detalles.html" class="action-btn" style="--btn-color: #3498db; --btn-color-dark: #2980b9;">
+                        <a href="actualizar-detalles.html" class="action-btn" style="--btn-color: #2563eb; --btn-color-dark: #1e40af;">
                             <i class="fas fa-edit"></i>
                             <span>Actualizar Detalles</span>
                         </a>
-                        <button onclick="manageImages()" class="action-btn" style="--btn-color: #27ae60; --btn-color-dark: #229954; border: none;">
+                        <button onclick="manageImages()" class="action-btn" style="--btn-color: #2563eb; --btn-color-dark: #229954; border: none;">
                             <i class="fas fa-images"></i>
                             <span>Gestionar Imágenes</span>
                         </button>
@@ -1075,7 +1078,7 @@ function createManageImagesFunction() {
                     document.getElementById('warningText').textContent = 'Recuerda mantener actualizados los detalles de tus cabañas';
                     
                     statsHTML = `
-                        <div class="stat-card" style="--stat-color: #27ae60;">
+                        <div class="stat-card" style="--stat-color: #2563eb;">
                             <div class="stat-icon">
                                 <i class="fas fa-tree"></i>
                             </div>
@@ -1089,7 +1092,7 @@ function createManageImagesFunction() {
                     `;
                     
                     actionsHTML = `
-                        <a href="actualizar-cabanas.html" class="action-btn" style="--btn-color: #27ae60; --btn-color-dark: #229954;">
+                        <a href="actualizar-cabanas.html" class="action-btn" style="--btn-color: #2563eb; --btn-color-dark: #229954;">
                             <i class="fas fa-edit"></i>
                             <span>Actualizar Detalles</span>
                         </a>
@@ -1156,7 +1159,7 @@ function createManageImagesFunction() {
                             <i class="fas fa-edit"></i>
                             <span>Actualizar Detalles</span>
                         </a>
-                        <a href="manage-images-tour.html" class="action-btn" style="--btn-color: #3498db; --btn-color-dark: #2980b9;">
+                        <a href="manage-images-tour.html" class="action-btn" style="--btn-color: #2563eb; --btn-color-dark: #1e40af;">
                             <i class="fas fa-images"></i>
                             <span>Gestionar Imágenes</span>
                         </a>
@@ -1169,7 +1172,7 @@ function createManageImagesFunction() {
                     document.getElementById('warningText').textContent = 'Recuerda mantener actualizado tu perfil y especialidades';
                     
                     statsHTML = `
-                        <div class="stat-card" style="--stat-color: #2196F3;">
+                        <div class="stat-card" style="--stat-color: #2563eb;">
                             <div class="stat-icon">
                                 <i class="fas fa-user-tie"></i>
                             </div>
@@ -1182,7 +1185,7 @@ function createManageImagesFunction() {
                     `;
                     
                     actionsHTML = `
-                        <a href="actualizar-guias.html" class="action-btn" style="--btn-color: #2196F3; --btn-color-dark: #1976D2;">
+                        <a href="actualizar-guias.html" class="action-btn" style="--btn-color: #2563eb; --btn-color-dark: #1e40af;">
                             <i class="fas fa-edit"></i>
                             <span>Actualizar Detalles</span>
                         </a>
@@ -1387,7 +1390,7 @@ function createManageImagesFunction() {
                                 activities.push({
                                     type: 'hotel',
                                     icon: 'fa-hotel',
-                                    color: '#3498db',
+                                    color: '#2563eb',
                                     name: hotel.nombre,
                                     action: 'registrado',
                                     date: hotel.createdAt,
@@ -1404,7 +1407,7 @@ function createManageImagesFunction() {
                                 activities.push({
                                     type: 'cabaña',
                                     icon: 'fa-tree',
-                                    color: '#27ae60',
+                                    color: '#2563eb',
                                     name: cabana.nombre,
                                     action: 'registrada',
                                     date: cabana.createdAt,

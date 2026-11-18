@@ -13,7 +13,7 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
             color: #333;
             background: #f0f2f5;
@@ -24,7 +24,7 @@
         /* Sidebar */
         .sidebar {
             width: 280px;
-            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            background: linear-gradient(135deg, #1f2937 0%, #2563eb 100%);
             color: white;
             position: fixed;
             height: 100vh;
@@ -63,7 +63,7 @@
         .user-avatar {
             width: 60px;
             height: 60px;
-            background: linear-gradient(135deg, #4CAF50, #45a049);
+            background: linear-gradient(135deg, #2563eb, #1e40af);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -125,7 +125,7 @@
 
         .menu-link.active {
             background: rgba(255,255,255,0.15);
-            border-left: 4px solid #4CAF50;
+            border-left: 4px solid #2563eb;
         }
 
         .menu-link i {
@@ -163,7 +163,7 @@
 
         .page-title {
             font-size: 1.8rem;
-            color: #2c3e50;
+            color: #1f2937;
             font-weight: 600;
         }
 
@@ -197,13 +197,13 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #4CAF50, #45a049);
+            background: linear-gradient(135deg, #2563eb, #1e40af);
             color: white;
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
         }
 
         /* Filters Section */
@@ -238,7 +238,7 @@
         .search-input:focus {
             outline: none;
             border-color: var(--business-color);
-            box-shadow: 0 0 10px rgba(76, 175, 80, 0.1);
+            box-shadow: 0 0 10px rgba(37, 99, 235, 0.1);
         }
 
         .search-icon {
@@ -314,7 +314,7 @@
         .stat-number {
             font-size: 2rem;
             font-weight: bold;
-            color: #2c3e50;
+            color: #1f2937;
             margin-bottom: 0.3rem;
         }
 
@@ -343,7 +343,7 @@
 
         .container-title {
             font-size: 1.3rem;
-            color: #2c3e50;
+            color: #1f2937;
             font-weight: 600;
         }
 
@@ -423,7 +423,7 @@
         }
 
         .status-active {
-            background: rgba(76, 175, 80, 0.9);
+            background: rgba(37, 99, 235, 0.9);
             color: white;
         }
 
@@ -439,7 +439,7 @@
         .anuncio-title {
             font-size: 1.2rem;
             font-weight: 600;
-            color: #2c3e50;
+            color: #1f2937;
             margin-bottom: 0.5rem;
             display: -webkit-box;
             -webkit-line-clamp: 1;
@@ -484,7 +484,7 @@
         .stat-value {
             font-size: 1.1rem;
             font-weight: 600;
-            color: #2c3e50;
+            color: #1f2937;
         }
 
         .stat-name {
@@ -514,11 +514,11 @@
 
         .btn-edit {
             background: #f0f8ff;
-            color: #3498db;
+            color: #2563eb;
         }
 
         .btn-edit:hover {
-            background: #3498db;
+            background: #2563eb;
             color: white;
             transform: translateY(-2px);
         }
@@ -564,7 +564,7 @@
             padding: 1rem;
             text-align: left;
             font-weight: 600;
-            color: #2c3e50;
+            color: #1f2937;
             border-bottom: 2px solid #e0e0e0;
         }
 
@@ -587,7 +587,7 @@
 
         .table-title {
             font-weight: 600;
-            color: #2c3e50;
+            color: #1f2937;
         }
 
         .table-subtitle {
@@ -706,7 +706,7 @@
 
         .modal-title {
             font-size: 1.5rem;
-            color: #2c3e50;
+            color: #1f2937;
             margin-bottom: 0.5rem;
         }
 
@@ -757,7 +757,7 @@
             top: 1rem;
             left: 1rem;
             z-index: 1001;
-            background: #2c3e50;
+            background: #1f2937;
             color: white;
             border: none;
             padding: 0.8rem;
@@ -841,6 +841,9 @@
             -webkit-overflow-scrolling: touch;
         }
     </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <style>body, button, input, select, textarea { font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }</style>
 </head>
 <body>
     <!-- Mobile Menu Toggle -->
@@ -854,7 +857,7 @@
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <a href="../index.html" class="logo">
+            <a href="/" class="logo">
                 <i class="fas fa-compass"></i>
                 <span>Dirección de Turismo</span>
             </a>
@@ -1076,7 +1079,7 @@ console.log('✅ BaseURL configurado:', baseURL);
         // Configuración por tipo de negocio
         const businessConfig = {
             hotel: {
-                color: '#3498db',
+                color: '#2563eb',
                 icon: 'fa-hotel',
                 title: 'Mis Hoteles',
                 singular: 'Hotel',
@@ -1085,7 +1088,7 @@ console.log('✅ BaseURL configurado:', baseURL);
                 priceLabel: 'por noche'
             },
             cabana: {
-                color: '#27ae60',
+                color: '#2563eb',
                 icon: 'fa-tree',
                 title: 'Mis Cabañas',
                 singular: 'Cabaña',
@@ -1112,7 +1115,7 @@ console.log('✅ BaseURL configurado:', baseURL);
                 priceLabel: 'por persona'
             },
             guiaturistica: {
-                color: '#2196F3',
+                color: '#2563eb',
                 icon: 'fa-user-tie',
                 title: 'Mi Perfil de Guía',
                 singular: 'Perfil',
@@ -1257,7 +1260,7 @@ console.log('✅ BaseURL configurado:', baseURL);
             
             // Generar HTML de estadísticas
             const statsHTML = `
-                <div class="stat-card" style="--stat-color: #4CAF50;">
+                <div class="stat-card" style="--stat-color: #2563eb;">
                     <div class="stat-icon">
                         <i class="fas fa-check-circle"></i>
                     </div>
@@ -1273,7 +1276,7 @@ console.log('✅ BaseURL configurado:', baseURL);
                     <div class="stat-label">${config.plural} Inactivos</div>
                 </div>
                 
-                <div class="stat-card" style="--stat-color: #3498db;">
+                <div class="stat-card" style="--stat-color: #2563eb;">
                     <div class="stat-icon">
                         <i class="fas fa-eye"></i>
                     </div>

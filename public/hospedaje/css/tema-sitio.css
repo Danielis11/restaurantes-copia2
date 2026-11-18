@@ -1,0 +1,147 @@
+/* =====================================================================
+   Tema del sitio principal para las páginas de /hospedaje/.
+   Se carga al final para que estas páginas se vean igual que el resto:
+   tipografía Outfit, azul #2563eb, grises neutros, tarjetas de 12px.
+   ===================================================================== */
+
+:root {
+    --sitio-azul: #2563eb;
+    --sitio-azul-oscuro: #1e40af;
+    --sitio-azul-claro: #eff6ff;
+    --sitio-texto: #1f2937;
+    --sitio-titulo: #111827;
+    --sitio-gris: #6b7280;
+    --sitio-borde: #e5e7eb;
+    --sitio-sombra: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --sitio-sombra-alta: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --sitio-fuente: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    /* Sus variables apuntan a la paleta del sitio */
+    --primary: #2563eb;
+    --primary-dark: #1e40af;
+    --primary-light: #3b82f6;
+    --font-primary: var(--sitio-fuente);
+    --font-display: var(--sitio-fuente);
+}
+
+/* ---------- Base ---------- */
+body {
+    font-family: var(--sitio-fuente) !important;
+    background: #ffffff !important;
+    color: var(--sitio-texto);
+}
+body input, body select, body textarea, body button {
+    font-family: var(--sitio-fuente);
+}
+h1, h2, h3, h4, h5, h6, .section-title {
+    font-family: var(--sitio-fuente);
+    color: var(--sitio-titulo);
+}
+
+/* La barra del sitio va por encima de todo lo suyo */
+.global-nav { z-index: 1100; }
+#compat-barra-vieja { display: none !important; }
+
+/* ---------- Portadas: foto con velo oscuro, como en Experiencias ---------- */
+.page-header {
+    background:
+        linear-gradient(180deg, rgba(17, 24, 39, 0.35) 0%, rgba(17, 24, 39, 0.6) 100%),
+        var(--portada, url('/images/Kayak%20en%20la%20Presa-103.jpg')) center 45% / cover no-repeat !important;
+    padding: 9rem 0 5rem !important;
+}
+body[data-pagina="hoteles"] { --portada: url('/images/_DSC0255.JPG'); }
+body[data-pagina="cabanas"] { --portada: url('/images/Naranjitos-1722.jpg'); }
+body[data-pagina="airbnb"] { --portada: url('/images/Turismo%20-%20Rey.JPG'); }
+body[data-pagina="guias"] { --portada: url('/images/Ciclismo-35.jpg'); }
+body[data-pagina="tourOperadora"] { --portada: url('/images/CUEVA%20DEL%20AGUA%20JALPAN.JPG'); }
+.page-header::before, .page-header::after { display: none !important; }
+.page-header h1, .page-header .page-title, .page-header-content h1 {
+    color: #ffffff !important;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+}
+.page-header p, .page-header-content p {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* ---------- Buscador y filtros ---------- */
+.search-section, .search-container, .hero-search-container {
+    border-radius: 12px !important;
+    box-shadow: var(--sitio-sombra) !important;
+    border: 1px solid var(--sitio-borde);
+}
+.search-form input, .search-form select, .search-section input, .search-section select {
+    border-radius: 8px !important;
+    border: 1px solid #d1d5db !important;
+}
+.search-form input:focus, .search-form select:focus, .search-section input:focus, .search-section select:focus {
+    border-color: var(--sitio-azul) !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+    outline: none;
+}
+
+/* ---------- Tarjetas ---------- */
+.hotel-card, .cabana-card, .airbnb-card, .guide-card, .operator-card,
+.category-card, .info-card, .filter-card, .hospedaje-card, .skeleton-card {
+    border-radius: 12px !important;
+    border: 1px solid var(--sitio-borde) !important;
+    box-shadow: var(--sitio-sombra) !important;
+    background: #ffffff;
+}
+.hotel-card:hover, .cabana-card:hover, .airbnb-card:hover, .guide-card:hover,
+.operator-card:hover, .category-card:hover, .hospedaje-card:hover {
+    box-shadow: var(--sitio-sombra-alta) !important;
+    transform: translateY(-4px);
+}
+
+/* ---------- Botones ---------- */
+.btn-search, .view-details-btn, .contact-btn, .cta-button, .retry-btn, .gastronomy-button,
+.filter-btn.active, .btn-primary {
+    background: var(--sitio-azul) !important;
+    background-image: none !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    font-weight: 600;
+}
+.btn-search:hover, .view-details-btn:hover, .contact-btn:hover, .cta-button:hover,
+.retry-btn:hover, .gastronomy-button:hover, .btn-primary:hover {
+    background: var(--sitio-azul-oscuro) !important;
+    transform: none;
+}
+/* Botón redondo de vista rápida (ojo) junto a «Ver detalles» */
+.view-details-btn[onclick*="openQuickView"] {
+    background: #ffffff !important;
+    color: var(--sitio-azul) !important;
+    border: 1px solid var(--sitio-borde) !important;
+    border-radius: 50% !important;
+    width: 40px; height: 40px;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center; justify-content: center;
+}
+.view-details-btn[onclick*="openQuickView"]:hover {
+    background: var(--sitio-azul-claro) !important;
+}
+.filter-btn {
+    border-radius: 9999px !important;
+    font-family: var(--sitio-fuente);
+}
+
+/* ---------- Etiquetas ---------- */
+.feature-tag, .specialty-tag, .type-badge, .amenity-tag {
+    background: var(--sitio-azul-claro) !important;
+    color: var(--sitio-azul-oscuro) !important;
+    border: none !important;
+    border-radius: 9999px !important;
+}
+.price-badge {
+    background: rgba(17, 24, 39, 0.75) !important;
+    color: #ffffff !important;
+    border-radius: 8px !important;
+    backdrop-filter: blur(4px);
+}
+
+/* ---------- Pie de página: el del sitio ---------- */
+footer.footer { margin-top: 4rem; }

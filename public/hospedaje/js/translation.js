@@ -1,10 +1,15 @@
 // translation.js
 document.addEventListener('DOMContentLoaded', () => {
-    const langSelect = document.getElementById('lang-select');
+    // Selector de idioma de la barra del sitio (#language-selector, valores es/en/fr) o el suyo antiguo
+    const langSelect = document.getElementById('language-selector') || document.getElementById('lang-select');
     if (!langSelect) return;
+    const minusculas = langSelect.id === 'language-selector';
 
-    const currentLang = localStorage.getItem('appLang') || 'ES';
-    langSelect.value = currentLang;
+    // El sitio principal guarda el idioma en minúsculas ('es'); aquí se usa 'ES'/'EN'/'FR'
+    let currentLang = 'ES';
+    try { currentLang = (localStorage.getItem('appLang') || 'es').toUpperCase(); } catch (e) { /* almacenamiento bloqueado */ }
+    if (!['ES', 'EN', 'FR'].includes(currentLang)) currentLang = 'ES';
+    langSelect.value = minusculas ? currentLang.toLowerCase() : currentLang;
 
     // We only translate if the selected language is not Spanish
     if (currentLang !== 'ES') {
@@ -12,8 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     langSelect.addEventListener('change', async (e) => {
-        const targetLang = e.target.value;
-        localStorage.setItem('appLang', targetLang);
+        const targetLang = String(e.target.value).toUpperCase();
+        try { localStorage.setItem('appLang', targetLang.toLowerCase()); } catch (err) { /* ignorar */ }
 
         if (targetLang === 'ES') {
             // Reload to restore original Spanish text
@@ -61,7 +66,7 @@ async function translatePage(targetLang) {
 
     try {
         // Show a loading indicator on the select
-        const langSelect = document.getElementById('lang-select');
+        const langSelect = document.getElementById('language-selector') || document.getElementById('lang-select');
         if (langSelect) langSelect.disabled = true;
 
         // We can chunk requests if there are too many elements (e.g., > 100), but for now send all
@@ -90,7 +95,7 @@ async function translatePage(targetLang) {
     } catch (error) {
         console.error('Error translating page:', error);
     } finally {
-        const langSelect = document.getElementById('lang-select');
+        const langSelect = document.getElementById('language-selector') || document.getElementById('lang-select');
         if (langSelect) langSelect.disabled = false;
     }
 }

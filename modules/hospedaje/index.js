@@ -48,6 +48,8 @@ function montar(app) {
   app.use('/uploads/airbnb', express.static(path.join(carpetaSubidas, 'airbnb'), { maxAge: '30d' }));
   app.use('/hospedaje/uploads', subidas);
   app.get(['/hospedaje/admin', '/hospedaje/admin/'], (req, res) => res.redirect('/hospedaje/admin/dashboard.html'));
+  // Su portada vieja ya no se usa: la sección empieza en hospedaje.html y el inicio es el del sitio
+  app.get(['/hospedaje', '/hospedaje/', '/hospedaje/index.html'], (req, res) => res.redirect(301, '/hospedaje/hospedaje.html'));
 }
 
 module.exports = { montar, api };

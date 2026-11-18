@@ -8,10 +8,10 @@
     <style>
         /* Variables CSS */
         :root {
-            --primary-color: #3498db;
-            --primary-dark: #2980b9;
-            --secondary-color: #2c3e50;
-            --success-color: #27ae60;
+            --primary-color: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary-color: #1f2937;
+            --success-color: #2563eb;
             --warning-color: #f39c12;
             --danger-color: #e74c3c;
             --card-bg: #ffffff;
@@ -29,7 +29,7 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
             color: var(--text-color);
             background: var(--bg-color);
@@ -99,7 +99,7 @@
         .user-avatar {
             width: 50px;
             height: 50px;
-            background: linear-gradient(135deg, var(--success-color), #2ecc71);
+            background: linear-gradient(135deg, var(--success-color), #3b82f6);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -501,7 +501,7 @@
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.4);
         }
 
         .btn-secondary {
@@ -515,13 +515,13 @@
         }
 
         .btn-success {
-            background: linear-gradient(135deg, var(--success-color), #2ecc71);
+            background: linear-gradient(135deg, var(--success-color), #3b82f6);
             color: white;
         }
 
         .btn-success:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.4);
         }
 
         .btn-sm {
@@ -610,14 +610,14 @@
         .form-label {
             display: block;
             font-weight: 600;
-            color: #2c3e50;
+            color: #1f2937;
             margin-bottom: 0.5rem;
             font-size: 1rem;
             line-height: 1.5;
         }
 
         .question-number {
-            background: #3498db;
+            background: #2563eb;
             color: white;
             padding: 0.2rem 0.5rem;
             border-radius: 4px;
@@ -639,9 +639,9 @@
 
         .form-control:focus {
             outline: none;
-            border-color: #3498db;
+            border-color: #2563eb;
             background: white;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
         .form-control.error {
@@ -650,7 +650,7 @@
         }
 
         .form-control.success {
-            border-color: #27ae60;
+            border-color: #2563eb;
             background-color: #f0f9f4;
         }
 
@@ -740,7 +740,7 @@
         }
 
         .alert-success {
-            background: linear-gradient(135deg, var(--success-color), #2ecc71);
+            background: linear-gradient(135deg, var(--success-color), #3b82f6);
         }
 
         .alert-error {
@@ -871,13 +871,16 @@
             }
         }
     </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <style>body, button, input, select, textarea { font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }</style>
 </head>
 <body>
     <div class="admin-container">
         <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <a href="../index.html" class="logo">
+                <a href="/" class="logo">
                     <i class="fas fa-compass"></i>
                     <span>Dirección de Turismo</span>
                 </a>
@@ -969,7 +972,7 @@
 
             <!-- Stats Grid -->
             <div class="stats-grid" id="statsGrid">
-                <div class="stat-card" style="--stat-color: #3498db;">
+                <div class="stat-card" style="--stat-color: #2563eb;">
                     <div class="stat-icon">
                         <i class="fas fa-house-user"></i>
                     </div>
@@ -977,7 +980,7 @@
                     <div class="stat-label">Propiedades Activas</div>
                 </div>
                 
-                <div class="stat-card" style="--stat-color: #27ae60;">
+                <div class="stat-card" style="--stat-color: #2563eb;">
                     <div class="stat-icon">
                         <i class="fas fa-users"></i>
                     </div>

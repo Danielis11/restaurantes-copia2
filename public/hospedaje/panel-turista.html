@@ -17,9 +17,9 @@
             --primary-bg: #f8fafc;
             --glass-bg: rgba(255, 255, 255, 0.7);
             --glass-border: rgba(255, 255, 255, 0.5);
-            --primary: #4f46e5;
-            --primary-light: #6366f1;
-            --primary-dark: #4338ca;
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --primary-dark: #1e40af;
             --accent: #ec4899;
             --success: #10b981;
             --warning: #f59e0b;
@@ -33,7 +33,7 @@
             --gray-900: #0f172a;
             
             /* Gradients radiantes */
-            --gradient-primary: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
             --gradient-success: linear-gradient(135deg, #10b981 0%, #34d399 100%);
             --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
             --gradient-error: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
@@ -286,7 +286,7 @@
         .stat-card:hover {
             transform: translateY(-8px);
             box-shadow: 0 20px 40px 0 rgba(31, 38, 135, 0.1);
-            border-color: rgba(99, 102, 241, 0.3);
+            border-color: rgba(37, 99, 235, 0.3);
         }
         
         .stat-card:hover::before {
@@ -320,7 +320,7 @@
             box-shadow: 0 8px 16px rgba(0,0,0,0.1);
         }
 
-        .stat-icon.primary { background: var(--gradient-primary); box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4); }
+        .stat-icon.primary { background: var(--gradient-primary); box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4); }
         .stat-icon.success { background: var(--gradient-success); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4); }
         .stat-icon.warning { background: var(--gradient-warning); box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4); }
         .stat-icon.error { background: var(--gradient-error); box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4); }
@@ -434,7 +434,7 @@
         }
 
         .action-icon.explore { background: var(--gradient-success); box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3); }
-        .action-icon.profile { background: var(--gradient-primary); box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); }
+        .action-icon.profile { background: var(--gradient-primary); box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3); }
         .action-icon.reviews { background: var(--gradient-warning); box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3); }
         .action-icon.favorites { background: var(--gradient-error); box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3); }
 
@@ -521,7 +521,7 @@
             font-size: 1rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
             text-transform: uppercase;
             letter-spacing: 1px;
             outline: none;
@@ -529,7 +529,7 @@
 
         .btn-primary:hover {
             transform: translateY(-3px);
-            box-shadow: 0 15px 25px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 15px 25px rgba(37, 99, 235, 0.4);
         }
         
         .btn-primary:active {
@@ -547,7 +547,7 @@
             outline: none;
             border-color: var(--primary-light) !important;
             background: var(--white) !important;
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1) !important;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1) !important;
         }
 
         @media (max-width: 768px) {
@@ -569,7 +569,7 @@
     <!-- Header -->
     <header class="header">
         <nav class="nav">
-            <a href="/hospedaje/index.html" class="logo" title="Volver al inicio">
+            <a href="/" class="logo" title="Volver al inicio">
                 <img src="/images/PueblosMágicos.svg.png" alt="Logo Turismo"
                     style="width: 32px; height: 32px; object-fit: contain;">
                 <span>Mi Panel Turístico</span>
@@ -672,7 +672,7 @@
 
             <div class="actions-grid">
                 <!-- Explorar -->
-                <a href="/hospedaje/index.html" class="action-card">
+                <a href="/" class="action-card">
                     <div class="action-icon explore">
                         <i class="fas fa-compass"></i>
                     </div>
@@ -1073,7 +1073,7 @@
                         <div style="grid-column: 1/-1; text-align: center; color: var(--gray-500); padding: 2rem; background:var(--white); border-radius: var(--radius-lg);">
                             <i class="far fa-star" style="font-size: 3rem; color: var(--gray-300); margin-bottom: 1rem;"></i>
                             <p>Aún no has escrito ninguna opinión.</p>
-                            <a href="/hospedaje/index.html" class="btn btn-primary" style="display:inline-block; margin-top:1rem; padding: 0.5rem 1rem; text-decoration:none;">Explorar y Opinar</a>
+                            <a href="/" class="btn btn-primary" style="display:inline-block; margin-top:1rem; padding: 0.5rem 1rem; text-decoration:none;">Explorar y Opinar</a>
                         </div>
                     `;
                     return;

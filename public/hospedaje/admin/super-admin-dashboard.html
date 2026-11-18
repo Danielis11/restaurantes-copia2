@@ -20,7 +20,7 @@
             box-sizing: border-box;
         }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             /* 🎨 NUEVO FONDO BLANCO ELEGANTE */
             background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%);
             min-height: 100vh;
@@ -682,7 +682,7 @@
             margin: 0;
             font-size: 2.5rem;
             font-weight: bold;
-            color: #2c3e50;
+            color: #1f2937;
         }
         .summary-content p {
             margin: 0;
@@ -915,13 +915,13 @@
         }
         .badge-hotel { 
             background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); 
-            color: #1976d2; 
-            border: 1px solid #2196f3;
+            color: #1e40af; 
+            border: 1px solid #2563eb;
         }
         .badge-cabana { 
-            background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c8 100%); 
-            color: #2e7d32; 
-            border: 1px solid #4caf50;
+            background: linear-gradient(135deg, #eff6ff 0%, #c8e6c8 100%); 
+            color: #1e40af; 
+            border: 1px solid #2563eb;
         }
         .badge-airbnb { 
             background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%); 
@@ -937,7 +937,7 @@
         }
         
         .establecimiento-info strong { 
-            color: #2c3e50; 
+            color: #1f2937; 
             font-size: 1rem;
             font-weight: 600;
         }
@@ -1309,7 +1309,7 @@
             text-overflow: ellipsis;
             cursor: help;
         }
-        .establecimiento-info strong { color: #2c3e50; }
+        .establecimiento-info strong { color: #1f2937; }
         .periodo-info { font-size: 0.85rem; }
         
         /* Badges para tipos */
@@ -1319,8 +1319,8 @@
             font-size: 0.75rem;
             font-weight: 600;
         }
-        .badge-hotel { background: #e3f2fd; color: #1976d2; }
-        .badge-cabana { background: #e8f5e8; color: #2e7d32; }
+        .badge-hotel { background: #e3f2fd; color: #1e40af; }
+        .badge-cabana { background: #eff6ff; color: #1e40af; }
         .badge-airbnb { background: #fce4ec; color: #c2185b; }
         
         /* Modal Styles */
@@ -1997,9 +1997,9 @@
     opacity: 0.9;
 }
 
-.trend-up { color: #2ecc71; }
+.trend-up { color: #3b82f6; }
 .trend-down { color: #e74c3c; }
-.trend-neutral { color: #95a5a6; }
+.trend-neutral { color: #9ca3af; }
 
 .statistics-grid {
     display: grid;
@@ -2145,6 +2145,9 @@
 
 
     </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <style>body, button, input, select, textarea { font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }</style>
 </head>
 <body>
     <!-- Floating Elements -->
@@ -2841,12 +2844,12 @@
                                 </table>
                             </div>
                             <!-- ✅ NOTA EXPLICATIVA MEJORADA -->
-                            <div style="margin-top: 1rem; padding: 1rem; background: linear-gradient(135deg, #f8f9ff 0%, #e3f2fd 100%); border-radius: 8px; font-size: 0.9em; color: #1976d2; border-left: 4px solid #2196f3;">
+                            <div style="margin-top: 1rem; padding: 1rem; background: linear-gradient(135deg, #f8f9ff 0%, #e3f2fd 100%); border-radius: 8px; font-size: 0.9em; color: #1e40af; border-left: 4px solid #2563eb;">
                                 <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
                                     <i class="fas fa-info-circle"></i>
                                     <strong>Información:</strong>
                                 </div>
-                                <span style="color: #1976d2;">*</span> <strong>Para hoteles:</strong> Habitaciones ocupadas | 
+                                <span style="color: #1e40af;">*</span> <strong>Para hoteles:</strong> Habitaciones ocupadas | 
                                 <strong>Para Airbnb:</strong> Días de ocupación | 
                                 <strong>Para Cabañas:</strong> Días ocupados
                             </div>
@@ -5120,8 +5123,8 @@ const userData = JSON.parse(localStorage.getItem('hospUserData') || '{}');
                     datasets: [{
                         label: 'Personas por Semana',
                         data: weeklyData.map(w => w.totalPersons),
-                        borderColor: '#3498db',
-                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
                         borderWidth: 3,
                         fill: true,
                         tension: 0.4
@@ -5156,7 +5159,7 @@ const userData = JSON.parse(localStorage.getItem('hospUserData') || '{}');
             // Procesar datos de procedencia
             const originData = processBasicOriginData(data);
             
-            const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6'];
+            const colors = ['#e74c3c', '#2563eb', '#3b82f6', '#f39c12', '#9b59b6'];
             
             statisticsCharts.procedencia = new Chart(ctx, {
                 type: 'doughnut',
@@ -5208,8 +5211,8 @@ const userData = JSON.parse(localStorage.getItem('hospUserData') || '{}');
                     }, {
                         label: 'Ocupación Promedio',
                         data: monthlyData.map(m => m.avgOcupacion),
-                        borderColor: '#3498db',
-                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
                         borderWidth: 2,
                         fill: false,
                         yAxisID: 'y1'
@@ -5269,14 +5272,14 @@ const userData = JSON.parse(localStorage.getItem('hospUserData') || '{}');
                     datasets: [{
                         label: 'Reportes',
                         data: typeData.map(t => t.reportes),
-                        backgroundColor: ['#3498db', '#2ecc71', '#e74c3c'],
-                        borderColor: ['#2980b9', '#27ae60', '#c0392b'],
+                        backgroundColor: ['#2563eb', '#3b82f6', '#e74c3c'],
+                        borderColor: ['#1e40af', '#2563eb', '#c0392b'],
                         borderWidth: 2
                     }, {
                         label: 'Total Turistas',
                         data: typeData.map(t => t.turistas),
-                        backgroundColor: ['rgba(52, 152, 219, 0.3)', 'rgba(46, 204, 113, 0.3)', 'rgba(231, 76, 60, 0.3)'],
-                        borderColor: ['#2980b9', '#27ae60', '#c0392b'],
+                        backgroundColor: ['rgba(37, 99, 235, 0.3)', 'rgba(46, 204, 113, 0.3)', 'rgba(231, 76, 60, 0.3)'],
+                        borderColor: ['#1e40af', '#2563eb', '#c0392b'],
                         borderWidth: 2,
                         yAxisID: 'y1'
                     }]
@@ -5887,7 +5890,7 @@ const userData = JSON.parse(localStorage.getItem('hospUserData') || '{}');
             if (confirm('¿Estás seguro de que deseas cerrar la sesión de Super Administrador?')) {
                 localStorage.removeItem('hospAuthToken');
                 localStorage.removeItem('hospUserData');
-                window.location.href = '/hospedaje/index.html';
+                window.location.href = '/';
             }
         }
         

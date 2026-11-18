@@ -13,7 +13,7 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #f8fafc;
             color: #2d3748;
             line-height: 1.6;
@@ -880,6 +880,9 @@
             }
         }
     </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <style>body, button, input, select, textarea { font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }</style>
 </head>
 <body>
     <div class="admin-container">
@@ -1273,7 +1276,7 @@ console.log('✅ BaseURL configurado para actualizar-tourOperadora:', baseURL);
                     icon: 'fas fa-user-tie',
                     label: 'Perfil Activo',
                     value: guias.length,
-                    color: '#2196F3'
+                    color: '#2563eb'
                 },
                 {
                     icon: 'fas fa-certificate',
@@ -1285,7 +1288,7 @@ console.log('✅ BaseURL configurado para actualizar-tourOperadora:', baseURL);
                     icon: 'fas fa-phone',
                     label: 'Contacto',
                     value: guias[0]?.contacto?.telefono ? 'Activo' : 'Faltante',
-                    color: '#4caf50'
+                    color: '#2563eb'
                 },
                 {
                     icon: 'fas fa-map-marker-alt',

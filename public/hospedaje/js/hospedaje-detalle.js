@@ -382,7 +382,7 @@ function renderPage(tipo) {
 
         if (resv.url) {
             resHTML += `
-                <a href="${resv.url}" target="_blank" class="contact-btn web" style="background-color: #3498db; color: white;">
+                <a href="${resv.url}" target="_blank" class="contact-btn web" style="background-color: #2563eb; color: white;">
                     <i class="fas fa-calendar-plus" style="font-size: 1.2rem;"></i>
                     <div>
                         <div class="contact-type" style="color: rgba(255,255,255,0.9);">Reserva en Línea</div>
@@ -395,7 +395,7 @@ function renderPage(tipo) {
         if (resv.indicaciones) {
             resHTML += `
                 <div class="contact-btn" style="cursor: default; display: flex; align-items: flex-start;">
-                    <i class="fas fa-info-circle" style="color: var(--primary-color, #2c3e50); margin-top: 4px;"></i>
+                    <i class="fas fa-info-circle" style="color: var(--primary-color, #1f2937); margin-top: 4px;"></i>
                     <div style="flex:1;">
                         <div class="contact-type">Indicaciones</div>
                         <div class="contact-value" style="font-size: 0.9rem; line-height: 1.4;">${resv.indicaciones}</div>

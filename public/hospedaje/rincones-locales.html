@@ -4,6 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Diseño del sitio principal -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <link rel="stylesheet" href="/css/ui-enhancements.css">
+    <script src="/js/ui-enhancements.js" defer></script>
+    <script src="/js/i18n.js" defer></script>
+    <script src="/js/barra-sitio.js" defer></script>
     <title>Rincones Locales - MISTIK360</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- AOS CSS -->
@@ -32,8 +42,8 @@
             --primary-gradient: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             --accent: var(--restaurant);
             --secondary: var(--cafe);
-            --font-primary: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            --font-display: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --font-primary: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             --spacing-xs: 0.25rem;
             --spacing-sm: 0.5rem;
             --spacing-md: 1rem;
@@ -103,7 +113,7 @@
             transform: translateY(-1px);
         }
 
-        .logo {
+        .viejo-logo {
             display: flex;
             align-items: center;
             gap: 0.75rem;
@@ -114,7 +124,7 @@
             margin: 0;
         }
 
-        .logo-image {
+        .viejo-logo-image {
             width: 45px;
             height: 45px;
             object-fit: contain;
@@ -169,7 +179,7 @@
             visibility: visible;
         }
 
-        .nav-menu {
+        .viejo-nav-menu {
             display: flex;
             list-style: none;
             gap: 1.5rem;
@@ -177,11 +187,11 @@
             margin: 0;
         }
 
-        .nav-item {
+        .viejo-nav-item {
             position: relative;
         }
 
-        .nav-link {
+        .viejo-nav-link {
             color: var(--gray-700);
             text-decoration: none;
             padding: 0.75rem 1rem;
@@ -194,7 +204,7 @@
             font-size: 0.95rem;
         }
 
-        .nav-link:hover {
+        .viejo-nav-link:hover {
             background: var(--gray-100);
             color: var(--primary);
             transform: translateY(-1px);
@@ -204,7 +214,7 @@
             position: relative;
         }
 
-        .dropdown .nav-link::after {
+        .dropdown .viejo-nav-link::after {
             content: "";
             width: 0;
             height: 0;
@@ -215,7 +225,7 @@
             transition: var(--transition);
         }
 
-        .dropdown:hover .nav-link::after {
+        .dropdown:hover .viejo-nav-link::after {
             transform: rotate(180deg);
         }
 
@@ -281,13 +291,13 @@
             gap: 0.5rem;
         }
 
-        .btn-login {
+        .viejo-btn-login {
             background: var(--primary);
             color: white;
             border: 1px solid var(--primary);
         }
 
-        .btn-login:hover {
+        .viejo-btn-login:hover {
             background: var(--primary-dark);
             transform: translateY(-2px);
             box-shadow: var(--shadow-colored);
@@ -327,7 +337,7 @@
                 display: flex;
             }
 
-            .nav-menu {
+            .viejo-nav-menu {
                 position: fixed;
                 top: 0;
                 right: -100%;
@@ -347,16 +357,16 @@
                 border-left: 1px solid var(--gray-200);
             }
 
-            .nav-menu.active {
+            .viejo-nav-menu.active {
                 right: 0;
             }
 
-            .nav-item {
+            .viejo-nav-item {
                 width: 100%;
                 border-bottom: 1px solid var(--gray-100);
             }
 
-            .nav-link {
+            .viejo-nav-link {
                 width: 100%;
                 padding: 1.2rem 2rem;
                 justify-content: flex-start;
@@ -365,7 +375,7 @@
                 color: var(--gray-700);
             }
 
-            .nav-link:hover {
+            .viejo-nav-link:hover {
                 background: var(--gray-50);
                 transform: none;
                 padding-left: 2.5rem;
@@ -406,14 +416,14 @@
                 }
             }
 
-            .dropdown>.nav-link {
+            .dropdown>.viejo-nav-link {
                 background: var(--gray-50);
                 font-weight: 600;
                 color: var(--primary);
                 position: relative;
             }
 
-            .dropdown>.nav-link::after {
+            .dropdown>.viejo-nav-link::after {
                 content: '\f107';
                 font-family: 'Font Awesome 6 Free';
                 font-weight: 900;
@@ -426,7 +436,7 @@
                 height: auto;
             }
 
-            .dropdown.active>.nav-link::after {
+            .dropdown.active>.viejo-nav-link::after {
                 transform: rotate(180deg);
             }
 
@@ -452,7 +462,7 @@
                 background: var(--gray-50);
             }
 
-            .btn-login {
+            .viejo-btn-login {
                 width: 100%;
                 text-align: center;
                 justify-content: center;
@@ -1063,26 +1073,26 @@
         }
 
         /* ===== FOOTER ===== */
-        .footer {
+        .viejo-footer {
             background: #000000;
-            color: #ecf0f1;
+            color: #f3f4f6;
             padding: 3rem 0 1rem 0;
         }
 
-        .footer-container {
+        .viejo-footer-container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 2rem;
         }
 
-        .footer-content {
+        .viejo-footer-content {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr 1.5fr;
             gap: 3rem;
             margin-bottom: 2rem;
         }
 
-        .footer-brand {
+        .viejo-footer-brand {
             max-width: 280px;
         }
 
@@ -1092,7 +1102,7 @@
             gap: 0.75rem;
             font-size: 1.4rem;
             font-weight: 700;
-            color: #ecf0f1;
+            color: #f3f4f6;
             margin-bottom: 1rem;
         }
 
@@ -1102,18 +1112,18 @@
         }
 
         .footer-description {
-            color: #bdc3c7;
+            color: #d1d5db;
             line-height: 1.6;
             margin-bottom: 1.5rem;
             font-size: 0.95rem;
         }
 
-        .footer-social {
+        .viejo-footer-social {
             display: flex;
             gap: 0.75rem;
         }
 
-        .social-link {
+        .viejo-social-link {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1127,28 +1137,28 @@
             font-size: 0.9rem;
         }
 
-        .social-link:hover {
+        .viejo-social-link:hover {
             background: var(--primary-light);
             transform: translateY(-2px);
         }
 
-        .footer-section h3 {
-            color: #ecf0f1;
+        .viejo-footer-section h3 {
+            color: #f3f4f6;
             font-size: 1.1rem;
             font-weight: 600;
             margin-bottom: 1rem;
         }
 
-        .footer-links {
+        .viejo-footer-links {
             list-style: none;
         }
 
-        .footer-links li {
+        .viejo-footer-links li {
             margin-bottom: 0.5rem;
         }
 
-        .footer-links a {
-            color: #bdc3c7;
+        .viejo-footer-links a {
+            color: #d1d5db;
             text-decoration: none;
             transition: var(--transition);
             font-size: 0.9rem;
@@ -1156,12 +1166,12 @@
             padding: 0.25rem 0;
         }
 
-        .footer-links a:hover {
+        .viejo-footer-links a:hover {
             color: var(--primary-light);
             padding-left: 0.5rem;
         }
 
-        .footer-contact {
+        .viejo-footer-contact {
             font-size: 0.9rem;
         }
 
@@ -1169,7 +1179,7 @@
             display: flex;
             align-items: flex-start;
             gap: 0.75rem;
-            color: #bdc3c7;
+            color: #d1d5db;
             margin-bottom: 0.75rem;
         }
 
@@ -1180,8 +1190,8 @@
             flex-shrink: 0;
         }
 
-        .footer-bottom {
-            border-top: 1px solid #34495e;
+        .viejo-footer-bottom {
+            border-top: 1px solid #374151;
             padding-top: 1.5rem;
             display: flex;
             justify-content: space-between;
@@ -1191,7 +1201,7 @@
         }
 
         .footer-copyright {
-            color: #95a5a6;
+            color: #9ca3af;
             font-size: 0.85rem;
         }
 
@@ -1201,7 +1211,7 @@
         }
 
         .footer-bottom-links a {
-            color: #95a5a6;
+            color: #9ca3af;
             text-decoration: none;
             font-size: 0.85rem;
             transition: var(--transition);
@@ -1226,7 +1236,7 @@
                 min-width: calc(50% - 0.75rem);
             }
 
-            .footer-content {
+            .viejo-footer-content {
                 grid-template-columns: 1fr 1fr;
                 gap: 2rem;
             }
@@ -1253,17 +1263,17 @@
                 grid-template-columns: repeat(2, 1fr);
             }
 
-            .footer-content {
+            .viejo-footer-content {
                 grid-template-columns: 1fr;
                 gap: 2rem;
                 text-align: left;
             }
 
-            .footer-social {
+            .viejo-footer-social {
                 justify-content: flex-start;
             }
 
-            .footer-bottom {
+            .viejo-footer-bottom {
                 flex-direction: column;
                 text-align: left;
                 gap: 1rem;
@@ -1275,7 +1285,7 @@
             .jalpan-container,
             .categories-container,
             .map-container,
-            .footer-container {
+            .viejo-footer-container {
                 padding: 0 1rem;
             }
 
@@ -1592,80 +1602,54 @@
         }
     </style>
     
+    <link rel="stylesheet" href="/hospedaje/css/tema-sitio.css">
 </head>
 
-<body>
+<body data-pagina="rincones-locales">
     <!-- Overlay para móvil -->
     <div class="mobile-overlay" id="mobileOverlay"></div>
 
     <!-- Header -->
-    <header class="header">
-        <nav class="nav">
-            <!-- Logo -->
-            <a href="index.html" class="nav-brand">
-                <h1 class="logo">
-                    <img src="/hospedaje/img_jalpan/logo_pueblos_magicos.jpg" alt="Logo Turismo" class="logo-image">
-                    <div class="logo-text">Dirección de Turismo</div>
-                </h1>
+    <header class="global-nav">
+        <nav class="nav-container">
+            <a href="/" class="logo">
+                <img src="/images/PueblosMágicos.svg.png" alt="Logo">
+                Jalpan de Serra
             </a>
-
-            <!-- Botón hamburguesa -->
-            <button class="mobile-menu-toggle" id="mobileMenuToggle">
-                <i class="fas fa-bars"></i>
-            </button>
-
-            <!-- Menú de navegación -->
-            <ul class="nav-menu" id="navMenu">
-                <!-- ✨ Botón de cerrar (solo móvil) -->
-                <li class="nav-item mobile-close-btn">
-                    <button class="close-menu-btn" id="closeMenuBtn">
-                        <i class="fas fa-times"></i>
+            <div class="nav-menu" id="nav-menu">
+                <a href="/" class="nav-link" data-i18n="navbar.inicio">Inicio</a>
+                <a href="/mapa.html" class="nav-link" data-i18n="navbar.mapa">Mapa</a>
+                <a href="/#restaurantes" class="nav-link" data-i18n="navbar.guia">Restaurantes</a>
+                <a href="/hospedaje/hospedaje.html" class="nav-link active" data-i18n="navbar.hospedaje">Hospedaje</a>
+                <a href="/experiencias.html" class="nav-link" data-i18n="navbar.tours">Experiencias</a>
+                <a href="/Contactos.html" class="nav-link" data-i18n="footer.contacto">Contacto</a>
+            </div>
+            <div class="nav-actions-wrapper" style="display: flex; align-items: center;">
+                <select id="language-selector"
+                    style="margin-right: 15px; padding: 5px; border-radius: 5px; border: 1px solid #ddd; background: white; font-family: var(--font-family);">
+                    <option value="es" data-i18n="lang.switch_es">Español</option>
+                    <option value="en" data-i18n="lang.switch_en">Inglés</option>
+                    <option value="fr" data-i18n="lang.switch_fr">Français</option>
+                </select>
+                <div class="nav-actions" id="navbar-actions" style="display: flex; align-items: center;">
+                    <a href="/login.html" class="btn-login"><i class="fas fa-user-circle"></i> <span
+                            data-i18n="navbar.iniciar_sesion">Iniciar Sesión</span></a>
+                    <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú">
+                        <i class="fas fa-bars"></i>
                     </button>
-                </li>
-
-                <li class="nav-item">
-                    <a href="index.html" class="nav-link">Inicio</a>
-                </li>
-                <li class="nav-item">
-                    <a href="/mapa.html" class="nav-link">Mapa</a>
-                </li>
-
-                <li class="nav-item">
-                    <a href="hospedaje.html" class="nav-link">
-                        Hospedaje
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a href="/" class="nav-link">Alimentos</a>
-                </li>
-
-                <li class="nav-item">
-                    <a href="/experiencias.html" class="nav-link">Experiencias</a>
-                </li>
-
-                <!-- Selector de Idiomas -->
-                <li class="nav-item">
-                    <select id="lang-select" class="form-control"
-                        style="padding: 0.5rem; border-radius: 5px; border: 1px solid #ccc; font-weight: bold; cursor: pointer; background: white;">
-                        <option value="ES">🇪🇸 ES</option>
-                        <option value="EN">🇺🇸 EN</option>
-                        <option value="FR">🇫🇷 FR</option>
-                    </select>
-                </li>
-
-                <li class="nav-item auth-buttons">
-                    <a href="login.html" class="btn btn-login">
-                        Iniciar Sesión
-                    </a>
-                </li>
-            </ul>
+                </div>
+            </div>
         </nav>
     </header>
+    <div hidden aria-hidden="true" id="compat-barra-vieja">
+        <button id="mobileMenuToggle"><i class="fas fa-bars"></i></button>
+        <div id="navMenu"></div><button id="closeMenuBtn"></button>
+        <div id="hospedajeDropdown"></div><div class="auth-buttons"></div>
+    </div>
     <div class="gallery-page">
         <div class="gallery-header" data-aos="fade-up">
             <div class="back-btn-container">
-                <a href="index.html" class="back-btn">
+                <a href="/" class="back-btn">
                     <i class="fas fa-arrow-left"></i> Regresar
                 </a>
             </div>
@@ -1753,85 +1737,59 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-container">
-            <div class="footer-content">
-                <!-- Sección principal -->
+            <div class="footer-grid">
                 <div class="footer-brand">
-                    <div class="footer-logo">
-                        <img src="/hospedaje/img_jalpan/logo_fondo_negro.png" alt="Logo Turismo" class="logo-image"
-                            style="width: 40px; height: 40px; background: black;">
-                        Dirección de Turismo
-                    </div>
-                    <p class="footer-description">
-                        Conectamos a las personas con los mejores destinos, alojamientos y experiencias gastronómicas de
-                        Jalpan de Serra, Pueblo Mágico.
-                    </p>
+                    <a href="/" class="logo">
+                        <img loading="lazy" decoding="async" src="/images/PueblosMágicos.svg.png" alt="Logo">
+                        Jalpan de Serra
+                    </a>
+                    <p>La plataforma líder que conecta a locales y turistas con la mejor oferta gastronómica del Corazón
+                        de la Sierra Gorda.</p>
                     <div class="footer-social">
-                        <a href="https://www.facebook.com/profile.php?id=61573849871475" class="social-link"
-                            title="Facebook">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="https://www.instagram.com/jalpan_pueblomagico?igsh=MWpmdDVnMndpbnB1dQ=="
-                            class="social-link" title="Instagram">
-                            <i class="fab fa-instagram"></i>
-                        </a>
+                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
                     </div>
                 </div>
 
-                <!-- Navegación -->
                 <div class="footer-section">
-                    <h3>Navegación</h3>
+                    <h4 class="footer-title">Navegación</h4>
                     <ul class="footer-links">
-                        <li><a href="/">Alimentos</a></li>
-                        <li><a href="hospedaje.html">Hospedaje</a></li>
-                        <li><a href="/experiencias.html">Experiencias</a></li>
+                        <li><a href="/">Inicio</a></li>
                         <li><a href="/mapa.html">Mapa</a></li>
+                        <li><a href="/Contactos.html">Contacto</a></li>
+                        <li><a href="/login.html">Panel Admin</a></li>
+                        <li><a href="/hospedaje/login.html">Acceso hospedajes</a></li>
                     </ul>
                 </div>
 
-                <!-- Soporte: Política -->
                 <div class="footer-section">
-                    <h3>Soporte: Política</h3>
+                    <h4 class="footer-title">Soporte</h4>
                     <ul class="footer-links">
-                        <li><a href="#gastronomia">Gastronomía Local</a></li>
-                        <li><a href="#atractivos">Atractivos Naturales</a></li>
-                        <li><a href="#misiones">Misiones Franciscanas</a></li>
-                        <li><a href="#cultura">Historia y Cultura</a></li>
-                        <li><a href="#eventos">Eventos Especiales</a></li>
-                        <li><a href="#tradiciones">Tradiciones</a></li>
+                        <li><a href="/Contactos.html#faq">Preguntas Frecuentes</a></li>
+                        <li><a href="mailto:restaurantesturismo57@gmail.com">Soporte Técnico</a></li>
+                        <li><a href="#">Guía de Uso</a></li>
                     </ul>
                 </div>
 
-                <!-- Contacto -->
                 <div class="footer-section">
-                    <h3>Contacto</h3>
+                    <h4 class="footer-title">Contacto</h4>
                     <div class="footer-contact">
-                        <div class="contact-item">
-                            <i class="fas fa-envelope"></i>
-                            <span>direcciondeturismojalpan@gmail.com</span>
-                        </div>
-                        <div class="contact-item">
-                            <i class="fas fa-phone"></i>
-                            <span>+52 441-296-0285</span>
-                        </div>
-                        <div class="contact-item">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>Plaza Principal, Jalpan de Serra, Querétaro</span>
-                        </div>
-                        <div class="contact-item">
-                            <i class="fas fa-clock"></i>
-                            <span>Lun - Vie: 8:00 AM - 3:30 PM</span>
-                        </div>
+                        <p><i class="fas fa-envelope"></i> restaurantesturismo57@gmail.com</p>
+                        <p><i class="fas fa-phone"></i> +52 (441) 296-0285</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Independencia No. 12, Jalpan de Serra, Qro.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Línea inferior -->
             <div class="footer-bottom">
-                <p class="footer-copyright">
-                    © 2024 Dirección de Turismo - Jalpan de Serra. Todos los derechos reservados.
-                </p>
-                <div class="footer-bottom-links">
-                    <a href="https://www.facebook.com/jenni.munoz.5011">Desarrollado por</a>
+                <p>&copy; 2025 Jalpan de Serra, Pueblo Mágico. Todos los derechos reservados.</p>
+                <div class="footer-meta">
+                    <a href="/privacidad.html">Privacidad</a>
+                    <a href="/terminos.html">Términos</a>
+                    <a href="#" style="display: flex; align-items: center; gap: 0.5rem; color: white;">
+                        <i class="fas fa-code"></i> Desarrollado por Zac
+                    </a>
                 </div>
             </div>
         </div>
@@ -2062,7 +2020,6 @@
     <script src="js/translation.js"></script>
 
     <!-- Script de Auth Navbar -->
-    <script src="js/auth-navbar.js"></script>
 
     <!-- AOS Script -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>

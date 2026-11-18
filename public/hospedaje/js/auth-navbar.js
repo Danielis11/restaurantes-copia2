@@ -90,7 +90,7 @@
             localStorage.removeItem('hospAuthToken');
             localStorage.removeItem('hospUserData');
             localStorage.removeItem('hospCurrentUser');
-            window.location.href = '/hospedaje/index.html';
+            window.location.href = '/';
         });
     });
 })();

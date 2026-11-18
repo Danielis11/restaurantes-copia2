@@ -154,7 +154,8 @@ body {
     }
 
     /* fa-utensils */
-    .nav-link[href="/#hospedaje"]::before {
+    .nav-link[href="/#hospedaje"]::before,
+    .nav-link[href="/hospedaje/hospedaje.html"]::before {
         content: "\f236";
     }
 

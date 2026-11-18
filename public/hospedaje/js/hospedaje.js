@@ -452,7 +452,7 @@ function openQuickView(tipo, id) {
                 </h2>
                 <p style="color:#666; margin-bottom:15px;"><i class="fas fa-map-marker-alt"></i> ${item.ubicacion?.ciudad || 'Jalpan de Serra'}</p>
                 <div style="display:flex; justify-content:space-between; background:#f9f9f9; padding:10px; border-radius:8px; margin-bottom:15px;">
-                    <div><i class="fas fa-coins" style="color:#2196F3;"></i> ${price > 0 ? `$${price} MXN` : 'Consultar'}</div>
+                    <div><i class="fas fa-coins" style="color:#2563eb;"></i> ${price > 0 ? `$${price} MXN` : 'Consultar'}</div>
                     <div><i class="fas fa-user" style="color:#FF5A5F;"></i> Hasta ${cap} per.</div>
                 </div>
                 <p style="font-size:0.95rem; line-height:1.5; color:#444;">${item.descripcion || 'Sin descripción detallada.'}</p>

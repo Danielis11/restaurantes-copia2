@@ -4,9 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Diseño del sitio principal -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <link rel="stylesheet" href="/css/ui-enhancements.css">
+    <script src="/js/ui-enhancements.js" defer></script>
+    <script src="/js/i18n.js" defer></script>
+    <script src="/js/barra-sitio.js" defer></script>
     <title>Detalle de Hospedaje - Dirección de Turismo</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/hospedaje/css/auth-navbar.css">
     <link rel="stylesheet" href="/hospedaje/css/favorite-heart.css">
     <!-- Mapbox GL JS -->
     <link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
@@ -15,50 +24,48 @@
 
     <!-- AOS CSS -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="/hospedaje/css/tema-sitio.css">
 </head>
 
-<body>
+<body data-pagina="hospedaje-detalle">
 
     <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="logo">
-                <img src="/hospedaje/img_jalpan/logo_pueblos_magicos.jpg" alt="Logo Turismo" class="logo-image">
-                Dirección de Turismo
+    <header class="global-nav">
+        <nav class="nav-container">
+            <a href="/" class="logo">
+                <img src="/images/PueblosMágicos.svg.png" alt="Logo">
+                Jalpan de Serra
             </a>
-            <button class="mobile-menu-toggle" id="mobileMenuToggle"><i class="fas fa-bars"></i></button>
-            <ul class="nav-menu" id="navMenu">
-                <!-- Boton cerrar (solo movil) -->
-                <li class="nav-item mobile-close-btn">
-                    <button class="close-menu-btn" id="closeMenuBtn">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </li>
-                <li class="nav-item"><a href="index.html" class="nav-link">Inicio</a></li>
-                <li class="nav-item"><a href="/mapa.html" class="nav-link">Mapa</a></li>
-                <li class="nav-item">
-                    <a href="hospedaje.html" class="nav-link">
-                        Hospedaje
-                    </a>
-                </li>
-                <li class="nav-item"><a href="/"
-                        class="nav-link">Alimentos</a></li>
-                <li class="nav-item"><a href="/experiencias.html" class="nav-link">Experiencias</a></li>
-                <!-- Selector de Idiomas -->
-                <li class="nav-item">
-                    <select id="lang-select" class="form-control"
-                        style="padding: 0.5rem; border-radius: 5px; border: 1px solid #ccc; font-weight: bold; cursor: pointer; background: white;">
-                        <option value="ES">🇪🇸 ES</option>
-                        <option value="EN">🇺🇸 EN</option>
-                        <option value="FR">🇫🇷 FR</option>
-                    </select>
-                </li>
-            </ul>
-            <div class="auth-buttons">
-                <a href="login.html" class="btn-login">Iniciar Sesión</a>
+            <div class="nav-menu" id="nav-menu">
+                <a href="/" class="nav-link" data-i18n="navbar.inicio">Inicio</a>
+                <a href="/mapa.html" class="nav-link" data-i18n="navbar.mapa">Mapa</a>
+                <a href="/#restaurantes" class="nav-link" data-i18n="navbar.guia">Restaurantes</a>
+                <a href="/hospedaje/hospedaje.html" class="nav-link active" data-i18n="navbar.hospedaje">Hospedaje</a>
+                <a href="/experiencias.html" class="nav-link" data-i18n="navbar.tours">Experiencias</a>
+                <a href="/Contactos.html" class="nav-link" data-i18n="footer.contacto">Contacto</a>
             </div>
-        </div>
-    </nav>
+            <div class="nav-actions-wrapper" style="display: flex; align-items: center;">
+                <select id="language-selector"
+                    style="margin-right: 15px; padding: 5px; border-radius: 5px; border: 1px solid #ddd; background: white; font-family: var(--font-family);">
+                    <option value="es" data-i18n="lang.switch_es">Español</option>
+                    <option value="en" data-i18n="lang.switch_en">Inglés</option>
+                    <option value="fr" data-i18n="lang.switch_fr">Français</option>
+                </select>
+                <div class="nav-actions" id="navbar-actions" style="display: flex; align-items: center;">
+                    <a href="/login.html" class="btn-login"><i class="fas fa-user-circle"></i> <span
+                            data-i18n="navbar.iniciar_sesion">Iniciar Sesión</span></a>
+                    <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div hidden aria-hidden="true" id="compat-barra-vieja">
+        <button id="mobileMenuToggle"><i class="fas fa-bars"></i></button>
+        <div id="navMenu"></div><button id="closeMenuBtn"></button>
+        <div id="hospedajeDropdown"></div><div class="auth-buttons"></div>
+    </div>
     <div class="mobile-overlay" id="mobileOverlay"></div>
 
     <!-- Loading State -->
@@ -72,7 +79,7 @@
         <i class="fas fa-exclamation-circle"></i>
         <h3>Error al cargar</h3>
         <p>No se pudo cargar la información del hospedaje.</p>
-        <a href="index.html" class="back-btn" style="margin-top:1rem"><i class="fas fa-home"></i> Volver al inicio</a>
+        <a href="/" class="back-btn" style="margin-top:1rem"><i class="fas fa-home"></i> Volver al inicio</a>
     </div>
 
     <!-- Main Content -->
@@ -323,7 +330,7 @@
                 <!-- Ubicación (Nuevo) -->
                 <div class="sidebar-card location-card" id="locationSection" style="display:none; padding: 15px; overflow: hidden; position: relative; border: 1px solid #eee; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); background-color: #fff;">
                     <div style="margin-bottom: 12px;">
-                        <h3 class="section-title" style="margin: 0; color: #2c3e50; font-size: 1.15rem; font-weight: bold; border-bottom: none; padding-bottom: 0px; display: flex; align-items: center; gap: 8px;">
+                        <h3 class="section-title" style="margin: 0; color: #1f2937; font-size: 1.15rem; font-weight: bold; border-bottom: none; padding-bottom: 0px; display: flex; align-items: center; gap: 8px;">
                             <i class="fas fa-map-marked-alt" style="color: #295ab0; font-size: 1.1rem;"></i> Ubicación
                         </h3>
                     </div>
@@ -353,85 +360,59 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-container">
-            <div class="footer-content-grid">
-                <!-- Sección principal -->
+            <div class="footer-grid">
                 <div class="footer-brand">
-                    <div class="footer-logo-section">
-                        <img src="/hospedaje/img_jalpan/logo_fondo_negro.png" alt="Logo Turismo" class="logo-image"
-                            style="width: 40px; height: 40px; background: black;">
-                        Dirección de Turismo
-                    </div>
-                    <p class="footer-description">
-                        Conectamos a las personas con los mejores destinos, alojamientos y experiencias gastronómicas de
-                        Jalpan de Serra, Pueblo Mágico.
-                    </p>
+                    <a href="/" class="logo">
+                        <img loading="lazy" decoding="async" src="/images/PueblosMágicos.svg.png" alt="Logo">
+                        Jalpan de Serra
+                    </a>
+                    <p>La plataforma líder que conecta a locales y turistas con la mejor oferta gastronómica del Corazón
+                        de la Sierra Gorda.</p>
                     <div class="footer-social">
-                        <a href="https://www.facebook.com/profile.php?id=61573849871475" class="footer-social-link"
-                            title="Facebook">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="https://www.instagram.com/jalpan_pueblomagico?igsh=MWpmdDVnMndpbnB1dQ=="
-                            class="footer-social-link" title="Instagram">
-                            <i class="fab fa-instagram"></i>
-                        </a>
+                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
                     </div>
                 </div>
 
-                <!-- Navegación -->
                 <div class="footer-section">
-                    <h3>Navegación</h3>
+                    <h4 class="footer-title">Navegación</h4>
                     <ul class="footer-links">
-                        <li><a href="/">Alimentos</a></li>
-                        <li><a href="hospedaje.html">Hospedaje</a></li>
-                        <li><a href="/experiencias.html">Experiencias</a></li>
+                        <li><a href="/">Inicio</a></li>
                         <li><a href="/mapa.html">Mapa</a></li>
+                        <li><a href="/Contactos.html">Contacto</a></li>
+                        <li><a href="/login.html">Panel Admin</a></li>
+                        <li><a href="/hospedaje/login.html">Acceso hospedajes</a></li>
                     </ul>
                 </div>
 
-                <!-- Soporte: Política -->
                 <div class="footer-section">
-                    <h3>Soporte: Política</h3>
+                    <h4 class="footer-title">Soporte</h4>
                     <ul class="footer-links">
-                        <li><a href="#gastronomia">Gastronomía Local</a></li>
-                        <li><a href="#atractivos">Atractivos Naturales</a></li>
-                        <li><a href="#misiones">Misiones Franciscanas</a></li>
-                        <li><a href="#cultura">Historia y Cultura</a></li>
-                        <li><a href="#eventos">Eventos Especiales</a></li>
-                        <li><a href="#tradiciones">Tradiciones</a></li>
+                        <li><a href="/Contactos.html#faq">Preguntas Frecuentes</a></li>
+                        <li><a href="mailto:restaurantesturismo57@gmail.com">Soporte Técnico</a></li>
+                        <li><a href="#">Guía de Uso</a></li>
                     </ul>
                 </div>
 
-                <!-- Contacto -->
                 <div class="footer-section">
-                    <h3>Contacto</h3>
-                    <div class="footer-contact-info">
-                        <div class="footer-contact-item">
-                            <i class="fas fa-envelope"></i>
-                            <span>direcciondeturismojalpan@gmail.com</span>
-                        </div>
-                        <div class="footer-contact-item">
-                            <i class="fas fa-phone"></i>
-                            <span>+52 441-296-0285</span>
-                        </div>
-                        <div class="footer-contact-item">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>Plaza Principal, Jalpan de Serra, Querétaro</span>
-                        </div>
-                        <div class="footer-contact-item">
-                            <i class="fas fa-clock"></i>
-                            <span>Lun - Vie: 8:00 AM - 3:30 PM</span>
-                        </div>
+                    <h4 class="footer-title">Contacto</h4>
+                    <div class="footer-contact">
+                        <p><i class="fas fa-envelope"></i> restaurantesturismo57@gmail.com</p>
+                        <p><i class="fas fa-phone"></i> +52 (441) 296-0285</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Independencia No. 12, Jalpan de Serra, Qro.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Línea inferior -->
             <div class="footer-bottom">
-                <p class="footer-copyright">
-                    © 2024 Dirección de Turismo - Jalpan de Serra. Todos los derechos reservados.
-                </p>
-                <div class="footer-bottom-links">
-                    <a href="https://www.facebook.com/jenni.munoz.5011">Desarrollado por</a>
+                <p>&copy; 2025 Jalpan de Serra, Pueblo Mágico. Todos los derechos reservados.</p>
+                <div class="footer-meta">
+                    <a href="/privacidad.html">Privacidad</a>
+                    <a href="/terminos.html">Términos</a>
+                    <a href="#" style="display: flex; align-items: center; gap: 0.5rem; color: white;">
+                        <i class="fas fa-code"></i> Desarrollado por Zac
+                    </a>
                 </div>
             </div>
         </div>
@@ -440,7 +421,6 @@
     <script src="/hospedaje/js/hospedaje-detalle.js"></script>
     <script src="/hospedaje/js/sub-cabana-carousel.js"></script>
     <script src="/hospedaje/js/translation.js"></script>
-    <script src="/hospedaje/js/auth-navbar.js"></script>
     <script src="/hospedaje/js/favorite-heart.js"></script>
 
     <!-- AOS Script -->

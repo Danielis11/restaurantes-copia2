@@ -12,7 +12,7 @@
             box-sizing: border-box;
         }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
             color: #333;
             background: #f0f2f5;
@@ -22,7 +22,7 @@
         /* Sidebar */
         .sidebar {
             width: 280px;
-            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            background: linear-gradient(135deg, #1f2937 0%, #2563eb 100%);
             color: white;
             position: fixed;
             height: 100vh;
@@ -56,7 +56,7 @@
         .user-avatar {
             width: 60px;
             height: 60px;
-            background: linear-gradient(135deg, #4CAF50, #45a049);
+            background: linear-gradient(135deg, #2563eb, #1e40af);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -110,7 +110,7 @@
         }
         .menu-link.active {
             background: rgba(255,255,255,0.15);
-            border-left: 4px solid #4CAF50;
+            border-left: 4px solid #2563eb;
         }
         .menu-link i {
             width: 20px;
@@ -135,15 +135,15 @@
 
         .submenu-link:hover {
             background: rgba(255, 255, 255, 0.15);
-            border-left-color: #4CAF50;
+            border-left-color: #2563eb;
             transform: translateX(2px);
             padding-left: 3.5rem !important;
         }
 
         .submenu-link.active {
             background: rgba(255, 255, 255, 0.2);
-            border-left-color: #4CAF50;
-            color: #4CAF50;
+            border-left-color: #2563eb;
+            color: #2563eb;
         }
 
         .submenu-link i {
@@ -154,7 +154,7 @@
 
         .submenu-link.active i,
         .submenu-link:hover i {
-            color: #4CAF50;
+            color: #2563eb;
         }
 
         /* Indicador visual para mostrar que es un submenu */
@@ -171,7 +171,7 @@
         }
 
         .submenu-item:hover::before {
-            background: #4CAF50;
+            background: #2563eb;
             width: 12px;
         }
 
@@ -194,7 +194,7 @@
         }
         .page-title {
             font-size: 1.8rem;
-            color: #2c3e50;
+            color: #1f2937;
             font-weight: 600;
         }
         .breadcrumb {
@@ -205,12 +205,12 @@
             font-size: 0.9rem;
         }
         .breadcrumb a {
-            color: #3498db;
+            color: #2563eb;
             text-decoration: none;
             transition: color 0.3s ease;
         }
         .breadcrumb a:hover {
-            color: #2980b9;
+            color: #1e40af;
         }
         /* Profile Section */
         .profile-section {
@@ -227,7 +227,7 @@
             position: relative;
         }
         .profile-header {
-            background: linear-gradient(135deg, var(--business-color, #3498db), var(--business-color-dark, #2980b9));
+            background: linear-gradient(135deg, var(--business-color, #2563eb), var(--business-color-dark, #1e40af));
             color: white;
             padding: 2rem;
             text-align: center;
@@ -271,7 +271,7 @@
             position: absolute;
             bottom: 0;
             right: 0;
-            background: #4CAF50;
+            background: #2563eb;
             color: white;
             width: 35px;
             height: 35px;
@@ -284,7 +284,7 @@
             border: 3px solid white;
         }
         .avatar-upload:hover {
-            background: #45a049;
+            background: #1e40af;
             transform: scale(1.1);
         }
         .profile-name {
@@ -303,7 +303,7 @@
             gap: 0.5rem;
             margin-top: 1rem;
             padding: 0.5rem 1rem;
-            background: rgba(76, 175, 80, 0.2);
+            background: rgba(37, 99, 235, 0.2);
             border-radius: 25px;
             font-size: 0.9rem;
         }
@@ -334,7 +334,7 @@
         .stat-number {
             font-size: 1.5rem;
             font-weight: bold;
-            color: var(--business-color, #3498db);
+            color: var(--business-color, #2563eb);
             display: block;
         }
         .stat-label {
@@ -356,7 +356,7 @@
             border-radius: 8px;
         }
         .detail-icon {
-            color: var(--business-color, #3498db);
+            color: var(--business-color, #2563eb);
             font-size: 1.1rem;
             width: 20px;
         }
@@ -381,7 +381,7 @@
             overflow: hidden;
         }
         .form-header {
-            background: linear-gradient(135deg, #34495e, #2c3e50);
+            background: linear-gradient(135deg, #374151, #1f2937);
             color: white;
             padding: 1.5rem 2rem;
             display: flex;
@@ -438,9 +438,9 @@
         }
         .form-control:focus {
             outline: none;
-            border-color: var(--business-color, #3498db);
+            border-color: var(--business-color, #2563eb);
             background: white;
-            box-shadow: 0 0 10px rgba(52, 152, 219, 0.1);
+            box-shadow: 0 0 10px rgba(37, 99, 235, 0.1);
         }
         .form-control:disabled {
             background: #f8f9fa;
@@ -480,12 +480,12 @@
             transform: translateY(-2px);
         }
         .btn-primary {
-            background: linear-gradient(135deg, var(--business-color, #3498db), var(--business-color-dark, #2980b9));
+            background: linear-gradient(135deg, var(--business-color, #2563eb), var(--business-color-dark, #1e40af));
             color: white;
         }
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
         }
         .btn:disabled {
             opacity: 0.6;
@@ -500,7 +500,7 @@
             margin-top: 2rem;
         }
         .business-header {
-            background: linear-gradient(135deg, var(--business-color, #3498db), var(--business-color-dark, #2980b9));
+            background: linear-gradient(135deg, var(--business-color, #2563eb), var(--business-color-dark, #1e40af));
             color: white;
             padding: 1.5rem 2rem;
             border-radius: 15px 15px 0 0;
@@ -530,14 +530,14 @@
             transition: all 0.3s ease;
         }
         .business-stat:hover {
-            border-color: var(--business-color, #3498db);
+            border-color: var(--business-color, #2563eb);
             transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.15);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.15);
         }
         .business-stat-icon {
             width: 60px;
             height: 60px;
-            background: linear-gradient(135deg, var(--business-color, #3498db), var(--business-color-dark, #2980b9));
+            background: linear-gradient(135deg, var(--business-color, #2563eb), var(--business-color-dark, #1e40af));
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -549,7 +549,7 @@
         .business-stat-number {
             font-size: 2rem;
             font-weight: bold;
-            color: #2c3e50;
+            color: #1f2937;
             margin-bottom: 0.5rem;
         }
         .business-stat-label {
@@ -586,7 +586,7 @@
             top: 1rem;
             left: 1rem;
             z-index: 1001;
-            background: #2c3e50;
+            background: #1f2937;
             color: white;
             border: none;
             padding: 0.8rem;
@@ -651,6 +651,9 @@
             display: block;
         }
     </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <style>body, button, input, select, textarea { font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }</style>
 </head>
 <body>
     <!-- Mobile Menu Toggle -->
@@ -663,7 +666,7 @@
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <a href="../index.html" class="logo">
+            <a href="/" class="logo">
                 <i class="fas fa-compass"></i>
                 <span>Dirección de Turismo</span>
             </a>
@@ -917,8 +920,8 @@ console.log('✅ BaseURL configurado:', baseURL);
             hotel: {
                 name: 'Hotel',
                 icon: 'fas fa-hotel',
-                color: '#3498db',
-                colorDark: '#2980b9',
+                color: '#2563eb',
+                colorDark: '#1e40af',
                 adminPageUrl: 'hoteles-admin.html',
                 imageManagementUrl: 'manage-images-hotel.html',
                 apiEndpoint: '/hoteles/mis-hoteles',
@@ -932,7 +935,7 @@ console.log('✅ BaseURL configurado:', baseURL);
             cabana: {
                 name: 'Cabaña',
                 icon: 'fas fa-tree',
-                color: '#27ae60',
+                color: '#2563eb',
                 colorDark: '#229954',
                 adminPageUrl: 'cabanas-admin.html',
                 imageManagementUrl: 'manage-images-cabana.html',
@@ -992,8 +995,8 @@ console.log('✅ BaseURL configurado:', baseURL);
             guiaturistica: {
                 name: 'Guía Turística',
                 icon: 'fas fa-user-tie',
-                color: '#2196F3',
-                colorDark: '#1976D2',
+                color: '#2563eb',
+                colorDark: '#1e40af',
                 adminPageUrl: 'guias-admin.html',
                 imageManagementUrl: 'manage-images-guia.html',
                 apiEndpoint: '/guias/mis-guias',

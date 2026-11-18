@@ -13,7 +13,7 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
             color: #333;
             background: #f0f2f5;
@@ -24,7 +24,7 @@
         /* Sidebar */
         .sidebar {
             width: 280px;
-            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            background: linear-gradient(135deg, #1f2937 0%, #2563eb 100%);
             color: white;
             position: fixed;
             height: 100vh;
@@ -63,7 +63,7 @@
         .user-avatar {
             width: 60px;
             height: 60px;
-            background: linear-gradient(135deg, #4CAF50, #45a049);
+            background: linear-gradient(135deg, #2563eb, #1e40af);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -125,7 +125,7 @@
 
         .menu-link.active {
             background: rgba(255,255,255,0.15);
-            border-left: 4px solid #4CAF50;
+            border-left: 4px solid #2563eb;
         }
 
         .menu-link i {
@@ -155,7 +155,7 @@
 
         .page-title {
             font-size: 1.8rem;
-            color: #2c3e50;
+            color: #1f2937;
             font-weight: 600;
         }
 
@@ -168,13 +168,13 @@
         }
 
         .breadcrumb a {
-            color: #3498db;
+            color: #2563eb;
             text-decoration: none;
             transition: color 0.3s ease;
         }
 
         .breadcrumb a:hover {
-            color: #2980b9;
+            color: #1e40af;
         }
 
         /* Messages */
@@ -227,7 +227,7 @@
         .hotel-icon {
             width: 80px;
             height: 80px;
-            background: linear-gradient(135deg, #3498db, #2980b9);
+            background: linear-gradient(135deg, #2563eb, #1e40af);
             border-radius: 15px;
             display: flex;
             align-items: center;
@@ -237,7 +237,7 @@
         }
 
         .hotel-details h2 {
-            color: #2c3e50;
+            color: #1f2937;
             margin-bottom: 0.5rem;
         }
 
@@ -264,7 +264,7 @@
         }
 
         .calendar-header {
-            background: linear-gradient(135deg, #3498db, #2980b9);
+            background: linear-gradient(135deg, #2563eb, #1e40af);
             color: white;
             padding: 2rem;
             position: relative;
@@ -356,7 +356,7 @@
 
         .calendar-day:hover {
             background: #f8f9fa;
-            border-color: #3498db;
+            border-color: #2563eb;
         }
 
         .calendar-day.other-month {
@@ -365,7 +365,7 @@
         }
 
         .calendar-day.today {
-            border-color: #3498db;
+            border-color: #2563eb;
             background: #e3f2fd;
         }
 
@@ -395,8 +395,8 @@
         }
 
         .status-available {
-            background: #e8f5e8;
-            color: #2e7d32;
+            background: #eff6ff;
+            color: #1e40af;
         }
 
         .status-occupied {
@@ -434,7 +434,7 @@
 
         .section-title {
             font-size: 1.3rem;
-            color: #2c3e50;
+            color: #1f2937;
             font-weight: 600;
         }
 
@@ -577,8 +577,8 @@
 
         .form-control:focus {
             outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 10px rgba(52, 152, 219, 0.1);
+            border-color: #2563eb;
+            box-shadow: 0 0 10px rgba(37, 99, 235, 0.1);
         }
 
         .status-options {
@@ -653,13 +653,13 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #3498db, #2980b9);
+            background: linear-gradient(135deg, #2563eb, #1e40af);
             color: white;
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
         }
 
         /* Loading State */
@@ -691,7 +691,7 @@
             width: 50px;
             height: 50px;
             border: 3px solid #f3f3f3;
-            border-top: 3px solid #3498db;
+            border-top: 3px solid #2563eb;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin: 0 auto 1rem;
@@ -736,7 +736,7 @@
             top: 1rem;
             left: 1rem;
             z-index: 1001;
-            background: #2c3e50;
+            background: #1f2937;
             color: white;
             border: none;
             padding: 0.8rem;
@@ -830,15 +830,18 @@
         }
 
         /* Color Variables */
-        .action-card:nth-child(1) { --action-color: #3498db; }
-        .action-card:nth-child(2) { --action-color: #27ae60; }
+        .action-card:nth-child(1) { --action-color: #2563eb; }
+        .action-card:nth-child(2) { --action-color: #2563eb; }
         .action-card:nth-child(3) { --action-color: #e74c3c; }
         .action-card:nth-child(4) { --action-color: #f39c12; }
 
-        .status-option:nth-child(1) { --status-color: #27ae60; --status-bg: #e8f5e8; }
+        .status-option:nth-child(1) { --status-color: #2563eb; --status-bg: #eff6ff; }
         .status-option:nth-child(2) { --status-color: #e74c3c; --status-bg: #ffebee; }
         .status-option:nth-child(3) { --status-color: #9c27b0; --status-bg: #f3e5f5; }
     </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <style>body, button, input, select, textarea { font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }</style>
 </head>
 <body>
     <!-- Mobile Menu Toggle -->
@@ -852,7 +855,7 @@
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <a href="../index.html" class="logo">
+            <a href="/" class="logo">
                 <i class="fas fa-compass"></i>
                 <span>Dirección de Turismo</span>
             </a>
