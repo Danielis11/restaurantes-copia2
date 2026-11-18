@@ -54,6 +54,9 @@ if (process.env.NODE_ENV !== 'test') {
 app.use('/api/auth/login', authLimiter);
 app.use('/api/auth/register', authLimiter);
 app.use('/api/auth/google', authLimiter);
+app.use('/api/hospedaje/auth/login', authLimiter);
+app.use('/api/hospedaje/auth/signup', authLimiter);
+app.use('/api/hospedaje/auth/google-login', authLimiter);
 app.use('/api/auth/user/login', authLimiter);
 app.use('/api/auth/user/register', authLimiter);
 app.use('/api', apiLimiter);
@@ -116,6 +119,9 @@ app.use('/api/crm-quejas', require('./routes/crmQuejasRoutes'));
 app.use('/api/bolsa-trabajo', require('./routes/bolsaTrabajoRoutes'));
 app.use('/api/recomendaciones', require('./routes/recommendationsRoutes'));
 app.use('/api/gobierno', require('./routes/gobiernoRoutes'));
+
+// Módulo de hospedaje (antes turismo-app): API en /api/hospedaje, páginas en /hospedaje/
+require('./modules/hospedaje').montar(app);
 
 // Rutas que antes vivían dentro de server.js (usan la ruta completa, p. ej. '/api/user/favorites')
 app.use(require('./routes/utilidadesRoutes'));     // /api/config/mapbox, /api/img-proxy

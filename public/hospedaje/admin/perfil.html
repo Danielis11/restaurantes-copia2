@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - Panel de Administración</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f0f2f5;
+            min-height: 100vh;
+            display: flex;
+        }
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            background: rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+        }
+        .logo i {
+            font-size: 2rem;
+        }
+        .user-info {
+            padding: 1.5rem;
+            background: rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            border: 3px solid rgba(255,255,255,0.2);
+        }
+        .user-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+        .user-role {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .sidebar-menu {
+            list-style: none;
+            padding: 1rem 0;
+        }
+        .menu-section {
+            padding: 0.5rem 1.5rem;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            opacity: 0.6;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-top: 1rem;
+        }
+        .menu-item {
+            margin: 0.2rem 0;
+        }
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            font-weight: 500;
+        }
+        .menu-link:hover {
+            background: rgba(255,255,255,0.1);
+            padding-left: 2rem;
+        }
+        .menu-link.active {
+            background: rgba(255,255,255,0.15);
+            border-left: 4px solid #4CAF50;
+        }
+        .menu-link i {
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        /* ✅ ESTILOS para submenu de gestión de imágenes */
+        .submenu-item {
+            margin-left: 0;
+            border-left: 3px solid transparent;
+            position: relative;
+        }
+
+        .submenu-link {
+            padding-left: 3rem !important;
+            background: rgba(0, 0, 0, 0.02);
+            font-size: 0.9rem;
+            border-left: 3px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .submenu-link:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-left-color: #4CAF50;
+            transform: translateX(2px);
+            padding-left: 3.5rem !important;
+        }
+
+        .submenu-link.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-left-color: #4CAF50;
+            color: #4CAF50;
+        }
+
+        .submenu-link i {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .submenu-link.active i,
+        .submenu-link:hover i {
+            color: #4CAF50;
+        }
+
+        /* Indicador visual para mostrar que es un submenu */
+        .submenu-item::before {
+            content: "";
+            position: absolute;
+            left: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .submenu-item:hover::before {
+            background: #4CAF50;
+            width: 12px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+        /* Top Bar */
+        .top-bar {
+            background: white;
+            padding: 1.5rem 2rem;
+            margin: -2rem -2rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .page-title {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .breadcrumb a {
+            color: #3498db;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .breadcrumb a:hover {
+            color: #2980b9;
+        }
+        /* Profile Section */
+        .profile-section {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        .profile-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            overflow: hidden;
+            position: relative;
+        }
+        .profile-header {
+            background: linear-gradient(135deg, var(--business-color, #3498db), var(--business-color-dark, #2980b9));
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="business-pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><rect x="5" y="5" width="10" height="10" fill="rgba(255,255,255,0.1)"/><rect x="7" y="7" width="2" height="2" fill="rgba(255,255,255,0.2)"/><rect x="11" y="7" width="2" height="2" fill="rgba(255,255,255,0.2)"/></pattern></defs><rect width="100" height="100" fill="url(%23business-pattern)"/></svg>');
+            z-index: 1;
+        }
+        .profile-header-content {
+            position: relative;
+            z-index: 2;
+        }
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            border: 4px solid rgba(255,255,255,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .avatar-upload {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: #4CAF50;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid white;
+        }
+        .avatar-upload:hover {
+            background: #45a049;
+            transform: scale(1.1);
+        }
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .profile-role {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+        .verification-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background: rgba(76, 175, 80, 0.2);
+            border-radius: 25px;
+            font-size: 0.9rem;
+        }
+        .verification-status.unverified {
+            background: rgba(255, 193, 7, 0.2);
+            color: #F57C00;
+        }
+        .profile-body {
+            padding: 2rem;
+        }
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        .stat-item:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--business-color, #3498db);
+            display: block;
+        }
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.3rem;
+        }
+        .profile-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .detail-icon {
+            color: var(--business-color, #3498db);
+            font-size: 1.1rem;
+            width: 20px;
+        }
+        .detail-content {
+            flex: 1;
+        }
+        .detail-label {
+            font-size: 0.8rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .detail-value {
+            font-weight: 500;
+            color: #333;
+        }
+        /* Form Section */
+        .form-section {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+        .form-header {
+            background: linear-gradient(135deg, #34495e, #2c3e50);
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .form-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        .edit-toggle {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        .edit-toggle:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        .form-body {
+            padding: 2rem;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-label {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .required {
+            color: #e74c3c;
+        }
+        .form-control {
+            padding: 0.8rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--business-color, #3498db);
+            background: white;
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.1);
+        }
+        .form-control:disabled {
+            background: #f8f9fa;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e0e0e0;
+        }
+        .btn {
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #666;
+        }
+        .btn-secondary:hover {
+            background: #d0d0d0;
+            transform: translateY(-2px);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--business-color, #3498db), var(--business-color-dark, #2980b9));
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        /* Business Info Section */
+        .business-info {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            margin-top: 2rem;
+        }
+        .business-header {
+            background: linear-gradient(135deg, var(--business-color, #3498db), var(--business-color-dark, #2980b9));
+            color: white;
+            padding: 1.5rem 2rem;
+            border-radius: 15px 15px 0 0;
+        }
+        .business-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .business-body {
+            padding: 2rem;
+        }
+        .business-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .business-stat {
+            text-align: center;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .business-stat:hover {
+            border-color: var(--business-color, #3498db);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.15);
+        }
+        .business-stat-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--business-color, #3498db), var(--business-color-dark, #2980b9));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+        .business-stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        .business-stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        /* Messages */
+        .message {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+        .message.active {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            padding: 0.8rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .mobile-menu-toggle {
+                display: block;
+            }
+            .profile-section {
+                grid-template-columns: 1fr;
+            }
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .profile-details {
+                grid-template-columns: 1fr;
+            }
+            .business-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 768px) {
+            .profile-stats {
+                grid-template-columns: 1fr;
+            }
+            .business-stats {
+                grid-template-columns: 1fr;
+            }
+            .form-actions {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        /* Overlay for mobile */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+        .overlay.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+    
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="../index.html" class="logo">
+                <i class="fas fa-compass"></i>
+                <span>Dirección de Turismo</span>
+            </a>
+        </div>
+        <div class="user-info">
+            <div class="user-avatar" id="userAvatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="user-name" id="userName">Administrador</div>
+            <div class="user-role">
+                <i class="fas fa-shield-alt"></i>
+                <span id="userRole">Administrador</span>
+            </div>
+        </div>
+        
+        <!-- ✅ MENÚ DINÁMICO: Se generará según el tipo de negocio -->
+        <ul class="sidebar-menu" id="sidebarMenu">
+            <li class="menu-section">Principal</li>
+            <li class="menu-item">
+                <a href="dashboard.html" class="menu-link">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            
+            <li class="menu-section">Gestión de Servicios</li>
+            <!-- Los elementos del menú se generarán dinámicamente aquí -->
+            
+            <li class="menu-section">Configuración</li>
+            <li class="menu-item">
+                <a href="perfil.html" class="menu-link active">
+                    <i class="fas fa-user-cog"></i>
+                    <span>Mi Perfil</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div>
+                <h1 class="page-title">Mi Perfil</h1>
+                <div class="breadcrumb">
+                    <a href="dashboard.html">Dashboard</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <span>Mi Perfil</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Messages -->
+        <div class="message success-message" id="successMessage">
+            <i class="fas fa-check-circle"></i>
+            <span id="successText">Perfil actualizado exitosamente</span>
+        </div>
+        <div class="message error-message" id="errorMessage">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span id="errorText">Error al actualizar perfil</span>
+        </div>
+        
+        <!-- Profile Section -->
+        <div class="profile-section">
+            <!-- Profile Card -->
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="profile-header-content">
+                        <div class="profile-avatar" id="profileAvatarDisplay">
+                            <span id="avatarInitials">AD</span>
+                            <div class="avatar-upload" onclick="document.getElementById('avatarInput').click()">
+                        
+                            </div>
+                            <input type="file" id="avatarInput" accept="image/*" style="display: none;">
+                        </div>
+                        <h2 class="profile-name" id="profileDisplayName">Administrador</h2>
+                        <p class="profile-role" id="profileRoleText">Propietario</p>
+                        <div class="verification-status" id="verificationStatus">
+                            <i class="fas fa-shield-check"></i>
+                            <span>Cuenta Verificada</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-body">
+                    <div class="profile-stats" id="profileStats">
+                        <!-- Las estadísticas se generarán dinámicamente -->
+                    </div>
+                    <div class="profile-details">
+                        <div class="detail-item">
+                            <i class="fas fa-envelope detail-icon"></i>
+                            <div class="detail-content">
+                                <div class="detail-label">Email</div>
+                                <div class="detail-value" id="profileEmail">email@negocio.com</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-calendar detail-icon"></i>
+                            <div class="detail-content">
+                                <div class="detail-label">Miembro desde</div>
+                                <div class="detail-value" id="profileMemberSince">Enero 2024</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-user-shield detail-icon"></i>
+                            <div class="detail-content">
+                                <div class="detail-label">Tipo de cuenta</div>
+                                <div class="detail-value">Administrador</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-check-circle detail-icon"></i>
+                            <div class="detail-content">
+                                <div class="detail-label">Estado</div>
+                                <div class="detail-value">Activo</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Edit Form -->
+            <div class="form-section">
+                <div class="form-header">
+                    <h3 class="form-title">
+                        <i class="fas fa-edit"></i>
+                        Información Personal
+                    </h3>
+                    <button class="edit-toggle" id="editToggle">
+                        <i class="fas fa-edit"></i>
+                        Editar
+                    </button>
+                </div>
+                <div class="form-body">
+                    <form id="profileForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-user"></i>
+                                    Nombre completo <span class="required">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="nombre" name="nombre" required disabled>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-envelope"></i>
+                                    Correo electrónico <span class="required">*</span>
+                                </label>
+                                <input type="email" class="form-control" id="email" name="email" required disabled>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-phone"></i>
+                                    Teléfono
+                                </label>
+                                <input type="tel" class="form-control" id="telefono" name="telefono" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-globe"></i>
+                                    Sitio web
+                                </label>
+                                <input type="url" class="form-control" id="sitioWeb" name="sitioWeb" placeholder="https://minegocio.com" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    Dirección
+                                </label>
+                                <textarea class="form-control" id="direccion" name="direccion" disabled></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span id="businessDescriptionLabel">Acerca de mi negocio</span>
+                                </label>
+                                <textarea class="form-control" id="descripcion" name="descripcion" placeholder="Cuéntanos sobre tu negocio y lo que lo hace especial..." disabled></textarea>
+                            </div>
+                        </div>
+                        <div class="form-actions" id="formActions" style="display: none;">
+                            <button type="button" class="btn btn-secondary" id="cancelEdit">
+                                <i class="fas fa-times"></i>
+                                Cancelar
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i>
+                                Guardar cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Business Info -->
+        <div class="business-info">
+            <div class="business-header">
+                <h3 class="business-title" id="businessTitle">
+                    <i class="fas fa-hotel" id="businessIcon"></i>
+                    <span id="businessTitleText">Resumen de mi negocio</span>
+                </h3>
+            </div>
+            <div class="business-body">
+                <div class="business-stats" id="businessStats">
+                    <!-- Las estadísticas se generarán dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Variables globales
+        const userData = JSON.parse(localStorage.getItem('hospUserData')) || {};
+        const authToken = localStorage.getItem('hospAuthToken');
+     const baseURL = (() => {
+    const hostname = window.location.hostname;
+    
+    console.log('🌐 Hostname detectado:', hostname);
+    
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+        console.log('🛠️ Modo desarrollo detectado');
+        return '/api/hospedaje';
+    }
+    
+    console.log('🚀 Modo producción detectado');
+    return `${window.location.protocol}//${window.location.host}/api`;
+})();
+
+console.log('✅ BaseURL configurado:', baseURL);
+        
+        let isEditing = false;
+        let originalFormData = {};
+        let currentEstablishment = null; // ✅ Variable para establecimiento actual
+        let businessConfig = null; // ✅ Configuración del tipo de negocio
+
+        // Verificar autenticación
+        if (!authToken) {
+            window.location.href = '../login.html';
+        }
+
+        // Elementos del DOM
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const editToggle = document.getElementById('editToggle');
+        const profileForm = document.getElementById('profileForm');
+        const formActions = document.getElementById('formActions');
+        const cancelEdit = document.getElementById('cancelEdit');
+
+        // ✅ CONFIGURACIÓN por tipo de negocio
+        const businessConfigs = {
+            hotel: {
+                name: 'Hotel',
+                icon: 'fas fa-hotel',
+                color: '#3498db',
+                colorDark: '#2980b9',
+                adminPageUrl: 'hoteles-admin.html',
+                imageManagementUrl: 'manage-images-hotel.html',
+                apiEndpoint: '/hoteles/mis-hoteles',
+                statsLabels: {
+                    main: 'Hoteles',
+                    capacity: 'Habitaciones',
+                    views: 'Vistas este mes',
+                    rating: 'Calificación promedio'
+                }
+            },
+            cabana: {
+                name: 'Cabaña',
+                icon: 'fas fa-tree',
+                color: '#27ae60',
+                colorDark: '#229954',
+                adminPageUrl: 'cabanas-admin.html',
+                imageManagementUrl: 'manage-images-cabana.html',
+                apiEndpoint: '/cabanas/mis-cabanas',
+                statsLabels: {
+                    main: 'Cabañas',
+                    capacity: 'Capacidad total',
+                    views: 'Vistas este mes',
+                    rating: 'Calificación promedio'
+                }
+            },
+            airbnb: {
+                name: 'Airbnb',
+                icon: 'fas fa-home',
+                color: '#e74c3c',
+                colorDark: '#c0392b',
+                adminPageUrl: 'airbnb-admin.html',
+                imageManagementUrl: 'manage-images-airbnb.html',
+                apiEndpoint: '/airbnb/mis-alojamientos',
+                statsLabels: {
+                    main: 'Alojamientos',
+                    capacity: 'Capacidad total',
+                    views: 'Vistas este mes',
+                    rating: 'Calificación promedio'
+                }
+            },
+            ayb: {
+                name: 'Airbnb',
+                icon: 'fas fa-home',
+                color: '#e74c3c',
+                colorDark: '#c0392b',
+                adminPageUrl: 'airbnb-admin.html',
+                imageManagementUrl: 'manage-images-airbnb.html',
+                apiEndpoint: '/airbnb/mis-alojamientos',
+                statsLabels: {
+                    main: 'Alojamientos',
+                    capacity: 'Capacidad total',
+                    views: 'Vistas este mes',
+                    rating: 'Calificación promedio'
+                }
+            },
+            touroperadora: {
+                name: 'Tour Operadora',
+                icon: 'fas fa-route',
+                color: '#f39c12',
+                colorDark: '#d68910',
+                adminPageUrl: 'tourOperadora-admin.html',
+                imageManagementUrl: 'manage-images-tour.html',
+                apiEndpoint: '/tours/mis-operadoras',
+                statsLabels: {
+                    main: 'Tours',
+                    capacity: 'Tours activos',
+                    views: 'Vistas este mes',
+                    rating: 'Calificación promedio'
+                }
+            },
+            guiaturistica: {
+                name: 'Guía Turística',
+                icon: 'fas fa-user-tie',
+                color: '#2196F3',
+                colorDark: '#1976D2',
+                adminPageUrl: 'guias-admin.html',
+                imageManagementUrl: 'manage-images-guia.html',
+                apiEndpoint: '/guias/mis-guias',
+                statsLabels: {
+                    main: 'Perfiles',
+                    capacity: 'Especialidades',
+                    views: 'Vistas este mes',
+                    rating: 'Calificación promedio'
+                }
+            }
+        };
+
+        // ✅ NUEVA FUNCIÓN: Configurar tipo de negocio
+        function setupBusinessType() {
+            const tipoNegocio = userData.tipoNegocio || 'hotel';
+            businessConfig = businessConfigs[tipoNegocio] || businessConfigs.hotel;
+            
+            console.log('🎯 Configurando perfil para:', businessConfig.name);
+            
+            // Configurar colores CSS
+            document.documentElement.style.setProperty('--business-color', businessConfig.color);
+            document.documentElement.style.setProperty('--business-color-dark', businessConfig.colorDark);
+            
+            // Actualizar textos dinámicos
+            document.getElementById('profileRoleText').textContent = `Propietario de ${businessConfig.name}`;
+            document.getElementById('businessDescriptionLabel').textContent = `Acerca de mi ${businessConfig.name.toLowerCase()}`;
+            document.getElementById('businessIcon').className = businessConfig.icon;
+            document.getElementById('businessTitleText').textContent = `Resumen de mi ${businessConfig.name.toLowerCase()}`;
+            
+            // Actualizar userRole
+            document.getElementById('userRole').textContent = `Administrador - ${businessConfig.name}`;
+        }
+
+        // ✅ FUNCIÓN CORREGIDA: Personalizar menú según tipo de negocio
+        async function customizeMenuByBusinessType() {
+            const sidebarMenu = document.getElementById('sidebarMenu');
+            const gestionServiciosSection = sidebarMenu.querySelector('.menu-section:nth-child(3)'); // "Gestión de Servicios"
+            
+            // Limpiar elementos existentes del menú de gestión
+            const existingItems = sidebarMenu.querySelectorAll('.menu-item');
+            existingItems.forEach(item => {
+                const link = item.querySelector('.menu-link');
+                if (link && (link.href.includes('admin.html') || link.href.includes('manage-images'))) {
+                    item.remove();
+                }
+            });
+            
+            if (!businessConfig) return;
+            
+            try {
+                // Obtener ID del establecimiento
+                let establishmentId = null;
+                const response = await fetch(`${baseURL}${businessConfig.apiEndpoint}`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    const establishments = data.data[Object.keys(data.data)[0]] || [];
+                    if (establishments.length > 0) {
+                        currentEstablishment = establishments[0];
+                        establishmentId = currentEstablishment._id;
+                        console.log(`🏢 ${businessConfig.name} encontrado:`, currentEstablishment.nombre);
+                    }
+                }
+                
+                // Crear elemento principal del menú
+                const menuItem = document.createElement('li');
+                menuItem.className = 'menu-item';
+                menuItem.innerHTML = `
+                    <a href="${businessConfig.adminPageUrl}" class="menu-link">
+                        <i class="${businessConfig.icon}"></i>
+                        <span>Mis ${businessConfig.statsLabels.main}</span>
+                    </a>
+                `;
+                
+                // ✅ NUEVO: Mapeo correcto de parámetros para gestión de imágenes
+                const parameterMapping = {
+                    'hotel': 'hotelId',
+                    'cabana': 'cabanaId', 
+                    'airbnb': 'airbnbId',
+                    'ayb': 'airbnbId',  // ← AQUÍ ESTÁ LA CORRECCIÓN: ayb usa airbnbId
+                    'touroperadora': 'tourId',
+                    'guiaturistica': 'guiaId'
+                };
+                
+                // Crear elemento de gestión de imágenes con parámetro correcto
+                const imageManagementItem = document.createElement('li');
+                imageManagementItem.className = 'menu-item submenu-item';
+                
+                let imageHref = businessConfig.imageManagementUrl;
+                if (establishmentId) {
+                    const correctParameter = parameterMapping[userData.tipoNegocio] || `${userData.tipoNegocio}Id`;
+                    imageHref = `${businessConfig.imageManagementUrl}?${correctParameter}=${establishmentId}`;
+                }
+                
+                imageManagementItem.innerHTML = `
+                    <a href="${imageHref}" class="menu-link submenu-link">
+                        <i class="fas fa-images"></i>
+                        <span>Gestión de Imágenes</span>
+                    </a>
+                `;
+                
+                // Insertar después de "Gestión de Servicios"
+                gestionServiciosSection.insertAdjacentElement('afterend', menuItem);
+                menuItem.insertAdjacentElement('afterend', imageManagementItem);
+                
+                console.log(`✅ Menú personalizado para ${businessConfig.name} en perfil`);
+                console.log('Enlace de gestión de imágenes:', imageHref);
+                console.log('Parámetro usado:', parameterMapping[userData.tipoNegocio]);
+                
+            } catch (error) {
+                console.error('❌ Error personalizando menú:', error);
+            }
+        }
+
+        // ✅ NUEVA FUNCIÓN: Cargar estadísticas dinámicas
+        async function loadBusinessStats() {
+            if (!businessConfig) return;
+            
+            try {
+                const response = await fetch(`${baseURL}${businessConfig.apiEndpoint}`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    const establishments = data.data[Object.keys(data.data)[0]] || [];
+                    const totalEstablishments = establishments.length;
+                    
+                    let totalCapacity = 0;
+                    let totalRating = 0;
+                    let countRating = 0;
+                    
+                    establishments.forEach(establishment => {
+                        // Calcular capacidad según tipo de negocio
+                        if (userData.tipoNegocio === 'hotel' && establishment.capacidad?.habitaciones) {
+                            totalCapacity += establishment.capacidad.habitaciones;
+                        } else if (userData.tipoNegocio === 'cabana' && establishment.capacidad?.huespedes) {
+                            totalCapacity += establishment.capacidad.huespedes;
+                        } else if ((userData.tipoNegocio === 'airbnb' || userData.tipoNegocio === 'ayb') && establishment.capacidad?.huespedes) {
+                            totalCapacity += establishment.capacidad.huespedes;
+                        }
+                        
+                        if (establishment.calificacion?.promedio) {
+                            totalRating += establishment.calificacion.promedio;
+                            countRating++;
+                        }
+                    });
+                    
+                    const promedioRating = countRating > 0 ? (totalRating / countRating).toFixed(1) : '0.0';
+                    const visitas = Math.floor(Math.random() * 1000) + 500; // Simulado
+                    
+                    // Actualizar estadísticas del perfil
+                    updateProfileStats(totalEstablishments, totalCapacity, promedioRating);
+                    
+                    // Actualizar estadísticas del negocio
+                    updateBusinessStats(totalEstablishments, totalCapacity, visitas, promedioRating);
+                }
+            } catch (error) {
+                console.error('Error cargando estadísticas:', error);
+            }
+        }
+
+        // ✅ NUEVA FUNCIÓN: Actualizar estadísticas del perfil
+        function updateProfileStats(totalEstablishments, totalCapacity, rating) {
+            const profileStats = document.getElementById('profileStats');
+            profileStats.innerHTML = `
+                <div class="stat-item">
+                    <span class="stat-number">${totalEstablishments}</span>
+                    <span class="stat-label">${businessConfig.statsLabels.main}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">${totalCapacity}</span>
+                    <span class="stat-label">${businessConfig.statsLabels.capacity}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">${rating}</span>
+                    <span class="stat-label">Rating</span>
+                </div>
+            `;
+        }
+
+        // ✅ NUEVA FUNCIÓN: Actualizar estadísticas del negocio
+        function updateBusinessStats(totalEstablishments, totalCapacity, visitas, rating) {
+            const businessStats = document.getElementById('businessStats');
+            businessStats.innerHTML = `
+                <div class="business-stat">
+                    <div class="business-stat-icon">
+                        <i class="${businessConfig.icon}"></i>
+                    </div>
+                    <div class="business-stat-number">${totalEstablishments}</div>
+                    <div class="business-stat-label">${businessConfig.statsLabels.main} registrados</div>
+                </div>
+                <div class="business-stat">
+                    <div class="business-stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="business-stat-number">${totalCapacity}</div>
+                    <div class="business-stat-label">${businessConfig.statsLabels.capacity}</div>
+                </div>
+              
+            
+            `;
+        }
+
+        // Toggle mobile menu
+        mobileMenuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
+        overlay.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+        
+        // Inicializar interfaz
+        async function initializeInterface() {
+            // Configurar tipo de negocio
+            setupBusinessType();
+            
+            // Actualizar información del usuario
+            document.getElementById('userName').textContent = userData.nombre || 'Administrador';
+            document.getElementById('profileDisplayName').textContent = userData.nombre || 'Administrador';
+            document.getElementById('profileEmail').textContent = userData.email || 'email@negocio.com';
+            
+            // Iniciales para avatar
+            const initials = userData.nombre ? 
+                userData.nombre.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'AD';
+            document.getElementById('userAvatar').innerHTML = `<span>${initials}</span>`;
+            document.getElementById('avatarInitials').textContent = initials;
+            
+            // Fecha de registro
+            if (userData.createdAt) {
+                const date = new Date(userData.createdAt);
+                document.getElementById('profileMemberSince').textContent = 
+                    date.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
+            }
+            
+            // Llenar formulario
+            fillForm();
+            
+            // ✅ Personalizar menú según tipo de negocio
+            await customizeMenuByBusinessType();
+            
+            // Cargar estadísticas
+            await loadBusinessStats();
+        }
+        
+        // Llenar formulario con datos del usuario
+        function fillForm() {
+            document.getElementById('nombre').value = userData.nombre || '';
+            document.getElementById('email').value = userData.email || '';
+            document.getElementById('telefono').value = userData.telefono || '';
+            document.getElementById('sitioWeb').value = userData.sitioWeb || '';
+            document.getElementById('direccion').value = userData.direccion || '';
+            document.getElementById('descripcion').value = userData.descripcion || '';
+        }
+        
+        // Toggle modo edición
+        editToggle.addEventListener('click', function() {
+            if (!isEditing) {
+                startEditing();
+            } else {
+                cancelEditing();
+            }
+        });
+
+        function startEditing() {
+            isEditing = true;
+            
+            // Guardar datos originales
+            originalFormData = {
+                nombre: document.getElementById('nombre').value,
+                email: document.getElementById('email').value,
+                telefono: document.getElementById('telefono').value,
+                sitioWeb: document.getElementById('sitioWeb').value,
+                direccion: document.getElementById('direccion').value,
+                descripcion: document.getElementById('descripcion').value
+            };
+            
+            // Habilitar campos
+            const inputs = profileForm.querySelectorAll('.form-control');
+            inputs.forEach(input => {
+                if (input.id !== 'email') { // El email no se puede cambiar
+                    input.disabled = false;
+                }
+            });
+            
+            // Actualizar UI
+            editToggle.innerHTML = '<i class="fas fa-times"></i> Cancelar';
+            editToggle.style.background = 'rgba(231, 76, 60, 0.3)';
+            formActions.style.display = 'flex';
+        }
+
+        function cancelEditing() {
+            isEditing = false;
+            
+            // Restaurar datos originales
+            Object.keys(originalFormData).forEach(key => {
+                document.getElementById(key).value = originalFormData[key];
+            });
+            
+            // Deshabilitar campos
+            const inputs = profileForm.querySelectorAll('.form-control');
+            inputs.forEach(input => {
+                input.disabled = true;
+            });
+            
+            // Actualizar UI
+            editToggle.innerHTML = '<i class="fas fa-edit"></i> Editar';
+            editToggle.style.background = 'rgba(255,255,255,0.2)';
+            formActions.style.display = 'none';
+            
+            hideMessages();
+        }
+
+        cancelEdit.addEventListener('click', cancelEditing);
+        
+        // Manejar envío del formulario
+        profileForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!isEditing) return;
+            
+            try {
+                showLoading();
+                
+                const formData = new FormData(this);
+                const updateData = {
+                    nombre: formData.get('nombre'),
+                    telefono: formData.get('telefono'),
+                    sitioWeb: formData.get('sitioWeb'),
+                    direccion: formData.get('direccion'),
+                    descripcion: formData.get('descripcion')
+                };
+                
+                // Aquí iría la llamada a la API para actualizar el perfil
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Actualizar localStorage
+                const updatedUserData = { ...userData, ...updateData };
+                localStorage.setItem('hospUserData', JSON.stringify(updatedUserData));
+                
+                // Actualizar interfaz
+                document.getElementById('profileDisplayName').textContent = updateData.nombre || userData.nombre;
+                document.getElementById('userName').textContent = updateData.nombre || userData.nombre;
+                
+                // Actualizar iniciales
+                if (updateData.nombre) {
+                    const initials = updateData.nombre.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                    document.getElementById('userAvatar').innerHTML = `<span>${initials}</span>`;
+                    document.getElementById('avatarInitials').textContent = initials;
+                }
+                
+                showSuccess('Perfil actualizado exitosamente');
+                cancelEditing();
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Error al actualizar el perfil');
+            } finally {
+                hideLoading();
+            }
+        });
+        
+        // Manejar carga de avatar
+        document.getElementById('avatarInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    showSuccess('Imagen de perfil actualizada (funcionalidad en desarrollo)');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Funciones de mensajes
+        function showSuccess(message) {
+            const successElement = document.getElementById('successMessage');
+            document.getElementById('successText').textContent = message;
+            successElement.classList.add('active');
+            setTimeout(() => {
+                successElement.classList.remove('active');
+            }, 3000);
+        }
+
+        function showError(message) {
+            const errorElement = document.getElementById('errorMessage');
+            document.getElementById('errorText').textContent = message;
+            errorElement.classList.add('active');
+            setTimeout(() => {
+                errorElement.classList.remove('active');
+            }, 3000);
+        }
+
+        function hideMessages() {
+            document.getElementById('successMessage').classList.remove('active');
+            document.getElementById('errorMessage').classList.remove('active');
+        }
+
+        function showLoading() {
+            const submitBtn = profileForm.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+        }
+
+        function hideLoading() {
+            const submitBtn = profileForm.querySelector('button[type="submit"]');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-save"></i> Guardar cambios';
+        }
+        
+        // ✅ INICIALIZAR con configuración completa
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Inicializando perfil dinámico para:', userData.tipoNegocio || 'hotel');
+            initializeInterface();
+        });
+    </script>
+</body>
+</html>

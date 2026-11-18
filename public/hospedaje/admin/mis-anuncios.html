@@ -1,0 +1,1634 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Anuncios - Dirección de Turismo</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f0f2f5;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            background: rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        .user-info {
+            padding: 1.5rem;
+            background: rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            border: 3px solid rgba(255,255,255,0.2);
+        }
+
+        .user-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .user-role {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 1rem 0;
+        }
+
+        .menu-section {
+            padding: 0.5rem 1.5rem;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            opacity: 0.6;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-top: 1rem;
+        }
+
+        .menu-item {
+            margin: 0.2rem 0;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            font-weight: 500;
+        }
+
+        .menu-link:hover {
+            background: rgba(255,255,255,0.1);
+            padding-left: 2rem;
+        }
+
+        .menu-link.active {
+            background: rgba(255,255,255,0.15);
+            border-left: 4px solid #4CAF50;
+        }
+
+        .menu-link i {
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background: white;
+            padding: 1.5rem 2rem;
+            margin: -2rem -2rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .page-badge {
+            background: var(--business-color);
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        /* Filters Section */
+        .filters-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: 1fr auto auto auto;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.7rem 1rem 0.7rem 2.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--business-color);
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .filter-select {
+            padding: 0.7rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 1rem;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--business-color);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--stat-color);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--stat-color);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: white;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Anuncios Grid */
+        .anuncios-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .container-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f2f5;
+        }
+
+        .container-title {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 0.5rem;
+            background: #f0f2f5;
+            padding: 0.3rem;
+            border-radius: 20px;
+        }
+
+        .toggle-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+
+        .toggle-btn.active {
+            background: white;
+            color: var(--business-color);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* Grid View */
+        .anuncios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .anuncio-card {
+            background: white;
+            border: 2px solid #f0f2f5;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .anuncio-card:hover {
+            border-color: var(--business-color);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .anuncio-image {
+            height: 200px;
+            background: linear-gradient(135deg, #f0f2f5, #e0e0e0);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .anuncio-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .anuncio-card:hover .anuncio-image img {
+            transform: scale(1.05);
+        }
+
+        .status-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-active {
+            background: rgba(76, 175, 80, 0.9);
+            color: white;
+        }
+
+        .status-inactive {
+            background: rgba(158, 158, 158, 0.9);
+            color: white;
+        }
+
+        .anuncio-body {
+            padding: 1.5rem;
+        }
+
+        .anuncio-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .anuncio-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .info-item i {
+            color: var(--business-color);
+            width: 16px;
+        }
+
+        .anuncio-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            padding: 1rem 0;
+            border-top: 1px solid #f0f2f5;
+            border-bottom: 1px solid #f0f2f5;
+            margin-bottom: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .stat-name {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        .anuncio-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 0.6rem 1rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.3rem;
+        }
+
+        .btn-edit {
+            background: #f0f8ff;
+            color: #3498db;
+        }
+
+        .btn-edit:hover {
+            background: #3498db;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-delete {
+            background: #fff0f0;
+            color: #e74c3c;
+        }
+
+        .btn-delete:hover {
+            background: #e74c3c;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-toggle {
+            background: #fffbf0;
+            color: #f39c12;
+        }
+
+        .btn-toggle:hover {
+            background: #f39c12;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* List View */
+        .anuncios-list {
+            display: none;
+        }
+
+        .anuncios-list.active {
+            display: block;
+        }
+
+        .anuncios-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .anuncios-table th {
+            background: #f8f9fa;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #2c3e50;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .anuncios-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #f0f2f5;
+            vertical-align: middle;
+        }
+
+        .anuncios-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .table-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .table-title {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .table-subtitle {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .table-action-btn {
+            padding: 0.4rem 0.8rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #ddd;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .empty-state p {
+            margin-bottom: 2rem;
+        }
+
+        /* Loading State */
+        .loading-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #666;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--business-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Delete Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-icon {
+            font-size: 3rem;
+            color: #e74c3c;
+            margin-bottom: 1rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-text {
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .btn-cancel {
+            background: #e0e0e0;
+            color: #666;
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel:hover {
+            background: #d0d0d0;
+        }
+
+        .btn-confirm {
+            background: #e74c3c;
+            color: white;
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-confirm:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            padding: 0.8rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .anuncios-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .top-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .anuncio-stats {
+                font-size: 0.9rem;
+            }
+
+            .anuncios-table {
+                font-size: 0.9rem;
+            }
+
+            .table-actions {
+                flex-direction: column;
+            }
+
+            .view-toggle {
+                display: none;
+            }
+        }
+
+        /* Overlay for mobile */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="../index.html" class="logo">
+                <i class="fas fa-compass"></i>
+                <span>Dirección de Turismo</span>
+            </a>
+        </div>
+
+        <div class="user-info">
+            <div class="user-avatar" id="userAvatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="user-name" id="userName">Administrador</div>
+            <div class="user-role">
+                <i class="fas fa-shield-alt"></i>
+                <span id="userRole">Administrador</span>
+            </div>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li class="menu-section">Principal</li>
+            <li class="menu-item">
+                <a href="dashboard.html" class="menu-link">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+
+            <li class="menu-section">Gestión de Servicios</li>
+            <li class="menu-item" id="menuHoteles">
+                <a href="mis-anuncios.html?tipo=hotel" class="menu-link active">
+                    <i class="fas fa-hotel"></i>
+                    <span>Mis Hoteles</span>
+                </a>
+            </li>
+            <li class="menu-item" id="menuCabanas">
+                <a href="mis-anuncios.html?tipo=cabana" class="menu-link active">
+                    <i class="fas fa-tree"></i>
+                    <span>Mis Cabañas</span>
+                </a>
+            </li>
+            <li class="menu-item" id="menuAirbnb">
+                <a href="mis-anuncios.html?tipo=airbnb" class="menu-link active">
+                    <i class="fas fa-home"></i>
+                    <span>Mis Airbnb</span>
+                </a>
+            </li>
+            <li class="menu-item" id="menuTours">
+                <a href="mis-anuncios.html?tipo=tour" class="menu-link active">
+                    <i class="fas fa-route"></i>
+                    <span>Mis Tours</span>
+                </a>
+            </li>
+            <li class="menu-item" id="menuGuias">
+                <a href="mi-perfil-guia.html" class="menu-link">
+                    <i class="fas fa-user-tie"></i>
+                    <span>Mi Perfil de Guía</span>
+                </a>
+            </li>
+
+            <li class="menu-section">Configuración</li>
+            <li class="menu-item">
+                <a href="perfil.html" class="menu-link">
+                    <i class="fas fa-user-cog"></i>
+                    <span>Mi Perfil</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="page-header">
+                <h1 class="page-title" id="pageTitle">Mis Anuncios</h1>
+                <span class="page-badge" id="pageBadge">Total: 0</span>
+            </div>
+            
+            <div class="top-actions">
+                <a href="crear-anuncio.html" class="btn btn-primary" id="btnCrear">
+                    <i class="fas fa-plus"></i>
+                    Crear Nuevo
+                </a>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid" id="statsGrid">
+            <!-- Las estadísticas se generarán dinámicamente -->
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-section">
+            <div class="filters-grid">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Buscar por nombre...">
+                </div>
+                
+                <select class="filter-select" id="statusFilter">
+                    <option value="">Todos los estados</option>
+                    <option value="true">Activos</option>
+                    <option value="false">Inactivos</option>
+                </select>
+                
+                <select class="filter-select" id="sortBy">
+                    <option value="newest">Más recientes</option>
+                    <option value="oldest">Más antiguos</option>
+                    <option value="name">Nombre A-Z</option>
+                    <option value="price-high">Precio mayor</option>
+                    <option value="price-low">Precio menor</option>
+                </select>
+                
+                <div class="view-toggle">
+                    <button class="toggle-btn active" id="gridViewBtn">
+                        <i class="fas fa-th"></i>
+                    </button>
+                    <button class="toggle-btn" id="listViewBtn">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Anuncios Container -->
+        <div class="anuncios-container">
+            <div class="container-header">
+                <h2 class="container-title" id="containerTitle">Todos los Anuncios</h2>
+            </div>
+
+            <!-- Loading State -->
+            <div class="loading-state" id="loadingState">
+                <div class="spinner"></div>
+                <p>Cargando anuncios...</p>
+            </div>
+
+            <!-- Grid View -->
+            <div class="anuncios-grid active" id="anunciosGrid">
+                <!-- Los anuncios se cargarán aquí dinámicamente -->
+            </div>
+
+            <!-- List View -->
+            <div class="anuncios-list" id="anunciosList">
+                <div class="table-responsive">
+                    <table class="anuncios-table">
+                        <thead>
+                            <tr>
+                                <th>Imagen</th>
+                                <th>Nombre</th>
+                                <th>Ubicación</th>
+                                <th>Precio</th>
+                                <th>Estado</th>
+                                <th>Vistas</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="anunciosTableBody">
+                            <!-- Las filas se cargarán aquí dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <i class="fas fa-folder-open"></i>
+                <h3>No tienes anuncios aún</h3>
+                <p>Comienza creando tu primer anuncio para aparecer en el directorio turístico</p>
+                <a href="crear-anuncio.html" class="btn btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Crear mi primer anuncio
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Delete Modal -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <i class="fas fa-exclamation-triangle modal-icon"></i>
+            <h3 class="modal-title">¿Eliminar anuncio?</h3>
+            <p class="modal-text">Esta acción no se puede deshacer. El anuncio será marcado como inactivo.</p>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeDeleteModal()">Cancelar</button>
+                <button class="btn-confirm" id="confirmDeleteBtn">Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        const userData = JSON.parse(localStorage.getItem('hospUserData')) || {};
+        const authToken = localStorage.getItem('hospAuthToken');
+     const baseURL = (() => {
+    const hostname = window.location.hostname;
+    
+    console.log('🌐 Hostname detectado:', hostname);
+    
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+        console.log('🛠️ Modo desarrollo detectado');
+        return '/api/hospedaje';
+    }
+    
+    console.log('🚀 Modo producción detectado');
+    return `${window.location.protocol}//${window.location.host}/api`;
+})();
+
+console.log('✅ BaseURL configurado:', baseURL);
+        
+        // Estado
+        let allAnuncios = [];
+        let filteredAnuncios = [];
+        let deleteTargetId = null;
+        let currentView = 'grid';
+
+        // Verificar autenticación
+        if (!authToken) {
+            window.location.href = '../login.html';
+        }
+
+        // Configuración por tipo de negocio
+        const businessConfig = {
+            hotel: {
+                color: '#3498db',
+                icon: 'fa-hotel',
+                title: 'Mis Hoteles',
+                singular: 'Hotel',
+                plural: 'Hoteles',
+                endpoint: '/hoteles',
+                priceLabel: 'por noche'
+            },
+            cabana: {
+                color: '#27ae60',
+                icon: 'fa-tree',
+                title: 'Mis Cabañas',
+                singular: 'Cabaña',
+                plural: 'Cabañas',
+                endpoint: '/cabanas',
+                priceLabel: 'por noche'
+            },
+            airbnb: {
+                color: '#e74c3c',
+                icon: 'fa-home',
+                title: 'Mis Alojamientos',
+                singular: 'Alojamiento',
+                plural: 'Alojamientos',
+                endpoint: '/airbnb',
+                priceLabel: 'por noche'
+            },
+            touroperadora: {
+                color: '#f39c12',
+                icon: 'fa-route',
+                title: 'Mi Tour Operadora',
+                singular: 'Tour',
+                plural: 'Tours',
+                endpoint: '/tours',
+                priceLabel: 'por persona'
+            },
+            guiaturistica: {
+                color: '#2196F3',
+                icon: 'fa-user-tie',
+                title: 'Mi Perfil de Guía',
+                singular: 'Perfil',
+                plural: 'Perfiles',
+                endpoint: '/guias',
+                priceLabel: 'por hora'
+            }
+        };
+
+        // Obtener tipo de negocio
+        const businessType = userData.tipoNegocio || new URLSearchParams(window.location.search).get('tipo');
+        const config = businessConfig[businessType] || businessConfig.hotel;
+
+        // Configurar colores
+        document.documentElement.style.setProperty('--business-color', config.color);
+
+        // Elementos del DOM
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+
+        // Actualizar información del usuario
+        document.getElementById('userName').textContent = userData.nombre || 'Administrador';
+        document.getElementById('userRole').textContent = userData.role === 'admin' ? 'Administrador' : 'Usuario';
+        
+        // Iniciales para avatar
+        const initials = userData.nombre ? userData.nombre.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'AD';
+        document.getElementById('userAvatar').innerHTML = `<span>${initials}</span>`;
+
+        // Toggle mobile menu
+        mobileMenuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
+
+        overlay.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+
+        // Personalizar interfaz
+        function customizeInterface() {
+            document.getElementById('pageTitle').textContent = config.title;
+            document.getElementById('btnCrear').innerHTML = `<i class="fas fa-plus"></i> Nuevo ${config.singular}`;
+            document.getElementById('containerTitle').textContent = `Todos los ${config.plural}`;
+            
+            // Ocultar items del menú que no corresponden
+            customizeMenu();
+        }
+
+        // Personalizar menú lateral
+        function customizeMenu() {
+            const menuItems = {
+                hotel: document.getElementById('menuHoteles'),
+                cabana: document.getElementById('menuCabanas'),
+                airbnb: document.getElementById('menuAirbnb'),
+                touroperadora: document.getElementById('menuTours'),
+                guiaturistica: document.getElementById('menuGuias')
+            };
+
+            // Ocultar todos
+            Object.values(menuItems).forEach(item => {
+                if (item) item.style.display = 'none';
+            });
+
+            // Mostrar solo el correspondiente
+            if (menuItems[businessType]) {
+                menuItems[businessType].style.display = 'block';
+            }
+        }
+
+        // Cargar anuncios
+        async function loadAnuncios() {
+            try {
+                showLoading();
+                
+                const endpoint = businessType === 'touroperadora' ? '/mis-operadoras' : '/mis-' + config.plural.toLowerCase();
+                const response = await fetch(`${baseURL}${config.endpoint}${endpoint}`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    // Extraer anuncios según el tipo
+                    if (businessType === 'touroperadora' && data.data?.tourOperadoras) {
+                        // Para tour operadoras, mostrar la operadora
+                        allAnuncios = data.data.tourOperadoras;
+                    } else if (businessType === 'guiaturistica' && data.data?.guias) {
+                        allAnuncios = data.data.guias;
+                    } else if (data.data?.hoteles) {
+                        allAnuncios = data.data.hoteles;
+                    } else if (data.data?.cabanas) {
+                        allAnuncios = data.data.cabanas;
+                    } else if (data.data?.alojamientos) {
+                        allAnuncios = data.data.alojamientos;
+                    } else {
+                        allAnuncios = [];
+                    }
+                    
+                    filteredAnuncios = [...allAnuncios];
+                    
+                    updateStats();
+                    displayAnuncios();
+                } else {
+                    throw new Error(data.message || 'Error al cargar anuncios');
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Error al cargar los anuncios');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Actualizar estadísticas
+        function updateStats() {
+            const totalAnuncios = allAnuncios.length;
+            const activeAnuncios = allAnuncios.filter(a => a.activo !== false).length;
+            const inactiveAnuncios = totalAnuncios - activeAnuncios;
+            
+            // Calcular estadísticas adicionales
+            let totalViews = 0;
+            let avgRating = 0;
+            let ratingCount = 0;
+            
+            allAnuncios.forEach(anuncio => {
+                totalViews += Math.floor(Math.random() * 1000); // Simulado
+                if (anuncio.calificacion?.promedio) {
+                    avgRating += anuncio.calificacion.promedio;
+                    ratingCount++;
+                }
+            });
+            
+            avgRating = ratingCount > 0 ? (avgRating / ratingCount).toFixed(1) : '0';
+            
+            // Actualizar badge
+            document.getElementById('pageBadge').textContent = `Total: ${totalAnuncios}`;
+            
+            // Generar HTML de estadísticas
+            const statsHTML = `
+                <div class="stat-card" style="--stat-color: #4CAF50;">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-number">${activeAnuncios}</div>
+                    <div class="stat-label">${config.plural} Activos</div>
+                </div>
+                
+                <div class="stat-card" style="--stat-color: #9e9e9e;">
+                    <div class="stat-icon">
+                        <i class="fas fa-pause-circle"></i>
+                    </div>
+                    <div class="stat-number">${inactiveAnuncios}</div>
+                    <div class="stat-label">${config.plural} Inactivos</div>
+                </div>
+                
+                <div class="stat-card" style="--stat-color: #3498db;">
+                    <div class="stat-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <div class="stat-number">${totalViews.toLocaleString()}</div>
+                    <div class="stat-label">Vistas Totales</div>
+                </div>
+                
+                <div class="stat-card" style="--stat-color: #f39c12;">
+                    <div class="stat-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-number">${avgRating}</div>
+                    <div class="stat-label">Calificación Promedio</div>
+                </div>
+            `;
+            
+            document.getElementById('statsGrid').innerHTML = statsHTML;
+        }
+
+        // Mostrar anuncios
+        function displayAnuncios() {
+            if (filteredAnuncios.length === 0) {
+                showEmpty();
+                return;
+            }
+            
+            hideEmpty();
+            
+            if (currentView === 'grid') {
+                displayGridView();
+            } else {
+                displayListView();
+            }
+        }
+
+        // Vista Grid
+        function displayGridView() {
+            const grid = document.getElementById('anunciosGrid');
+            let html = '';
+            
+            filteredAnuncios.forEach(anuncio => {
+                const imageUrl = anuncio.imagenes?.[0] || 'https://via.placeholder.com/350x200';
+                const precio = getPrecio(anuncio);
+                const ubicacion = getUbicacion(anuncio);
+                const isActive = anuncio.activo !== false;
+                
+                html += `
+                    <div class="anuncio-card">
+                        <div class="anuncio-image">
+                            <img src="${imageUrl}" alt="${anuncio.nombre}" onerror="this.src='https://via.placeholder.com/350x200'">
+                            <span class="status-badge ${isActive ? 'status-active' : 'status-inactive'}">
+                                ${isActive ? 'Activo' : 'Inactivo'}
+                            </span>
+                        </div>
+                        
+                        <div class="anuncio-body">
+                            <h3 class="anuncio-title">${anuncio.nombre}</h3>
+                            
+                            <div class="anuncio-info">
+                                <div class="info-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>${ubicacion}</span>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-tag"></i>
+                                    <span>$${precio} MXN ${config.priceLabel}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="anuncio-stats">
+                                <div class="stat-item">
+                                    <div class="stat-value">${Math.floor(Math.random() * 500)}</div>
+                                    <div class="stat-name">Vistas</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">${anuncio.calificacion?.promedio || '0'}</div>
+                                    <div class="stat-name">Rating</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">${anuncio.calificacion?.totalReviews || '0'}</div>
+                                    <div class="stat-name">Reviews</div>
+                                </div>
+                            </div>
+                            
+                            <div class="anuncio-actions">
+                                <button class="action-btn btn-edit" onclick="editAnuncio('${anuncio._id}')">
+                                    <i class="fas fa-edit"></i>
+                                    Editar
+                                </button>
+                                <button class="action-btn btn-toggle" onclick="toggleStatus('${anuncio._id}', ${isActive})">
+                                    <i class="fas fa-${isActive ? 'pause' : 'play'}"></i>
+                                    ${isActive ? 'Pausar' : 'Activar'}
+                                </button>
+                                <button class="action-btn btn-delete" onclick="deleteAnuncio('${anuncio._id}')">
+                                    <i class="fas fa-trash"></i>
+                                    Eliminar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            grid.innerHTML = html;
+        }
+
+        // Vista Lista
+        function displayListView() {
+            const tbody = document.getElementById('anunciosTableBody');
+            let html = '';
+            
+            filteredAnuncios.forEach(anuncio => {
+                const imageUrl = anuncio.imagenes?.[0] || 'https://via.placeholder.com/60x60';
+                const precio = getPrecio(anuncio);
+                const ubicacion = getUbicacion(anuncio);
+                const isActive = anuncio.activo !== false;
+                
+                html += `
+                    <tr>
+                        <td>
+                            <img src="${imageUrl}" alt="${anuncio.nombre}" class="table-image" onerror="this.src='https://via.placeholder.com/60x60'">
+                        </td>
+                        <td>
+                            <div class="table-title">${anuncio.nombre}</div>
+                            <div class="table-subtitle">${anuncio.descripcion?.substring(0, 50)}...</div>
+                        </td>
+                        <td>${ubicacion}</td>
+                        <td>$${precio}</td>
+                        <td>
+                            <span class="status-badge ${isActive ? 'status-active' : 'status-inactive'}">
+                                ${isActive ? 'Activo' : 'Inactivo'}
+                            </span>
+                        </td>
+                        <td>${Math.floor(Math.random() * 500)}</td>
+                        <td>
+                            <div class="table-actions">
+                                <button class="table-action-btn btn-edit" onclick="editAnuncio('${anuncio._id}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="table-action-btn btn-toggle" onclick="toggleStatus('${anuncio._id}', ${isActive})">
+                                    <i class="fas fa-${isActive ? 'pause' : 'play'}"></i>
+                                </button>
+                                <button class="table-action-btn btn-delete" onclick="deleteAnuncio('${anuncio._id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+        }
+
+        // Obtener precio según tipo
+        function getPrecio(anuncio) {
+            if (businessType === 'airbnb') {
+                return anuncio.precioPorNoche || anuncio.precio || 0;
+            } else if (businessType === 'guiaturistica') {
+                return anuncio.tarifas?.porHora || anuncio.precio || 0;
+            } else if (businessType === 'touroperadora' && anuncio.tours?.length > 0) {
+                // Mostrar precio más bajo de los tours
+                const precios = anuncio.tours.map(t => t.precio).filter(p => p > 0);
+                return precios.length > 0 ? Math.min(...precios) : 0;
+            }
+            return anuncio.precio || 0;
+        }
+
+        // Obtener ubicación
+        function getUbicacion(anuncio) {
+            if (anuncio.ubicacion?.ciudad) {
+                return `${anuncio.ubicacion.ciudad}, ${anuncio.ubicacion.estado || ''}`;
+            } else if (anuncio.ubicacion?.ciudadesOperacion?.length > 0) {
+                return anuncio.ubicacion.ciudadesOperacion[0];
+            }
+            return 'Sin ubicación';
+        }
+
+        // Cambiar vista
+        document.getElementById('gridViewBtn').addEventListener('click', function() {
+            currentView = 'grid';
+            this.classList.add('active');
+            document.getElementById('listViewBtn').classList.remove('active');
+            document.getElementById('anunciosGrid').classList.add('active');
+            document.getElementById('anunciosList').classList.remove('active');
+            displayAnuncios();
+        });
+
+        document.getElementById('listViewBtn').addEventListener('click', function() {
+            currentView = 'list';
+            this.classList.add('active');
+            document.getElementById('gridViewBtn').classList.remove('active');
+            document.getElementById('anunciosList').classList.add('active');
+            document.getElementById('anunciosGrid').classList.remove('active');
+            displayAnuncios();
+        });
+
+        // Filtros
+        document.getElementById('searchInput').addEventListener('input', filterAnuncios);
+        document.getElementById('statusFilter').addEventListener('change', filterAnuncios);
+        document.getElementById('sortBy').addEventListener('change', sortAnuncios);
+
+        function filterAnuncios() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            
+            filteredAnuncios = allAnuncios.filter(anuncio => {
+                // Filtro por búsqueda
+                const matchesSearch = !searchTerm || 
+                    anuncio.nombre.toLowerCase().includes(searchTerm) ||
+                    anuncio.descripcion?.toLowerCase().includes(searchTerm);
+                
+                // Filtro por estado
+                const matchesStatus = !statusFilter || 
+                    (statusFilter === 'true' && anuncio.activo !== false) ||
+                    (statusFilter === 'false' && anuncio.activo === false);
+                
+                return matchesSearch && matchesStatus;
+            });
+            
+            sortAnuncios();
+        }
+
+        function sortAnuncios() {
+            const sortBy = document.getElementById('sortBy').value;
+            
+            switch(sortBy) {
+                case 'newest':
+                    filteredAnuncios.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    break;
+                case 'oldest':
+                    filteredAnuncios.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+                    break;
+                case 'name':
+                    filteredAnuncios.sort((a, b) => a.nombre.localeCompare(b.nombre));
+                    break;
+                case 'price-high':
+                    filteredAnuncios.sort((a, b) => getPrecio(b) - getPrecio(a));
+                    break;
+                case 'price-low':
+                    filteredAnuncios.sort((a, b) => getPrecio(a) - getPrecio(b));
+                    break;
+            }
+            
+            displayAnuncios();
+        }
+
+        // Acciones
+        window.editAnuncio = function(id) {
+            window.location.href = `editar-anuncio.html?id=${id}&tipo=${businessType}`;
+        };
+
+        window.toggleStatus = async function(id, currentStatus) {
+            try {
+                const endpoint = `${config.endpoint}/editar/${id}`;
+                const response = await fetch(baseURL + endpoint, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ activo: !currentStatus })
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    // Recargar anuncios
+                    loadAnuncios();
+                } else {
+                    throw new Error(data.message || 'Error al actualizar estado');
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al cambiar el estado del anuncio');
+            }
+        };
+
+        window.deleteAnuncio = function(id) {
+            deleteTargetId = id;
+            document.getElementById('deleteModal').classList.add('active');
+        };
+
+        window.closeDeleteModal = function() {
+            document.getElementById('deleteModal').classList.remove('active');
+            deleteTargetId = null;
+        };
+
+        document.getElementById('confirmDeleteBtn').addEventListener('click', async function() {
+            if (!deleteTargetId) return;
+            
+            try {
+                const endpoint = `${config.endpoint}/editar/${deleteTargetId}`;
+                const response = await fetch(baseURL + endpoint, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    closeDeleteModal();
+                    loadAnuncios();
+                } else {
+                    throw new Error(data.message || 'Error al eliminar');
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al eliminar el anuncio');
+            }
+        });
+
+        // Estados de la interfaz
+        function showLoading() {
+            document.getElementById('loadingState').style.display = 'block';
+            document.getElementById('anunciosGrid').style.display = 'none';
+            document.getElementById('anunciosList').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'none';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingState').style.display = 'none';
+            if (currentView === 'grid') {
+                document.getElementById('anunciosGrid').style.display = 'grid';
+            } else {
+                document.getElementById('anunciosList').style.display = 'block';
+            }
+        }
+
+        function showEmpty() {
+            document.getElementById('emptyState').style.display = 'block';
+            document.getElementById('anunciosGrid').style.display = 'none';
+            document.getElementById('anunciosList').style.display = 'none';
+            document.getElementById('statsGrid').style.display = 'none';
+        }
+
+        function hideEmpty() {
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('statsGrid').style.display = 'grid';
+        }
+
+        function showError(message) {
+            // Aquí podrías implementar un toast o notificación
+            console.error(message);
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            customizeInterface();
+            loadAnuncios();
+        });
+    </script>
+</body>
+</html>

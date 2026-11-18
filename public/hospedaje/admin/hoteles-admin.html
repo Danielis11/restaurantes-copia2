@@ -1,0 +1,2323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Hoteles - Panel de Administración</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f0f2f5;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            background: rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        .user-info {
+            padding: 1.5rem;
+            background: rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            border: 3px solid rgba(255,255,255,0.2);
+        }
+
+        .user-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .user-role {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 1rem 0;
+        }
+
+        .menu-section {
+            padding: 0.5rem 1.5rem;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            opacity: 0.6;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-top: 1rem;
+        }
+
+        .menu-item {
+            margin: 0.2rem 0;
+            position: relative;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            font-weight: 500;
+        }
+
+        .menu-link:hover {
+            background: rgba(255,255,255,0.1);
+            padding-left: 2rem;
+        }
+
+        .menu-link.active {
+            background: rgba(255,255,255,0.15);
+            border-left: 4px solid #4CAF50;
+        }
+
+        .menu-link i {
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        /* 🆕 NUEVOS ESTILOS para el submenu de gestión de imágenes */
+        .submenu-item {
+            margin-left: 0;
+            border-left: 3px solid transparent;
+            position: relative;
+        }
+
+        .submenu-link {
+            padding-left: 3rem !important;
+            background: rgba(0, 0, 0, 0.02);
+            font-size: 0.9rem;
+            border-left: 3px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .submenu-link:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-left-color: #4CAF50;
+            transform: translateX(2px);
+            padding-left: 3.5rem !important;
+        }
+
+        .submenu-link.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-left-color: #4CAF50;
+            color: #4CAF50;
+        }
+
+        .submenu-link i {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .submenu-link.active i,
+        .submenu-link:hover i {
+            color: #4CAF50;
+        }
+
+        /* Indicador visual para mostrar que es un submenu */
+        .submenu-item::before {
+            content: "";
+            position: absolute;
+            left: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .submenu-item:hover::before {
+            background: #4CAF50;
+            width: 12px;
+        }
+
+        /* Badge del contador de hoteles */
+        .menu-badge {
+            background: #4CAF50;
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            margin-left: auto;
+            min-width: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background: white;
+            padding: 1.5rem 2rem;
+            margin: -2rem -2rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb a {
+            color: #3498db;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: #2980b9;
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #666;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+            transform: translateY(-2px);
+        }
+
+        /* Hotel Card */
+        .hotel-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .hotel-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+        }
+
+        .hotel-image {
+            height: 300px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .hotel-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .hotel-card:hover .hotel-image img {
+            transform: scale(1.05);
+        }
+
+        .hotel-badges {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.9);
+            color: #2c3e50;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .badge.status {
+            background: rgba(76, 175, 80, 0.9);
+            color: white;
+        }
+
+        .hotel-actions {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .hotel-card:hover .hotel-actions {
+            opacity: 1;
+        }
+
+        .action-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .action-btn:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+
+        .action-btn i {
+            color: #3498db;
+            font-size: 1.1rem;
+        }
+
+        /* Hotel Info */
+        .hotel-info {
+            padding: 2rem;
+        }
+
+        .hotel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1.5rem;
+        }
+
+        .hotel-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .hotel-location {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .hotel-price {
+            text-align: right;
+        }
+
+        .price-amount {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .price-currency {
+            font-size: 1rem;
+            color: #666;
+            font-weight: normal;
+        }
+
+        .price-period {
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        .hotel-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        /* Hotel Details Grid */
+        .hotel-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .detail-section {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 15px;
+            border-left: 4px solid #3498db;
+        }
+
+        .detail-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-title i {
+            color: #3498db;
+        }
+
+        .detail-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .detail-value {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        /* Services Grid */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .service-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem;
+            background: white;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .service-item:hover {
+            border-color: #3498db;
+            transform: translateY(-2px);
+        }
+
+        .service-icon {
+            color: #3498db;
+            font-size: 1.1rem;
+        }
+
+        .service-name {
+            font-size: 0.9rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        /* Stats Cards - Solo 2 cards ahora */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--stat-color);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--stat-color);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: white;
+            margin: 0 auto 1rem;
+            opacity: 0.9;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #ddd;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .empty-state p {
+            margin-bottom: 2rem;
+        }
+
+        /* Loading State */
+        .loading-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #666;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            padding: 0.8rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hotel-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: start;
+            }
+
+            .hotel-price {
+                text-align: left;
+            }
+
+            .hotel-details {
+                grid-template-columns: 1fr;
+            }
+
+            .services-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            /* Responsive para submenu en móviles */
+            .submenu-link {
+                padding-left: 2.5rem !important;
+            }
+            
+            .submenu-item::before {
+                left: 1rem;
+            }
+        }
+
+        /* Overlay for mobile */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* Estilos para el Cuestionario Semanal */
+        .weekly-survey-section {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .survey-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+        }
+
+        .survey-header {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .survey-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .survey-title i {
+            font-size: 1.5rem;
+        }
+
+        .survey-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .survey-hotel-name,
+        .survey-week {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .survey-form {
+            padding: 2rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .question-number {
+            background: #3498db;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            margin-right: 0.5rem;
+            font-weight: 700;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #fafbfc;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3498db;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .form-control.error {
+            border-color: #e74c3c;
+            background-color: #fdf2f2;
+        }
+
+        .form-control.success {
+            border-color: #27ae60;
+            background-color: #f0f9f4;
+        }
+
+        /* ✅ ESTILOS ADICIONALES PARA TEXTAREA */
+        .form-control[rows] {
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+            line-height: 1.5;
+        }
+
+        .form-control[rows]:focus {
+            outline: none;
+            border-color: #3498db;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .form-control[rows].error {
+            border-color: #e74c3c;
+            background-color: #fdf2f2;
+        }
+
+        .form-control[rows].success {
+            border-color: #27ae60;
+            background-color: #f0f9f4;
+        }
+
+        /* Contador de caracteres */
+        .char-counter {
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            display: block;
+            text-align: right;
+            font-style: italic;
+            transition: color 0.3s ease;
+        }
+
+        .form-hint {
+            display: block;
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        .survey-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .survey-loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .survey-loading .btn {
+            position: relative;
+        }
+
+        .survey-loading .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .survey-actions {
+                flex-direction: column;
+            }
+            
+            .survey-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .survey-header {
+                padding: 1.5rem;
+            }
+            
+            .survey-title {
+                font-size: 1.5rem;
+            }
+
+            .form-control[rows] {
+                min-height: 80px;
+            }
+        }
+
+        /* Animaciones */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .survey-card {
+            animation: slideIn 0.5s ease-out;
+        }
+
+        /* Estados de validación */
+        .form-control:invalid {
+            border-color: #e74c3c;
+        }
+
+        .form-control:valid {
+            border-color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="../index.html" class="logo">
+                <i class="fas fa-compass"></i>
+                <span>Dirección de Turismo</span>
+            </a>
+        </div>
+
+        <div class="user-info">
+            <div class="user-avatar" id="userAvatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="user-name" id="userName">Administrador</div>
+            <div class="user-role">
+                <i class="fas fa-shield-alt"></i>
+                <span id="userRole">Administrador</span>
+            </div>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li class="menu-section">Principal</li>
+            <li class="menu-item">
+                <a href="dashboard.html" class="menu-link">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+
+            <li class="menu-section">Gestión de Servicios</li>
+            
+            <!-- Mis Hoteles - Enlace principal -->
+            <li class="menu-item">
+                <a href="hoteles-admin.html" class="menu-link active">
+                    <i class="fas fa-hotel"></i>
+                    <span>Mis Hoteles</span>
+                    <span class="menu-badge" id="hotelCount">0</span>
+                </a>
+            </li>
+            
+              <!-- ✅ CORREGIDO: Gestión de Imágenes SIEMPRE VISIBLE -->
+        <li class="menu-item submenu-item" id="menu-edicion-imagenes">
+            <a href="manage-images-hotel.html" class="menu-link submenu-link" id="image-management-link">
+                <i class="fas fa-images"></i>
+                <span>Gestión de Imágenes</span>
+            </a>
+        </li>
+
+             <!-- CONFIGURACIÓN -->
+        <li class="menu-section">Configuración</li>
+        <li class="menu-item">
+            <!-- ✅ CORREGIDO: Solo "Mi Perfil" sin "y configuración" -->
+            <a href="perfil.html" class="menu-link">
+                <i class="fas fa-user-cog"></i>
+                <span>Mi Perfil</span>
+            </a>
+        </li>
+    </ul>
+</aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div>
+                <h1 class="page-title">Mis Hoteles</h1>
+                <div class="breadcrumb">
+                    <a href="dashboard.html">Dashboard</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <span>Mis Hoteles</span>
+                </div>
+            </div>
+            
+          
+        </div>
+
+        <!-- Stats Grid - Solo Hoteles Activos y Habitaciones Totales -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card" style="--stat-color: #3498db;">
+                <div class="stat-icon">
+                    <i class="fas fa-hotel"></i>
+                </div>
+                <div class="stat-number" id="totalHoteles">0</div>
+                <div class="stat-label">Hoteles Activos</div>
+            </div>
+            
+            <div class="stat-card" style="--stat-color: #27ae60;">
+                <div class="stat-icon">
+                    <i class="fas fa-bed"></i>
+                </div>
+                <div class="stat-number" id="totalHabitaciones">0</div>
+                <div class="stat-label">Habitaciones Totales</div>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div class="loading-state" id="loadingState">
+            <div class="spinner"></div>
+            <h3>Cargando información del hotel...</h3>
+            <p>Por favor espera mientras obtenemos los datos</p>
+        </div>
+
+        <!-- Hotel Content -->
+        <div id="hotelContent" style="display: none;">
+            <!-- Hotel Card will be populated here -->
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <i class="fas fa-hotel"></i>
+            <h3>No tienes hoteles registrados</h3>
+            <p>Comienza registrando tu primer hotel para aparecer en el directorio turístico</p>
+            <a href="crear-anuncio.html?tipo=hotel" class="btn btn-primary">
+                <i class="fas fa-plus"></i>
+                Registrar mi primer hotel
+            </a>
+        </div>
+
+        <!-- Sección del Cuestionario Semanal -->
+        <div class="weekly-survey-section" style="margin: 2rem 0;">
+            <div class="survey-card">
+                <div class="survey-header">
+                    <h2 class="survey-title">
+                        <i class="fas fa-clipboard-list"></i>
+                        Cuestionario Semanal
+                    </h2>
+                    <div class="survey-info">
+                        <div class="survey-hotel-name">
+                            <strong>Hotel:</strong> <span id="surveyHotelName">Cargando...</span>
+                        </div>
+                        <div class="survey-week">
+                            <strong>Semana del:</strong> <span id="surveyWeekDates">Cargando...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="weeklySurveyForm" class="survey-form">
+                    <!-- ✅ AGREGADO: Input hidden para hotel ID -->
+                    <input type="hidden" name="hotelId" id="hotelId" value="">
+                    
+                    <div class="form-grid">
+                        <!-- Pregunta 1 -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <span class="question-number">1.</span>
+                                Número total de habitaciones ocupadas:
+                            </label>
+                            <input type="number" class="form-control" id="habitacionesOcupadas" name="habitacionesOcupadas" min="0" required>
+                            <span class="form-hint">Indique cuántas habitaciones estuvieron ocupadas durante la semana.</span>
+                        </div>
+
+                        <!-- Pregunta 2 -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <span class="question-number">2.</span>
+                                Número de habitaciones ocupadas por residentes nacionales:
+                            </label>
+                            <input type="number" class="form-control" id="habitacionesNacionales" name="habitacionesNacionales" min="0" required>
+                            <span class="form-hint">Especifique cuántas de las habitaciones ocupadas fueron utilizadas por residentes del país.</span>
+                        </div>
+
+                        <!-- Pregunta 3 -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <span class="question-number">3.</span>
+                                Número de habitaciones ocupadas por extranjeros:
+                            </label>
+                            <input type="number" class="form-control" id="habitacionesExtranjeros" name="habitacionesExtranjeros" min="0" required>
+                            <span class="form-hint">Especifique cuántas habitaciones ocupadas fueron utilizadas por turistas extranjeros.</span>
+                        </div>
+
+                        <!-- Pregunta 4 -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <span class="question-number">4.</span>
+                                Número total de personas hospedadas:
+                            </label>
+                            <input type="number" class="form-control" id="totalPersonas" name="totalPersonas" min="0" required>
+                            <span class="form-hint">Indique el número total de personas que se hospedaron, sin distinguir nacionalidad.</span>
+                        </div>
+
+                        <!-- Pregunta 5 -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <span class="question-number">5.</span>
+                                Número de turistas hospedados que son residentes nacionales:
+                            </label>
+                            <input type="number" class="form-control" id="turistasNacionales" name="turistasNacionales" min="0" required>
+                            <span class="form-hint">De las personas hospedadas, cuántas son turistas residentes en el país.</span>
+                        </div>
+
+                        <!-- Pregunta 6 -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <span class="question-number">6.</span>
+                                Número de turistas hospedados que son extranjeros:
+                            </label>
+                            <input type="number" class="form-control" id="turistasExtranjeros" name="turistasExtranjeros" min="0" required>
+                            <span class="form-hint">De las personas hospedadas, cuántas son turistas extranjeros.</span>
+                        </div>
+
+                        <!-- Pregunta 7 -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <span class="question-number">7.</span>
+                                Número total de turistas que se hospedaron por al menos una noche:
+                            </label>
+                            <input type="number" class="form-control" id="turistasAlMenosUnaNoche" name="turistasAlMenosUnaNoche" min="0" required>
+                            <span class="form-hint">Indique cuántos turistas pasaron al menos una noche en el establecimiento.</span>
+                        </div>
+
+                        <!-- Pregunta 8 -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <span class="question-number">8.</span>
+                                Número de turistas residentes nacionales que se hospedaron por la noche:
+                            </label>
+                            <input type="number" class="form-control" id="turistasNacionalesNoche" name="turistasNacionalesNoche" min="0" required>
+                            <span class="form-hint">Indique cuántos turistas nacionales pernoctaron en el establecimiento.</span>
+                        </div>
+
+                        <!-- Pregunta 9 -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <span class="question-number">9.</span>
+                                Número de turistas extranjeros que se hospedaron por la noche:
+                            </label>
+                            <input type="number" class="form-control" id="turistasExtranjerosNoche" name="turistasExtranjerosNoche" min="0" required>
+                            <span class="form-hint">Indique cuántos turistas extranjeros pernoctaron en el establecimiento.</span>
+                        </div>
+
+                        <!-- ✅ PREGUNTA 10 CORREGIDA -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <span class="question-number">10.</span>
+                                Lugar de procedencia de los turistas hospedados:
+                            </label>
+                            <textarea class="form-control" id="procedenciaTuristas" name="procedenciaTuristas" rows="4" 
+                                      placeholder="Ejemplo: Ciudad de México (DF), Guadalajara (Jalisco), Estados Unidos, Francia, etc." required></textarea>
+                            <span class="form-hint">Indique los principales lugares (ciudades, estados o países) de donde provienen los turistas que se hospedaron durante la semana.</span>
+                        </div>
+                    </div>
+
+                    <div class="survey-actions">
+                        <button type="button" class="btn btn-secondary" onclick="resetSurveyForm()">
+                            <i class="fas fa-undo"></i>
+                            Limpiar Formulario
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i>
+                            Enviar Cuestionario
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Variables globales
+      // ✅ REEMPLAZAR POR ESTA CONFIGURACIÓN DINÁMICA:
+
+const baseURL = (() => {
+    const hostname = window.location.hostname;
+    
+    console.log('🌐 Hostname detectado en hoteles-admin:', hostname);
+    
+    // Solo usar localhost si REALMENTE estamos en desarrollo local
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+        console.log('🛠️ Modo desarrollo detectado');
+        return '/api/hospedaje';
+    }
+    
+    // Para Railway y cualquier otro hosting
+    console.log('🚀 Modo producción detectado');
+    return `${window.location.protocol}//${window.location.host}/api`;
+})();
+
+console.log('✅ BaseURL configurado para hoteles-admin:', baseURL);
+
+// 🎯 TAMBIÉN verifica que estas líneas estén correctas:
+const userData = JSON.parse(localStorage.getItem('hospUserData')) || {};
+const authToken = localStorage.getItem('hospAuthToken');
+
+// ✅ Agregar validación de autenticación:
+if (!authToken) {
+    console.log('❌ No hay token, redirigiendo al login');
+    window.location.href = '../login.html';
+}
+
+        // Variable global para el hotel actual
+        let currentHotel = null;
+
+        // ✅ FUNCIÓN CORREGIDA - VERSIÓN SIMPLE que funciona (igual que hoteles.html)
+        function getImageUrl(imagePath) {
+            console.log('🔍 getImageUrl recibió:', imagePath);
+            
+            // Si no hay imagen, usar imagen por defecto
+            if (!imagePath) {
+                console.log('⚠️ No hay imagen, usando por defecto');
+                return 'https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+            }
+            
+            // Si ya es una URL completa (http/https), devolverla tal como está
+            if (imagePath.startsWith('http')) {
+                console.log('✅ URL completa:', imagePath);
+                return imagePath;
+            }
+            
+            // ✅ LÓGICA SIMPLE que funciona en hoteles.html
+            const finalUrl = `${baseURL.replace('/api/hospedaje', '')}${imagePath}`;
+            console.log('✅ URL construida:', finalUrl);
+            return finalUrl;
+        }
+
+        // ✅ FUNCIÓN AGREGADA: Manejo global de errores de imágenes (de hoteles.html)
+        function addImageErrorHandling() {
+            document.addEventListener('error', function(e) {
+                if (e.target.tagName === 'IMG') {
+                    console.warn('Error cargando imagen:', e.target.src);
+                    e.target.src = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+                }
+            }, true);
+        }
+
+        // ✅ FUNCIÓN DE DEBUG MEJORADA: debugHotelImages
+        function debugHotelImages(hotel) {
+            console.log('🔍 === DEBUG DETALLADO DE IMÁGENES ===');
+            console.log('Hotel:', hotel.nombre);
+            console.log('Array de imágenes:', hotel.imagenes);
+            console.log('Cantidad de imágenes:', hotel.imagenes?.length || 0);
+            
+            if (hotel.imagenes && hotel.imagenes.length > 0) {
+                hotel.imagenes.forEach((img, index) => {
+                    const finalUrl = getImageUrl(img);
+                    console.log(`--- Imagen ${index + 1} ---`);
+                    console.log('  Original:', img);
+                    console.log('  URL final:', finalUrl);
+                    
+                    // Probar si la imagen es accesible
+                    const testImg = new Image();
+                    testImg.onload = () => {
+                        console.log(`✅ Imagen ${index + 1} carga correctamente`);
+                    };
+                    testImg.onerror = (error) => {
+                        console.error(`❌ Imagen ${index + 1} NO se puede cargar:`, error);
+                        console.error(`   URL que falló: ${finalUrl}`);
+                    };
+                    testImg.src = finalUrl;
+                });
+            } else {
+                console.log('⚠️ No hay imágenes para este hotel');
+            }
+            
+            console.log('=====================================');
+        }
+
+        // ✅ NUEVA FUNCIÓN: Probar conectividad con el servidor de imágenes
+        async function testImageServer() {
+            console.log('🧪 === TESTING SERVIDOR DE IMÁGENES ===');
+            
+            const testUrls = [
+                '/uploads/',
+                '/uploads/hoteles/',
+                `${window.location.origin}/uploads/`,
+                `${window.location.origin}/uploads/hoteles/`
+            ];
+            
+            for (const url of testUrls) {
+                try {
+                    const response = await fetch(url);
+                    console.log(`${url} - Status: ${response.status} (${response.status === 200 ? '✅ OK' : '❌ FAIL'})`);
+                } catch (error) {
+                    console.log(`${url} - Error: ${error.message} (❌ FAIL)`);
+                }
+            }
+            
+            console.log('=====================================');
+        }
+
+        // ✅ NUEVA FUNCIÓN: Verificar imagen específica por filename
+        async function testSpecificImage(filename) {
+            if (!filename) {
+                console.error('⚠️ Proporciona un filename para probar');
+                return;
+            }
+            
+            const testUrls = [
+                `/uploads/hoteles/${filename}`,
+                `/uploads/${filename}`,
+                `${window.location.origin}/uploads/hoteles/${filename}`,
+                `${window.location.origin}/uploads/${filename}`
+            ];
+            
+            console.log(`🧪 Testing imagen: ${filename}`);
+            
+            for (const url of testUrls) {
+                try {
+                    const response = await fetch(url, { method: 'HEAD' });
+                    console.log(`${url} - ${response.status === 200 ? '✅ ENCONTRADA' : '❌ NO ENCONTRADA'} (${response.status})`);
+                    if (response.status === 200) {
+                        console.log(`🎯 URL CORRECTA: ${url}`);
+                        return url;
+                    }
+                } catch (error) {
+                    console.log(`${url} - ❌ ERROR: ${error.message}`);
+                }
+            }
+        }
+
+        // ✅ FUNCIÓN CORREGIDA: setupImageManagementMenu (SIN lógica de show/hide)
+        function setupImageManagementMenu() {
+            const menuEdicionImagenes = document.getElementById('menu-edicion-imagenes');
+            const imageManagementLink = document.getElementById('image-management-link');
+            
+            console.log('🔍 Configurando menú de gestión de imágenes...');
+            console.log('- Elemento del menú encontrado:', !!menuEdicionImagenes);
+            console.log('- Link encontrado:', !!imageManagementLink);
+            
+            if (!menuEdicionImagenes || !imageManagementLink) {
+                console.warn('⚠️ No se encontraron elementos del menú');
+                return;
+            }
+            
+            // ✅ NUEVO: El menú SIEMPRE está visible - No hay lógica de show/hide
+            console.log('✅ Menú de gestión de imágenes siempre disponible');
+            
+            // ✅ BUSCAR el hotel actual desde múltiples fuentes
+            let hotelActual = null;
+            
+            // Opción 1: Desde la variable global currentHotel
+            if (window.currentHotel && window.currentHotel._id) {
+                hotelActual = window.currentHotel;
+                console.log('✅ Hotel encontrado en variable global:', hotelActual.nombre);
+            }
+            // Opción 2: Desde el DOM (primera tarjeta de hotel visible)
+            else if (document.querySelector('.hotel-card[data-hotel-id]')) {
+                const hotelCard = document.querySelector('.hotel-card[data-hotel-id]');
+                const hotelId = hotelCard.dataset.hotelId;
+                const hotelName = hotelCard.querySelector('.hotel-title')?.textContent || 'Hotel actual';
+                hotelActual = { _id: hotelId, nombre: hotelName };
+                console.log('✅ Hotel encontrado en DOM:', hotelActual.nombre);
+            }
+            // Opción 3: Desde localStorage
+            else if (localStorage.getItem('currentHotelId')) {
+                const hotelId = localStorage.getItem('currentHotelId');
+                if (hotelId && hotelId !== 'null' && hotelId !== 'undefined') {
+                    hotelActual = { _id: hotelId, nombre: 'Hotel guardado' };
+                    console.log('✅ Hotel encontrado en localStorage:', hotelId);
+                } else {
+                    console.log('⚠️ ID de hotel en localStorage inválido:', hotelId);
+                }
+            }
+            
+            // ✅ CONFIGURAR ENLACE (siempre, sin condicionales de visibilidad)
+            if (hotelActual && hotelActual._id) {
+                console.log('🖼️ Configurando enlace para hotel:', hotelActual.nombre);
+                
+                // Actualizar el href del enlace
+                imageManagementLink.href = `manage-images-hotel.html?hotelId=${hotelActual._id}`;
+                console.log('✅ Enlace actualizado:', imageManagementLink.href);
+                
+                // Actualizar la función global manageImages
+                window.manageImages = function(hotelId = hotelActual._id) {
+                    console.log('🖼️ Navegando a gestión de imágenes:', hotelId);
+                    window.location.href = `manage-images-hotel.html?hotelId=${hotelId}`;
+                };
+                
+            } else {
+                console.log('⚠️ No se encontró hotel específico, configurando enlace general');
+                // Si no hay hotel específico, configurar enlace general
+                imageManagementLink.href = `manage-images-hotel.html`;
+                
+                // Función general para gestión de imágenes
+                window.manageImages = function(hotelId) {
+                    console.log('🖼️ Navegando a gestión de imágenes:', hotelId);
+                    if (hotelId) {
+                        window.location.href = `manage-images-hotel.html?hotelId=${hotelId}`;
+                    } else {
+                        window.location.href = `manage-images-hotel.html`;
+                    }
+                };
+            }
+        }
+
+        // Verificar hoteles del usuario
+        async function checkUserHotels() {
+            try {
+                const token = localStorage.getItem('hospAuthToken');
+                if (!token) {
+                    console.log(' No hay token de autenticación');
+                    return;
+                }
+
+                const response = await fetch(`${baseURL}/hoteles/mis-hoteles`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const hotelCount = document.getElementById('hotelCount');
+                    
+                    if (data.status === 'success' && data.data.hoteles.length > 0) {
+                        // Actualizar contador
+                        if (hotelCount) {
+                            hotelCount.textContent = data.data.hoteles.length;
+                        }
+                        
+                        console.log(` Usuario tiene ${data.data.hoteles.length} hotel(es)`);
+                        return data.data.hoteles.length > 0;
+                    } else {
+                        console.log(' Usuario no tiene hoteles registrados');
+                        return false;
+                    }
+                } else {
+                    console.error(' Error al verificar hoteles:', response.status);
+                    return false;
+                }
+            } catch (error) {
+                console.error(' Error verificando hoteles:', error);
+                return false;
+            }
+        }
+
+        // Verificar autenticación
+        if (!authToken) {
+            window.location.href = '../login.html';
+        }
+
+        // Elementos del DOM
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const loadingState = document.getElementById('loadingState');
+        const hotelContent = document.getElementById('hotelContent');
+        const emptyState = document.getElementById('emptyState');
+
+        // Actualizar información del usuario
+        document.getElementById('userName').textContent = userData.nombre || 'Administrador';
+        document.getElementById('userRole').textContent = userData.role === 'admin' ? 'Administrador' : 'Usuario';
+        
+        // Iniciales para avatar
+        const initials = userData.nombre ? userData.nombre.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'AD';
+        document.getElementById('userAvatar').innerHTML = `<span>${initials}</span>`;
+
+        // Toggle mobile menu
+        mobileMenuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
+
+        overlay.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+
+        // INICIALIZACIÓN CORREGIDA
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log(' Iniciando hoteles-admin...');
+            
+            addImageErrorHandling();
+            loadHotelesInfo();
+            initializeWeeklySurvey();
+            
+            console.log(' Sistema de gestión de imágenes inicializado');
+        });
+
+        // FUNCIÓN: Cargar información de hoteles
+        async function loadHotelesInfo() {
+            try {
+                showLoading();
+                
+                const response = await fetch(`${baseURL}/hoteles/mis-hoteles`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success' && data.data.hoteles.length > 0) {
+                    const hotel = data.data.hoteles[0]; // Tomar el primer hotel
+                    
+                    // GUARDAR EN VARIABLE GLOBAL
+                    currentHotel = hotel;
+                    window.currentHotel = hotel;
+                    localStorage.setItem('currentHotelId', hotel._id);
+                    
+                    updateStats([hotel]);
+                    displayHotel(hotel);
+                    showHotelContent();
+                    
+                    //  menú después de cargar datos
+                    setTimeout(() => {
+                        setupImageManagementMenu();
+                    }, 500);
+                    
+                    console.log(' Hotel cargado:', hotel.nombre);
+                } else {
+                    showEmpty();
+                    // CONFIGURAR menú incluso sin hoteles
+                    setTimeout(() => {
+                        setupImageManagementMenu();
+                    }, 500);
+                }
+                
+            } catch (error) {
+                console.error(' Error cargando hoteles:', error);
+                showError();
+                //  CONFIGURAR menú incluso en caso de error
+                setTimeout(() => {
+                    setupImageManagementMenu();
+                }, 500);
+            }
+        }
+
+        // Actualizar estadísticas - Solo hoteles y habitaciones
+        function updateStats(hoteles) {
+            const totalHoteles = hoteles.length;
+            let totalHabitaciones = 0;
+
+            hoteles.forEach(hotel => {
+                if (hotel.capacidad?.habitaciones) {
+                    totalHabitaciones += hotel.capacidad.habitaciones;
+                }
+            });
+
+            document.getElementById('totalHoteles').textContent = totalHoteles;
+            document.getElementById('totalHabitaciones').textContent = totalHabitaciones;
+
+            // Animar números
+            animateNumbers();
+        }
+
+        // ✅ FUNCIÓN CORREGIDA: Mostrar información del hotel
+        function displayHotel(hotel) {
+            const imageUrl = getImageUrl(hotel.imagenes?.[0]);
+            const isActive = hotel.activo !== false;
+
+            const hotelHTML = `
+                <div class="hotel-card" data-hotel-id="${hotel._id}">
+                    <div class="hotel-image">
+                        <img src="${imageUrl}" 
+                             alt="${hotel.nombre}" 
+                             onerror="this.src='https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'"
+                             loading="lazy">
+                        
+                        <div class="hotel-badges">
+                            <div class="badge status">
+                                <i class="fas fa-${isActive ? 'check-circle' : 'pause-circle'}"></i>
+                                ${isActive ? 'Activo' : 'Inactivo'}
+                            </div>
+                        </div>
+
+                        <div class="hotel-actions">
+                            <button class="action-btn" onclick="editHotel('${hotel._id}')" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn" onclick="manageImages('${hotel._id}')" title="Gestionar Imágenes">
+                                <i class="fas fa-images"></i>
+                            </button>
+                     
+                       
+                            
+                        </div>
+                    </div>
+
+                    <div class="hotel-info">
+                        <div class="hotel-header">
+                            <div>
+                                <h2 class="hotel-title hotel-name">${hotel.nombre}</h2>
+                                <div class="hotel-location">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    ${hotel.ubicacion?.ciudad || ''}, ${hotel.ubicacion?.estado || ''}
+                                </div>
+                            </div>
+                            <div class="hotel-price">
+                                <div class="price-amount">${hotel.precio?.toLocaleString('es-MX') || '0'}</div>
+                                <div class="price-currency">MXN</div>
+                                <div class="price-period">por noche</div>
+                            </div>
+                        </div>
+
+                        <p class="hotel-description">${hotel.descripcion || 'Sin descripción disponible'}</p>
+
+                        <div class="hotel-details">
+                            <div class="detail-section">
+                                <h3 class="detail-title">
+                                    <i class="fas fa-bed"></i>
+                                    Capacidad
+                                </h3>
+                                <div class="detail-list">
+                                    <div class="detail-item">
+                                        <span class="detail-label">Habitaciones</span>
+                                        <span class="detail-value">${hotel.capacidad?.habitaciones || 'N/A'}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Personas máximo</span>
+                                        <span class="detail-value">${hotel.capacidad?.personasMax || 'N/A'}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="detail-section">
+                                <h3 class="detail-title">
+                                    <i class="fas fa-info-circle"></i>
+                                    Información
+                                </h3>
+                                <div class="detail-list">
+                                    <div class="detail-item">
+                                        <span class="detail-label">Estado</span>
+                                        <span class="detail-value">${isActive ? 'Activo' : 'Inactivo'}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Fecha de registro</span>
+                                        <span class="detail-value">${formatDate(hotel.createdAt)}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="detail-section">
+                                <h3 class="detail-title">
+                                    <i class="fas fa-phone"></i>
+                                    Contacto
+                                </h3>
+                                <div class="detail-list">
+                                    <div class="detail-item">
+                                        <span class="detail-label">Teléfono</span>
+                                        <span class="detail-value">${hotel.contacto?.telefono || 'No disponible'}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Email</span>
+                                        <span class="detail-value">${hotel.contacto?.email || 'No disponible'}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Sitio web</span>
+                                        <span class="detail-value">${hotel.contacto?.sitioWeb || 'No disponible'}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="detail-section">
+                                <h3 class="detail-title">
+                                    <i class="fas fa-concierge-bell"></i>
+                                    Servicios
+                                </h3>
+                                <div class="services-grid">
+                                    ${hotel.servicios?.length > 0 ? hotel.servicios.map(servicio => `
+                                        <div class="service-item">
+                                            <i class="fas fa-${getServiceIcon(servicio)} service-icon"></i>
+                                            <span class="service-name">${formatService(servicio)}</span>
+                                        </div>
+                                    `).join('') : '<p class="detail-value">No hay servicios registrados</p>'}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            hotelContent.innerHTML = hotelHTML;
+
+            // ✅ ACTUALIZAR variables globales y cuestionario
+            currentHotel = hotel;
+            window.currentHotel = hotel;
+            localStorage.setItem('currentHotelId', hotel._id);
+            
+            document.getElementById('hotelId').value = hotel._id;
+            document.getElementById('surveyHotelName').textContent = hotel.nombre;
+
+            // ✅ RECONFIGURAR menú de imágenes
+            setTimeout(() => {
+                setupImageManagementMenu();
+            }, 100);
+
+            // Debug automático de imágenes
+            console.log('🔍 Hotel cargado, verificando imágenes...');
+            debugHotelImages(hotel);
+        }
+
+        // Formatear nombre de servicio
+        function formatService(service) {
+            const services = {
+                'wifi': 'WiFi',
+                'piscina': 'Piscina',
+                'gym': 'Gimnasio',
+                'spa': 'Spa',
+                'restaurante': 'Restaurante',
+                'bar': 'Bar',
+                'estacionamiento': 'Estacionamiento',
+                'aireacondicionado': 'Aire Acondicionado',
+                'television': 'Televisión',
+                'desayuno': 'Desayuno'
+            };
+            return services[service] || service.charAt(0).toUpperCase() + service.slice(1);
+        }
+
+        // Obtener icono de servicio
+        function getServiceIcon(service) {
+            const icons = {
+                'wifi': 'wifi',
+                'piscina': 'swimming-pool',
+                'gym': 'dumbbell',
+                'spa': 'spa',
+                'restaurante': 'utensils',
+                'bar': 'glass-martini-alt',
+                'estacionamiento': 'parking',
+                'aireacondicionado': 'snowflake',
+                'television': 'tv',
+                'desayuno': 'coffee'
+            };
+            return icons[service] || 'check';
+        }
+
+        // Formatear fecha
+        function formatDate(dateString) {
+            if (!dateString) return 'No disponible';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('es-MX', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        // Acciones de botones
+        window.editHotel = function(hotelId) {
+            window.location.href = `actualizar-detalles.html?id=${hotelId}`;
+        };
+
+        // ✅ FUNCIÓN GLOBAL: manageImages (se actualiza dinámicamente)
+        window.manageImages = function(hotelId) {
+            console.log('🖼️ Abriendo gestión de imágenes para hotel:', hotelId);
+            if (!hotelId && currentHotel) {
+                hotelId = currentHotel._id;
+            }
+            window.location.href = `manage-images-hotel.html?hotelId=${hotelId}`;
+        };
+
+        window.toggleStatus = function(hotelId, currentStatus) {
+            if (confirm(`¿Estás seguro de ${currentStatus ? 'desactivar' : 'activar'} este hotel?`)) {
+                alert('Funcionalidad en desarrollo');
+            }
+        };
+
+        window.viewStats = function(hotelId) {
+            alert('Estadísticas detalladas - Funcionalidad en desarrollo');
+        };
+
+        // Animar números
+        function animateNumbers() {
+            const numbers = document.querySelectorAll('.stat-number');
+            
+            numbers.forEach(num => {
+                const target = parseInt(num.textContent.replace(/,/g, ''));
+                let current = 0;
+                const increment = Math.ceil(target / 50);
+                
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    num.textContent = current.toLocaleString();
+                }, 50);
+            });
+        }
+
+        // Estados de la interfaz
+        function showLoading() {
+            loadingState.style.display = 'block';
+            hotelContent.style.display = 'none';
+            emptyState.style.display = 'none';
+        }
+
+        function showHotelContent() {
+            loadingState.style.display = 'none';
+            hotelContent.style.display = 'block';
+            emptyState.style.display = 'none';
+        }
+
+        function showEmpty() {
+            loadingState.style.display = 'none';
+            hotelContent.style.display = 'none';
+            emptyState.style.display = 'block';
+        }
+
+        function showError() {
+            loadingState.innerHTML = `
+                <i class="fas fa-exclamation-triangle" style="color: #e74c3c; font-size: 3rem; margin-bottom: 1rem;"></i>
+                <h3>Error al cargar la información</h3>
+                <p>No se pudo obtener la información del hotel. Por favor, recarga la página.</p>
+            `;
+        }
+
+        // ========================================
+        // ✅ FUNCIONES DEL CUESTIONARIO CORREGIDAS Y ACTUALIZADAS
+        // ========================================
+
+        // ✅ FUNCIÓN AUXILIAR: Obtener ID del hotel actual
+        function getCurrentHotelId() {
+            // Opción 1: Desde el input hidden del formulario
+            const hiddenInput = document.getElementById('hotelId');
+            if (hiddenInput && hiddenInput.value) return hiddenInput.value;
+            
+            // Opción 2: Desde localStorage
+            const currentHotelLocal = localStorage.getItem('currentHotelId');
+            if (currentHotelLocal) return currentHotelLocal;
+            
+            // Opción 3: Desde el objeto global currentHotel
+            if (window.currentHotel && window.currentHotel._id) return window.currentHotel._id;
+            
+            // Opción 4: Desde URL params
+            const urlParams = new URLSearchParams(window.location.search);
+            const hotelId = urlParams.get('hotelId');
+            if (hotelId) return hotelId;
+            
+            // Opción 5: Desde el elemento del DOM
+            const hotelElement = document.querySelector('[data-hotel-id]');
+            if (hotelElement) return hotelElement.dataset.hotelId;
+            
+            throw new Error('No se pudo identificar el hotel actual');
+        }
+
+        // ✅ FUNCIÓN AUXILIAR: Calcular fechas de la semana actual
+        function getCurrentWeekDates() {
+            const today = new Date();
+            const dayOfWeek = today.getDay(); // 0 = Domingo, 1 = Lunes, etc.
+            
+            // Calcular lunes de la semana actual
+            const monday = new Date(today);
+            const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // Si es domingo, retroceder 6 días
+            monday.setDate(today.getDate() + diff);
+            monday.setHours(0, 0, 0, 0);
+            
+            // Calcular domingo de la semana actual
+            const sunday = new Date(monday);
+            sunday.setDate(monday.getDate() + 6);
+            sunday.setHours(23, 59, 59, 999);
+            
+            return {
+                fechaInicio: monday.toISOString(),
+                fechaFin: sunday.toISOString()
+            };
+        }
+
+        // JavaScript para el Cuestionario Semanal
+        function initializeWeeklySurvey() {
+            loadCurrentWeekDates();
+            setupSurveyForm();
+            setupFormValidations();
+        }
+
+        function loadCurrentWeekDates() {
+            const today = new Date();
+            const monday = new Date(today);
+            const dayOfWeek = today.getDay();
+            const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+            monday.setDate(today.getDate() + diff);
+            
+            const sunday = new Date(monday);
+            sunday.setDate(monday.getDate() + 6);
+            
+            const options = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            
+            const mondayStr = monday.toLocaleDateString('es-ES', options);
+            const sundayStr = sunday.toLocaleDateString('es-ES', options);
+            
+            document.getElementById('surveyWeekDates').textContent = `${mondayStr} - ${sundayStr}`;
+        }
+
+        function setupSurveyForm() {
+            const form = document.getElementById('weeklySurveyForm');
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                submitWeeklySurvey(e);
+            });
+        }
+
+        // ✅ FUNCIÓN ACTUALIZADA: setupFormValidations con soporte para textarea
+        function setupFormValidations() {
+            // Validaciones para campos numéricos
+            const numericInputs = document.querySelectorAll('.survey-form input[type="number"]');
+            
+            numericInputs.forEach(input => {
+                input.addEventListener('blur', function() {
+                    validateInput(this);
+                });
+                
+                input.addEventListener('input', function() {
+                    this.classList.remove('error', 'success');
+                });
+            });
+            
+            // ✅ NUEVA VALIDACIÓN: Para el campo de procedencia
+            const procedenciaInput = document.getElementById('procedenciaTuristas');
+            if (procedenciaInput) {
+                procedenciaInput.addEventListener('blur', function() {
+                    validateProcedenciaInput(this);
+                });
+                
+                procedenciaInput.addEventListener('input', function() {
+                    this.classList.remove('error', 'success');
+                    
+                    // Mostrar contador de caracteres
+                    const charCount = this.value.length;
+                    const minChars = 10;
+                    const maxChars = 500;
+                    
+                    // Crear o actualizar contador si no existe
+                    let counter = document.querySelector('.char-counter');
+                    if (!counter) {
+                        counter = document.createElement('span');
+                        counter.className = 'char-counter';
+                        counter.style.cssText = `
+                            font-size: 0.8rem;
+                            color: #666;
+                            margin-top: 0.25rem;
+                            display: block;
+                        `;
+                        this.parentElement.appendChild(counter);
+                    }
+                    
+                    if (charCount < minChars) {
+                        counter.textContent = `${charCount}/${maxChars} caracteres (mínimo ${minChars})`;
+                        counter.style.color = '#e74c3c';
+                    } else if (charCount > maxChars) {
+                        counter.textContent = `${charCount}/${maxChars} caracteres (excede el límite)`;
+                        counter.style.color = '#e74c3c';
+                    } else {
+                        counter.textContent = `${charCount}/${maxChars} caracteres`;
+                        counter.style.color = '#27ae60';
+                    }
+                });
+            }
+        }
+
+        function validateInput(input) {
+            const value = parseInt(input.value);
+            
+            if (isNaN(value) || value < 0) {
+                input.classList.add('error');
+                input.classList.remove('success');
+                return false;
+            } else {
+                input.classList.add('success');
+                input.classList.remove('error');
+                return true;
+            }
+        }
+
+        // ✅ NUEVA FUNCIÓN: Validar campo de procedencia
+        function validateProcedenciaInput(input) {
+            const value = input.value.trim();
+            const minLength = 10;
+            const maxLength = 500;
+            
+            if (!value || value.length < minLength) {
+                input.classList.add('error');
+                input.classList.remove('success');
+                return false;
+            } else if (value.length > maxLength) {
+                input.classList.add('error');
+                input.classList.remove('success');
+                return false;
+            } else {
+                input.classList.add('success');
+                input.classList.remove('error');
+                return true;
+            }
+        }
+
+        // ✅ FUNCIÓN PRINCIPAL CORREGIDA Y ACTUALIZADA: Enviar cuestionario a MongoDB
+        async function submitWeeklySurvey(event) {
+            event.preventDefault();
+            
+            const form = document.getElementById('weeklySurveyForm');
+            const formData = new FormData(form);
+            
+            // Validar todos los campos numéricos
+            const numericInputs = form.querySelectorAll('input[type="number"][required]');
+            let isValid = true;
+            
+            numericInputs.forEach(input => {
+                if (!validateInput(input)) {
+                    isValid = false;
+                }
+            });
+            
+            // ✅ NUEVA VALIDACIÓN: Verificar campo de procedencia
+            const procedenciaInput = document.getElementById('procedenciaTuristas');
+            const procedenciaValue = procedenciaInput.value.trim();
+            
+            if (!procedenciaValue || procedenciaValue.length < 10) {
+                procedenciaInput.classList.add('error');
+                isValid = false;
+                showAlert('Por favor, proporcione información detallada sobre la procedencia de los turistas (mínimo 10 caracteres).', 'error');
+            } else {
+                procedenciaInput.classList.remove('error');
+                procedenciaInput.classList.add('success');
+            }
+            
+            if (!isValid) {
+                showAlert('Por favor, complete todos los campos correctamente.', 'error');
+                return;
+            }
+            
+            // Mostrar estado de carga
+            form.classList.add('survey-loading');
+            
+            try {
+                const hotelId = getCurrentHotelId();
+                const { fechaInicio, fechaFin } = getCurrentWeekDates();
+                
+                const cuestionarioData = {
+                    hotelId: hotelId,
+                    fechaInicio: fechaInicio,
+                    fechaFin: fechaFin,
+                    datos: {
+                        // ✅ NUEVO: Incluir procedencia de turistas
+                        procedenciaTuristas: procedenciaValue,
+                        
+                        // Campos numéricos existentes
+                        habitacionesOcupadas: parseInt(formData.get('habitacionesOcupadas')),
+                        habitacionesNacionales: parseInt(formData.get('habitacionesNacionales')),
+                        habitacionesExtranjeros: parseInt(formData.get('habitacionesExtranjeros')),
+                        totalPersonas: parseInt(formData.get('totalPersonas')),
+                        turistasNacionales: parseInt(formData.get('turistasNacionales')),
+                        turistasExtranjeros: parseInt(formData.get('turistasExtranjeros')),
+                        turistasAlMenosUnaNoche: parseInt(formData.get('turistasAlMenosUnaNoche')),
+                        turistasNacionalesNoche: parseInt(formData.get('turistasNacionalesNoche')),
+                        turistasExtranjerosNoche: parseInt(formData.get('turistasExtranjerosNoche'))
+                    }
+                };
+                
+                console.log('📤 Enviando cuestionario:', cuestionarioData);
+                
+                const response = await fetch(`${baseURL}/cuestionarios`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(cuestionarioData)
+                });
+                
+                const result = await response.json();
+                console.log('📥 Respuesta del servidor:', result);
+                
+                if (response.ok && result.status === 'success') {
+                    form.classList.remove('survey-loading');
+                    showAlert('¡Cuestionario enviado correctamente!', 'success');
+                    
+                    form.reset();
+                    
+                    // ✅ ACTUALIZADO: Limpiar estados de todos los campos
+                    const allInputs = form.querySelectorAll('input, textarea');
+                    allInputs.forEach(input => {
+                        input.classList.remove('error', 'success');
+                    });
+                    
+                    console.log('✅ Cuestionario guardado:', result.data);
+                    
+                } else {
+                    throw new Error(result.message || 'Error al enviar el cuestionario');
+                }
+                
+            } catch (error) {
+                form.classList.remove('survey-loading');
+                console.error('❌ Error:', error);
+                
+                if (error.message.includes('Ya existe un cuestionario')) {
+                    showAlert('Ya existe un cuestionario para esta semana. Use la función de actualización.', 'warning');
+                } else if (error.message.includes('No tienes permiso')) {
+                    showAlert('No tienes permisos para enviar este cuestionario.', 'error');
+                } else if (error.message.includes('Hotel no encontrado')) {
+                    showAlert('Error: Hotel no encontrado. Verifica la configuración.', 'error');
+                } else if (error.message.includes('No estás autenticado')) {
+                    showAlert('Sesión expirada. Por favor, inicia sesión nuevamente.', 'error');
+                    setTimeout(() => {
+                        window.location.href = '../login.html';
+                    }, 2000);
+                } else {
+                    showAlert(error.message || 'Error al enviar el cuestionario. Inténtelo de nuevo.', 'error');
+                }
+            }
+        }
+
+        // ✅ FUNCIÓN ACTUALIZADA: resetSurveyForm
+        function resetSurveyForm() {
+            const form = document.getElementById('weeklySurveyForm');
+            form.reset();
+            
+            // ✅ ACTUALIZADO: Limpiar estados de todos los campos (input y textarea)
+            const allInputs = form.querySelectorAll('input, textarea');
+            allInputs.forEach(input => {
+                input.classList.remove('error', 'success');
+            });
+            
+            // ✅ NUEVO: Limpiar contador de caracteres si existe
+            const charCounter = document.querySelector('.char-counter');
+            if (charCounter) {
+                charCounter.remove();
+            }
+            
+            showAlert('Formulario limpiado correctamente.', 'info');
+        }
+
+        // ✅ SISTEMA DE ALERTAS
+        function showAlert(message, type = 'info') {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `
+                <i class="fas fa-${getAlertIcon(type)}"></i>
+                <span>${message}</span>
+                <button class="alert-close" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            if (!document.querySelector('#alert-styles')) {
+                const alertStyles = document.createElement('style');
+                alertStyles.id = 'alert-styles';
+                alertStyles.textContent = `
+                    .alert {
+                        position: fixed;
+                        top: 20px;
+                        right: 20px;
+                        padding: 1rem 1.5rem;
+                        border-radius: 8px;
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                        z-index: 1000;
+                        max-width: 400px;
+                        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+                        animation: slideInAlert 0.3s ease-out;
+                    }
+                    
+                    .alert-success {
+                        background: #d4edda;
+                        color: #155724;
+                        border: 1px solid #c3e6cb;
+                    }
+                    
+                    .alert-error {
+                        background: #f8d7da;
+                        color: #721c24;
+                        border: 1px solid #f5c6cb;
+                    }
+
+                    .alert-warning {
+                        background: #fff3cd;
+                        color: #856404;
+                        border: 1px solid #ffeaa7;
+                    }
+                    
+                    .alert-info {
+                        background: #d1ecf1;
+                        color: #0c5460;
+                        border: 1px solid #b6d4da;
+                    }
+                    
+                    .alert-close {
+                        background: none;
+                        border: none;
+                        color: inherit;
+                        cursor: pointer;
+                        margin-left: auto;
+                        opacity: 0.7;
+                        transition: opacity 0.2s ease;
+                    }
+                    
+                    .alert-close:hover {
+                        opacity: 1;
+                    }
+                    
+                    @keyframes slideInAlert {
+                        from {
+                            transform: translateX(100%);
+                            opacity: 0;
+                        }
+                        to {
+                            transform: translateX(0);
+                            opacity: 1;
+                        }
+                    }
+                `;
+                document.head.appendChild(alertStyles);
+            }
+            
+            document.body.appendChild(alert);
+            
+            setTimeout(() => {
+                if (alert.parentElement) {
+                    alert.remove();
+                }
+            }, 5000);
+        }
+
+        function getAlertIcon(type) {
+            switch (type) {
+                case 'success': return 'check-circle';
+                case 'error': return 'exclamation-triangle';
+                case 'warning': return 'exclamation-circle';
+                case 'info': return 'info-circle';
+                default: return 'info-circle';
+            }
+        }
+
+        // ✅ FUNCIÓN DE DEBUG para verificar configuración (usar en consola)
+        window.debugImageManagement = function() {
+            console.log('🔍 === DEBUG GESTIÓN DE IMÁGENES ===');
+            console.log('- currentHotel:', currentHotel?.nombre || 'No definido');
+            console.log('- currentHotel._id:', currentHotel?._id || 'No ID');
+            console.log('- localStorage hotel:', localStorage.getItem('currentHotelId'));
+            
+            const menu = document.getElementById('menu-edicion-imagenes');
+            const link = document.getElementById('image-management-link');
+            console.log('- Menú existe:', !!menu);
+            console.log('- Menú visible:', menu ? (menu.style.display !== 'none') : 'Siempre visible (sin style.display)');
+            console.log('- Link existe:', !!link);
+            console.log('- Link href:', link?.href || 'No enlace');
+            
+            console.log('===============================');
+        };
+
+        // ✅ FUNCIONES GLOBALES para debug
+        window.debugHotelImages = debugHotelImages;
+        window.getImageUrl = getImageUrl;
+        window.debugCurrentHotel = function() {
+            if (currentHotel) {
+                debugHotelImages(currentHotel);
+            } else {
+                console.log('❌ No hay hotel actual cargado');
+            }
+        };
+        window.setupImageManagementMenu = setupImageManagementMenu;
+        window.testImageServer = testImageServer;
+        window.testSpecificImage = testSpecificImage;
+    </script>
+</body>
+</html>

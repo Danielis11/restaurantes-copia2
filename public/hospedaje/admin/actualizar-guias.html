@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actualizar Perfil de Guía - Jalpan Turismo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8fafc;
+            color: #2d3748;
+            line-height: 1.6;
+        }
+
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .sidebar-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+
+        .sidebar-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            border-left-color: #ffd700;
+        }
+
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .user-role {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Overlay */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 0;
+            min-height: 100vh;
+            background: #f8fafc;
+        }
+
+        .top-header {
+            background: white;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .mobile-menu-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: none;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            cursor: pointer;
+            color: #4a5568;
+            transition: all 0.3s;
+        }
+
+        .mobile-menu-toggle:hover {
+            background: #f7fafc;
+            border-color: #cbd5e0;
+        }
+
+        .top-header h1 {
+            font-size: 1.5rem;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #718096;
+        }
+
+        .breadcrumb a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            color: #5a67d8;
+        }
+
+        .breadcrumb i {
+            font-size: 0.8rem;
+        }
+
+        /* Messages */
+        .message {
+            display: none;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 2rem;
+            margin: 0 2rem;
+            margin-top: 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .success-message {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+
+        .error-message {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #fc8181;
+        }
+
+        /* Loading State */
+        .loading {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            color: #718096;
+        }
+
+        .loading i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1.1rem;
+        }
+
+        /* Form Container */
+        .form-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .form-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px 12px 0 0;
+            border: 1px solid #e2e8f0;
+            border-bottom: none;
+            text-align: center;
+        }
+
+        .form-header h2 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-header i {
+            color: #667eea;
+        }
+
+        .form-header p {
+            color: #718096;
+        }
+
+        .form-body {
+            background: white;
+            padding: 2rem;
+            border-radius: 0 0 12px 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* Form Sections */
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .form-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            color: #2d3748;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .section-title i {
+            color: #667eea;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .required {
+            color: #e53e3e;
+        }
+
+        .form-control {
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-control:invalid {
+            border-color: #e53e3e;
+        }
+
+        .form-control:valid {
+            border-color: #38a169;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-hint {
+            font-size: 0.85rem;
+            color: #718096;
+            margin-top: 0.25rem;
+        }
+
+        /* Checkbox Groups */
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .checkbox-item:hover {
+            background: #f7fafc;
+            border-color: #cbd5e0;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .checkbox-item input[type="checkbox"]:checked + label {
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .checkbox-item label {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .checkbox-item label i {
+            color: #718096;
+            transition: color 0.3s;
+        }
+
+        .checkbox-item input[type="checkbox"]:checked + label i {
+            color: #667eea;
+        }
+
+        /* Buttons */
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #5a67d8;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #edf2f7;
+            color: #4a5568;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+            border-color: #cbd5e0;
+        }
+
+        /* Responsive */
+        @media (min-width: 1024px) {
+            .sidebar {
+                position: relative;
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 280px;
+            }
+
+            .mobile-menu-toggle {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 0 1rem;
+                margin: 1rem auto;
+            }
+
+            .form-header,
+            .form-body {
+                padding: 1.5rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .section-title {
+                font-size: 1.1rem;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .checkbox-group {
+                grid-template-columns: 1fr;
+            }
+
+            .top-header {
+                padding: 1rem;
+            }
+
+            .top-header h1 {
+                font-size: 1.25rem;
+            }
+
+            .breadcrumb {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-user-tie"></i>
+                    <span>Jalpan Turismo</span>
+                </div>
+                <button class="sidebar-close" id="sidebarClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="guias-admin.html" class="nav-item active">
+                    <i class="fas fa-user-tie"></i>
+                    <span>Mi Perfil de Guía</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">
+                        <span>GT</span>
+                    </div>
+                    <div class="user-details">
+                        <div class="user-name" id="userName">Guía Turística</div>
+                        <div class="user-role" id="userRole">Administrador</div>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Cerrar Sesión</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Overlay for mobile -->
+        <div class="sidebar-overlay" id="overlay"></div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div>
+                        <h1>Actualizar Perfil de Guía Turística</h1>
+                        <div class="breadcrumb">
+                            <a href="dashboard.html">Dashboard</a>
+                            <i class="fas fa-chevron-right"></i>
+                            <a href="guias-admin.html">Mi Perfil</a>
+                            <i class="fas fa-chevron-right"></i>
+                            <span>Actualizar Detalles</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Messages -->
+            <div class="message success-message" id="successMessage">
+                <i class="fas fa-check-circle"></i>
+                <span id="successText">¡Perfil actualizado exitosamente!</span>
+            </div>
+
+            <div class="message error-message" id="errorMessage">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span id="errorText">Error al actualizar el perfil</span>
+            </div>
+
+            <!-- Loading State -->
+            <div class="loading" id="loadingState">
+                <i class="fas fa-spinner"></i>
+                <div class="loading-text">Cargando información del perfil...</div>
+            </div>
+
+            <!-- Form Container -->
+            <div class="form-container" id="formContainer">
+                <div class="form-header">
+                    <h2>
+                        <i class="fas fa-edit"></i>
+                        Actualizar Información del Perfil
+                    </h2>
+                    <p>Modifica los detalles de tu perfil profesional para mantener la información actualizada</p>
+                </div>
+
+                <div class="form-body">
+                    <form id="updateForm">
+                        <!-- Información Personal -->
+                        <div class="form-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-user"></i>
+                                Información Personal
+                            </h3>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        Nombre Completo <span class="required">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" id="nombre" name="nombre" required>
+                                    <span class="form-hint">Tu nombre profesional completo</span>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        Descripción Profesional <span class="required">*</span>
+                                    </label>
+                                    <textarea class="form-control" id="descripcion" name="descripcion" rows="4" required></textarea>
+                                    <span class="form-hint">Describe tu experiencia y servicios como guía turística</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Información de Contacto -->
+                        <div class="form-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-phone"></i>
+                                Información de Contacto
+                            </h3>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        Teléfono <span class="required">*</span>
+                                    </label>
+                                    <input type="tel" class="form-control" id="telefono" name="contacto.telefono" required>
+                                    <span class="form-hint">Número de teléfono para contacto directo</span>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        Email de Contacto
+                                    </label>
+                                    <input type="email" class="form-control" id="emailContacto" name="contacto.email">
+                                    <span class="form-hint">Email alternativo para clientes (opcional)</span>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        WhatsApp
+                                    </label>
+                                    <input type="tel" class="form-control" id="whatsapp" name="contacto.whatsapp">
+                                    <span class="form-hint">Número de WhatsApp para contacto directo</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Ubicación -->
+                        <div class="form-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Ubicación de Servicios
+                            </h3>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        Ciudad <span class="required">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" id="ciudad" name="ubicacion.ciudad" required>
+                                    <span class="form-hint">Ciudad principal donde ofreces servicios</span>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        Estado <span class="required">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" id="estado" name="ubicacion.estado" required>
+                                    <span class="form-hint">Estado donde operas</span>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        Zona de Cobertura
+                                    </label>
+                                    <textarea class="form-control" id="zonaCobertura" name="ubicacion.zonaCobertura" rows="2"></textarea>
+                                    <span class="form-hint">Describe las áreas donde proporcionas servicios de guía</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Especialidades -->
+                        <div class="form-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-certificate"></i>
+                                Especialidades
+                            </h3>
+                            
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Áreas de Especialización <span class="required">*</span>
+                                </label>
+                               <div class="checkbox-group">
+    <div class="checkbox-item">
+        <input type="checkbox" id="excursionismo" name="especialidades" value="excursionismo">
+        <label for="excursionismo"><i class="fas fa-mountain"></i> Excursionismo</label>
+    </div>
+    <div class="checkbox-item">
+        <input type="checkbox" id="misiones_franciscanas" name="especialidades" value="misiones_franciscanas">
+        <label for="misiones_franciscanas"><i class="fas fa-church"></i> Misiones Franciscanas</label>
+    </div>
+    <div class="checkbox-item">
+        <input type="checkbox" id="interpretacion_ambiental" name="especialidades" value="interpretacion_ambiental">
+        <label for="interpretacion_ambiental"><i class="fas fa-leaf"></i> Interpretación Ambiental</label>
+    </div>
+    <div class="checkbox-item">
+        <input type="checkbox" id="guia_cultural" name="especialidades" value="guia_cultural">
+        <label for="guia_cultural"><i class="fas fa-theater-masks"></i> Guía Cultural</label>
+    </div>
+</div>
+                                <span class="form-hint">Selecciona al menos una especialidad</span>
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="btn-group">
+                            <a href="guias-admin.html" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i>
+                                Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary" id="updateBtn">
+                                <i class="fas fa-save"></i>
+                                Actualizar Perfil
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Variables globales
+        let guiaId = null;
+      const baseURL = (() => {
+    const hostname = window.location.hostname;
+    
+    console.log('🌐 Hostname detectado:', hostname);
+    
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+        console.log('🛠️ Modo desarrollo detectado');
+        return '/api/hospedaje';
+    }
+    
+    console.log('🚀 Modo producción detectado');
+    return `${window.location.protocol}//${window.location.host}/api`;
+})();
+
+console.log('✅ BaseURL configurado:', baseURL);
+        const authToken = localStorage.getItem('hospAuthToken');
+        const userData = JSON.parse(localStorage.getItem('hospUserData') || '{}');
+
+        // Inicializar página
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!authToken) {
+                window.location.href = '../login.html';
+                return;
+            }
+
+            // Actualizar info del usuario
+            document.getElementById('userName').textContent = userData.nombre || 'Guía Turística';
+            document.getElementById('userRole').textContent = userData.role === 'admin' ? 'Administrador' : 'Usuario';
+            
+            // Iniciales para avatar
+            const initials = userData.nombre ? 
+                userData.nombre.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'GT';
+            document.getElementById('userAvatar').innerHTML = `<span>${initials}</span>`;
+
+            // Configurar mobile menu
+            setupMobileMenu();
+            
+            // Cargar datos de guía desde URL o localStorage
+            loadGuiaFromUrl();
+            
+            // Configurar formulario
+            setupForm();
+        });
+
+        function setupMobileMenu() {
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+
+            if (mobileMenuToggle) {
+                mobileMenuToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('active');
+                    overlay.classList.toggle('active');
+                });
+            }
+
+            overlay.addEventListener('click', function() {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+        }
+
+        // Cargar datos de guía desde URL
+        async function loadGuiaFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            guiaId = urlParams.get('guiaId');
+
+            if (!guiaId) {
+                // Si no hay ID en URL, intentar obtener de "mis guías"
+                await loadMiGuia();
+                return;
+            }
+
+            try {
+                showLoading();
+                
+                const response = await fetch(`${baseURL}/guias/${guiaId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    fillForm(data.data.guia);
+                    hideLoading();
+                } else {
+                    showError('No se pudo cargar la información del perfil');
+                    hideLoading();
+                }
+            } catch (error) {
+                console.error('Error cargando datos:', error);
+                showError('Error de conexión al cargar los datos');
+                hideLoading();
+            }
+        }
+
+        // Cargar mi guía (primera guía del usuario)
+        async function loadMiGuia() {
+            try {
+                showLoading();
+                
+                const response = await fetch(`${baseURL}/guias/mis-guias`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (data.status === 'success' && data.data.guias.length > 0) {
+                    const guia = data.data.guias[0];
+                    guiaId = guia._id;
+                    fillForm(guia);
+                    hideLoading();
+                } else {
+                    showError('No se encontró perfil de guía. Crea uno primero.');
+                    setTimeout(() => {
+                        window.location.href = 'crear-anuncio.html?tipo=guiaturistica';
+                    }, 2000);
+                }
+            } catch (error) {
+                console.error('Error cargando mi guía:', error);
+                showError('Error de conexión');
+                hideLoading();
+            }
+        }
+
+        // Llenar formulario con datos existentes
+        function fillForm(guia) {
+            // Información personal
+            document.getElementById('nombre').value = guia.nombre || '';
+            document.getElementById('descripcion').value = guia.descripcion || '';
+
+            // Contacto
+            document.getElementById('telefono').value = guia.contacto?.telefono || '';
+            document.getElementById('emailContacto').value = guia.contacto?.email || '';
+            document.getElementById('whatsapp').value = guia.contacto?.whatsapp || '';
+
+            // Ubicación
+            document.getElementById('ciudad').value = guia.ubicacion?.ciudad || '';
+            document.getElementById('estado').value = guia.ubicacion?.estado || '';
+            document.getElementById('zonaCobertura').value = guia.ubicacion?.zonaCobertura || '';
+
+            // Especialidades
+            if (guia.especialidades) {
+                guia.especialidades.forEach(especialidad => {
+                    const checkbox = document.getElementById(especialidad);
+                    if (checkbox) checkbox.checked = true;
+                });
+            }
+        }
+
+        // Configurar formulario
+        function setupForm() {
+            const form = document.getElementById('updateForm');
+            form.addEventListener('submit', handleFormSubmit);
+        }
+
+        // Manejar envío del formulario
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const updateData = {};
+
+            // Información básica
+            updateData.nombre = formData.get('nombre');
+            updateData.descripcion = formData.get('descripcion');
+
+            // Contacto
+            updateData.contacto = {
+                telefono: formData.get('contacto.telefono'),
+                email: formData.get('contacto.email'),
+                whatsapp: formData.get('contacto.whatsapp')
+            };
+
+            // Ubicación
+            updateData.ubicacion = {
+                ciudad: formData.get('ubicacion.ciudad'),
+                estado: formData.get('ubicacion.estado'),
+                zonaCobertura: formData.get('ubicacion.zonaCobertura')
+            };
+
+            // Especialidades
+            updateData.especialidades = formData.getAll('especialidades');
+
+            // Validar que al menos haya una especialidad
+            if (updateData.especialidades.length === 0) {
+                showError('Debes seleccionar al menos una especialidad');
+                return;
+            }
+
+            try {
+                setLoading(true);
+                
+                const response = await fetch(`${baseURL}/guias/editar/${guiaId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(updateData)
+                });
+
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    showSuccess('Perfil actualizado exitosamente');
+                    setTimeout(() => {
+                        window.location.href = 'guias-admin.html';
+                    }, 2000);
+                } else {
+                    showError(result.message || 'Error al actualizar el perfil');
+                }
+            } catch (error) {
+                console.error('Error actualizando perfil:', error);
+                showError('Error de conexión al actualizar');
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        // Funciones de UI
+        function showLoading() {
+            document.getElementById('loadingState').style.display = 'flex';
+            document.getElementById('formContainer').style.display = 'none';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('formContainer').style.display = 'block';
+        }
+
+        function setLoading(loading) {
+            const btn = document.getElementById('updateBtn');
+            if (loading) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Actualizando...';
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save"></i> Actualizar Perfil';
+            }
+        }
+
+        function showSuccess(message) {
+            const successMessage = document.getElementById('successMessage');
+            const successText = document.getElementById('successText');
+            successText.textContent = message;
+            successMessage.style.display = 'flex';
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        function showError(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+            errorText.textContent = message;
+            errorMessage.style.display = 'flex';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        function logout() {
+            localStorage.removeItem('hospAuthToken');
+            localStorage.removeItem('hospUserData');
+            window.location.href = '../login.html';
+        }
+    </script>
+</body>
+</html>

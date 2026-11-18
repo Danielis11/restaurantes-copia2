@@ -1,0 +1,2504 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MISTIK360 - Pueblo Mágico</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- AOS CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        /* ===== VARIABLES CSS ===== */
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #3b82f6;
+            --restaurant: #f59e0b;
+            --bar: #8b5cf6;
+            --cafe: #06b6d4;
+            --white: #ffffff;
+            --gray-50: #fafafa;
+            --gray-100: #f4f4f5;
+            --gray-200: #e4e4e7;
+            --gray-300: #d4d4d8;
+            --gray-400: #a1a1aa;
+            --gray-500: #71717a;
+            --gray-600: #52525b;
+            --gray-700: #3f3f46;
+            --gray-800: #27272a;
+            --gray-900: #18181b;
+            --primary-gradient: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            --accent: var(--restaurant);
+            --secondary: var(--cafe);
+            --font-primary: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --font-display: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-2xl: 3rem;
+            --spacing-3xl: 4rem;
+            --spacing-4xl: 6rem;
+            --radius-sm: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.5rem;
+            --radius-2xl: 2rem;
+            --radius-full: 9999px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-colored: 0 10px 30px rgba(37, 99, 235, 0.2);
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ===== ESTILOS BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            line-height: 1.6;
+            color: #333;
+            padding-top: 80px;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 0.75rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            min-height: 60px;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .nav-brand:hover {
+            transform: translateY(-1px);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            margin: 0;
+        }
+
+        .logo-image {
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+            border-radius: var(--radius-sm);
+            background: var(--white);
+            padding: 3px;
+            box-shadow: var(--shadow-sm);
+            border: none;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .logo-text {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gray-800);
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--gray-700);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+        }
+
+        .mobile-menu-toggle:hover {
+            background: var(--gray-100);
+            color: var(--primary);
+        }
+
+        .mobile-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .mobile-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+            align-items: center;
+            margin: 0;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            color: var(--gray-700);
+            text-decoration: none;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .nav-link:hover {
+            background: var(--gray-100);
+            color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown .nav-link::after {
+            content: "";
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 4px solid currentColor;
+            margin-left: 0.25rem;
+            transition: var(--transition);
+        }
+
+        .dropdown:hover .nav-link::after {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            min-width: 220px;
+            box-shadow: var(--shadow-lg);
+            border-radius: var(--radius-lg);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: var(--transition);
+            z-index: 1000;
+            padding: 0.75rem 0;
+            margin-top: 0.5rem;
+            border: 1px solid var(--gray-200);
+        }
+
+        .dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 0.75rem 1.25rem;
+            color: var(--gray-600);
+            text-decoration: none;
+            transition: var(--transition);
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:hover {
+            background: var(--gray-50);
+            color: var(--primary);
+            padding-left: 1.5rem;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--radius-lg);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-login {
+            background: var(--primary);
+            color: white;
+            border: 1px solid var(--primary);
+        }
+
+        .btn-login:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-colored);
+        }
+
+        /* ===== BOTÓN DE CERRAR MÓVIL ===== */
+        .mobile-close-btn {
+            display: none;
+            justify-content: flex-end;
+            padding: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .close-menu-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--gray-700);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+        }
+
+        .close-menu-btn:hover {
+            background: var(--gray-100);
+            color: var(--primary);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .mobile-close-btn {
+                display: flex;
+            }
+
+            .nav-menu {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 90vw;
+                max-width: 320px;
+                height: 100vh;
+                background: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                align-items: flex-start;
+                justify-content: flex-start;
+                gap: 0;
+                padding: 0;
+                transition: all 0.4s ease;
+                overflow-y: auto;
+                box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
+                border-left: 1px solid var(--gray-200);
+            }
+
+            .nav-menu.active {
+                right: 0;
+            }
+
+            .nav-item {
+                width: 100%;
+                border-bottom: 1px solid var(--gray-100);
+            }
+
+            .nav-link {
+                width: 100%;
+                padding: 1.2rem 2rem;
+                justify-content: flex-start;
+                border-radius: 0;
+                font-size: 1rem;
+                color: var(--gray-700);
+            }
+
+            .nav-link:hover {
+                background: var(--gray-50);
+                transform: none;
+                padding-left: 2.5rem;
+                color: var(--primary);
+            }
+
+            .dropdown-menu {
+                position: static;
+                opacity: 1;
+                visibility: visible;
+                transform: none;
+                box-shadow: none;
+                background: var(--gray-50);
+                border-radius: 0;
+                margin: 0;
+                padding: 0;
+                display: none;
+                border-top: 1px solid var(--gray-200);
+                border-bottom: 1px solid var(--gray-200);
+                border-left: none;
+                border-right: none;
+            }
+
+            .dropdown.active .dropdown-menu {
+                display: block;
+                animation: slideDown 0.3s ease;
+            }
+
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    max-height: 0;
+                }
+
+                to {
+                    opacity: 1;
+                    max-height: 200px;
+                }
+            }
+
+            .dropdown>.nav-link {
+                background: var(--gray-50);
+                font-weight: 600;
+                color: var(--primary);
+                position: relative;
+            }
+
+            .dropdown>.nav-link::after {
+                content: '\f107';
+                font-family: 'Font Awesome 6 Free';
+                font-weight: 900;
+                margin-left: auto;
+                transition: transform 0.3s ease;
+                position: absolute;
+                right: 2rem;
+                border: none;
+                width: auto;
+                height: auto;
+            }
+
+            .dropdown.active>.nav-link::after {
+                transform: rotate(180deg);
+            }
+
+            .dropdown-item {
+                padding: 1rem 3rem;
+                background: transparent;
+                color: var(--gray-600);
+                font-size: 0.95rem;
+                border-bottom: 1px solid var(--gray-100);
+            }
+
+            .dropdown-item:hover {
+                background: rgba(37, 99, 235, 0.05);
+                padding-left: 3.5rem;
+                color: var(--primary);
+            }
+
+            .auth-buttons {
+                width: 100%;
+                padding: 1.5rem 2rem;
+                margin-top: auto;
+                border-top: 2px solid var(--gray-200);
+                background: var(--gray-50);
+            }
+
+            .btn-login {
+                width: 100%;
+                text-align: center;
+                justify-content: center;
+            }
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-slider {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .hero-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        .hero-slide.active {
+            opacity: 1;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            /* Oscurecimiento ligero neutro */
+            z-index: 2;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+            color: white;
+            max-width: 800px;
+            padding: 0 2rem;
+        }
+
+        .hero-content h1 {
+            font-family: var(--font-display);
+            font-size: clamp(3rem, 6vw, 5rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 4px 8px rgba(0, 0, 0, 0.3);
+            line-height: 1.1;
+            /* AOS Override for initial load effect */
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+
+        .hero-content p {
+            font-size: clamp(1.1rem, 2vw, 1.4rem);
+            margin-bottom: 2rem;
+            opacity: 0.95;
+            font-weight: 300;
+            text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.3);
+            line-height: 1.6;
+        }
+
+        .cta-button {
+            background: var(--restaurant);
+            color: white;
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: var(--radius-full);
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: var(--transition);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(245, 158, 11, 0.4);
+            background: #e69500;
+        }
+
+        /* ===== JALPAN SECTION ===== */
+        .jalpan-section {
+            padding: var(--spacing-4xl) 0;
+            background: linear-gradient(135deg, var(--gray-50) 0%, white 100%);
+        }
+
+        .jalpan-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .jalpan-header {
+            text-align: center;
+            margin-bottom: var(--spacing-3xl);
+        }
+
+        .jalpan-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: var(--radius-full);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .jalpan-title {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 4vw, 3.5rem);
+            color: var(--gray-900);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .jalpan-subtitle {
+            font-size: 1.25rem;
+            color: var(--gray-600);
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        .jalpan-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-3xl);
+            align-items: center;
+            margin-bottom: var(--spacing-3xl);
+        }
+
+        .jalpan-info-cards {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .info-card {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+            border-left: 4px solid var(--primary);
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-icon i {
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 1rem;
+        }
+
+        .card-description {
+            color: var(--gray-600);
+            line-height: 1.6;
+        }
+
+        .jalpan-visual {
+            position: relative;
+        }
+
+        .main-image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .floating-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .floating-badge {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 0.75rem 1.25rem;
+            border-radius: var(--radius-lg);
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .badge-1 {
+            top: 2rem;
+            right: 2rem;
+            background: rgba(37, 99, 235, 0.9);
+        }
+
+        .badge-2 {
+            bottom: 6rem;
+            left: 2rem;
+            background: rgba(245, 158, 11, 0.9);
+        }
+
+        .badge-3 {
+            top: 50%;
+            right: 2rem;
+            background: rgba(139, 92, 246, 0.9);
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .achievement-item {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+            border-top: 4px solid var(--restaurant);
+        }
+
+        .achievement-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .achievement-year {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .achievement-title {
+            color: var(--gray-700);
+            font-weight: 600;
+        }
+
+        /* ===== CATEGORIES SECTION ===== */
+        .categories-section {
+            padding: var(--spacing-4xl) 0;
+            background: white;
+        }
+
+        .categories-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+        }
+
+        .categories-title {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 4vw, 3.5rem);
+            text-align: center;
+            color: var(--gray-900);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .categories-subtitle {
+            text-align: center;
+            font-size: 1.25rem;
+            color: var(--gray-600);
+            margin-bottom: var(--spacing-3xl);
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .categories-slider {
+            position: relative;
+            overflow: hidden;
+            border-radius: var(--radius-2xl);
+        }
+
+        .categories-track {
+            display: flex;
+            transition: transform 0.3s ease;
+        }
+
+        .category-slide {
+            min-width: calc(33.333% - 1rem);
+            margin-right: 1.5rem;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 2.5rem;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+            cursor: pointer;
+            height: 100%;
+            border: 2px solid transparent;
+        }
+
+        .category-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-colored);
+            border-color: var(--primary-light);
+        }
+
+        .category-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: var(--primary-gradient);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .category-card:hover .category-icon {
+            transform: scale(1.1);
+        }
+
+        .category-icon i {
+            font-size: 2rem;
+            color: white;
+        }
+
+        .category-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 1rem;
+        }
+
+        .category-description {
+            color: var(--gray-600);
+            line-height: 1.6;
+        }
+
+        .slider-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow-md);
+            z-index: 10;
+        }
+
+        .slider-nav:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .slider-prev {
+            left: -25px;
+        }
+
+        .slider-next {
+            right: -25px;
+        }
+
+        .slider-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: var(--radius-full);
+            background: var(--gray-300);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .indicator.active {
+            background: var(--primary);
+        }
+
+        /* ===== GASTRONOMÍA SECTION ===== */
+        .stats {
+            padding: var(--spacing-4xl) 0;
+            background: var(--primary-gradient);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23pattern)"/></svg>');
+        }
+
+        .stats-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+                .services-slider {
+            position: relative;
+            min-height: 400px; 
+            width: 100%;
+        }
+
+        .service-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transform: translateY(20px) scale(0.98);
+        }
+
+        .service-slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+            z-index: 2;
+        }
+
+        .services-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            position: relative;
+            z-index: 3;
+        }
+
+        .service-btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            background: transparent;
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 0;
+        }
+
+        .service-btn.active {
+            background: white;
+            border-color: white;
+            transform: scale(1.2);
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        .gastronomy-title, .lodging-title {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 4px 8px rgba(0, 0, 0, 0.3);
+            color: white;
+        }
+
+        .gastronomy-description, .lodging-description {
+            font-size: 1.25rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.95;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.7;
+            color: white;
+        }
+
+        .gastronomy-button, .lodging-button {
+            padding: 1.25rem 2.5rem;
+            border: none;
+            border-radius: var(--radius-full);
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            color: white;
+            margin-top: auto;
+        }
+
+        .gastronomy-button {
+            background: var(--restaurant);
+            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.3);
+        }
+
+        .lodging-button {
+            background: var(--cafe);
+            box-shadow: 0 10px 30px rgba(6, 182, 212, 0.3);
+        }
+
+        .gastronomy-button::before, .lodging-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .gastronomy-button:hover::before, .lodging-button:hover::before {
+            left: 100%;
+        }
+
+        .gastronomy-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(245, 158, 11, 0.4);
+            background: #e69500;
+        }
+
+        .lodging-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(6, 182, 212, 0.4);
+            background: #059bb5;
+        }
+
+        /* ===== MAP SECTION ===== */
+        .map-section {
+            padding: var(--spacing-4xl) 0;
+            background: var(--gray-50);
+        }
+
+        .map-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .map-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-3xl);
+            align-items: center;
+        }
+
+        .map-info h2 {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            color: var(--gray-900);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .map-info p {
+            color: var(--gray-600);
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        .location-features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+        }
+
+        .feature-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .feature-icon {
+            color: var(--primary);
+            font-size: 1.25rem;
+        }
+
+        .map-embed {
+            border-radius: var(--radius-2xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .map-embed iframe {
+            width: 100%;
+            height: 450px;
+            border: none;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: #000000;
+            color: #ecf0f1;
+            padding: 3rem 0 1rem 0;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.5fr;
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-brand {
+            max-width: 280px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #ecf0f1;
+            margin-bottom: 1rem;
+        }
+
+        .footer-logo i {
+            font-size: 1.6rem;
+            color: var(--primary-light);
+        }
+
+        .footer-description {
+            color: #bdc3c7;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .social-link:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+        }
+
+        .footer-section h3 {
+            color: #ecf0f1;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 0.9rem;
+            display: block;
+            padding: 0.25rem 0;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-light);
+            padding-left: 0.5rem;
+        }
+
+        .footer-contact {
+            font-size: 0.9rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            color: #bdc3c7;
+            margin-bottom: 0.75rem;
+        }
+
+        .contact-item i {
+            color: var(--primary-light);
+            width: 16px;
+            margin-top: 0.1rem;
+            flex-shrink: 0;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #34495e;
+            padding-top: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-copyright {
+            color: #95a5a6;
+            font-size: 0.85rem;
+        }
+
+        .footer-bottom-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-bottom-links a {
+            color: #95a5a6;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .footer-bottom-links a:hover {
+            color: var(--primary-light);
+        }
+
+        /* ===== RESPONSIVE ADICIONAL ===== */
+        @media (max-width: 1024px) {
+            .jalpan-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .map-content {
+                grid-template-columns: 1fr;
+            }
+
+            .category-slide {
+                min-width: calc(50% - 0.75rem);
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .jalpan-content {
+                gap: var(--spacing-xl);
+            }
+
+            .location-features {
+                grid-template-columns: 1fr;
+            }
+
+            .category-slide {
+                min-width: 100%;
+            }
+
+            .achievements-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                text-align: left;
+            }
+
+            .footer-social {
+                justify-content: flex-start;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: left;
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            .jalpan-container,
+            .categories-container,
+            .map-container,
+            .footer-container {
+                padding: 0 1rem;
+            }
+
+            .achievements-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        /* ===== USER PROFILE DROPDOWN ===== */
+        .user-profile-dropdown {
+            position: relative;
+        }
+
+        .user-profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem 0.5rem 0.5rem;
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: var(--font-primary);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .user-profile-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-colored);
+        }
+
+        .user-profile-btn.active {
+            background: var(--primary-dark);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .user-name {
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .user-chevron {
+            font-size: 0.7rem;
+            transition: transform 0.2s ease;
+        }
+
+        .user-profile-btn.active .user-chevron {
+            transform: rotate(180deg);
+        }
+
+        .user-dropdown-menu {
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            right: 0;
+            background: white;
+            min-width: 240px;
+            border-radius: var(--radius-lg);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            border: 1px solid var(--gray-200);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: all 0.2s ease;
+            z-index: 1001;
+            overflow: hidden;
+        }
+
+        .user-dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .user-dropdown-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.25rem;
+            background: var(--gray-50);
+        }
+
+        .user-avatar-lg {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .user-dropdown-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-dropdown-name {
+            font-weight: 600;
+            color: var(--gray-900);
+            font-size: 0.95rem;
+        }
+
+        .user-dropdown-role {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+        }
+
+        .user-dropdown-divider {
+            height: 1px;
+            background: var(--gray-200);
+        }
+
+        .user-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.25rem;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            border: none;
+            background: none;
+            width: 100%;
+            cursor: pointer;
+            font-family: var(--font-primary);
+        }
+
+        .user-dropdown-item:hover {
+            background: var(--gray-50);
+            color: var(--primary);
+        }
+
+        .user-dropdown-item i {
+            width: 18px;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+
+        .user-dropdown-logout {
+            color: #ef4444;
+        }
+
+        .user-dropdown-logout:hover {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        @media (max-width: 768px) {
+            .user-profile-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .user-dropdown-menu {
+                position: static;
+                opacity: 1;
+                visibility: visible;
+                transform: none;
+                box-shadow: none;
+                border: 1px solid var(--gray-200);
+                margin-top: 0.5rem;
+                width: 100%;
+            }
+
+            .user-dropdown-menu:not(.show) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Overlay para móvil -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <!-- Logo -->
+            <a href="index.html" class="nav-brand">
+                <h1 class="logo">
+                    <img src="/hospedaje/img_jalpan/logo_pueblos_magicos.jpg" alt="Logo Turismo" class="logo-image">
+                    <div class="logo-text">Dirección de Turismo</div>
+                </h1>
+            </a>
+
+            <!-- Botón hamburguesa -->
+            <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <!-- Menú de navegación -->
+            <ul class="nav-menu" id="navMenu">
+                <!-- ✨ Botón de cerrar (solo móvil) -->
+                <li class="nav-item mobile-close-btn">
+                    <button class="close-menu-btn" id="closeMenuBtn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </li>
+
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/mapa.html" class="nav-link">Mapa</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="hospedaje.html" class="nav-link">
+                        Hospedaje
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="/" class="nav-link">Alimentos</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="/experiencias.html" class="nav-link">Experiencias</a>
+                </li>
+
+                <!-- Selector de Idiomas -->
+                <li class="nav-item">
+                    <select id="lang-select" class="form-control"
+                        style="padding: 0.5rem; border-radius: 5px; border: 1px solid #ccc; font-weight: bold; cursor: pointer; background: white;">
+                        <option value="ES">🇪🇸 ES</option>
+                        <option value="EN">🇺🇸 EN</option>
+                        <option value="FR">🇫🇷 FR</option>
+                    </select>
+                </li>
+
+                <li class="nav-item auth-buttons">
+                    <a href="login.html" class="btn btn-login">
+                        Iniciar Sesión
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-slider">
+            <div class="hero-slide active" style="background-image: url('/hospedaje/img_jalpan/mision.jpg')"></div>
+            <div class="hero-slide" style="background-image: url('/hospedaje/img_jalpan/rio.jpeg')"></div>
+            <div class="hero-slide" style="background-image: url('/hospedaje/img_jalpan/tancama.jpeg')"></div>
+            <div class="hero-slide" style="background-image: url('/hospedaje/img_jalpan/adentro.jpg')"></div>
+            <div class="hero-slide" style="background-image: url('/hospedaje/img_jalpan/Misión\ Jalpan-61.jpg')"></div>
+        </div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1>MISTIK360</h1>
+            <p>Pueblo mágico</p>
+            <p>Donde cada amanecer promete nuevas aventuras y cada atardecer, el descanso perfecto, este el corazón de
+                la sierra</p>
+            <div class="hero-search-container"
+                style="margin-top: 2rem; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto;">
+                <div class="category-pills" style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="hospedaje.html" class="pill-btn"
+                        style="background: white; color: var(--gray-600); padding: 0.5rem 1.2rem; border-radius: 50px; text-decoration: none; font-size: 0.9rem; font-weight: 500; display: flex; align-items: center; gap: 0.5rem; transition: background 0.2s, color 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                        <i class="fas fa-bed"></i> Hospedaje
+                    </a>
+                    <a href="/" class="pill-btn"
+                        style="background: white; color: var(--gray-600); padding: 0.5rem 1.2rem; border-radius: 50px; text-decoration: none; font-size: 0.9rem; font-weight: 500; display: flex; align-items: center; gap: 0.5rem; transition: background 0.2s, color 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                        <i class="fas fa-utensils"></i> Alimentos
+                    </a>
+                    <a href="tourOperadora.html" class="pill-btn"
+                        style="background: white; color: var(--gray-600); padding: 0.5rem 1.2rem; border-radius: 50px; text-decoration: none; font-size: 0.9rem; font-weight: 500; display: flex; align-items: center; gap: 0.5rem; transition: background 0.2s, color 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                        <i class="fas fa-map-marked-alt"></i> Experiencias
+                    </a>
+                </div>
+            </div>
+            <style>
+                .pill-btn:hover {
+                    background: var(--gray-50) !important;
+                    color: var(--primary) !important;
+                }
+            </style>
+    </section>
+
+    <!-- Sección Jalpan -->
+    <section class="jalpan-section">
+        <div class="jalpan-container">
+            <div class="jalpan-header">
+                <div class="jalpan-badge">
+                    <i class="fas fa-star"></i>
+                    Pueblo Mágico desde 2010
+                </div>
+                <h2 class="jalpan-title">Conoce un poco sobre Jalpan</h2>
+                <p class="jalpan-subtitle">Un lugar donde convergen la historia, la naturaleza y la cultura, ofreciendo
+                    experiencias únicas e inolvidables</p>
+            </div>
+
+            <div class="jalpan-content">
+                <div class="jalpan-info-cards">
+                    <div class="info-card" data-aos="fade-right" data-aos-delay="100">
+                        <div class="card-icon">
+                            <i class="fas fa-church"></i>
+                        </div>
+                        <h3 class="card-title">Patrimonio de la Humanidad</h3>
+                        <p class="card-description">
+                            Las misiones franciscanas del siglo XVIII representan una arquitectura barroca única,
+                            reconocida por la UNESCO como Patrimonio Cultural de la Humanidad.
+                        </p>
+                    </div>
+
+                    <div class="info-card" data-aos="fade-right" data-aos-delay="200">
+                        <div class="card-icon">
+                            <i class="fas fa-leaf"></i>
+                        </div>
+                        <h3 class="card-title">Reserva de la Biosfera</h3>
+                        <p class="card-description">
+                            Ubicado en el corazón de la Sierra Gorda, hogar de una extraordinaria biodiversidad
+                            con ecosistemas únicos y especies endémicas.
+                        </p>
+                    </div>
+
+                    <div class="info-card" data-aos="fade-right" data-aos-delay="300">
+                        <div class="card-icon">
+                            <i class="fas fa-mountain"></i>
+                        </div>
+                        <h3 class="card-title">Aventura y Naturaleza</h3>
+                        <p class="card-description">
+                            Desde cascadas y grutas hasta senderos de montaña, Jalpan ofrece aventuras
+                            para todos los niveles en un entorno natural privilegiado.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="jalpan-visual" data-aos="fade-left">
+                    <img src="/hospedaje/img_jalpan/jalpan_1.jpg" alt="Misión de Jalpan" class="main-image">
+                    <div class="floating-elements">
+                        <div class="floating-badge badge-1">
+                            <i class="fas fa-star"></i>
+                            Pueblo Mágico
+                        </div>
+                        <div class="floating-badge badge-2">
+                            <i class="fas fa-globe"></i>
+                            UNESCO
+                        </div>
+                        <div class="floating-badge badge-3">
+                            <i class="fas fa-tree"></i>
+                            Biodiversidad
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Logros y reconocimientos -->
+            <div class="achievements-grid">
+                <div class="achievement-item" data-aos="fade-up" data-aos-delay="100">
+                    <div class="achievement-year">2003</div>
+                    <div class="achievement-title">Patrimonio Mundial UNESCO</div>
+                </div>
+                <div class="achievement-item" data-aos="fade-up" data-aos-delay="200">
+                    <div class="achievement-year">2010</div>
+                    <div class="achievement-title">Pueblo Mágico</div>
+                </div>
+                <div class="achievement-item" data-aos="fade-up" data-aos-delay="300">
+                    <div class="achievement-year">1997</div>
+                    <div class="achievement-title">Reserva de la Biosfera</div>
+                </div>
+                <div class="achievement-item" data-aos="fade-up" data-aos-delay="400">
+                    <div class="achievement-year">2004</div>
+                    <div class="achievement-title">Sitio Ramsar</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Rincones Locales -->
+    <section class="rincones-section" id="rincones">
+        <div class="categories-container">
+            <div class="jalpan-header" style="margin-bottom: 2rem;">
+                <div class="jalpan-badge">
+                    <i class="fas fa-camera-retro"></i>
+                    El Auténtico Jalpan
+                </div>
+                <h2 class="categories-title" data-aos="fade-up">Rincones Locales</h2>
+                <p class="categories-subtitle" data-aos="fade-up" data-aos-delay="100">Descubre los lugares favoritos de nuestra gente: calles llenas de vida, ríos cristalinos y nuestro hermoso centro decorado.</p>
+            </div>
+
+            <div class="bento-grid" data-aos="fade-up" data-aos-delay="200">
+                <div class="bento-item bento-large" onclick="window.location.href='rincones-locales.html#corazon'">
+                    <img src="/hospedaje/img_jalpan/6_Plazoleta_opt.jpg" alt="Plazoleta" loading="lazy">
+                    <div class="bento-overlay">
+                        <h3>El Corazón Decorado</h3>
+                        <p>Nuestra plazoleta llena de color y tradición</p>
+                    </div>
+                </div>
+                <div class="bento-item bento-small" onclick="window.location.href='rincones-locales.html#rios'">
+                    <img src="/hospedaje/img_jalpan/rio.jpeg" alt="Ríos Cristalinos" loading="lazy">
+                    <div class="bento-overlay">
+                        <h3>Ríos Cristalinos</h3>
+                        <p>Naturaleza pura al alcance</p>
+                    </div>
+                </div>
+                <div class="bento-item bento-small" onclick="window.location.href='rincones-locales.html#misticismo'">
+                    <img src="/hospedaje/img_jalpan/adentro.jpg" alt="Vida Local" loading="lazy">
+                    <div class="bento-overlay">
+                        <h3>Misticismo</h3>
+                        <p>Descubre los secretos locales</p>
+                    </div>
+                </div>
+                <div class="bento-item bento-small" onclick="window.location.href='rincones-locales.html#calles'">
+                    <img src="/hospedaje/img_jalpan/principal.jpeg" alt="Calles Principales" loading="lazy">
+                    <div class="bento-overlay">
+                        <h3>Calles Pintorescas</h3>
+                        <p>Caminos con historia</p>
+                    </div>
+                </div>
+                <div class="bento-item bento-small" onclick="window.location.href='rincones-locales.html#iconicos'">
+                    <img src="/hospedaje/img_jalpan/mision.jpg" alt="Misión" loading="lazy">
+                    <div class="bento-overlay">
+                        <h3>Sitios Icónicos</h3>
+                        <p>Belleza y fe atemporal</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Experiencias - Collage / Carrusel -->
+    <section class="categories-section" id="activities">
+        <div class="categories-container">
+            <h2 class="categories-title" data-aos="fade-up">Experiencias Turísticas</h2>
+            <p class="categories-subtitle" data-aos="fade-up" data-aos-delay="100">Descubre las aventuras que Jalpan tiene para ofrecerte</p>
+
+            <!-- Collage Desktop / Carrusel Móvil -->
+            <div class="exp-collage" id="expCollage" data-aos="fade-up" data-aos-delay="200">
+                <div class="exp-collage-item" onclick="window.location.href='experiencias.html'">
+                    <img src="/hospedaje/img_jalpan/tour_1.png" alt="Experiencia 1" loading="lazy">
+                    <div class="exp-collage-overlay"><span>Espeleísmo</span></div>
+                </div>
+                <div class="exp-collage-item" onclick="window.location.href='experiencias.html'">
+                    <img src="/hospedaje/img_jalpan/tour_2.png" alt="Experiencia 2" loading="lazy">
+                    <div class="exp-collage-overlay"><span>Turismo Cultural</span></div>
+                </div>
+                <div class="exp-collage-item" onclick="window.location.href='experiencias.html'">
+                    <img src="/hospedaje/img_jalpan/tour_3.png" alt="Experiencia 3" loading="lazy">
+                    <div class="exp-collage-overlay"><span>Aviturismo</span></div>
+                </div>
+                <div class="exp-collage-item" onclick="window.location.href='experiencias.html'">
+                    <img src="/hospedaje/img_jalpan/tour_4.png" alt="Experiencia 4" loading="lazy">
+                    <div class="exp-collage-overlay"><span>Senderismo</span></div>
+                </div>
+                <div class="exp-collage-item" onclick="window.location.href='experiencias.html'">
+                    <img src="/hospedaje/img_jalpan/tour_5.png" alt="Experiencia 5" loading="lazy">
+                    <div class="exp-collage-overlay"><span>Kayak</span></div>
+                </div>
+                <div class="exp-collage-item" onclick="window.location.href='experiencias.html'">
+                    <img src="/hospedaje/img_jalpan/tour_6.png" alt="Experiencia 6" loading="lazy">
+                    <div class="exp-collage-overlay"><span>Ciclismo</span></div>
+                </div>
+                <div class="exp-collage-item" onclick="window.location.href='experiencias.html'">
+                    <img src="/hospedaje/img_jalpan/tour_7.png" alt="Experiencia 7" loading="lazy">
+                    <div class="exp-collage-overlay"><span>RZR</span></div>
+                </div>
+                <div class="exp-collage-item" onclick="window.location.href='experiencias.html'">
+                    <img src="/hospedaje/img_jalpan/tour_8.png" alt="Experiencia 8" loading="lazy">
+                    <div class="exp-collage-overlay"><span>Rutas Comunitarias</span></div>
+                </div>
+                <div class="exp-collage-item" onclick="window.location.href='experiencias.html'">
+                    <img src="/hospedaje/img_jalpan/tour_9.png" alt="Experiencia 9" loading="lazy">
+                    <div class="exp-collage-overlay"><span>Rappel</span></div>
+                </div>
+                <div class="exp-collage-item" onclick="window.location.href='experiencias.html'">
+                    <img src="/hospedaje/img_jalpan/tour_10.png" alt="Experiencia 10" loading="lazy">
+                    <div class="exp-collage-overlay"><span>Camping</span></div>
+                </div>
+            </div>
+
+            <!-- Botón CTA -->
+            <div style="text-align: center; margin-top: 2rem;">
+                <a href="/experiencias.html" class="exp-explore-btn">
+                    <i class="fas fa-compass"></i> Explorar Experiencias
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        /* ===== RINCONES BENTO GRID ===== */
+        .rincones-section {
+            padding: var(--spacing-4xl) 0;
+            background: var(--gray-50);
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(2, 250px);
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .bento-item {
+            position: relative;
+            border-radius: var(--radius-2xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .bento-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .bento-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .bento-item:hover img {
+            transform: scale(1.08);
+        }
+
+        .bento-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 2rem 1.5rem;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8) 80%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            transition: var(--transition);
+        }
+
+        .bento-overlay h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .bento-overlay p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            transform: translateY(10px);
+            transition: transform 0.4s ease, opacity 0.4s ease;
+        }
+
+        .bento-item:hover .bento-overlay p {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Bento Grid Sizes */
+        .bento-large { grid-column: span 2; grid-row: span 2; }
+        .bento-small { grid-column: span 1; grid-row: span 1; }
+
+        @media (max-width: 992px) {
+            .bento-grid {
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: auto;
+                grid-auto-rows: 250px;
+            }
+            .bento-large { grid-column: span 2; grid-row: span 2; }
+            .bento-small { grid-column: span 1; grid-row: span 1; }
+        }
+
+        @media (max-width: 576px) {
+            .bento-grid {
+                grid-template-columns: 1fr;
+            }
+            .bento-large, .bento-small {
+                grid-column: span 1;
+                grid-row: span 1;
+                height: 250px;
+            }
+        }
+
+        /* ===== COLLAGE EXPERIENCIAS ===== */
+        .exp-collage {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(2, 160px);
+            gap: 8px;
+            margin-top: 2rem;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .exp-collage-item {
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        .exp-collage-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease, filter 0.4s ease;
+        }
+
+        .exp-collage-item:hover img {
+            transform: scale(1.1);
+            filter: brightness(0.75);
+        }
+
+        .exp-collage-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 10px 12px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .exp-collage-overlay span {
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        }
+
+        .exp-collage-item:hover .exp-collage-overlay span {
+            text-shadow: 0 2px 6px rgba(0,0,0,0.8);
+        }
+
+        .exp-explore-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: linear-gradient(135deg, #2e8b57, #1a6b3c);
+            color: white;
+            padding: 0.9rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(46, 139, 87, 0.35);
+        }
+
+        .exp-explore-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(46, 139, 87, 0.45);
+            background: linear-gradient(135deg, #34a065, #1f7d47);
+        }
+
+        /* ===== CARRUSEL MÓVIL ===== */
+        @media (max-width: 768px) {
+            .exp-collage {
+                display: flex;
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+                gap: 12px;
+                padding-bottom: 12px;
+                grid-template-columns: unset;
+                grid-template-rows: unset;
+                border-radius: 12px;
+                scrollbar-width: none;
+            }
+
+            .exp-collage::-webkit-scrollbar {
+                display: none;
+            }
+
+            .exp-collage-item {
+                flex: 0 0 75%;
+                height: 200px;
+                scroll-snap-align: center;
+                border-radius: 12px;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .exp-collage {
+                grid-template-columns: repeat(5, 1fr);
+                grid-template-rows: repeat(2, 140px);
+            }
+        }
+    </style>
+
+        <!-- Sección Servicios y Destacados (Gastronomía y Hospedaje) -->
+    <section class="stats" id="services-section">
+        <div class="stats-container">
+            <div class="services-slider">
+                <!-- Slide Gastronomía -->
+                <div class="service-slide active">
+                    <h2 class="gastronomy-title">Gastronomía de Jalpan</h2>
+                    <p class="gastronomy-description">
+                        Descubre los sabores auténticos de la Sierra Gorda. Desde platillos tradicionales
+                        hasta propuestas gastronómicas innovadoras que honran nuestras raíces culinarias.
+                    </p>
+                    <a href="/" class="gastronomy-button">
+                        <i class="fas fa-utensils"></i>
+                        Explorar Restaurantes
+                    </a>
+                </div>
+                
+                <!-- Slide Hospedaje -->
+                <div class="service-slide">
+                    <h2 class="lodging-title">Hospedaje en Jalpan</h2>
+                    <p class="lodging-description">
+                        Encuentra el lugar perfecto para descansar. Desde acogedoras cabañas rodeadas de naturaleza
+                        hasta cómodos hoteles en el centro de nuestro Pueblo Mágico.
+                    </p>
+                    <a href="hospedaje.html" class="lodging-button">
+                        <i class="fas fa-bed"></i>
+                        Explorar Hospedaje
+                    </a>
+                </div>
+            </div>
+            
+            <div class="services-controls">
+                <button class="service-btn active" onclick="goToServiceSlide(0)" aria-label="Ver Gastronomía"></button>
+                <button class="service-btn" onclick="goToServiceSlide(1)" aria-label="Ver Hospedaje"></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Mapa -->
+    <section class="map-section">
+        <div class="map-container">
+            <div class="map-content">
+                <div class="map-info">
+                    <h2>Ubicación</h2>
+                    <p>
+                        Jalpan de Serra se encuentra estratégicamente ubicado en el corazón de la Sierra Gorda,
+                        ofreciendo fácil acceso a diversos atractivos naturales y culturales.
+                    </p>
+                    <p>
+                        Su posición central lo convierte en el punto de partida ideal para explorar las maravillas
+                        de la región, desde las misiones franciscanas hasta las impresionantes formaciones naturales.
+                    </p>
+
+                    <div class="location-features">
+                        <div class="feature-item">
+                            <i class="fas fa-map-marker-alt feature-icon"></i>
+                            <span>Centro de la Sierra Gorda</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-road feature-icon"></i>
+                            <span>Acceso por carretera federal</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-clock feature-icon"></i>
+                            <span>3 horas desde Ciudad de México</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-compass feature-icon"></i>
+                            <span>Punto de conexión regional</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="map-embed">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3633.8967891234567!2d-99.47123456789012!3d21.217890123456789!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjHCsDEzJzA0LjQiTiA5OcKwMjgnMTYuNCJX!5e0!3m2!1ses!2smx!4v1234567890123!5m2!1ses!2smx"
+                        allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <!-- Sección principal -->
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <img src="/hospedaje/img_jalpan/logo_fondo_negro.png" alt="Logo Turismo" class="logo-image"
+                            style="width: 40px; height: 40px; background: black;">
+                        Dirección de Turismo
+                    </div>
+                    <p class="footer-description">
+                        Conectamos a las personas con los mejores destinos, alojamientos y experiencias gastronómicas de
+                        Jalpan de Serra, Pueblo Mágico.
+                    </p>
+                    <div class="footer-social">
+                        <a href="https://www.facebook.com/profile.php?id=61573849871475" class="social-link"
+                            title="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://www.instagram.com/jalpan_pueblomagico?igsh=MWpmdDVnMndpbnB1dQ=="
+                            class="social-link" title="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Navegación -->
+                <div class="footer-section">
+                    <h3>Navegación</h3>
+                    <ul class="footer-links">
+                        <li><a href="/">Alimentos</a></li>
+                        <li><a href="hospedaje.html">Hospedaje</a></li>
+                        <li><a href="/experiencias.html">Experiencias</a></li>
+                        <li><a href="/mapa.html">Mapa</a></li>
+                    </ul>
+                </div>
+
+                <!-- Soporte: Política -->
+                <div class="footer-section">
+                    <h3>Soporte: Política</h3>
+                    <ul class="footer-links">
+                        <li><a href="#gastronomia">Gastronomía Local</a></li>
+                        <li><a href="#atractivos">Atractivos Naturales</a></li>
+                        <li><a href="#misiones">Misiones Franciscanas</a></li>
+                        <li><a href="#cultura">Historia y Cultura</a></li>
+                        <li><a href="#eventos">Eventos Especiales</a></li>
+                        <li><a href="#tradiciones">Tradiciones</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contacto -->
+                <div class="footer-section">
+                    <h3>Contacto</h3>
+                    <div class="footer-contact">
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>direcciondeturismojalpan@gmail.com</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <span>+52 441-296-0285</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Plaza Principal, Jalpan de Serra, Querétaro</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-clock"></i>
+                            <span>Lun - Vie: 8:00 AM - 3:30 PM</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Línea inferior -->
+            <div class="footer-bottom">
+                <p class="footer-copyright">
+                    © 2024 Dirección de Turismo - Jalpan de Serra. Todos los derechos reservados.
+                </p>
+                <div class="footer-bottom-links">
+                    <a href="https://www.facebook.com/jenni.munoz.5011">Desarrollado por</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ===== NAVEGACIÓN MÓVIL =====
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const navMenu = document.getElementById('navMenu');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+        const hospedajeDropdown = document.getElementById('hospedajeDropdown');
+        const closeMenuBtn = document.getElementById('closeMenuBtn');
+
+        // Abrir/cerrar menú con hamburguesa
+        mobileMenuToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            mobileOverlay.classList.toggle('active');
+
+            const icon = mobileMenuToggle.querySelector('i');
+            if (navMenu.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+        // ✨ Cerrar con botón X
+        closeMenuBtn.addEventListener('click', closeMenu);
+
+        // Cerrar con overlay
+        mobileOverlay.addEventListener('click', closeMenu);
+
+        // Función cerrar menú
+        function closeMenu() {
+            navMenu.classList.remove('active');
+            mobileOverlay.classList.remove('active');
+            hospedajeDropdown.classList.remove('active');
+
+            const icon = mobileMenuToggle.querySelector('i');
+            icon.classList.remove('fa-times');
+            icon.classList.add('fa-bars');
+        }
+
+        // Dropdown en móvil
+        hospedajeDropdown.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768) {
+                if (e.target.closest('.nav-link') && !e.target.closest('.dropdown-item')) {
+                    e.preventDefault();
+                    hospedajeDropdown.classList.toggle('active');
+                }
+            }
+        });
+
+        // Cerrar dropdown items en móvil
+        const dropdownItems = document.querySelectorAll('.dropdown-item');
+        dropdownItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                if (window.innerWidth <= 768) {
+                    setTimeout(() => {
+                        closeMenu();
+                    }, 100);
+                }
+            });
+        });
+
+        // Cerrar enlaces principales en móvil
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                if (window.innerWidth <= 768 &&
+                    !e.target.closest('#hospedajeDropdown') &&
+                    !e.target.closest('.dropdown-item')) {
+                    closeMenu();
+                }
+            });
+        });
+
+        // Cerrar al redimensionar
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                closeMenu();
+            }
+        });
+
+        // ===== CARRUSEL HERO =====
+        const heroSlides = document.querySelectorAll('.hero-slide');
+        let currentHeroSlide = 0;
+
+        function showHeroSlide(index) {
+            heroSlides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+        }
+
+        function nextHeroSlide() {
+            currentHeroSlide = (currentHeroSlide + 1) % heroSlides.length;
+            showHeroSlide(currentHeroSlide);
+        }
+
+        setInterval(nextHeroSlide, 5000);
+
+        // ===== SLIDER DE CATEGORÍAS =====
+        const categoriesTrack = document.getElementById('categoriesTrack');
+        const sliderPrev = document.getElementById('sliderPrev');
+        const sliderNext = document.getElementById('sliderNext');
+        const indicators = document.querySelectorAll('.indicator');
+        let currentSlide = 0;
+        const totalSlides = Math.ceil(document.querySelectorAll('.category-slide').length / 3);
+
+        function updateSlider() {
+            const slideWidth = 100 / totalSlides;
+            categoriesTrack.style.transform = `translateX(-${currentSlide * slideWidth}%)`;
+
+            indicators.forEach((indicator, index) => {
+                indicator.classList.toggle('active', index === currentSlide);
+            });
+        }
+
+        sliderNext.addEventListener('click', () => {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateSlider();
+        });
+
+        sliderPrev.addEventListener('click', () => {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            updateSlider();
+        });
+
+        indicators.forEach((indicator, index) => {
+            indicator.addEventListener('click', () => {
+                currentSlide = index;
+                updateSlider();
+            });
+        });
+
+        setInterval(() => {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateSlider();
+        }, 7000);
+
+        // ===== SMOOTH SCROLLING =====
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // ===== SCROLL ANIMATIONS =====
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.info-card, .category-card, .achievement-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s ease';
+            observer.observe(el);
+        });
+
+        // ===== HEADER SCROLL EFFECT =====
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(255, 255, 255, 0.98)';
+                header.style.boxShadow = '0 4px 30px rgba(0,0,0,0.15)';
+            } else {
+                header.style.background = 'rgba(255, 255, 255, 0.95)';
+                header.style.boxShadow = '0 2px 20px rgba(0,0,0,0.1)';
+            }
+        });
+
+        // ===== LOADING ANIMATIONS =====
+        window.addEventListener('load', () => {
+            const heroContent = document.querySelector('.hero-content');
+            heroContent.style.opacity = '0';
+            heroContent.style.transform = 'translateY(50px)';
+            heroContent.style.transition = 'all 1s ease';
+
+            setTimeout(() => {
+                heroContent.style.opacity = '1';
+                heroContent.style.transform = 'translateY(0)';
+            }, 500);
+        });
+
+        // ===== RESPONSIVE SLIDER ADJUSTMENTS =====
+        function adjustSliderForMobile() {
+            if (window.innerWidth <= 768) {
+                const slides = document.querySelectorAll('.category-slide');
+                slides.forEach((slide) => {
+                    slide.style.minWidth = '100%';
+                });
+            } else if (window.innerWidth <= 1024) {
+                const slides = document.querySelectorAll('.category-slide');
+                slides.forEach((slide) => {
+                    slide.style.minWidth = 'calc(50% - 0.75rem)';
+                });
+            } else {
+                const slides = document.querySelectorAll('.category-slide');
+                slides.forEach((slide) => {
+                    slide.style.minWidth = 'calc(33.333% - 1rem)';
+                });
+            }
+        }
+
+        window.addEventListener('load', adjustSliderForMobile);
+        window.addEventListener('resize', adjustSliderForMobile);
+    </script>
+
+    <!-- Script de Traducción -->
+    <script src="js/translation.js"></script>
+
+    <!-- Script de Auth Navbar -->
+    <script src="js/auth-navbar.js"></script>
+
+    <!-- AOS Script -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            AOS.init({
+                once: true, // Animates only once
+                offset: 50, // Trigger offset
+                duration: 800, // Animation duration
+                easing: 'ease-out-cubic' // Easing curve
+            });
+        });
+    </script>
+
+    <script>
+        // Slider de Servicios (Gastronomía/Hospedaje)
+        let currentServiceSlide = 0;
+        const serviceSlides = document.querySelectorAll('.service-slide');
+        const serviceBtns = document.querySelectorAll('.service-btn');
+        let serviceInterval;
+
+        function goToServiceSlide(index) {
+            serviceSlides.forEach((slide, i) => {
+                if (i === index) {
+                    slide.classList.add('active');
+                    serviceBtns[i].classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                    serviceBtns[i].classList.remove('active');
+                }
+            });
+            currentServiceSlide = index;
+            resetServiceInterval();
+        }
+
+        function nextServiceSlide() {
+            currentServiceSlide = (currentServiceSlide + 1) % serviceSlides.length;
+            goToServiceSlide(currentServiceSlide);
+        }
+
+        function resetServiceInterval() {
+            clearInterval(serviceInterval);
+            if (serviceSlides.length > 1) {
+                serviceInterval = setInterval(nextServiceSlide, 6000);
+            }
+        }
+
+        if (serviceSlides.length > 0) {
+            resetServiceInterval();
+        }
+    </script>
+</body>
+
+</html>

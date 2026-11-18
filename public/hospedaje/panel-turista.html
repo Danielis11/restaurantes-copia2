@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Panel - RestauranteWeb</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* Colores vibrantes Premium */
+            --primary-bg: #f8fafc;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --primary: #4f46e5;
+            --primary-light: #6366f1;
+            --primary-dark: #4338ca;
+            --accent: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-900: #0f172a;
+            
+            /* Gradients radiantes */
+            --gradient-primary: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            --gradient-success: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+            --gradient-error: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+            --gradient-accent: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-glow: 0 10px 30px -10px var(--primary);
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.5rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Animaciones base */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes ringSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        body {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(-45deg, #f8fafc, #eff6ff, #f0fdf4, #fdf4ff);
+            background-size: 400% 400%;
+            animation: gradientFlow 15s ease infinite;
+            color: var(--gray-900);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        /* Header con Glassmorphism */
+        .header {
+            background-color: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s ease;
+        }
+
+        .nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 1.3rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            transition: transform 0.3s ease;
+        }
+        
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .user-info {
+            text-align: right;
+            animation: fadeInUp 0.5s ease backwards;
+            animation-delay: 0.2s;
+        }
+
+        .user-name {
+            font-weight: 700;
+            color: var(--gray-900);
+            font-size: 1rem;
+            letter-spacing: -0.3px;
+        }
+
+        .user-role {
+            font-size: 0.85rem;
+            color: var(--primary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Avatar Instagram Story style */
+        .user-avatar-wrapper {
+            position: relative;
+            padding: 4px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            animation: fadeInUp 0.5s ease backwards;
+            animation-delay: 0.3s;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .user-avatar-wrapper:hover {
+            transform: scale(1.1);
+        }
+
+        .user-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-900);
+            font-weight: 700;
+            font-size: 1.1rem;
+            border: 2px solid var(--white);
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.1);
+            border: none;
+            color: var(--error);
+            cursor: pointer;
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeInUp 0.5s ease backwards;
+            animation-delay: 0.4s;
+        }
+
+        .logout-btn:hover {
+            color: var(--white);
+            background: var(--gradient-error);
+            box-shadow: 0 8px 15px rgba(239, 68, 68, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Main Content */
+        .main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .page-header {
+            margin-bottom: 3.5rem;
+            animation: fadeInUp 0.8s ease backwards;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.75rem;
+            letter-spacing: -1px;
+            display: inline-block;
+        }
+
+        .page-subtitle {
+            color: var(--gray-600);
+            font-size: 1.2rem;
+            max-width: 650px;
+            line-height: 1.6;
+        }
+
+        /* Dashboard Grid con Glassmorphism */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 2.5rem 2rem;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeInUp 0.8s ease backwards;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Animaciones escalonadas de entrada */
+        .dashboard-grid > *:nth-child(1) { animation-delay: 0.1s; }
+        .dashboard-grid > *:nth-child(2) { animation-delay: 0.2s; }
+        .dashboard-grid > *:nth-child(3) { animation-delay: 0.3s; }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px 0 rgba(31, 38, 135, 0.1);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+        
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.5rem;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        .stat-icon.primary { background: var(--gradient-primary); box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4); }
+        .stat-icon.success { background: var(--gradient-success); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4); }
+        .stat-icon.warning { background: var(--gradient-warning); box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4); }
+        .stat-icon.error { background: var(--gradient-error); box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4); }
+        .stat-icon.accent { background: var(--gradient-accent); box-shadow: 0 8px 20px rgba(236, 72, 153, 0.4); }
+
+        .stat-value {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+            letter-spacing: -2px;
+            line-height: 1;
+        }
+
+        .stat-change {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            color: var(--gray-500);
+            font-weight: 500;
+        }
+
+        /* Action Buttons */
+        .actions-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--glass-border);
+            padding: 3rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+            animation: fadeInUp 0.8s ease backwards;
+            animation-delay: 0.4s;
+        }
+
+        .actions-header {
+            margin-bottom: 2rem;
+        }
+
+        .actions-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .action-card {
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: var(--radius-lg);
+            padding: 2rem 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .actions-grid > *:nth-child(1) { animation: fadeInUp 0.6s backwards; animation-delay: 0.5s; }
+        .actions-grid > *:nth-child(2) { animation: fadeInUp 0.6s backwards; animation-delay: 0.6s; }
+        .actions-grid > *:nth-child(3) { animation: fadeInUp 0.6s backwards; animation-delay: 0.7s; }
+        .actions-grid > *:nth-child(4) { animation: fadeInUp 0.6s backwards; animation-delay: 0.8s; }
+
+        .action-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: inherit;
+            box-shadow: inset 0 0 0 2px transparent;
+            transition: all 0.3s ease;
+        }
+
+        .action-card:hover {
+            background: var(--white);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+        }
+
+        .action-card:hover::after {
+            box-shadow: inset 0 0 0 2px var(--primary-light);
+        }
+
+        .action-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            transition: all 0.4s ease;
+        }
+
+        .action-card:hover .action-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .action-icon.explore { background: var(--gradient-success); box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3); }
+        .action-icon.profile { background: var(--gradient-primary); box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); }
+        .action-icon.reviews { background: var(--gradient-warning); box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3); }
+        .action-icon.favorites { background: var(--gradient-error); box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3); }
+
+        .action-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--gray-900);
+        }
+
+        .action-description {
+            font-size: 0.95rem;
+            color: var(--gray-500);
+            line-height: 1.5;
+        }
+
+        /* Notificaciones */
+        .notification {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 10000;
+            max-width: 400px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            border: 1px solid var(--glass-border);
+            border-left: 6px solid var(--primary);
+            transform: translateY(150%) scale(0.9);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            padding: 1.25rem 1.5rem;
+            gap: 1.2rem;
+        }
+
+        .notification.show {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+
+        .notification.success { border-left-color: var(--success); }
+        .notification.error { border-left-color: var(--error); }
+        .notification.warning { border-left-color: var(--warning); }
+
+        .notification i { font-size: 24px; color: var(--primary); }
+        .notification.success i { color: var(--success); }
+        .notification.error i { color: var(--error); }
+        .notification.warning i { color: var(--warning); }
+
+        .notification-message {
+            flex: 1;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--gray-800);
+            line-height: 1.4;
+        }
+
+        .notification-close {
+            background: rgba(0,0,0,0.05);
+            border: none;
+            cursor: pointer;
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            color: var(--gray-500);
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .notification-close:hover {
+            background: rgba(0,0,0,0.1);
+            color: var(--gray-900);
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: var(--white);
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: var(--radius-lg);
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            outline: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px rgba(99, 102, 241, 0.4);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        input {
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8) !important;
+            border: 2px solid transparent !important;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: var(--primary-light) !important;
+            background: var(--white) !important;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1) !important;
+        }
+
+        @media (max-width: 768px) {
+            .nav { padding: 0 1rem; height: 70px; }
+            .logo span { display: none; }
+            .user-info { display: none; }
+            .main { padding: 2rem 1rem; }
+            .page-title { font-size: 2.2rem; }
+            .stat-card { padding: 2rem 1.5rem; }
+            .actions-section { padding: 2rem 1.5rem; }
+            .actions-title { font-size: 1.5rem; }
+            .dashboard-grid { gap: 1rem; }
+        }
+    </style>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <a href="/hospedaje/index.html" class="logo" title="Volver al inicio">
+                <img src="/images/PueblosMágicos.svg.png" alt="Logo Turismo"
+                    style="width: 32px; height: 32px; object-fit: contain;">
+                <span>Mi Panel Turístico</span>
+            </a>
+
+            <div class="user-section">
+                <div class="user-info">
+                    <div class="user-name" id="user-name">Cargando...</div>
+                    <div class="user-role" id="user-role">turista</div>
+                </div>
+                <div class="user-avatar-wrapper"><div class="user-avatar" id="user-avatar"><i class="fas fa-user"></i></div></div>
+
+                <!-- Notificaciones -->
+                <div class="notifications-wrapper" style="position:relative; margin-right: 1rem;">
+                    <button class="notification-btn" id="notification-btn" title="Notificaciones"
+                        style="background:none;border:none;color:var(--gray-600);font-size:1.2rem;cursor:pointer;position:relative;padding:0.5rem;">
+                        <i class="fas fa-bell"></i>
+                        <span id="notification-badge"
+                            style="display:none;position:absolute;top:0px;right:0px;background:var(--error);color:white;font-size:0.6rem;padding:0.1rem 0.3rem;border-radius:50%;font-weight:bold;">0</span>
+                    </button>
+                    <!-- Dropdown Notificaciones -->
+                    <div id="notifications-dropdown"
+                        style="display:none;position:absolute;top:100%;right:0;width:300px;background:white;border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:1rem;z-index:100;max-height:400px;overflow-y:auto;border:1px solid var(--gray-200);">
+                        <h4
+                            style="margin-bottom:0.5rem;font-size:1rem;border-bottom:1px solid var(--gray-100);padding-bottom:0.5rem;">
+                            Notificaciones Inteligentes</h4>
+                        <div id="notifications-list" style="display:flex;flex-direction:column;gap:0.5rem;">
+                            <p style="font-size:0.9rem;color:var(--gray-500);text-align:center;">No tienes
+                                notificaciones.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="logout-btn" id="logout-btn" title="Cerrar sesión">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Bienvenido a tu Panel Principal</h1>
+            <p class="page-subtitle">Explora tus lugares favoritos, revisa tus comentarios y descubre más destinos
+                increíbles.</p>
+        </div>
+
+        <!-- Dashboard Stats -->
+        <div class="dashboard-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Mis Favoritos</div>
+                    <div class="stat-icon error">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="total-favorites">0</div>
+                <div class="stat-change">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Lugares que te encantaron</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Opiniones</div>
+                    <div class="stat-icon warning">
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="total-reviews">0</div>
+                <div class="stat-change">
+                    <i class="fas fa-comment-dots"></i>
+                    <span>Tus experiencias publicadas</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Último Acceso</div>
+                    <div class="stat-icon primary">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                </div>
+                <div class="stat-value" style="font-size: 1.2rem;" id="last-access">Ahora</div>
+                <div class="stat-change">
+                    <i class="fas fa-history"></i>
+                    <span>Sesión activa</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions Section -->
+        <div class="actions-section">
+            <div class="actions-header">
+                <h2 class="actions-title">¿Qué deseas hacer hoy?</h2>
+            </div>
+
+            <div class="actions-grid">
+                <!-- Explorar -->
+                <a href="/hospedaje/index.html" class="action-card">
+                    <div class="action-icon explore">
+                        <i class="fas fa-compass"></i>
+                    </div>
+                    <div class="action-title">Explorar Destinos</div>
+                    <div class="action-description">Volver al mapa y encontrar más lugares para visitar</div>
+                </a>
+
+                <!-- Ver Favoritos -->
+                <a href="#favoritos-section" class="action-card">
+                    <div class="action-icon favorites">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="action-title">Ver Favoritos</div>
+                    <div class="action-description">Revive tus lugares y platillos que más te gustaron</div>
+                </a>
+
+                <!-- Mis Reseñas -->
+                <a href="#opiniones-section" class="action-card">
+                    <div class="action-icon reviews">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="action-title">Mis Opiniones</div>
+                    <div class="action-description">Revisa los comentarios que has dejado públicos</div>
+                </a>
+
+                <!-- Mi Perfil -->
+                <a href="#perfil-section" class="action-card">
+                    <div class="action-icon profile">
+                        <i class="fas fa-user-cog"></i>
+                    </div>
+                    <div class="action-title">Mi Cuenta</div>
+                    <div class="action-description">Ajusta tu nombre, correo u opciones de la plataforma</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Favorites Section -->
+        <div class="actions-section" id="favoritos-section">
+            <div class="actions-header" style="margin-top: 2rem;">
+                <h2 class="actions-title"><i class="fas fa-heart text-danger"></i> Tus Lugares Favoritos</h2>
+            </div>
+
+            <div class="dashboard-grid" id="favorites-grid" style="margin-top: 1rem;">
+                <div style="grid-column: 1/-1; text-align: center; color: var(--gray-500); padding: 2rem;">
+                    <i class="fas fa-spinner fa-spin fa-2x"></i>
+                    <p style="margin-top: 1rem;">Cargando tus lugares guardados...</p>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 1.5rem;">
+                <a href="/hospedaje/hospedaje.html" style="display: inline-flex; align-items: center; gap: 0.5rem; background: var(--black); color: var(--white); padding: 0.875rem 2rem; border-radius: var(--radius-md); font-weight: 600; font-size: 0.95rem; text-decoration: none; transition: all 0.3s ease; box-shadow: 0 4px 14px rgba(0,0,0,0.1);" onmouseover="this.style.background='#333'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='var(--black)'; this.style.transform='translateY(0)'">
+                    <i class="fas fa-compass"></i> Seguir Explorando
+                </a>
+            </div>
+        </div>
+
+        <!-- Mis Opiniones Section -->
+        <div class="actions-section" id="opiniones-section">
+            <div class="actions-header" style="margin-top: 2rem;">
+                <h2 class="actions-title"><i class="fas fa-star text-warning"></i> Mis Opiniones</h2>
+            </div>
+
+            <div id="reviews-list" class="dashboard-grid" style="margin-top: 1rem;">
+                <div style="grid-column: 1/-1; text-align: center; color: var(--gray-500); padding: 2rem;">
+                    <i class="fas fa-spinner fa-spin fa-2x"></i>
+                    <p style="margin-top: 1rem;">Cargando tus reseñas...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mi Cuenta Section -->
+        <div class="actions-section" id="perfil-section">
+            <div class="actions-header" style="margin-top: 2rem;">
+                <h2 class="actions-title"><i class="fas fa-user-cog text-primary"></i> Mi Cuenta</h2>
+            </div>
+
+            <div
+                style="margin-top: 1rem; background: var(--white); padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);">
+                <form id="profile-form" onsubmit="updateProfile(event)">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div style="margin-bottom: 1rem; grid-column: 1/-1;">
+                            <label for="profile-name"
+                                style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--gray-700);">Nombre
+                                Completo</label>
+                            <input type="text" id="profile-name" required
+                                style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: var(--radius-md); font-family: inherit;">
+                        </div>
+                        <div style="margin-bottom: 1rem; grid-column: 1/-1;">
+                            <label for="profile-email"
+                                style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--gray-700);">Correo
+                                Electrónico</label>
+                            <input type="email" id="profile-email" required
+                                style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: var(--radius-md); font-family: inherit;">
+                        </div>
+                        <div style="margin-bottom: 1rem; grid-column: 1/-1;">
+                            <label for="profile-password"
+                                style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--gray-700);">Nueva
+                                Contraseña (Opcional)</label>
+                            <input type="password" id="profile-password"
+                                placeholder="Déjalo en blanco para no cambiarla"
+                                style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: var(--radius-md); font-family: inherit;">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary"
+                        style="margin-top: 1rem; padding: 0.75rem 2rem; border: none; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-save"></i> Guardar Cambios
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="/js/i18n.js"></script>
+    <script>
+        const API_BASE = window.location.origin + '/api/hospedaje';
+        let currentUser = null;
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+
+            const icon = type === 'success' ? 'fa-check-circle' :
+                type === 'error' ? 'fa-exclamation-circle' :
+                    type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle';
+
+            notification.innerHTML = `
+                <i class="fas ${icon}"></i>
+                <span class="notification-message">${message}</span>
+                <button class="notification-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+
+            document.body.appendChild(notification);
+            setTimeout(() => notification.classList.add('show'), 100);
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (document.body.contains(notification)) document.body.removeChild(notification);
+                }, 300);
+            }, 5000);
+
+            notification.querySelector('.notification-close').onclick = () => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (document.body.contains(notification)) document.body.removeChild(notification);
+                }, 300);
+            };
+        }
+
+        async function checkAuth() {
+            const token = localStorage.getItem('hospAuthToken');
+
+            if (!token) {
+                showNotification('No has iniciado sesión', 'error');
+                setTimeout(() => { window.location.href = '/hospedaje/login.html'; }, 2000);
+                return;
+            }
+
+            try {
+                // Utiliza la nueva API dual de login/perfil o los tokens guardados (cambiado a /auth/me para coincidir con la API local)
+                const response = await fetch(`${API_BASE}/auth/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const json = await response.json().catch(() => ({}));
+
+                // Compatibilidad de data structure
+                const userObj = json.data && json.data.user ? json.data.user : json.data;
+
+                if (response.ok && userObj) {
+                    currentUser = userObj;
+                    updateUserInterface();
+                    showNotification(`¡Bienvenido a tu panel turístico, ${currentUser.nombre}!`, 'success');
+
+                    // Cargar los favoritos
+                    loadFavorites();
+
+                    // Cargar notificaciones
+                    loadNotifications();
+
+                    // Cargar reseñas hechas por el usuario
+                    loadReviews();
+                } else {
+                    localStorage.removeItem('hospAuthToken');
+                    localStorage.removeItem('hospCurrentUser');
+                    showNotification('Sesión expirada o credenciales inválidas', 'warning');
+                    setTimeout(() => { window.location.href = '/hospedaje/login.html'; }, 2000);
+                }
+            } catch (error) {
+                localStorage.removeItem('hospAuthToken');
+                localStorage.removeItem('hospCurrentUser');
+                showNotification('Error verificando sesión, redirigiendo...', 'warning');
+                setTimeout(() => { window.location.href = '/hospedaje/login.html'; }, 2000);
+            }
+        }
+
+        function updateUserInterface() {
+            if (!currentUser) return;
+            document.getElementById('user-name').textContent = currentUser.nombre;
+            const initials = (currentUser.nombre?.charAt(0) || 'T').toUpperCase();
+            document.getElementById('user-avatar').textContent = initials;
+            const now = new Date();
+            document.getElementById('last-access').textContent = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+
+            // Rellenar formulario de perfil
+            const profileName = document.getElementById('profile-name');
+            const profileEmail = document.getElementById('profile-email');
+            if (profileName) profileName.value = currentUser.nombre || '';
+            if (profileEmail) profileEmail.value = currentUser.email || '';
+        }
+
+        async function loadNotifications() {
+            try {
+                const token = localStorage.getItem('hospAuthToken');
+                const res = await fetch(`${API_BASE}/user/notifications`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const json = await res.json();
+
+                if (json.success && json.data) {
+                    const notifs = json.data;
+                    const unread = notifs.filter(n => !n.leida);
+
+                    const badge = document.getElementById('notification-badge');
+                    if (unread.length > 0) {
+                        badge.textContent = unread.length;
+                        badge.style.display = 'inline-block';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+
+                    const list = document.getElementById('notifications-list');
+                    if (notifs.length === 0) {
+                        list.innerHTML = '<p style="font-size:0.9rem;color:var(--gray-500);text-align:center;">No tienes notificaciones.</p>';
+                        return;
+                    }
+
+                    list.innerHTML = notifs.map(n => `
+                        <div style="padding:0.75rem; background:${n.leida ? 'transparent' : 'var(--primary-light)'}; border-left:3px solid ${n.leida ? 'transparent' : 'var(--primary)'}; border-radius:4px; font-size:0.85rem; cursor:pointer;" onclick="markNotificationRead('${n._id}')">
+                            <p style="margin:0; color:var(--gray-800);">${n.mensaje}</p>
+                            <small style="color:var(--gray-500); font-size:0.7rem;">${new Date(n.fecha).toLocaleDateString()}</small>
+                        </div>
+                    `).join('');
+                } else {
+                    document.getElementById('notifications-list').innerHTML = '<p style="font-size:0.9rem;color:var(--gray-500);text-align:center;">No configuradas temporalmente.</p>';
+                }
+            } catch (error) {
+                console.error('Error loading notifications:', error);
+                document.getElementById('notifications-list').innerHTML = '<p style="font-size:0.9rem;color:var(--gray-500);text-align:center;">No configuradas temporalmente.</p>';
+            }
+        }
+
+        async function markNotificationRead(id) {
+            try {
+                const token = localStorage.getItem('hospAuthToken');
+                await fetch(`${API_BASE}/user/notifications/${id}/read`, {
+                    method: 'PATCH',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                loadNotifications(); // Reload to update badge and styles
+            } catch (e) { console.error(e); }
+        }
+
+        // Dropdown toggle para notificaciones
+        document.getElementById('notification-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            const drop = document.getElementById('notifications-dropdown');
+            drop.style.display = drop.style.display === 'none' ? 'block' : 'none';
+        });
+
+        document.addEventListener('click', () => {
+            const drop = document.getElementById('notifications-dropdown');
+            if (drop) drop.style.display = 'none';
+        });
+
+        async function loadFavorites() {
+            try {
+                const token = localStorage.getItem('hospAuthToken');
+                const res = await fetch(`${API_BASE}/user/favorites`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const json = await res.json();
+
+                const grid = document.getElementById('favorites-grid');
+                if (!json.success || !json.data) {
+                    grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--error);">Servicio de favoritos no disponible por el momento.</div>';
+                    return;
+                }
+
+                const favHospedajes = json.data.hospedajes || [];
+                const totalFavs = favHospedajes.length;
+
+                document.getElementById('total-favorites').textContent = totalFavs;
+
+                if (totalFavs === 0) {
+                    grid.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; color: var(--gray-500); padding: 2rem; background:var(--white); border-radius: var(--radius-lg);">
+                            <i class="far fa-heart" style="font-size: 3rem; color: var(--gray-300); margin-bottom: 1rem;"></i>
+                            <p>Aún no has guardado ningún lugar en tus favoritos.</p>
+                            <a href="/hospedaje/hospedaje.html" class="btn btn-primary" style="display:inline-block; margin-top:1rem; padding: 0.5rem 1rem; text-decoration:none;">Explorar lugares</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Mapear tipos a iconos y colores
+                const tipoConfig = {
+                    'hotel': { icon: 'fa-hotel', color: '#2e8b57', label: 'Hotel' },
+                    'cabana': { icon: 'fa-home', color: '#8b6914', label: 'Cabaña' },
+                    'airbnb': { icon: 'fa-building', color: '#ff5a5f', label: 'Airbnb' }
+                };
+
+                grid.innerHTML = favHospedajes.map(fav => {
+                    const config = tipoConfig[fav.tipoHospedaje] || tipoConfig['hotel'];
+                    const fecha = fav.fechaAgregado ? new Date(fav.fechaAgregado).toLocaleDateString('es-MX', { year: 'numeric', month: 'short', day: 'numeric' }) : '';
+                    const hospId = fav.hospedajeId?._id || fav.hospedajeId;
+
+                    // Determinar la URL de detalle
+                    let detalleUrl = `/hospedaje/hospedaje-detalle.html?tipo=${fav.tipoHospedaje}&id=${hospId}`;
+
+                    return `
+                        <div class="stat-card" style="padding: 1.25rem; position: relative;">
+                            <div style="display: flex; align-items: flex-start; gap: 1rem;">
+                                <div style="width: 50px; height: 50px; border-radius: 12px; background: ${config.color}15; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                    <i class="fas ${config.icon}" style="font-size: 1.3rem; color: ${config.color};"></i>
+                                </div>
+                                <div style="flex: 1; min-width: 0;">
+                                    <h3 style="font-size: 1.05rem; margin: 0 0 0.3rem 0; color: var(--gray-800); cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" onclick="window.location.href='${detalleUrl}'" title="${fav.nombreHospedaje || 'Hospedaje'}">
+                                        ${fav.nombreHospedaje || 'Hospedaje'}
+                                    </h3>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                                        <span style="display:inline-flex; align-items:center; gap:0.3rem; font-size: 0.75rem; background: ${config.color}; color: white; padding: 0.2rem 0.6rem; border-radius:1rem; font-weight:500;">
+                                            <i class="fas ${config.icon}"></i> ${config.label}
+                                        </span>
+                                        ${fecha ? `<span style="font-size: 0.78rem; color: var(--gray-400);"><i class="fas fa-calendar-alt"></i> ${fecha}</span>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                                <a href="${detalleUrl}" style="flex: 1; text-align: center; padding: 0.5rem; background: ${config.color}; color: white; border-radius: var(--radius-md); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+                                    <i class="fas fa-eye"></i> Ver detalles
+                                </a>
+                                <button onclick="removeFavorite('${hospId}', this)" style="padding: 0.5rem 0.75rem; background: none; border: 1px solid var(--gray-200); color: var(--gray-400); border-radius: var(--radius-md); cursor: pointer; font-size: 0.85rem; transition: all 0.2s;" onmouseover="this.style.color='var(--error)'; this.style.borderColor='var(--error)'" onmouseout="this.style.color='var(--gray-400)'; this.style.borderColor='var(--gray-200)'" title="Quitar de favoritos">
+                                    <i class="fas fa-heart-broken"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('favorites-grid').innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--gray-500);">Servicio de favoritos no disponible por el momento.</div>';
+            }
+        }
+
+        async function removeFavorite(hospedajeId, btn) {
+            if (!confirm('¿Quitar este lugar de tus favoritos?')) return;
+            try {
+                const token = localStorage.getItem('hospAuthToken');
+                const res = await fetch(`${API_BASE}/user/favorites/${hospedajeId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const json = await res.json();
+                if (json.success) {
+                    showNotification('💔 Eliminado de favoritos', 'success');
+                    loadFavorites(); // Recargar la lista
+                } else {
+                    showNotification(json.message || 'Error al eliminar', 'error');
+                }
+            } catch (error) {
+                showNotification('Error de conexión', 'error');
+            }
+        }
+
+        async function loadReviews() {
+            try {
+                const token = localStorage.getItem('hospAuthToken');
+                const res = await fetch(`${API_BASE}/user/reviews`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const json = await res.json();
+
+                const list = document.getElementById('reviews-list');
+                if (!json.success || !json.data) {
+                    list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--error);">Servicio de reseñas temporalmente no disponible.</div>';
+                    return;
+                }
+
+                const reviews = json.data;
+                document.getElementById('total-reviews').textContent = reviews.length;
+
+                if (reviews.length === 0) {
+                    list.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; color: var(--gray-500); padding: 2rem; background:var(--white); border-radius: var(--radius-lg);">
+                            <i class="far fa-star" style="font-size: 3rem; color: var(--gray-300); margin-bottom: 1rem;"></i>
+                            <p>Aún no has escrito ninguna opinión.</p>
+                            <a href="/hospedaje/index.html" class="btn btn-primary" style="display:inline-block; margin-top:1rem; padding: 0.5rem 1rem; text-decoration:none;">Explorar y Opinar</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                list.innerHTML = reviews.map(r => {
+                    const stars = Array(5).fill(0).map((_, i) =>
+                        `<i class="fas fa-star" style="color: ${i < r.rating ? 'var(--warning)' : 'var(--gray-300)'}; font-size: 0.9rem;"></i>`
+                    ).join('');
+
+                    let badgeColor, badgeIcon;
+                    if (r.tipoLugar === 'Restaurante') {
+                        badgeColor = '#f59e0b';
+                        badgeIcon = 'fa-utensils';
+                    } else if (r.tipoLugar === 'Hotel') {
+                        badgeColor = '#2e8b57';
+                        badgeIcon = 'fa-hotel';
+                    } else if (r.tipoLugar === 'Cabaña') {
+                        badgeColor = '#8b6914';
+                        badgeIcon = 'fa-home';
+                    } else if (r.tipoLugar === 'Airbnb') {
+                        badgeColor = '#ff5a5f';
+                        badgeIcon = 'fa-building';
+                    } else if (r.tipoLugar === 'Agencia') {
+                        badgeColor = '#0ea5e9';
+                        badgeIcon = 'fa-briefcase';
+                    } else { // Experiencia o Tour
+                        badgeColor = '#10b981';
+                        badgeIcon = 'fa-map-marked-alt';
+                    }
+
+                    const badge = `<span style="display:inline-flex; align-items:center; gap:0.3rem; font-size: 0.75rem; background: ${badgeColor}; color: white; padding: 0.2rem 0.6rem; border-radius:1rem; font-weight:500;"><i class="fas ${badgeIcon}"></i> ${r.tipoLugar}</span>`;
+
+                    const estadoBadge = r.estado === 'pendiente'
+                        ? '<span style="display:inline-block; margin-left:0.5rem; font-size: 0.75rem; background: var(--warning); color: white; padding: 0.2rem 0.6rem; border-radius:1rem;">Pendiente</span>'
+                        : '';
+
+                    let fotosHtml = '';
+                    if (r.fotos && r.fotos.length > 0) {
+                        fotosHtml = `<div style="display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.75rem;">
+                            ${r.fotos.map(f => `<img src="${f.url}" alt="Foto" style="width:60px; height:60px; object-fit:cover; border-radius:0.4rem; border:1px solid var(--gray-200);">`).join('')}
+                        </div>`;
+                    }
+
+                    let deleteData = '';
+                    if (r.origen === 'local') {
+                        deleteData = `data-tipo="hospedaje" data-id="${r._id}"`;
+                    } else if (r.tipoLugar === 'Restaurante') {
+                        deleteData = `data-tipo="restaurante" data-id="${r._id}"`;
+                    } else if (r.tipoLugar === 'Agencia') {
+                        deleteData = `data-tipo="agencia" data-agencia-id="${r.agenciaId}" data-id="${r._id}"`;
+                    } else {
+                        deleteData = `data-tipo="tour" data-tour-id="${r.tourId}" data-id="${r._id}"`;
+                    }
+
+                    return `
+                        <div style="background: var(--white); padding: 1.5rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); border-left: 4px solid ${badgeColor};">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                                <div>
+                                    <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+                                        <h3 style="margin: 0; font-size: 1.1rem; color: var(--gray-800); cursor: pointer;" onclick="window.location.href='${r.lugarUrl}'">${r.lugarNombre}</h3>
+                                        ${badge}${estadoBadge}
+                                    </div>
+                                    <div style="font-size: 0.85rem; color: var(--gray-500); margin-top: 0.3rem;">${new Date(r.fechaCreacion).toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                                </div>
+                                <div style="display:flex; align-items:center; gap:0.75rem;">
+                                    <div>${stars}</div>
+                                    <button onclick="deleteReview(this)" ${deleteData}
+                                        style="background:none; border:1px solid var(--gray-200); color:var(--gray-400); cursor:pointer; padding:0.4rem 0.5rem; border-radius:0.4rem; transition:all 0.2s; font-size:0.8rem;"
+                                        onmouseover="this.style.color='var(--error)'; this.style.borderColor='var(--error)'"
+                                        onmouseout="this.style.color='var(--gray-400)'; this.style.borderColor='var(--gray-200)'"
+                                        title="Eliminar reseña">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <p style="margin: 0.5rem 0 0 0; color: var(--gray-700); line-height: 1.5;">${r.comentario}</p>
+                            ${fotosHtml}
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error al cargar reseñas:', error);
+                document.getElementById('reviews-list').innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--gray-500);">Servicio de reseñas temporalmente no disponible.</div>';
+            }
+        }
+
+        async function deleteReview(btn) {
+            const tipo = btn.dataset.tipo;
+            const id = btn.dataset.id;
+            const tourId = btn.dataset.tourId;
+            const agenciaId = btn.dataset.agenciaId;
+
+            if (!confirm('¿Estás seguro de que quieres eliminar esta reseña? Esta acción no se puede deshacer.')) return;
+
+            const token = localStorage.getItem('hospAuthToken');
+            let url = '';
+            if (tipo === 'hospedaje') {
+                url = `${API_BASE}/user/reviews/hospedaje/${id}`;
+            } else if (tipo === 'restaurante') {
+                url = `${API_BASE}/user/reviews/restaurante/${id}`;
+            } else if (tipo === 'agencia') {
+                url = `${API_BASE}/user/reviews/agencia/${agenciaId}/review/${id}`;
+            } else {
+                url = `${API_BASE}/user/reviews/tour/${tourId}/review/${id}`;
+            }
+
+            try {
+                const res = await fetch(url, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const json = await res.json();
+
+                if (json.success) {
+                    showNotification('Reseña eliminada correctamente', 'success');
+                    loadReviews();
+                } else {
+                    showNotification(json.message || 'Error al eliminar', 'error');
+                }
+            } catch (error) {
+                showNotification('Error de conexión al eliminar la reseña', 'error');
+            }
+        }
+
+        async function updateProfile(event) {
+            event.preventDefault();
+            const btn = event.target.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+
+            const nombre = document.getElementById('profile-name').value;
+            const email = document.getElementById('profile-email').value;
+            const password = document.getElementById('profile-password').value;
+
+            const payload = { nombre, email };
+            if (password) payload.password = password;
+
+            try {
+                const token = localStorage.getItem('hospAuthToken');
+                // IMPORTANTE: Cambio a '/auth/profile' simulado o dejar que marque error por ahora
+                const res = await fetch(`${API_BASE}/auth/user/profile`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const json = await res.json();
+
+                if (json.success) {
+                    showNotification('Perfil actualizado correctamente', 'success');
+                    currentUser = json.data;
+                    localStorage.setItem('hospCurrentUser', JSON.stringify(currentUser));
+                    updateUserInterface();
+                    document.getElementById('profile-password').value = '';
+                } else {
+                    showNotification(json.message || 'La actualización requiere API dual', 'error');
+                }
+            } catch (error) {
+                showNotification('Ruta PUT profile no implementada en backend aún', 'warning');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save"></i> Guardar Cambios';
+            }
+        }
+
+        function logout() {
+            if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+                localStorage.removeItem('hospAuthToken');
+                localStorage.removeItem('hospCurrentUser');
+                localStorage.removeItem('hospUserData'); // por si acaso existe el viejo localstorage key
+                showNotification('Sesión cerrada correctamente', 'info');
+                setTimeout(() => { window.location.href = '/hospedaje/login.html'; }, 1000);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            checkAuth();
+            const logoutBtn = document.getElementById('logout-btn');
+            if (logoutBtn) logoutBtn.addEventListener('click', logout);
+        });
+    </script>
+</body>
+
+</html>

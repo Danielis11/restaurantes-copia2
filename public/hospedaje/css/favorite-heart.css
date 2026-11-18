@@ -1,0 +1,165 @@
+/* ===== FAVORITE HEART BUTTON ===== */
+/* Based on Uiverse.io by waleedlh10 */
+
+.hospedaje-name-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.hospedaje-name-row h1 {
+    margin: 0;
+}
+
+.con-like {
+    --red: rgb(255, 50, 50);
+    position: relative;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+}
+
+.con-like .like {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    z-index: 20;
+    cursor: pointer;
+}
+
+.con-like .checkmark {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.con-like .outline,
+.con-like .filled {
+    fill: var(--red);
+    position: absolute;
+}
+
+.con-like .outline {
+    width: 24px;
+    height: 24px;
+}
+
+.con-like .filled {
+    width: 24px;
+    height: 24px;
+    animation: kfr-filled 0.5s;
+    display: none;
+}
+
+.con-like .celebrate {
+    position: absolute;
+    animation: kfr-celebrate 0.5s;
+    animation-fill-mode: forwards;
+    display: none;
+}
+
+.con-like .poly {
+    stroke: var(--red);
+    fill: var(--red);
+}
+
+.con-like .like:checked ~ .checkmark .filled {
+    display: block;
+}
+
+.con-like .like:checked ~ .checkmark .outline {
+    display: none;
+}
+
+.con-like .like:checked ~ .checkmark .celebrate {
+    display: block;
+}
+
+@keyframes kfr-filled {
+    0% {
+        opacity: 0;
+        transform: scale(0);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+}
+
+@keyframes kfr-celebrate {
+    0% {
+        transform: scale(0);
+    }
+    50% {
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1.2);
+        opacity: 0;
+        display: none;
+    }
+}
+
+/* Tooltip de favorito */
+.con-like::after {
+    content: 'Agregar a favoritos';
+    position: absolute;
+    bottom: -32px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    font-size: 0.7rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+
+.con-like:hover::after {
+    opacity: 1;
+}
+
+.con-like.is-fav::after {
+    content: 'Quitar de favoritos';
+}
+
+/* Fondo circular sutil para el corazón */
+.con-like .checkmark {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+
+.con-like:hover .checkmark {
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .hospedaje-name-row {
+        flex-wrap: nowrap;
+    }
+
+    .con-like {
+        width: 36px;
+        height: 36px;
+    }
+
+    .con-like .outline,
+    .con-like .filled {
+        width: 20px;
+        height: 20px;
+    }
+
+    .con-like::after {
+        display: none;
+    }
+}

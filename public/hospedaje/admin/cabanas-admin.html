@@ -1,0 +1,1982 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrar Cabañas - Jalpan Turismo</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Variables CSS */
+        :root {
+            --primary-color: #3498db;
+            --primary-dark: #2980b9;
+            --secondary-color: #2c3e50;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --card-bg: #ffffff;
+            --border-color: #e0e0e0;
+            --text-color: #333333;
+            --text-muted: #666666;
+            --bg-color: #f0f2f5;
+        }
+
+        /* Reset y base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background: var(--bg-color);
+            min-height: 100vh;
+        }
+
+        /* Admin Container */
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            background: rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        .sidebar-close {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+        }
+
+        /* User Info in Sidebar */
+        .user-info {
+            padding: 1rem 1.5rem;
+            background: rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--success-color), #2ecc71);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            border: 3px solid rgba(255,255,255,0.2);
+            margin: 0 auto 1rem;
+        }
+
+        .user-name {
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .user-role {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Sidebar Menu */
+        .sidebar-menu {
+            list-style: none;
+            padding: 1rem 0;
+        }
+
+        .menu-section {
+            padding: 1rem 1.5rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.7);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 0.5rem;
+        }
+
+        .menu-item {
+            list-style: none;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-link:hover {
+            background: rgba(255,255,255,0.1);
+            border-left-color: var(--success-color);
+        }
+
+        .menu-link.active {
+            background: rgba(255,255,255,0.15);
+            border-left-color: var(--success-color);
+        }
+
+        .menu-link i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .menu-badge {
+            background: var(--success-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: auto;
+        }
+
+        .submenu-item {
+            margin-left: 1rem;
+        }
+
+        .submenu-link {
+            padding-left: 3rem !important;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .submenu-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Sidebar Footer */
+        .sidebar-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem;
+            background: rgba(0,0,0,0.1);
+        }
+
+        .logout-btn {
+            width: 100%;
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(231, 76, 60, 0.3);
+        }
+
+        /* Sidebar Overlay para móviles */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            min-height: 100vh;
+            background: var(--bg-color);
+        }
+
+        /* Top Header */
+        .top-header {
+            background: white;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .page-title i {
+            color: var(--primary-color);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border-left: 4px solid var(--stat-color, var(--primary-color));
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--stat-color, var(--primary-color)), var(--primary-dark));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        /* Loading State */
+        .loading-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 2rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-state h3 {
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .loading-state p {
+            color: var(--text-muted);
+        }
+
+        /* Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            text-align: center;
+            background: white;
+            margin: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            max-width: 400px;
+        }
+
+        /* Admin Card */
+        .admin-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin: 2rem;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1.5rem 2rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .card-content {
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .property-image img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .property-details {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-item i {
+            color: var(--primary-color);
+            width: 20px;
+            text-align: center;
+        }
+
+        .text-success {
+            color: var(--success-color) !important;
+        }
+
+        .text-danger {
+            color: var(--danger-color) !important;
+        }
+
+        /* Botones */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn i {
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color), #2ecc71);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .top-actions .btn {
+            background: linear-gradient(135deg, var(--success-color), #2ecc71);
+        }
+
+        .btn-images {
+            background: linear-gradient(135deg, #e67e22, #d35400);
+            color: white;
+            margin-left: 0.5rem;
+        }
+
+        .btn-images:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(230, 126, 34, 0.4);
+        }
+
+        /* ESTILOS DEL CUESTIONARIO SEMANAL */
+        .weekly-survey-section {
+            margin: 2rem;
+        }
+
+        .survey-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .survey-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .survey-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .survey-title i {
+            font-size: 1.5rem;
+        }
+
+        .survey-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .survey-cabana-name,
+        .survey-week {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .survey-form {
+            padding: 2rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group-full {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .question-number {
+            background: #3498db;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            margin-right: 0.5rem;
+            font-weight: 700;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #fafbfc;
+            font-family: inherit;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3498db;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .form-control.error {
+            border-color: #e74c3c;
+            background-color: #fdf2f2;
+        }
+
+        .form-control.success {
+            border-color: #27ae60;
+            background-color: #f0f9f4;
+        }
+
+        .form-hint {
+            display: block;
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .survey-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .survey-loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .survey-loading .btn {
+            position: relative;
+        }
+
+        .survey-loading .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Alert Container */
+        .alert-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 400px;
+        }
+
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            animation: slideInRight 0.3s ease-out;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, var(--success-color), #2ecc71);
+        }
+
+        .alert-error {
+            background: linear-gradient(135deg, var(--danger-color), #c0392b);
+        }
+
+        .alert-warning {
+            background: linear-gradient(135deg, var(--warning-color), #e67e22);
+        }
+
+        .alert-info {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+        }
+
+        /* ✅ NUEVO: Estilo para contador de caracteres */
+        .char-counter {
+            font-size: 0.8rem;
+            color: #6b7280;
+            text-align: right;
+            margin-top: 0.25rem;
+        }
+
+        .char-counter.warning {
+            color: var(--warning-color);
+        }
+
+        .char-counter.error {
+            color: var(--danger-color);
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .card-content {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .form-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .sidebar-overlay.active {
+                display: block;
+            }
+
+            .sidebar-close {
+                display: block;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .top-header {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                padding: 1rem;
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .survey-actions {
+                flex-direction: column;
+            }
+
+            .survey-info {
+                grid-template-columns: 1fr;
+            }
+
+            .survey-header {
+                padding: 1.5rem;
+            }
+
+            .survey-title {
+                font-size: 1.5rem;
+            }
+
+            .card-content {
+                padding: 1.5rem;
+            }
+
+            .admin-card {
+                margin: 1rem;
+            }
+
+            .weekly-survey-section {
+                margin: 1rem;
+            }
+
+            .alert-container {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+
+            .card-actions {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .card-actions .btn {
+                font-size: 0.85rem;
+                padding: 0.5rem 0.75rem;
+            }
+        }
+
+        /* Estados de validación adicionales */
+        .form-control:invalid {
+            border-color: #e74c3c;
+        }
+
+        .form-control:valid {
+            border-color: #27ae60;
+        }
+
+        /* Animaciones adicionales */
+        .stat-card {
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .admin-card {
+            animation: slideIn 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="../index.html" class="logo">
+                    <i class="fas fa-compass"></i>
+                    <span>Dirección de Turismo</span>
+                </a>
+                <button class="sidebar-close" id="sidebarClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-name" id="userName">Administrador</div>
+                <div class="user-role">
+                    <i class="fas fa-shield-alt"></i>
+                    <span id="userRole">Administrador</span>
+                </div>
+            </div>
+
+            <ul class="sidebar-menu">
+                <!-- PRINCIPAL -->
+                <li class="menu-section">Principal</li>
+                <li class="menu-item">
+                    <a href="dashboard.html" class="menu-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+
+                <!-- GESTIÓN DE SERVICIOS -->
+                <li class="menu-section">Gestión de Servicios</li>
+                
+                <!-- Mis Cabañas - Enlace principal -->
+                <li class="menu-item">
+                    <a href="cabanas-admin.html" class="menu-link active">
+                        <i class="fas fa-mountain"></i>
+                        <span>Mis Cabañas</span>
+                        <span class="menu-badge" id="cabanaCount">0</span>
+                    </a>
+                </li>
+                
+                <!-- Gestión de Imágenes -->
+                <li class="menu-item submenu-item" id="menu-edicion-imagenes">
+                    <a href="manage-images-cabana.html" class="menu-link submenu-link" id="image-management-link">
+                        <i class="fas fa-images"></i>
+                        <span>Gestión de Imágenes</span>
+                    </a>
+                </li>
+
+                <!-- CONFIGURACIÓN -->
+                <li class="menu-section">Configuración</li>
+                <li class="menu-item">
+                    <a href="perfil.html" class="menu-link">
+                        <i class="fas fa-user-cog"></i>
+                        <span>Mi Perfil</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Sidebar Footer -->
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Cerrar Sesión</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Overlay for mobile -->
+        <div class="sidebar-overlay" id="overlay"></div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="page-title">
+                        <i class="fas fa-mountain"></i>
+                        <span>Gestión de Cabañas</span>
+                    </div>
+                </div>
+                
+               
+            </header>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card" style="--stat-color: #3498db;">
+                    <div class="stat-icon">
+                        <i class="fas fa-mountain"></i>
+                    </div>
+                    <div class="stat-number" id="totalCabanas">0</div>
+                    <div class="stat-label">Cabañas Activas</div>
+                </div>
+                
+                <div class="stat-card" style="--stat-color: #27ae60;">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-number" id="totalCapacidad">0</div>
+                    <div class="stat-label">Capacidad Total</div>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div class="loading-state" id="loadingState">
+                <div class="spinner"></div>
+                <h3>Cargando información de la cabaña...</h3>
+                <p>Por favor espera mientras obtenemos los datos</p>
+            </div>
+
+            <!-- Cabaña Content -->
+            <div id="cabanaContent" style="display: none;">
+                <!-- Cabaña Card will be populated here -->
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <i class="fas fa-mountain"></i>
+                <h3>No tienes cabañas registradas</h3>
+                <p>Comienza registrando tu primera cabaña para aparecer en el directorio turístico</p>
+                <a href="crear-anuncio.html?tipo=cabana" class="btn btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Registrar mi primera cabaña
+                </a>
+            </div>
+
+            <!-- Sección del Cuestionario Semanal -->
+            <div class="weekly-survey-section" style="margin: 2rem 0;">
+                <div class="survey-card">
+                    <div class="survey-header">
+                        <h2 class="survey-title">
+                            <i class="fas fa-clipboard-list"></i>
+                            Cuestionario Semanal
+                        </h2>
+                        <div class="survey-info">
+                            <div class="survey-cabana-name">
+                                <strong>Cabaña:</strong> <span id="surveyCabanaName">Cargando...</span>
+                            </div>
+                            <div class="survey-week">
+                                <strong>Semana del:</strong> <span id="surveyWeekDates">Cargando...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form id="weeklySurveyForm" class="survey-form">
+                        <!-- Input hidden para cabaña ID -->
+                        <input type="hidden" name="cabanaId" id="cabanaId" value="">
+                        
+                        <div class="form-grid">
+                            <!-- Pregunta 1 -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <span class="question-number">1.</span>
+                                    Número de días que la cabaña estuvo ocupada:
+                                </label>
+                                <input type="number" class="form-control" id="diasOcupada" name="diasOcupada" min="0" max="7" required>
+                                <span class="form-hint">Indique cuántos días de la semana estuvo ocupada la cabaña (máximo 7).</span>
+                            </div>
+
+                            <!-- Pregunta 2 -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <span class="question-number">2.</span>
+                                    Número de días ocupados por turistas residentes nacionales:
+                                </label>
+                                <input type="number" class="form-control" id="ocupacionNacionales" name="ocupacionNacionales" min="0" required>
+                                <span class="form-hint">Especifique cuántos días fue ocupada por turistas nacionales.</span>
+                            </div>
+
+                            <!-- Pregunta 3 -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <span class="question-number">3.</span>
+                                    Número de días ocupados por turistas extranjeros:
+                                </label>
+                                <input type="number" class="form-control" id="ocupacionExtranjeros" name="ocupacionExtranjeros" min="0" required>
+                                <span class="form-hint">Especifique cuántos días fue ocupada por turistas extranjeros.</span>
+                            </div>
+
+                            <!-- Pregunta 4 -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <span class="question-number">4.</span>
+                                    Número total de personas hospedadas:
+                                </label>
+                                <input type="number" class="form-control" id="totalPersonas" name="totalPersonas" min="0" required>
+                                <span class="form-hint">Indique el número total de personas que se hospedaron durante la semana.</span>
+                            </div>
+
+                            <!-- Pregunta 5 -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <span class="question-number">5.</span>
+                                    Número de turistas hospedados que son residentes nacionales:
+                                </label>
+                                <input type="number" class="form-control" id="turistasNacionales" name="turistasNacionales" min="0" required>
+                                <span class="form-hint">De las personas hospedadas, cuántas son turistas residentes en el país.</span>
+                            </div>
+
+                            <!-- Pregunta 6 -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <span class="question-number">6.</span>
+                                    Número de turistas hospedados que son extranjeros:
+                                </label>
+                                <input type="number" class="form-control" id="turistasExtranjeros" name="turistasExtranjeros" min="0" required>
+                                <span class="form-hint">De las personas hospedadas, cuántas son turistas extranjeros.</span>
+                            </div>
+
+                            <!-- Pregunta 7 -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <span class="question-number">7.</span>
+                                    Número total de pernoctaciones:
+                                </label>
+                                <input type="number" class="form-control" id="totalPernoctaciones" name="totalPernoctaciones" min="0" required>
+                                <span class="form-hint">Indique el total de noches que los turistas se hospedaron.</span>
+                            </div>
+
+                            <!-- Pregunta 8 -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <span class="question-number">8.</span>
+                                    Número de turistas residentes nacionales que pernoctaron:
+                                </label>
+                                <input type="number" class="form-control" id="pernoctacionesNacionales" name="pernoctacionesNacionales" min="0" required>
+                                <span class="form-hint">Especifique cuántos turistas nacionales pasaron al menos una noche.</span>
+                            </div>
+
+                            <!-- Pregunta 9 -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <span class="question-number">9.</span>
+                                    Número de turistas extranjeros que pernoctaron:
+                                </label>
+                                <input type="number" class="form-control" id="pernoctacionesExtranjeros" name="pernoctacionesExtranjeros" min="0" required>
+                                <span class="form-hint">Especifique cuántos turistas extranjeros pasaron al menos una noche.</span>
+                            </div>
+
+                            <!-- ✅ NUEVA PREGUNTA 10: Procedencia de turistas -->
+                            <div class="form-group form-group-full">
+                                <label class="form-label">
+                                    <span class="question-number">10.</span>
+                                    Lugar de procedencia de los turistas hospedados:
+                                </label>
+                                <textarea class="form-control" id="procedenciaTuristas" name="procedenciaTuristas" 
+                                          rows="4" required minlength="10" maxlength="500"
+                                          placeholder="Ejemplo: Ciudad de México (DF), Guadalajara (Jalisco), Estados Unidos, Francia, etc."></textarea>
+                                <span class="form-hint">Especifique los lugares de origen de los turistas que se hospedaron (mínimo 10 caracteres, máximo 500).</span>
+                                <div class="char-counter" id="procedenciaCounter">0/500 caracteres</div>
+                            </div>
+
+                            <!-- Notas adicionales -->
+                            <div class="form-group form-group-full">
+                                <label class="form-label">
+                                    Notas adicionales (opcional):
+                                </label>
+                                <textarea class="form-control" id="notas" name="notas" rows="3" maxlength="500" placeholder="Agregue cualquier observación o comentario sobre la semana..."></textarea>
+                                <span class="form-hint">Máximo 500 caracteres</span>
+                            </div>
+                        </div>
+
+                        <div class="survey-actions">
+                            <button type="button" class="btn btn-secondary" onclick="resetSurveyForm()">
+                                <i class="fas fa-redo"></i>
+                                Limpiar Formulario
+                            </button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-paper-plane"></i>
+                                Enviar Cuestionario
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Alert Container -->
+    <div id="alertContainer" class="alert-container"></div>
+
+    <script>
+        // Variables globales
+    // ✅ POR ESTA CONFIGURACIÓN DINÁMICA:
+const baseURL = (() => {
+    const hostname = window.location.hostname;
+    
+    console.log('🌐 Hostname detectado en cabanas-admin:', hostname);
+    
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+        console.log('🛠️ Modo desarrollo detectado');
+        return '/api/hospedaje';
+    }
+    
+    console.log('🚀 Modo producción detectado');
+    return `${window.location.protocol}//${window.location.host}/api`;
+})();
+
+console.log('✅ BaseURL configurado para cabanas-admin:', baseURL);
+        
+        let authToken = localStorage.getItem('hospAuthToken');
+        let currentUser = JSON.parse(localStorage.getItem('hospCurrentUser') || '{}');
+        let currentCabana = null; // Variable para almacenar cabaña actual
+
+        // Función para construir URLs de imágenes correctamente
+        function getImageUrl(imagePath) {
+            console.log('🔍 getImageUrl recibió:', imagePath);
+            
+            // Si no hay imagen, usar imagen por defecto
+            if (!imagePath) {
+                console.log('⚠️ No hay imagen, usando por defecto');
+                return 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+            }
+            
+            // Si ya es una URL completa (http/https), devolverla tal como está
+            if (imagePath.startsWith('http')) {
+                console.log('✅ URL completa:', imagePath);
+                return imagePath;
+            }
+            
+            // Lógica simple que funciona en hoteles-admin.html
+            const finalUrl = `${baseURL.replace('/api/hospedaje', '')}${imagePath}`;
+            console.log('✅ URL construida:', finalUrl);
+            return finalUrl;
+        }
+
+        // Manejo global de errores de imágenes
+        function addImageErrorHandling() {
+            document.addEventListener('error', function(e) {
+                if (e.target.tagName === 'IMG') {
+                    console.warn('Error cargando imagen:', e.target.src);
+                    e.target.src = 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+                }
+            }, true);
+        }
+
+        // Elementos del DOM
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const loadingState = document.getElementById('loadingState');
+        const cabanaContent = document.getElementById('cabanaContent');
+        const emptyState = document.getElementById('emptyState');
+
+        // Verificar autenticación al cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔧 Inicializando cabanas-admin con corrección de imágenes...');
+            
+            if (!authToken) {
+                window.location.href = '../login.html';
+                return;
+            }
+            
+            // Agregar manejo de errores de imágenes
+            addImageErrorHandling();
+            
+            initializePage();
+        });
+
+        function initializePage() {
+            setupUserInfo();
+            setupMobileMenu();
+            loadCabanaInfo();
+            initializeWeeklySurvey();
+        }
+
+        function setupUserInfo() {
+            const userData = currentUser || {};
+            document.getElementById('userName').textContent = userData.nombre || 'Usuario';
+            document.getElementById('userRole').textContent = userData.isSuperAdmin ? 'Administrador' : 'Usuario';
+            
+            const initials = userData.nombre ? userData.nombre.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'AD';
+            document.getElementById('userAvatar').innerHTML = `<span>${initials}</span>`;
+        }
+
+        function setupMobileMenu() {
+            if (mobileMenuToggle) {
+                mobileMenuToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('active');
+                    overlay.classList.toggle('active');
+                });
+            }
+
+            overlay.addEventListener('click', function() {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+        }
+
+        // Configurar menú de gestión de imágenes
+        function setupImageManagementMenu() {
+            const menuEdicionImagenes = document.getElementById('menu-edicion-imagenes');
+            const imageManagementLink = document.getElementById('image-management-link');
+            
+            console.log('🔍 Configurando menú de gestión de imágenes para cabañas...');
+            
+            if (!menuEdicionImagenes) {
+                console.warn('⚠️ No se encontró el elemento del menú menu-edicion-imagenes');
+                return;
+            }
+            
+            // Buscar la cabaña actual
+            let cabanaActual = null;
+            
+            if (currentCabana && currentCabana._id) {
+                cabanaActual = currentCabana;
+                console.log('✅ Cabaña encontrada en variable global:', cabanaActual.nombre);
+            } else if (localStorage.getItem('currentCabanaId')) {
+                const cabanaId = localStorage.getItem('currentCabanaId');
+                if (cabanaId && cabanaId !== 'null' && cabanaId !== 'undefined') {
+                    cabanaActual = { _id: cabanaId, nombre: 'Cabaña guardada' };
+                    console.log('✅ Cabaña encontrada en localStorage:', cabanaId);
+                }
+            }
+            
+            // Configurar menú según el resultado
+            if (cabanaActual && cabanaActual._id) {
+                console.log('🖼️ Habilitando menú de gestión de imágenes para:', cabanaActual.nombre);
+                
+                // Mostrar el menú
+                menuEdicionImagenes.style.display = 'block';
+                
+                // Actualizar el href del enlace
+                if (imageManagementLink) {
+                    imageManagementLink.href = `manage-images-cabana.html?cabanaId=${cabanaActual._id}`;
+                    console.log('✅ Enlace actualizado:', imageManagementLink.href);
+                }
+                
+                // Actualizar la función global manageImages
+                window.manageImages = function(cabanaId = cabanaActual._id) {
+                    console.log('🖼️ Navegando a gestión de imágenes:', cabanaId);
+                    window.location.href = `manage-images-cabana.html?cabanaId=${cabanaId}`;
+                };
+                
+            } else {
+                console.log('⚠️ No se encontró cabaña activa, ocultando menú');
+                menuEdicionImagenes.style.display = 'none';
+            }
+        }
+
+        // Cargar información de cabañas
+        async function loadCabanaInfo() {
+            try {
+                showLoading();
+                
+                const response = await fetch(`${baseURL}/cabanas/mis-cabanas`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success' && data.data.cabanas.length > 0) {
+                    const cabana = data.data.cabanas[0];
+                    currentCabana = cabana; // Almacenar cabaña actual
+                    console.log('🏔️ Datos de cabaña recibidos:', cabana);
+                    updateStats([cabana]);
+                    displayCabana(cabana);
+                    showCabanaContent();
+                    
+                    // Actualizar información del cuestionario
+                    updateSurveyInfo(cabana);
+                    
+                    // Configurar menú de gestión de imágenes
+                    setupImageManagementMenu();
+                } else {
+                    showEmpty();
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showError();
+            }
+        }
+
+        function updateStats(cabanas) {
+            const totalCabanas = cabanas.length;
+            let totalCapacidad = 0;
+
+            cabanas.forEach(cabana => {
+                if (cabana.capacidad) {
+                    totalCapacidad += cabana.capacidad.huespedes || cabana.capacidad.personasMax || 0;
+                }
+            });
+
+            document.getElementById('totalCabanas').textContent = totalCabanas;
+            document.getElementById('totalCapacidad').textContent = totalCapacidad;
+        }
+
+        function displayCabana(cabana) {
+            // Usar getImageUrl en lugar de acceso directo
+            const imageUrl = getImageUrl(cabana.imagenes?.[0]);
+            const tipoCabana = formatTipoCabana(cabana.caracteristicas?.tipoPropiedad);
+            
+            // Construir ubicación completa
+            let ubicacionCompleta = 'Ubicación no especificada';
+            if (cabana.ubicacion) {
+                const partes = [];
+                if (cabana.ubicacion.direccion) partes.push(cabana.ubicacion.direccion);
+                if (cabana.ubicacion.ciudad) partes.push(cabana.ubicacion.ciudad);
+                if (cabana.ubicacion.estado) partes.push(cabana.ubicacion.estado);
+                ubicacionCompleta = partes.length > 0 ? partes.join(', ') : 'Ubicación no especificada';
+            }
+            
+            // Formatear servicios
+            let serviciosTexto = '';
+            if (cabana.servicios) {
+                if (Array.isArray(cabana.servicios)) {
+                    serviciosTexto = cabana.servicios.join(', ');
+                } else if (typeof cabana.servicios === 'string') {
+                    serviciosTexto = cabana.servicios;
+                }
+            }
+            
+            const cabanaCard = `
+                <div class="admin-card">
+                    <div class="card-header">
+                        <h3>${cabana.nombre || 'Cabaña sin nombre'}</h3>
+                        <div class="card-actions">
+                        <a href="actualizar-cabanas.html?id=${cabana._id}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-edit"></i>
+                                Editar
+                            </a>
+                            <button onclick="manageImages('${cabana._id}')" class="btn btn-sm btn-images">
+                                <i class="fas fa-images"></i>
+                                Imágenes
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="card-content">
+                        <div class="property-image">
+                            <img src="${imageUrl}" alt="${cabana.nombre}" onerror="this.src='https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'">
+                        </div>
+                        
+                        <div class="property-details">
+                            <div class="detail-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>${ubicacionCompleta}</span>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <i class="fas fa-mountain"></i>
+                                <span>${tipoCabana}</span>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <i class="fas fa-users"></i>
+                                <span>Capacidad: ${cabana.capacidad?.huespedes || cabana.capacidad?.personasMax || 0} huéspedes</span>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <i class="fas fa-bed"></i>
+                                <span>Habitaciones: ${cabana.capacidad?.habitaciones || 'No especificado'}</span>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <i class="fas fa-dollar-sign"></i>
+                                <span>${cabana.precio?.toLocaleString('es-MX') || 0} por noche</span>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <i class="fas fa-phone"></i>
+                                <span>${cabana.contacto?.telefono || 'No especificado'}</span>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>${cabana.contacto?.email || 'No especificado'}</span>
+                            </div>
+                            
+                            ${cabana.contacto?.sitioWeb ? `
+                                <div class="detail-item">
+                                    <i class="fas fa-globe"></i>
+                                    <span><a href="${cabana.contacto.sitioWeb}" target="_blank">${cabana.contacto.sitioWeb}</a></span>
+                                </div>
+                            ` : ''}
+                            
+                            <div class="detail-item">
+                                <i class="fas fa-${cabana.activo !== false ? 'check-circle text-success' : 'times-circle text-danger'}"></i>
+                                <span>${cabana.activo !== false ? 'Activa' : 'Inactiva'}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    ${serviciosTexto ? `
+                        <div style="padding: 0 2rem 2rem;">
+                            <h4 style="margin-bottom: 1rem; color: var(--text-color);">
+                                <i class="fas fa-concierge-bell" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                Servicios disponibles:
+                            </h4>
+                            <p style="color: var(--text-muted); line-height: 1.6;">${serviciosTexto}</p>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            cabanaContent.innerHTML = cabanaCard;
+        }
+
+        // Función global: manageImages
+        window.manageImages = function(cabanaId) {
+            console.log('🖼️ Abriendo gestión de imágenes para cabaña:', cabanaId);
+            if (!cabanaId && currentCabana) {
+                cabanaId = currentCabana._id;
+            }
+            window.location.href = `manage-images-cabana.html?cabanaId=${cabanaId}`;
+        };
+
+        function formatTipoCabana(tipo) {
+            const tipos = {
+                'cabana': 'Cabaña',
+                'casa_rural': 'Casa Rural',
+                'chalet': 'Chalet',
+                'bungalow': 'Bungalow',
+                'individual': 'Cabaña Individual',
+                'complejo': 'Complejo de Cabañas',
+                'rustica': 'Cabaña Rústica',
+                'moderna': 'Cabaña Moderna'
+            };
+            return tipos[tipo] || tipo || 'Tipo no especificado';
+        }
+
+        function showLoading() {
+            loadingState.style.display = 'block';
+            cabanaContent.style.display = 'none';
+            emptyState.style.display = 'none';
+        }
+
+        function showCabanaContent() {
+            loadingState.style.display = 'none';
+            cabanaContent.style.display = 'block';
+            emptyState.style.display = 'none';
+        }
+
+        function showEmpty() {
+            loadingState.style.display = 'none';
+            cabanaContent.style.display = 'none';
+            emptyState.style.display = 'block';
+        }
+
+        function showError() {
+            loadingState.style.display = 'none';
+            cabanaContent.style.display = 'none';
+            emptyState.style.display = 'block';
+        }
+
+        // ===================== SISTEMA DE ALERTAS =====================
+
+        function showAlert(message, type = 'info') {
+            const alertContainer = document.getElementById('alertContainer');
+            if (!alertContainer) {
+                console.error('Alert container not found');
+                return;
+            }
+
+            const alertId = 'alert-' + Date.now();
+            const alertElement = document.createElement('div');
+            alertElement.id = alertId;
+            alertElement.className = `alert alert-${type}`;
+            
+            // Iconos según el tipo
+            const icons = {
+                success: 'fas fa-check-circle',
+                error: 'fas fa-exclamation-circle',
+                warning: 'fas fa-exclamation-triangle',
+                info: 'fas fa-info-circle'
+            };
+            
+            alertElement.innerHTML = `
+                <i class="${icons[type] || icons.info}"></i>
+                <span>${message}</span>
+            `;
+            
+            alertContainer.appendChild(alertElement);
+            
+            // Auto-remove después de 5 segundos
+            setTimeout(() => {
+                const element = document.getElementById(alertId);
+                if (element) {
+                    element.style.animation = 'slideOutRight 0.3s ease-in';
+                    setTimeout(() => {
+                        if (element.parentNode) {
+                            element.parentNode.removeChild(element);
+                        }
+                    }, 300);
+                }
+            }, 5000);
+        }
+
+        // ===================== CUESTIONARIO SEMANAL =====================
+
+        function initializeWeeklySurvey() {
+            loadCurrentWeekDates();
+            setupSurveyForm();
+            setupFormValidations();
+            setupCharacterCounter(); // ✅ NUEVO: Configurar contador de caracteres
+        }
+
+        function updateSurveyInfo(cabana) {
+            document.getElementById('surveyCabanaName').textContent = cabana.nombre || 'Cabaña';
+            document.getElementById('cabanaId').value = cabana._id;
+        }
+
+        function loadCurrentWeekDates() {
+            const today = new Date();
+            const monday = new Date(today);
+            const dayOfWeek = today.getDay();
+            const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+            monday.setDate(today.getDate() + diff);
+            
+            const sunday = new Date(monday);
+            sunday.setDate(monday.getDate() + 6);
+            
+            const options = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            
+            const mondayStr = monday.toLocaleDateString('es-ES', options);
+            const sundayStr = sunday.toLocaleDateString('es-ES', options);
+            
+            document.getElementById('surveyWeekDates').textContent = `${mondayStr} - ${sundayStr}`;
+        }
+
+        function setupSurveyForm() {
+            const form = document.getElementById('weeklySurveyForm');
+            if (form) {
+                form.addEventListener('submit', handleSurveySubmit);
+            }
+        }
+
+        // ✅ NUEVA FUNCIÓN: Configurar contador de caracteres para procedencia
+        function setupCharacterCounter() {
+            const procedenciaTextarea = document.getElementById('procedenciaTuristas');
+            const counter = document.getElementById('procedenciaCounter');
+            
+            if (procedenciaTextarea && counter) {
+                procedenciaTextarea.addEventListener('input', function() {
+                    const currentLength = this.value.length;
+                    const maxLength = 500;
+                    
+                    counter.textContent = `${currentLength}/${maxLength} caracteres`;
+                    
+                    // Cambiar color según el límite
+                    if (currentLength > maxLength * 0.9) {
+                        counter.className = 'char-counter error';
+                    } else if (currentLength > maxLength * 0.7) {
+                        counter.className = 'char-counter warning';
+                    } else {
+                        counter.className = 'char-counter';
+                    }
+                });
+            }
+        }
+
+        function setupFormValidations() {
+            // Validaciones en tiempo real
+            const diasOcupada = document.getElementById('diasOcupada');
+            const ocupacionNacionales = document.getElementById('ocupacionNacionales');
+            const ocupacionExtranjeros = document.getElementById('ocupacionExtranjeros');
+            const totalPersonas = document.getElementById('totalPersonas');
+            const turistasNacionales = document.getElementById('turistasNacionales');
+            const turistasExtranjeros = document.getElementById('turistasExtranjeros');
+
+            function validateOcupaciones() {
+                const total = parseInt(diasOcupada.value) || 0;
+                const nacionales = parseInt(ocupacionNacionales.value) || 0;
+                const extranjeros = parseInt(ocupacionExtranjeros.value) || 0;
+
+                if (nacionales + extranjeros > total) {
+                    showAlert('La suma de días nacionales y extranjeros no puede ser mayor al total', 'warning');
+                    return false;
+                }
+                return true;
+            }
+
+            function validatePersonas() {
+                const total = parseInt(totalPersonas.value) || 0;
+                const nacionales = parseInt(turistasNacionales.value) || 0;
+                const extranjeros = parseInt(turistasExtranjeros.value) || 0;
+
+                if (nacionales + extranjeros > total) {
+                    showAlert('La suma de turistas nacionales y extranjeros no puede ser mayor al total', 'warning');
+                    return false;
+                }
+                return true;
+            }
+
+            [diasOcupada, ocupacionNacionales, ocupacionExtranjeros].forEach(input => {
+                input.addEventListener('input', validateOcupaciones);
+            });
+
+            [totalPersonas, turistasNacionales, turistasExtranjeros].forEach(input => {
+                input.addEventListener('input', validatePersonas);
+            });
+        }
+
+        function getCurrentWeekDates() {
+            const today = new Date();
+            const dayOfWeek = today.getDay();
+            
+            const monday = new Date(today);
+            const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+            monday.setDate(today.getDate() + diff);
+            monday.setHours(0, 0, 0, 0);
+            
+            const sunday = new Date(monday);
+            sunday.setDate(monday.getDate() + 6);
+            sunday.setHours(23, 59, 59, 999);
+            
+            return {
+                fechaInicio: monday.toISOString(),
+                fechaFin: sunday.toISOString()
+            };
+        }
+
+        function getCurrentCabanaId() {
+            const cabanaId = document.getElementById('cabanaId').value;
+            if (!cabanaId) {
+                throw new Error('No se pudo obtener el ID de la cabaña');
+            }
+            return cabanaId;
+        }
+
+        // ✅ FUNCIÓN ACTUALIZADA: Incluir validación de procedencia
+        async function handleSurveySubmit(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const formData = new FormData(form);
+            
+            // ✅ NUEVA VALIDACIÓN: Campo de procedencia
+            const procedenciaInput = document.getElementById('procedenciaTuristas');
+            const procedenciaValue = procedenciaInput.value.trim();
+            
+            if (!procedenciaValue || procedenciaValue.length < 10) {
+                procedenciaInput.classList.add('error');
+                showAlert('Por favor, proporcione información detallada sobre la procedencia de los turistas (mínimo 10 caracteres).', 'error');
+                return;
+            } else {
+                procedenciaInput.classList.remove('error');
+                procedenciaInput.classList.add('success');
+            }
+            
+            // Validar que todos los campos requeridos estén llenos
+            const requiredFields = ['diasOcupada', 'ocupacionNacionales', 'ocupacionExtranjeros', 
+                                    'totalPersonas', 'turistasNacionales', 'turistasExtranjeros', 
+                                    'totalPernoctaciones', 'pernoctacionesNacionales', 'pernoctacionesExtranjeros'];
+            
+            for (let field of requiredFields) {
+                if (!formData.get(field) || formData.get(field) === '') {
+                    showAlert('Por favor complete todos los campos requeridos', 'error');
+                    return;
+                }
+            }
+            
+            // Validaciones de lógica de negocio
+            const diasOcupada = parseInt(formData.get('diasOcupada'));
+            const ocupacionNacionales = parseInt(formData.get('ocupacionNacionales'));
+            const ocupacionExtranjeros = parseInt(formData.get('ocupacionExtranjeros'));
+            const totalPersonas = parseInt(formData.get('totalPersonas'));
+            const turistasNacionales = parseInt(formData.get('turistasNacionales'));
+            const turistasExtranjeros = parseInt(formData.get('turistasExtranjeros'));
+            const totalPernoctaciones = parseInt(formData.get('totalPernoctaciones'));
+            const pernoctacionesNacionales = parseInt(formData.get('pernoctacionesNacionales'));
+            const pernoctacionesExtranjeros = parseInt(formData.get('pernoctacionesExtranjeros'));
+            
+            // Validar que las sumas sean correctas
+            if (ocupacionNacionales + ocupacionExtranjeros !== diasOcupada) {
+                showAlert('Error: La suma de días nacionales y extranjeros debe ser igual al total de días ocupados', 'error');
+                return;
+            }
+            
+            if (turistasNacionales + turistasExtranjeros !== totalPersonas) {
+                showAlert('Error: La suma de turistas nacionales y extranjeros debe ser igual al total de personas', 'error');
+                return;
+            }
+            
+            if (pernoctacionesNacionales + pernoctacionesExtranjeros !== totalPernoctaciones) {
+                showAlert('Error: La suma de pernoctaciones nacionales y extranjeras debe ser igual al total', 'error');
+                return;
+            }
+            
+            // Validar que no haya más pernoctaciones que personas totales
+            if (totalPernoctaciones > totalPersonas) {
+                showAlert('Error: No puede haber más pernoctaciones que el total de personas', 'error');
+                return;
+            }
+            
+            // Validar que los días ocupados no excedan 7
+            if (diasOcupada > 7) {
+                showAlert('Error: No puede haber más de 7 días ocupados por semana', 'error');
+                return;
+            }
+            
+            form.classList.add('survey-loading');
+            
+            try {
+                const cabanaId = getCurrentCabanaId();
+                const { fechaInicio, fechaFin } = getCurrentWeekDates();
+                
+                const cuestionarioData = {
+                    cabanaId: cabanaId,
+                    tipoEstablecimiento: 'cabana',
+                    fechaInicio: fechaInicio,
+                    fechaFin: fechaFin,
+                    datos: {
+                        // ✅ NUEVO: Incluir procedencia de turistas
+                        procedenciaTuristas: procedenciaValue,
+                        
+                        // Campos numéricos existentes
+                        diasOcupada: diasOcupada,
+                        ocupacionNacionales: ocupacionNacionales,
+                        ocupacionExtranjeros: ocupacionExtranjeros,
+                        totalPersonas: totalPersonas,
+                        turistasNacionales: turistasNacionales,
+                        turistasExtranjeros: turistasExtranjeros,
+                        totalPernoctaciones: totalPernoctaciones,
+                        pernoctacionesNacionales: pernoctacionesNacionales,
+                        pernoctacionesExtranjeros: pernoctacionesExtranjeros
+                    },
+                    notas: formData.get('notas') || ''
+                };
+                
+                console.log('📤 Enviando cuestionario de cabaña con procedencia:', cuestionarioData);
+                
+                const response = await fetch(`${baseURL}/cuestionarios`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(cuestionarioData)
+                });
+                
+                const result = await response.json();
+                console.log('📥 Respuesta del servidor:', result);
+                
+                if (response.ok && result.status === 'success') {
+                    form.classList.remove('survey-loading');
+                    showAlert('¡Cuestionario de cabaña enviado correctamente! Incluyendo información de procedencia de turistas.', 'success');
+                    
+                    // Resetear formulario
+                    form.reset();
+                    
+                    // ✅ ACTUALIZADO: Limpiar clases de validación y contador
+                    const inputs = form.querySelectorAll('input, textarea');
+                    inputs.forEach(input => {
+                        input.classList.remove('error', 'success');
+                    });
+                    
+                    // Resetear contador de caracteres
+                    const counter = document.getElementById('procedenciaCounter');
+                    if (counter) {
+                        counter.textContent = '0/500 caracteres';
+                        counter.className = 'char-counter';
+                    }
+                    
+                    console.log('✅ Cuestionario de cabaña guardado exitosamente con procedencia:', result.data);
+                    
+                } else {
+                    throw new Error(result.message || 'Error al enviar el cuestionario');
+                }
+                
+            } catch (error) {
+                form.classList.remove('survey-loading');
+                console.error('❌ Error al enviar cuestionario de cabaña:', error);
+                
+                // Manejo específico de errores
+                if (error.message.includes('Ya existe un cuestionario')) {
+                    showAlert('Ya existe un cuestionario para esta semana. Solo se puede enviar un cuestionario por semana.', 'warning');
+                } else if (error.message.includes('No tienes permiso')) {
+                    showAlert('No tienes permisos para enviar este cuestionario.', 'error');
+                } else if (error.message.includes('Cabaña no encontrada')) {
+                    showAlert('Error: Cabaña no encontrada. Verifica la configuración.', 'error');
+                } else if (error.message.includes('not authenticated') || error.message.includes('jwt')) {
+                    showAlert('Sesión expirada. Por favor, inicia sesión nuevamente.', 'error');
+                    setTimeout(() => {
+                        window.location.href = '../login.html';
+                    }, 2000);
+                } else if (error.message.includes('Error de validación')) {
+                    showAlert('Error de validación: ' + error.message, 'error');
+                } else if (error.message.includes('procedencia de turistas')) {
+                    showAlert('Error: ' + error.message, 'error');
+                } else if (error.message.includes('fetch')) {
+                    showAlert('Error de conexión. Verifica tu conexión a internet.', 'error');
+                } else {
+                    showAlert(error.message || 'Error al enviar el cuestionario. Inténtelo de nuevo.', 'error');
+                }
+            }
+        }
+
+        // ✅ FUNCIÓN ACTUALIZADA: Limpiar también contador de caracteres
+        function resetSurveyForm() {
+            const form = document.getElementById('weeklySurveyForm');
+            form.reset();
+            
+            const inputs = form.querySelectorAll('input, textarea');
+            inputs.forEach(input => {
+                input.classList.remove('error', 'success');
+            });
+            
+            // Resetear contador de caracteres
+            const counter = document.getElementById('procedenciaCounter');
+            if (counter) {
+                counter.textContent = '0/500 caracteres';
+                counter.className = 'char-counter';
+            }
+            
+            showAlert('Formulario limpiado correctamente.', 'info');
+        }
+
+        function logout() {
+            localStorage.removeItem('hospAuthToken');
+            localStorage.removeItem('hospCurrentUser');
+            window.location.href = '../login.html';
+        }
+
+        // Funciones de debug (usar en consola del navegador)
+        function debugCabanaImages(cabana) {
+            console.log('🔍 === DEBUG DETALLADO DE IMÁGENES ===');
+            console.log('Cabaña:', cabana.nombre);
+            console.log('Array de imágenes:', cabana.imagenes);
+            console.log('Cantidad de imágenes:', cabana.imagenes?.length || 0);
+            
+            if (cabana.imagenes && cabana.imagenes.length > 0) {
+                cabana.imagenes.forEach((img, index) => {
+                    const finalUrl = getImageUrl(img);
+                    console.log(`--- Imagen ${index + 1} ---`);
+                    console.log('  Original:', img);
+                    console.log('  URL final:', finalUrl);
+                    
+                    // Probar si la imagen es accesible
+                    const testImg = new Image();
+                    testImg.onload = () => {
+                        console.log(`✅ Imagen ${index + 1} carga correctamente`);
+                    };
+                    testImg.onerror = (error) => {
+                        console.error(`❌ Imagen ${index + 1} NO se puede cargar:`, error);
+                        console.error(`   URL que falló: ${finalUrl}`);
+                    };
+                    testImg.src = finalUrl;
+                });
+            } else {
+                console.log('⚠️ No hay imágenes para esta cabaña');
+            }
+            
+            console.log('=====================================');
+        }
+
+        // Funciones globales para debug
+        window.debugCabanaImages = debugCabanaImages;
+        window.getImageUrl = getImageUrl;
+        window.debugCurrentCabana = function() {
+            if (currentCabana) {
+                debugCabanaImages(currentCabana);
+            } else {
+                console.log('❌ No hay cabaña actual cargada');
+            }
+        };
+    </script>
+</body>
+</html>

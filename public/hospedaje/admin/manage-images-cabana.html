@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Imágenes - Cabañas</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c5530;
+            --primary-hover: #234429;
+            --secondary-color: #4a7c59;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --gray-600: #6c757d;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+            --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            --shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+            --border-radius: 0.5rem;
+            --border-radius-sm: 0.25rem;
+            --border-radius-lg: 0.75rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--gray-100) 0%, #ffffff 100%);
+            color: var(--gray-900);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-btn {
+            background: var(--gray-100);
+            border: 1px solid var(--gray-300);
+            padding: 0.5rem;
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+        }
+
+        .back-btn:hover {
+            background: var(--gray-200);
+            transform: translateX(-2px);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--gray-900);
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+
+        .logo i {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info {
+            text-align: right;
+            display: none;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--gray-900);
+        }
+
+        .user-role {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: calc(100vh - 80px);
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: var(--gray-600);
+            font-size: 1.1rem;
+        }
+
+        /* Cabana Info Card */
+        .cabana-info-card {
+            background: white;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--gray-200);
+        }
+
+        .cabana-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .cabana-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: var(--border-radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .cabana-details h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.75rem;
+        }
+
+        .cabana-meta {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .cabana-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gray-600);
+            font-size: 0.95rem;
+        }
+
+        .cabana-meta i {
+            color: var(--primary-color);
+            width: 16px;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            background: white;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--gray-200);
+        }
+
+        .upload-area {
+            border: 3px dashed var(--gray-300);
+            border-radius: var(--border-radius-lg);
+            padding: 3rem 2rem;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            background: var(--gray-50);
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary-color);
+            background: rgba(44, 85, 48, 0.05);
+        }
+
+        .upload-area.drag-over {
+            border-color: var(--primary-color);
+            background: rgba(44, 85, 48, 0.1);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--gray-400);
+            margin-bottom: 1rem;
+        }
+
+        .upload-area:hover .upload-icon {
+            color: var(--primary-color);
+        }
+
+        .upload-text {
+            font-size: 1.1rem;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-hint {
+            font-size: 0.9rem;
+            color: var(--gray-500);
+            margin-bottom: 1.5rem;
+        }
+
+        .upload-button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .upload-button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        /* Progress */
+        .progress-container {
+            display: none;
+            margin-top: 2rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--gray-200);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-color);
+            transition: width 0.3s;
+            border-radius: 4px;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: var(--gray-600);
+            font-size: 0.9rem;
+        }
+
+        /* Gallery Section */
+        .gallery-section {
+            background: white;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            border: 1px solid var(--gray-200);
+        }
+
+        .gallery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .gallery-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .gallery-stats {
+            color: var(--gray-600);
+            font-size: 0.95rem;
+        }
+
+        .gallery-stats span {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--gray-200);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Gallery Grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .image-card {
+            position: relative;
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s;
+            background: white;
+            border: 1px solid var(--gray-200);
+        }
+
+        .image-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .image-container {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .image-card:hover .image-container img {
+            transform: scale(1.05);
+        }
+
+        .main-badge {
+            position: absolute;
+            top: 0.75rem;
+            left: 0.75rem;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--border-radius);
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 2;
+        }
+
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .image-card:hover .image-overlay {
+            opacity: 1;
+        }
+
+        .image-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            background: white;
+            border: none;
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+        }
+
+        .action-btn.primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .action-btn.danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--gray-500);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: var(--gray-300);
+        }
+
+        .empty-state h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--gray-700);
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            max-width: 400px;
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius);
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            box-shadow: var(--shadow-lg);
+            transform: translateX(120%);
+            transition: transform 0.3s;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: var(--success-color);
+        }
+
+        .notification.error {
+            background: var(--danger-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav {
+                padding: 1rem;
+            }
+
+            .main {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .cabana-info {
+                flex-direction: column;
+                text-align: center;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .cabana-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-left">
+                <button class="back-btn" onclick="goBack()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <a href="cabanas-admin.html" class="logo">
+                    <i class="fas fa-images"></i>
+                    Gestión de Imágenes
+                </a>
+            </div>
+            
+            <div class="user-section">
+                <div class="user-info">
+                    <div class="user-name" id="user-name">Cargando...</div>
+                    <div class="user-role" id="user-role">admin</div>
+                </div>
+                <div class="user-avatar" id="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Gestión de Imágenes</h1>
+            <p class="page-subtitle">Administra las fotos de tu cabaña</p>
+        </div>
+
+        <!-- Cabana Info -->
+        <div class="cabana-info-card" id="cabana-info-card" style="display: none;">
+            <div class="cabana-info">
+                <div class="cabana-icon">
+                    <i class="fas fa-mountain"></i>
+                </div>
+                <div class="cabana-details">
+                    <h3 id="cabana-name">Cargando cabaña...</h3>
+                    <div class="cabana-meta">
+                        <span><i class="fas fa-map-marker-alt"></i> <span id="cabana-location">-</span></span>
+                        <span><i class="fas fa-users"></i> <span id="cabana-capacity">-</span> huéspedes</span>
+                        <span><i class="fas fa-bed"></i> <span id="cabana-rooms">-</span> habitaciones</span>
+                        <span><i class="fas fa-fire"></i> <span id="cabana-type">-</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload Section -->
+        <div class="upload-section">
+            <h2 style="margin-bottom: 1.5rem; font-size: 1.25rem; color: var(--gray-900);">Subir Nuevas Imágenes</h2>
+            
+            <div class="upload-area" id="upload-area">
+                <div class="upload-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <div class="upload-text">
+                    <strong>Haz clic aquí</strong> o arrastra las imágenes para subirlas
+                </div>
+                <div class="upload-hint">
+                    Formatos soportados: JPG, PNG, GIF, WebP • Máximo 5MB por imagen • Hasta 10 imágenes
+                </div>
+                <button type="button" class="upload-button" onclick="document.getElementById('file-input').click()">
+                    <i class="fas fa-plus"></i>
+                    Seleccionar Imágenes
+                </button>
+            </div>
+            
+            <input type="file" id="file-input" multiple accept="image/*">
+            
+            <div class="progress-container" id="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <div class="progress-text" id="progress-text">Subiendo imágenes...</div>
+            </div>
+        </div>
+
+        <!-- Gallery Section -->
+        <div class="gallery-section">
+            <div class="gallery-header">
+                <h2 class="gallery-title">Galería de Imágenes</h2>
+                <div class="gallery-stats" id="gallery-stats">
+                    <span id="image-count">0</span> imágenes
+                </div>
+            </div>
+            
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>Cargando imágenes...</p>
+            </div>
+            
+            <div id="gallery-grid" class="gallery-grid" style="display: none;">
+                <!-- Las imágenes se cargarán aquí dinámicamente -->
+            </div>
+            
+            <div id="empty-state" class="empty-state" style="display: none;">
+                <i class="fas fa-images"></i>
+                <h3>No hay imágenes</h3>
+                <p>Sube tus primeras imágenes para comenzar</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // ✅ CONFIGURACIÓN PARA CABAÑAS
+        const API_BASE = window.location.origin.includes('localhost') 
+            ? '/api/hospedaje' 
+            : '/api/hospedaje';
+        
+        // Variables globales
+        let currentCabana = null;
+        let currentUser = null; // ✅ AGREGADO para consistencia
+        let images = [];
+
+        // Elementos del DOM
+        const loadingElement = document.getElementById('loading');
+        const galleryGrid = document.getElementById('gallery-grid');
+        const emptyState = document.getElementById('empty-state');
+        const imageCount = document.getElementById('image-count');
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput = document.getElementById('file-input');
+        const progressContainer = document.getElementById('progress-container');
+        const progressFill = document.getElementById('progress-fill');
+        const progressText = document.getElementById('progress-text');
+
+        // ✅ FUNCIÓN CORREGIDA: Verificación rápida (como en otras páginas)
+        function quickAuthCheck() {
+            const token = localStorage.getItem('hospAuthToken');
+            if (!token) {
+                console.log('❌ No hay token en quickAuthCheck');
+                window.location.href = '../login.html';
+                return false;
+            }
+            return true;
+        }
+
+        // ✅ VERIFICACIÓN CORREGIDA: Igual que hoteles
+        async function checkAuth() {
+            const token = localStorage.getItem('hospAuthToken');
+            const userData = JSON.parse(localStorage.getItem('hospUserData') || '{}');
+            
+            // ✅ VERIFICACIÓN SIMPLE como en otras páginas del proyecto
+            if (!token) {
+                console.log('❌ No hay token, redirigiendo al login');
+                showNotification('No has iniciado sesión', 'error');
+                setTimeout(() => {
+                    window.location.href = '../login.html';
+                }, 2000);
+                return;
+            }
+
+            // ✅ VERIFICACIÓN ADICIONAL OPCIONAL (solo si hay userData)
+            if (userData && userData.nombre) {
+                currentUser = userData;
+                updateUserInfo(userData);
+                await loadCabanaInfo();
+                console.log('✅ Usuario autenticado desde localStorage:', userData.email || userData.nombre);
+                return;
+            }
+
+            // ✅ VERIFICACIÓN CON SERVIDOR (solo si no hay userData local)
+            try {
+                console.log('🔍 Verificando token con servidor...');
+                const response = await fetch(`${API_BASE}/auth/me`, {  // ✅ RUTA CORREGIDA
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // ✅ GUARDAR datos del usuario en localStorage para futuras verificaciones
+                    currentUser = data.data.user;
+                    localStorage.setItem('hospUserData', JSON.stringify(currentUser));
+                    
+                    updateUserInfo(currentUser);
+                    await loadCabanaInfo();
+                    console.log('✅ Usuario verificado con servidor:', currentUser.email);
+                } else {
+                    // ✅ NO redirigir inmediatamente - dar oportunidad de funcionar con token local
+                    console.warn('⚠️ Error verificando con servidor, pero token existe localmente');
+                    
+                    // Solo redirigir si es un error de token inválido (401)
+                    if (response.status === 401) {
+                        throw new Error('Token inválido');
+                    }
+                }
+            } catch (error) {
+                console.error('❌ Error verificando auth:', error);
+                
+                // ✅ SOLO eliminar datos y redirigir si es error grave
+                if (error.message.includes('Token inválido') || error.message.includes('401')) {
+                    localStorage.removeItem('hospAuthToken');
+                    localStorage.removeItem('hospUserData');
+                    showNotification('Sesión expirada, redirigiendo...', 'warning');
+                    setTimeout(() => {
+                        window.location.href = '../login.html';
+                    }, 2000);
+                } else {
+                    // ✅ Para otros errores (conexión, etc.), continuar con token local
+                    console.log('⚠️ Error de conexión, continuando con sesión local');
+                    showNotification('Conexión limitada, pero continuando...', 'warning');
+                }
+            }
+        }
+
+        // ✅ FUNCIÓN CORREGIDA: Actualizar interfaz de usuario
+        function updateUserInfo(user) {
+            if (!user) {
+                // ✅ Usar datos básicos desde localStorage si no hay user
+                const userData = JSON.parse(localStorage.getItem('hospUserData') || '{}');
+                user = userData;
+            }
+
+            const userName = document.getElementById('user-name');
+            const userAvatar = document.getElementById('user-avatar');
+
+            if (userName && user.nombre) {
+                userName.textContent = user.nombre;
+            }
+
+            if (userAvatar && user.nombre) {
+                const initials = user.nombre.split(' ')
+                    .map(n => n[0])
+                    .join('')
+                    .substring(0, 2)
+                    .toUpperCase();
+                userAvatar.innerHTML = `<span>${initials}</span>`;
+            }
+        }
+
+        // Cargar información de la cabaña
+        async function loadCabanaInfo() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const cabanaId = urlParams.get('cabanaId');
+
+            if (!cabanaId) {
+                showNotification('ID de cabaña no encontrado', 'error');
+                return;
+            }
+
+            const token = localStorage.getItem('hospAuthToken');
+            if (!token) return;
+
+            try {
+                // Obtener información de la cabaña
+                const response = await fetch(`${API_BASE}/cabanas/mis-cabanas`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const cabana = data.data.cabanas.find(c => c._id === cabanaId);
+                    
+                    if (cabana) {
+                        currentCabana = cabana;
+                        displayCabanaInfo(cabana);
+                        loadImages();
+                    } else {
+                        showNotification('Cabaña no encontrada', 'error');
+                    }
+                } else {
+                    throw new Error('Error cargando información de la cabaña');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error cargando información de la cabaña', 'error');
+            }
+        }
+
+        // Mostrar información de la cabaña
+        function displayCabanaInfo(cabana) {
+            const cabanaInfoCard = document.getElementById('cabana-info-card');
+            const cabanaName = document.getElementById('cabana-name');
+            const cabanaLocation = document.getElementById('cabana-location');
+            const cabanaCapacity = document.getElementById('cabana-capacity');
+            const cabanaRooms = document.getElementById('cabana-rooms');
+            const cabanaType = document.getElementById('cabana-type');
+
+            if (cabanaName) cabanaName.textContent = cabana.nombre || 'Cabaña';
+            if (cabanaLocation) {
+                const location = `${cabana.ubicacion?.ciudad || ''}, ${cabana.ubicacion?.estado || ''}`.trim().replace(/^,|,$/, '') || 'Ubicación no especificada';
+                cabanaLocation.textContent = location;
+            }
+            if (cabanaCapacity) cabanaCapacity.textContent = cabana.capacidad?.huespedes || cabana.capacidad?.personasMax || 0;
+            if (cabanaRooms) cabanaRooms.textContent = cabana.capacidad?.habitaciones || 'No especificado';
+            if (cabanaType) cabanaType.textContent = cabana.tipo || 'Cabaña';
+
+            if (cabanaInfoCard) cabanaInfoCard.style.display = 'block';
+
+            // ✅ AGREGAR DEBUG de imágenes
+            if (cabana.imagenes && cabana.imagenes.length > 0) {
+                console.log('🖼️ Cabaña tiene imágenes, ejecutando debug...');
+                debugCabanaImages(cabana);
+            }
+        }
+
+        // Configurar drag and drop
+        function setupDragAndDrop() {
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('drag-over');
+            });
+
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('drag-over');
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('drag-over');
+                const files = Array.from(e.dataTransfer.files);
+                handleFileSelection(files);
+            });
+
+            uploadArea.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                const files = Array.from(e.target.files);
+                handleFileSelection(files);
+            });
+        }
+
+        // Manejar selección de archivos
+        function handleFileSelection(files) {
+            const validFiles = files.filter(file => {
+                if (!file.type.startsWith('image/')) {
+                    showNotification(`${file.name} no es una imagen válida`, 'error');
+                    return false;
+                }
+                if (file.size > 5 * 1024 * 1024) {
+                    showNotification(`${file.name} es muy grande (máximo 5MB)`, 'error');
+                    return false;
+                }
+                return true;
+            });
+
+            if (validFiles.length > 10) {
+                showNotification('Máximo 10 imágenes por vez', 'error');
+                return;
+            }
+
+            if (validFiles.length > 0) {
+                uploadImages(validFiles);
+            }
+        }
+
+        // Subir imágenes
+        async function uploadImages(files) {
+            const token = localStorage.getItem('hospAuthToken');
+            if (!token || !currentCabana) {
+                showNotification('Error de autenticación o cabaña no válida', 'error');
+                return;
+            }
+
+            try {
+                progressContainer.style.display = 'block';
+                progressFill.style.width = '0%';
+                progressText.textContent = 'Preparando subida...';
+
+                const formData = new FormData();
+                files.forEach(file => {
+                    formData.append('images', file);
+                });
+
+                const xhr = new XMLHttpRequest();
+                
+                xhr.upload.onprogress = (e) => {
+                    if (e.lengthComputable) {
+                        const percentage = (e.loaded / e.total) * 100;
+                        progressFill.style.width = `${percentage}%`;
+                        progressText.textContent = `Subiendo... ${Math.round(percentage)}%`;
+                    }
+                };
+
+                xhr.onload = () => {
+                    progressContainer.style.display = 'none';
+                    
+                    if (xhr.status === 200) {
+                        const response = JSON.parse(xhr.responseText);
+                        showNotification(response.message || 'Imágenes subidas exitosamente', 'success');
+                        loadImages(); // Recargar galería
+                        fileInput.value = ''; // Limpiar input
+                    } else {
+                        const error = JSON.parse(xhr.responseText);
+                        showNotification(error.message || 'Error subiendo imágenes', 'error');
+                    }
+                };
+
+                xhr.onerror = () => {
+                    progressContainer.style.display = 'none';
+                    showNotification('Error de conexión', 'error');
+                };
+
+                xhr.open('POST', `${API_BASE}/cabanas/${currentCabana._id}/images/upload`);
+                xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+                xhr.send(formData);
+
+            } catch (error) {
+                progressContainer.style.display = 'none';
+                console.error('Error subiendo imágenes:', error);
+                showNotification('Error subiendo imágenes', 'error');
+            }
+        }
+
+        // Cargar imágenes
+        async function loadImages() {
+            const token = localStorage.getItem('hospAuthToken');
+            if (!token || !currentCabana) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/cabanas/${currentCabana._id}/images`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    images = data.data || [];
+                    displayImages();
+                } else {
+                    throw new Error('Error cargando imágenes');
+                }
+            } catch (error) {
+                console.error('Error cargando imágenes:', error);
+                showNotification('Error cargando imágenes', 'error');
+                showEmptyState();
+            }
+        }
+
+        // ✅ FUNCIÓN CORREGIDA: Mostrar imágenes usando getImageUrl()
+        function displayImages() {
+            loadingElement.style.display = 'none';
+            
+            if (images.length === 0) {
+                showEmptyState();
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            galleryGrid.style.display = 'grid';
+            imageCount.textContent = images.length;
+
+            console.log('🖼️ Mostrando', images.length, 'imágenes...');
+
+            galleryGrid.innerHTML = images.map((image, index) => {
+                const imageUrl = getImageUrl(image);
+                console.log(`Imagen ${index + 1}: ${image} → ${imageUrl}`);
+                
+                return `
+                <div class="image-card" data-image-index="${index}">
+                    ${index === 0 ? '<div class="main-badge">Principal</div>' : ''}
+                    <div class="image-container">
+                        <img src="${imageUrl}" alt="Imagen ${index + 1}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'">
+                        <div class="image-overlay">
+                            <div class="image-actions">
+                                ${index !== 0 ? 
+                                    `<button class="action-btn primary" onclick="setMainImage(${index})" title="Establecer como principal">
+                                        <i class="fas fa-star"></i>
+                                    </button>` : ''
+                                }
+                                <button class="action-btn danger" onclick="deleteImage(${index})" title="Eliminar imagen">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;}).join('');
+        }
+
+        // ✅ FUNCIÓN CORREGIDA: getImageUrl con soporte para paths de Windows
+        function getImageUrl(imagePath) {
+            console.log('🔍 getImageUrl recibió:', imagePath);
+            
+            // Si no hay imagen, usar imagen por defecto
+            if (!imagePath) {
+                return 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+            }
+            
+            // Si ya es una URL completa de Cloudinary u otra (http/https), devolverla tal como está
+            if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+                return imagePath;
+            }
+            
+            // ✅ DETECTAR ruta absoluta de Windows (C:\... D:\... o contiene backslashes)
+            if (/^[A-Za-z]:\\/.test(imagePath) || imagePath.includes('\\')) {
+                const filename = imagePath.replace(/\\/g, '/').split('/').pop();
+                const finalUrl = `${API_BASE.replace('/api/hospedaje', '')}/uploads/cabanas/${filename}`;
+                console.log('⚠️ Path de Windows detectado, URL corregida:', finalUrl);
+                return finalUrl;
+            }
+            
+            // Ruta relativa normal (/uploads/cabanas/...)
+            const finalUrl = `${API_BASE.replace('/api/hospedaje', '')}${imagePath.startsWith('/') ? '' : '/'}${imagePath}`;
+            console.log('✅ URL construida:', finalUrl);
+            return finalUrl;
+        }
+
+        // Mostrar estado vacío
+        function showEmptyState() {
+            loadingElement.style.display = 'none';
+            galleryGrid.style.display = 'none';
+            emptyState.style.display = 'block';
+            imageCount.textContent = '0';
+        }
+
+        // Establecer imagen principal
+        async function setMainImage(imageIndex) {
+            const token = localStorage.getItem('hospAuthToken');
+            if (!token || !currentCabana) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/cabanas/${currentCabana._id}/images/set-main`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ imageIndex })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showNotification(data.message || 'Imagen principal actualizada', 'success');
+                    loadImages(); // Recargar galería
+                } else {
+                    showNotification(data.message || 'Error estableciendo imagen principal', 'error');
+                }
+            } catch (error) {
+                console.error('Error estableciendo imagen principal:', error);
+                showNotification('Error de conexión', 'error');
+            }
+        }
+
+        // Eliminar imagen
+        async function deleteImage(imageIndex) {
+            const confirmed = confirm('¿Estás seguro de que quieres eliminar esta imagen?');
+            if (!confirmed) return;
+
+            const token = localStorage.getItem('hospAuthToken');
+            if (!token || !currentCabana) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/cabanas/${currentCabana._id}/images/${imageIndex}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showNotification(data.message || 'Imagen eliminada exitosamente', 'success');
+                    loadImages(); // Recargar galería
+                } else {
+                    showNotification(data.message || 'Error eliminando imagen', 'error');
+                }
+            } catch (error) {
+                console.error('Error eliminando imagen:', error);
+                showNotification('Error de conexión', 'error');
+            }
+        }
+
+        // Mostrar notificación
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'}"></i>
+                ${message}
+            `;
+
+            document.body.appendChild(notification);
+
+            // Mostrar
+            setTimeout(() => notification.classList.add('show'), 100);
+
+            // Ocultar y eliminar
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => document.body.removeChild(notification), 300);
+            }, 4000);
+        }
+
+        // Función para volver atrás
+        function goBack() {
+            window.history.back();
+        }
+
+        // ✅ FUNCIÓN DE DEBUG: Para diagnosticar problemas de imágenes
+        function debugCabanaImages(cabana) {
+            console.log('🔍 === DEBUG DETALLADO DE IMÁGENES ===');
+            console.log('Cabaña:', cabana.nombre);
+            console.log('Array de imágenes:', cabana.imagenes);
+            console.log('Cantidad de imágenes:', cabana.imagenes?.length || 0);
+            
+            if (cabana.imagenes && cabana.imagenes.length > 0) {
+                cabana.imagenes.forEach((img, index) => {
+                    const finalUrl = getImageUrl(img);
+                    console.log(`--- Imagen ${index + 1} ---`);
+                    console.log('  Original:', img);
+                    console.log('  URL final:', finalUrl);
+                    
+                    // Probar si la imagen es accesible
+                    const testImg = new Image();
+                    testImg.onload = () => {
+                        console.log(`✅ Imagen ${index + 1} carga correctamente`);
+                    };
+                    testImg.onerror = (error) => {
+                        console.error(`❌ Imagen ${index + 1} NO se puede cargar:`, error);
+                        console.error(`   URL que falló: ${finalUrl}`);
+                    };
+                    testImg.src = finalUrl;
+                });
+            } else {
+                console.log('⚠️ No hay imágenes para esta cabaña');
+            }
+            
+            console.log('=====================================');
+        }
+
+        // Manejo de errores de imágenes
+        function addImageErrorHandling() {
+            document.addEventListener('error', function(e) {
+                if (e.target.tagName === 'IMG') {
+                    e.target.src = 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+                }
+            }, true);
+        }
+
+        // Manejo de errores de imágenes
+        function addImageErrorHandling() {
+            document.addEventListener('error', function(e) {
+                if (e.target.tagName === 'IMG') {
+                    e.target.src = 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+                }
+            }, true);
+        }
+
+        // ✅ INICIALIZACIÓN CORREGIDA: Igual que en hoteles
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Iniciando manage-images-cabana...');
+            
+            // ✅ VERIFICACIÓN RÁPIDA primero (como en otras páginas)
+            if (!quickAuthCheck()) {
+                return; // Si no hay token, ya redirigió
+            }
+            
+            // ✅ AGREGAR manejo de errores de imágenes
+            addImageErrorHandling();
+            
+            // ✅ CONTINUAR con inicialización
+            setupDragAndDrop();
+            
+            // ✅ VERIFICACIÓN COMPLETA después (sin redirigir automáticamente)
+            checkAuth();
+            
+            console.log('✅ Gestión de imágenes de cabaña inicializada');
+        });
+
+        // Verificación periódica del token
+        setInterval(() => {
+            const token = localStorage.getItem('hospAuthToken');
+            if (!token) {
+                console.log('⚠️ Token eliminado durante la sesión, redirigiendo...');
+                window.location.href = '../login.html';
+            }
+        }, 60000);
+    </script>
+</body>
+</html>

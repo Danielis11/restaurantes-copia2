@@ -54,3 +54,7 @@ public/debug_*.png
 
 # Respaldo de imágenes originales (sin optimizar)
 /imagenes-originales/
+
+# Fotos del módulo de hospedaje (435 MB): se quedan fuera de git; subir a Cloudinary para producción
+public/hospedaje/img_jalpan/
+!public/hospedaje/uploads/

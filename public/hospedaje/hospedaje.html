@@ -1,0 +1,2148 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospedaje - Dirección de Turismo</title>
+    <link rel="stylesheet" href="css/auth-navbar.css">
+    
+    <!-- AOS CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        /* Header y Navegación */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 0.75rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--gray-800);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-image {
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+            border-radius: var(--radius-sm);
+            background: var(--white);
+            padding: 3px;
+            box-shadow: var(--shadow-sm);
+            border: none;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #333;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-toggle:hover {
+            background: #f4f4f5;
+            color: #2563eb;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #52525b;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: #f4f4f5;
+            color: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            min-width: 200px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            border-radius: 15px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1001;
+            padding: 0.75rem 0;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 0.7rem 1.5rem;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .dropdown-item:hover,
+        .dropdown-item.active {
+            background: #fafafa;
+            color: #2563eb;
+            border-left: 3px solid #2563eb;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        /* Boton de cerrar movil */
+        .mobile-close-btn {
+            display: none;
+            justify-content: flex-end;
+            padding: 1rem;
+            border-bottom: 1px solid #e4e4e7;
+        }
+
+        .close-menu-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #3f3f46;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .close-menu-btn:hover {
+            background: #f4f4f5;
+            color: #2563eb;
+        }
+
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-login {
+            background: #2563eb;
+            color: white;
+            border: 1px solid #2563eb;
+            border-radius: 8px;
+        }
+
+        .btn-login:hover {
+            background: #1d4ed8;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.2);
+        }
+
+        .mobile-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-top: 80px;
+            background: url('/hospedaje/img_jalpan/rio_jalpan.jpg') center/cover no-repeat fixed;
+            padding: 6rem 2rem 8rem;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 40vh;
+            border-radius: 0 0 30px 30px;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.3) 100%);
+            z-index: 1;
+        }
+
+        .page-header-content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .page-header h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 1rem;
+            text-shadow: 2px 4px 8px rgba(0, 0, 0, 0.4);
+            font-weight: 700;
+            /* AOS Override for initial load effect */
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+
+        .page-header p {
+            font-size: clamp(1.1rem, 2vw, 1.4rem);
+            opacity: 0.95;
+            max-width: 700px;
+            margin: 0 auto;
+            text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.4);
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        /* Search and Filters */
+        .search-section {
+            background: white;
+            padding: 2rem;
+            margin: -2rem 2rem 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 100;
+        }
+
+        .search-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Category Filters */
+        .category-filters {
+            display: flex;
+            justify-content: center;
+            gap: 1.25rem;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+            padding: 0.5rem;
+        }
+
+        .filter-btn {
+            padding: 0.8rem 1.8rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: white;
+            color: #475569;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .filter-btn i {
+            font-size: 1.1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-color: #cbd5e1;
+            color: #1e293b;
+        }
+
+        .filter-btn:hover i {
+            transform: scale(1.15);
+        }
+
+        /* Todos - Emerald */
+        .filter-btn[data-filter="all"].active {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.5);
+        }
+
+        /* Hoteles - Blue */
+        .filter-btn[data-filter="hotel"].active {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.5);
+        }
+
+        /* Cabañas - Amber/Terracotta */
+        .filter-btn[data-filter="cabana"].active {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 10px 20px -5px rgba(245, 158, 11, 0.5);
+        }
+
+        /* Airbnbs - Rose/Red */
+        .filter-btn[data-filter="airbnb"].active {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 10px 20px -5px rgba(239, 68, 68, 0.5);
+        }
+
+        .form-group label {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-control {
+            padding: 0.8rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #8BC34A;
+            box-shadow: 0 0 10px rgba(139, 195, 74, 0.2);
+        }
+
+        .btn-search {
+            background: linear-gradient(135deg, #8BC34A, #689F38);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-search:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 195, 74, 0.4);
+        }
+
+        /* Cabins Grid */
+        .cabanas-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .results-info {
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        .sort-dropdown {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .cabanas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .cabana-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .cabana-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .cabana-image {
+            height: 250px;
+            background: linear-gradient(135deg, #8BC34A 0%, #689F38 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cabana-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .cabana-card:hover .cabana-image img {
+            transform: scale(1.1);
+        }
+
+        .price-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(139, 195, 74, 0.9);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-weight: bold;
+            backdrop-filter: blur(10px);
+        }
+
+        .capacity-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(76, 175, 80, 0.9);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .type-badge {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #8BC34A;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            backdrop-filter: blur(10px);
+        }
+
+        .eco-badge {
+            position: absolute;
+            top: 60px;
+            left: 15px;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            padding: 6px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 3px 10px rgba(39, 174, 96, 0.4);
+            z-index: 5;
+            animation: pulse-eco 2s infinite;
+            backdrop-filter: blur(10px);
+        }
+
+        .eco-badge i {
+            font-size: 12px;
+        }
+
+        @keyframes pulse-eco {
+
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 3px 10px rgba(39, 174, 96, 0.4);
+            }
+
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 5px 15px rgba(39, 174, 96, 0.5);
+            }
+        }
+
+        .cabana-content {
+            padding: 1.5rem;
+        }
+
+        .cabana-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .cabana-location {
+            color: #666;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .cabana-description {
+            color: #666;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .cabana-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-tag {
+            background: #e8f5e8;
+            color: #689F38;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .more-features {
+            background: #f0f0f0;
+            color: #666;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .cabana-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .contact-info {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .contact-btn {
+            color: #8BC34A;
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .contact-btn:hover {
+            color: #689F38;
+            transform: scale(1.1);
+        }
+
+        .view-details-btn {
+            background: linear-gradient(135deg, #8BC34A, #689F38);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .view-details-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 195, 74, 0.4);
+        }
+
+        /* Loading and Empty States */
+        .loading {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #666;
+        }
+
+        .loading i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: spin 1s linear infinite;
+            color: #8BC34A;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Skeleton Loading State */
+        .skeleton-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 0 0.5rem;
+        }
+
+        .skeleton-header h2 {
+            font-size: 1.8rem;
+            color: #111827;
+            font-weight: 700;
+        }
+
+        .skeleton-header span {
+            color: #6b7280;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .skeleton-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid #f3f4f6;
+        }
+
+        .skeleton-img {
+            height: 250px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite linear;
+        }
+
+        .skeleton-content {
+            padding: 1.5rem;
+        }
+
+        .skeleton-line {
+            height: 12px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite linear;
+            border-radius: 6px;
+            margin-bottom: 0.8rem;
+        }
+
+        .skeleton-line.title {
+            height: 20px;
+            width: 50%;
+            margin-bottom: 1.5rem;
+        }
+
+        .skeleton-line.desc {
+            width: 100%;
+        }
+
+        .skeleton-line.desc.short {
+            width: 80%;
+            margin-bottom: 1.5rem;
+        }
+
+        .skeleton-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .skeleton-line.footer-line {
+            width: 40%;
+            height: 20px;
+            margin-bottom: 0;
+        }
+
+        .skeleton-btn {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite linear;
+            border-radius: 50%;
+        }
+
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #ddd;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        /* Modal Styles */
+        .cabana-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            padding: 20px;
+        }
+
+        .cabana-modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .cabana-modal {
+            background: white;
+            border-radius: 20px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .cabana-modal-overlay.show .cabana-modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #8BC34A, #689F38);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><circle cx="30" cy="30" r="25" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/></svg>') repeat;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .modal-cabana-info {
+            position: relative;
+            z-index: 1;
+        }
+
+        .modal-cabana-name {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 0 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-cabana-name .eco-icon {
+            color: #f1c40f;
+            font-size: 22px;
+            filter: drop-shadow(0 0 8px rgba(241, 196, 15, 0.5));
+        }
+
+        .modal-cabana-location {
+            font-size: 16px;
+            opacity: 0.9;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-close-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .modal-close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .modal-content {
+            padding: 30px;
+        }
+
+        .modal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .modal-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .modal-section:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            font-size: 18px;
+            font-weight: 700;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+
+        .section-title i {
+            color: #8BC34A;
+            font-size: 20px;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-item.full-width {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #2c3e50;
+            min-width: 120px;
+        }
+
+        .info-value {
+            color: #5d6d7e;
+            text-align: right;
+            flex: 1;
+        }
+
+        .info-item.full-width .info-value {
+            text-align: left;
+        }
+
+        /* Modal Styling Extensions */
+        .contact-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .contact-item:last-child {
+            border-bottom: none;
+        }
+
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #8BC34A, #689F38);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .contact-details {
+            flex: 1;
+        }
+
+        .contact-label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 3px;
+            font-size: 14px;
+        }
+
+        .contact-value {
+            color: #5d6d7e;
+            font-size: 15px;
+        }
+
+        .contact-value a {
+            color: #8BC34A;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .contact-value a:hover {
+            color: #689F38;
+            text-decoration: underline;
+        }
+
+        /* Availability Status */
+        .availability-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            text-align: center;
+            justify-content: center;
+        }
+
+        .availability-status.available {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            color: #155724;
+            border: 2px solid #b8dacc;
+        }
+
+        .availability-status.unavailable {
+            background: linear-gradient(135deg, #f8d7da, #f1aeb5);
+            color: #721c24;
+            border: 2px solid #f1aeb5;
+        }
+
+        .availability-status i {
+            font-size: 18px;
+        }
+
+        /* Services Grid */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .service-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 3px solid #8BC34A;
+            transition: all 0.3s ease;
+        }
+
+        .service-item:hover {
+            background: #e8f5e8;
+            transform: translateX(3px);
+        }
+
+        .service-item i {
+            color: #8BC34A;
+            font-size: 14px;
+            width: 16px;
+            text-align: center;
+        }
+
+        .service-item span {
+            color: #2c3e50;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        /* Payment Methods */
+        .payment-methods-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .payment-method {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 20px 15px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .payment-method:hover {
+            border-color: #8BC34A;
+            background: #e8f5e8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 195, 74, 0.2);
+        }
+
+        .payment-method.no-methods {
+            grid-column: 1 / -1;
+            background: #fff3cd;
+            border-color: #ffeaa7;
+            color: #856404;
+        }
+
+        .payment-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #8BC34A, #689F38);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        .payment-method.no-methods .payment-icon {
+            background: linear-gradient(135deg, #ffc107, #ff8f00);
+        }
+
+        .payment-label {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .payment-method.no-methods .payment-label {
+            color: #856404;
+        }
+
+        /* Eco Practices */
+        .eco-section {
+            background: linear-gradient(135deg, #e8f5e8, #f1f8f1) !important;
+            border: 2px solid #c8e6c9 !important;
+        }
+
+        .eco-practices-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+        }
+
+        .eco-practice-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            border-left: 4px solid #4caf50;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .eco-practice-item:hover {
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateX(3px);
+            box-shadow: 0 3px 10px rgba(76, 175, 80, 0.2);
+        }
+
+        .eco-practice-item i {
+            color: #4caf50;
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .eco-practice-item span {
+            color: #2c3e50;
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        /* Galería de imágenes */
+        .cabana-gallery-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+            margin-bottom: 25px;
+        }
+
+        .gallery-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            font-size: 18px;
+            font-weight: 700;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+
+        .gallery-title i {
+            color: #8BC34A;
+            font-size: 20px;
+        }
+
+        .image-slider-container {
+            position: relative;
+            max-width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .main-image-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            overflow: hidden;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .main-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .main-image:hover {
+            transform: scale(1.02);
+        }
+
+        .slider-nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            z-index: 10;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slider-nav-btn:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .slider-nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: translateY(-50%) scale(0.9);
+        }
+
+        .slider-prev {
+            left: 15px;
+        }
+
+        .slider-next {
+            right: 15px;
+        }
+
+        .image-counter {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .thumbnails-container {
+            display: flex;
+            gap: 8px;
+            padding: 15px;
+            background: #f8f9fa;
+            overflow-x: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e0 #f7fafc;
+        }
+
+        .thumbnail {
+            flex-shrink: 0;
+            width: 60px;
+            height: 45px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            overflow: hidden;
+        }
+
+        .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .thumbnail:hover {
+            transform: scale(1.05);
+            border-color: #8BC34A;
+        }
+
+        .thumbnail.active {
+            border-color: #8BC34A;
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(139, 195, 74, 0.4);
+        }
+
+        /* Image Modal */
+        .image-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 20000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .image-modal-overlay.show {
+            display: flex;
+        }
+
+        .enlarged-image {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .close-modal-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .close-modal-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        /* Responsive para móviles */
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .mobile-close-btn {
+                display: flex;
+            }
+
+            .nav-menu {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 90vw;
+                max-width: 320px;
+                height: 100vh;
+                background: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                align-items: flex-start;
+                justify-content: flex-start;
+                gap: 0;
+                padding: 0;
+                transition: all 0.4s ease;
+                overflow-y: auto;
+                z-index: 1000;
+                box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
+                border-left: 1px solid #e4e4e7;
+            }
+
+            .nav-menu.active {
+                right: 0;
+            }
+
+            .nav-item {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+
+            .nav-link {
+                width: 100%;
+                padding: 1rem;
+                border-radius: 10px;
+                justify-content: flex-start;
+            }
+
+            .dropdown-menu {
+                position: static;
+                opacity: 1;
+                visibility: visible;
+                transform: none;
+                box-shadow: none;
+                background: rgba(76, 175, 80, 0.1);
+                margin-top: 0.5rem;
+                display: none;
+            }
+
+            .dropdown.active .dropdown-menu {
+                display: block;
+            }
+
+            .dropdown-item {
+                padding: 0.75rem 1rem;
+                margin: 0.25rem 0;
+                border-radius: 8px;
+            }
+
+            .auth-buttons {
+                width: 100%;
+                padding: 1.5rem 2rem;
+                margin-top: auto;
+                border-top: 2px solid #e4e4e7;
+                background: #fafafa;
+            }
+
+            .btn-login {
+                width: 100%;
+                text-align: center;
+                justify-content: center;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .search-form {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .cabanas-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .eco-badge {
+                top: 50px;
+                left: 10px;
+                padding: 5px 8px;
+                font-size: 10px;
+            }
+
+            .cabana-modal {
+                margin: 10px;
+                max-height: 95vh;
+            }
+
+            .modal-header {
+                padding: 20px;
+            }
+
+            .modal-cabana-name {
+                font-size: 20px;
+            }
+
+            .modal-content {
+                padding: 20px;
+            }
+
+            .modal-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .main-image-container {
+                height: 250px;
+            }
+
+            .slider-nav-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+
+            .slider-prev {
+                left: 10px;
+            }
+
+            .slider-next {
+                right: 10px;
+            }
+
+            .thumbnail {
+                width: 50px;
+                height: 38px;
+            }
+
+            .thumbnails-container {
+                padding: 12px;
+                gap: 6px;
+            }
+
+            /* Mobile styles for new modal sections */
+            .contact-grid {
+                gap: 15px;
+            }
+
+            .contact-item {
+                padding: 10px 0;
+            }
+
+            .contact-icon {
+                width: 35px;
+                height: 35px;
+                font-size: 14px;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .service-item {
+                padding: 8px 10px;
+            }
+
+            .payment-methods-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 12px;
+            }
+
+            .payment-method {
+                padding: 15px 10px;
+            }
+
+            .payment-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+
+            .payment-label {
+                font-size: 13px;
+            }
+
+            .eco-practices-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .eco-practice-item {
+                padding: 10px 12px;
+            }
+
+            .availability-status {
+                padding: 12px 15px;
+                font-size: 14px;
+            }
+
+            .availability-status i {
+                font-size: 16px;
+            }
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: #000000;
+            color: #ecf0f1;
+            padding: 3rem 0 1rem 0;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.5fr;
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-brand {
+            max-width: 280px;
+        }
+
+        .footer-logo-section {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #ecf0f1;
+            margin-bottom: 1rem;
+        }
+
+        .footer-logo-section i {
+            font-size: 1.6rem;
+            color: #2563eb;
+        }
+
+        .footer-description {
+            color: #bdc3c7;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .footer-social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: #2563eb;
+            color: white;
+            border-radius: 50%;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .footer-social-link:hover {
+            background: #3b82f6;
+            transform: translateY(-2px);
+        }
+
+        .footer-section h3 {
+            color: #ecf0f1;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            display: block;
+            padding: 0.25rem 0;
+        }
+
+        .footer-links a:hover {
+            color: #3b82f6;
+            padding-left: 0.5rem;
+        }
+
+        .footer-contact-info {
+            font-size: 0.9rem;
+        }
+
+        .footer-contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            color: #bdc3c7;
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-contact-item i {
+            color: #3b82f6;
+            width: 16px;
+            margin-top: 0.1rem;
+            flex-shrink: 0;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #34495e;
+            padding-top: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-copyright {
+            color: #95a5a6;
+            font-size: 0.85rem;
+        }
+
+        .footer-bottom-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-bottom-links a {
+            color: #95a5a6;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .footer-bottom-links a:hover {
+            color: #3b82f6;
+        }
+
+        @media (max-width: 768px) {
+            .footer-content-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="/hospedaje/img_jalpan/logo_pueblos_magicos.jpg" alt="Logo Turismo" class="logo-image">
+                Dirección de Turismo
+            </a>
+
+            <!-- Botón de menú móvil -->
+            <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <!-- Menú de navegación -->
+            <ul class="nav-menu" id="navMenu">
+                <!-- Boton cerrar (solo movil) -->
+                <li class="nav-item mobile-close-btn">
+                    <button class="close-menu-btn" id="closeMenuBtn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">
+
+                        Inicio
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="/mapa.html" class="nav-link">
+
+                        Mapa
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="hospedaje.html" class="nav-link">
+                        Hospedaje
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="/" class="nav-link">
+
+                        Alimentos
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="/experiencias.html" class="nav-link">
+
+                        Experiencias
+                    </a>
+                </li>
+
+                <!-- Selector de Idiomas -->
+                <li class="nav-item">
+                    <select id="lang-select" class="form-control"
+                        style="padding: 0.5rem; border-radius: 5px; border: 1px solid #ccc; font-weight: bold; cursor: pointer; background: white;">
+                        <option value="ES">🇪🇸 ES</option>
+                        <option value="EN">🇺🇸 EN</option>
+                        <option value="FR">🇫🇷 FR</option>
+                    </select>
+                </li>
+
+                <li class="nav-item auth-buttons">
+                    <a href="login.html" class="btn btn-login">Iniciar Sesión</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Overlay para móvil -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="page-header-content">
+            <h1><i class="fas fa-bed"></i> Hospedaje</h1>
+            <p>Encuentra el lugar perfecto para tu estancia. Desde hoteles cómodos hasta cabañas en la naturaleza y
+                opciones de Airbnb.</p>
+            <div class="hero-search-container" style="width: 100%; max-width: 600px; margin: 2rem auto 0 auto;">
+                <form id="searchForm" class="search-bar"
+                    style="display: flex; align-items: center; background: white; border-radius: 50px; padding: 0.5rem 0.5rem 0.5rem 1.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+                    <i class="fas fa-search" style="color: var(--gray-400); font-size: 1.2rem;"></i>
+                    <input type="text" id="searchQuery" placeholder="Buscar alojamientos..."
+                        style="flex: 1; border: none; outline: none; padding: 0 1rem; font-size: 1rem; color: var(--gray-700); background: transparent;">
+                    <button type="submit"
+                        style="background: linear-gradient(135deg, #8b5cf6, #6366f1); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s; box-shadow: 0 4px 10px rgba(139, 92, 246, 0.3);">
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
+            </div>
+            <style>
+                .search-bar button:hover {
+                    transform: scale(1.05);
+                }
+            </style>
+        </div>
+    </section>
+
+
+    <!-- Categories Filter -->
+    <section class="filters-section" style="max-width: 1200px; margin: 0 auto; padding: 0 2rem 1rem;">
+        <div class="category-filters" id="categoryFilters">
+            <button class="filter-btn active" data-filter="all">
+                <i class="fas fa-th-large"></i> Todos
+            </button>
+            <button class="filter-btn hotel" data-filter="hotel">
+                <i class="fas fa-hotel"></i> Hoteles
+            </button>
+            <button class="filter-btn cabana" data-filter="cabana">
+                <i class="fas fa-tree"></i> Cabañas
+            </button>
+            <button class="filter-btn airbnb" data-filter="airbnb">
+                <i class="fab fa-airbnb"></i> Airbnbs
+            </button>
+        </div>
+    </section>
+
+    <!-- Accommodations Section -->
+    <section class="cabanas-section">
+        <div class="section-header">
+            <div class="results-info" id="resultsInfo">
+                Cargando alojamientos...
+            </div>
+            <select class="sort-dropdown" id="sortBy">
+                <option value="newest">Más recientes</option>
+                <option value="price-low">Precio: menor a mayor</option>
+                <option value="price-high">Precio: mayor a menor</option>
+                <option value="capacity">Capacidad</option>
+                <option value="name">Nombre A-Z</option>
+            </select>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingState" style="width: 100%; padding: 2rem 0;">
+            <div class="skeleton-header">
+                <h2>Establecimientos Disponibles</h2>
+                <span>Cargando...</span>
+            </div>
+            <div class="cabanas-grid">
+                <!-- Skeleton Card 1 -->
+                <div class="skeleton-card">
+                    <div class="skeleton-img"></div>
+                    <div class="skeleton-content">
+                        <div class="skeleton-line title"></div>
+                        <div class="skeleton-line desc"></div>
+                        <div class="skeleton-line desc short"></div>
+                        <div class="skeleton-footer">
+                            <div class="skeleton-line footer-line"></div>
+                            <div class="skeleton-btn"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Skeleton Card 2 -->
+                <div class="skeleton-card">
+                    <div class="skeleton-img"></div>
+                    <div class="skeleton-content">
+                        <div class="skeleton-line title"></div>
+                        <div class="skeleton-line desc"></div>
+                        <div class="skeleton-line desc short"></div>
+                        <div class="skeleton-footer">
+                            <div class="skeleton-line footer-line"></div>
+                            <div class="skeleton-btn"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Skeleton Card 3 -->
+                <div class="skeleton-card">
+                    <div class="skeleton-img"></div>
+                    <div class="skeleton-content">
+                        <div class="skeleton-line title"></div>
+                        <div class="skeleton-line desc"></div>
+                        <div class="skeleton-line desc short"></div>
+                        <div class="skeleton-footer">
+                            <div class="skeleton-line footer-line"></div>
+                            <div class="skeleton-btn"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Skeleton Card 4 -->
+                <div class="skeleton-card">
+                    <div class="skeleton-img"></div>
+                    <div class="skeleton-content">
+                        <div class="skeleton-line title"></div>
+                        <div class="skeleton-line desc"></div>
+                        <div class="skeleton-line desc short"></div>
+                        <div class="skeleton-footer">
+                            <div class="skeleton-line footer-line"></div>
+                            <div class="skeleton-btn"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Skeleton Card 5 -->
+                <div class="skeleton-card">
+                    <div class="skeleton-img"></div>
+                    <div class="skeleton-content">
+                        <div class="skeleton-line title"></div>
+                        <div class="skeleton-line desc"></div>
+                        <div class="skeleton-line desc short"></div>
+                        <div class="skeleton-footer">
+                            <div class="skeleton-line footer-line"></div>
+                            <div class="skeleton-btn"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Skeleton Card 6 -->
+                <div class="skeleton-card">
+                    <div class="skeleton-img"></div>
+                    <div class="skeleton-content">
+                        <div class="skeleton-line title"></div>
+                        <div class="skeleton-line desc"></div>
+                        <div class="skeleton-line desc short"></div>
+                        <div class="skeleton-footer">
+                            <div class="skeleton-line footer-line"></div>
+                            <div class="skeleton-btn"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cabins Grid -->
+        <div class="cabanas-grid" id="cabanasGrid" style="display: none;">
+            <!-- Las cabañas se cargarán aquí dinámicamente -->
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <i class="fas fa-search"></i>
+            <h3>No se encontraron alojamientos</h3>
+            <p>Intenta ajustar tus filtros de búsqueda</p>
+        </div>
+    </section>
+
+    <!-- Modal para imagen ampliada -->
+    <div class="image-modal-overlay" id="imageModalOverlay" onclick="closeImageModal()">
+        <button class="close-modal-btn" onclick="closeImageModal()">
+            <i class="fas fa-times"></i>
+        </button>
+        <img id="enlargedImage" src="" alt="Imagen ampliada" class="enlarged-image" onclick="event.stopPropagation()">
+    </div>
+
+    <script src="js/hospedaje.js"></script>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content-grid">
+                <!-- Sección principal -->
+                <div class="footer-brand">
+                    <div class="footer-logo-section">
+                        <img src="/hospedaje/img_jalpan/logo_fondo_negro.png" alt="Logo Turismo" class="logo-image"
+                            style="width: 40px; height: 40px; background: black;">
+                        Dirección de Turismo
+                    </div>
+                    <p class="footer-description">
+                        Conectamos a las personas con los mejores destinos, alojamientos y experiencias gastronómicas de
+                        Jalpan de Serra, Pueblo Mágico.
+                    </p>
+                    <div class="footer-social">
+                        <a href="https://www.facebook.com/profile.php?id=61573849871475" class="footer-social-link"
+                            title="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://www.instagram.com/jalpan_pueblomagico?igsh=MWpmdDVnMndpbnB1dQ=="
+                            class="footer-social-link" title="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Navegación -->
+                <div class="footer-section">
+                    <h3>Navegación</h3>
+                    <ul class="footer-links">
+                        <li><a href="/">Alimentos</a></li>
+                        <li><a href="hospedaje.html">Hospedaje</a></li>
+                        <li><a href="/experiencias.html">Experiencias</a></li>
+                        <li><a href="/mapa.html">Mapa</a></li>
+                    </ul>
+                </div>
+
+                <!-- Soporte: Política -->
+                <div class="footer-section">
+                    <h3>Soporte: Política</h3>
+                    <ul class="footer-links">
+                        <li><a href="#gastronomia">Gastronomía Local</a></li>
+                        <li><a href="#atractivos">Atractivos Naturales</a></li>
+                        <li><a href="#misiones">Misiones Franciscanas</a></li>
+                        <li><a href="#cultura">Historia y Cultura</a></li>
+                        <li><a href="#eventos">Eventos Especiales</a></li>
+                        <li><a href="#tradiciones">Tradiciones</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contacto -->
+                <div class="footer-section">
+                    <h3>Contacto</h3>
+                    <div class="footer-contact-info">
+                        <div class="footer-contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>direcciondeturismojalpan@gmail.com</span>
+                        </div>
+                        <div class="footer-contact-item">
+                            <i class="fas fa-phone"></i>
+                            <span>+52 441-296-0285</span>
+                        </div>
+                        <div class="footer-contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Plaza Principal, Jalpan de Serra, Querétaro</span>
+                        </div>
+                        <div class="footer-contact-item">
+                            <i class="fas fa-clock"></i>
+                            <span>Lun - Vie: 8:00 AM - 3:30 PM</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Línea inferior -->
+            <div class="footer-bottom">
+                <p class="footer-copyright">
+                    © 2024 Dirección de Turismo - Jalpan de Serra. Todos los derechos reservados.
+                </p>
+                <div class="footer-bottom-links">
+                    <a href="https://www.facebook.com/jenni.munoz.5011">Desarrollado por</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="js/translation.js"></script>
+    <script src="js/auth-navbar.js"></script>
+    
+    <!-- AOS Script -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            AOS.init({
+                once: true, // Animates only once
+                offset: 50, // Trigger offset
+                duration: 800, // Animation duration
+                easing: 'ease-out-cubic' // Easing curve
+            });
+        });
+    </script>
+</body>
+
+</html>

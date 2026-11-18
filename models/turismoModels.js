@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const hospedajesDb = require('../config/hospedajesDb');
 
-// ===== Modelo Review en turismo-db =====
+// ===== Reseñas de hospedajes (colección resenashospedaje, antes 'reviews' en turismo-db) =====
 // Las reseñas usan el userId del cluster LOCAL (restaurant_db),
 // y referencian hospedajes por hospedajeId + tipoHospedaje
 const ReviewTurismoSchema = new mongoose.Schema({
@@ -13,7 +13,7 @@ const ReviewTurismoSchema = new mongoose.Schema({
   rating: Number,
   comentario: String,
   fecha: Date
-}, { strict: false, collection: 'reviews' });
+}, { strict: false, collection: 'resenashospedaje' });
 
 // ===== Modelo Hotel en turismo-db =====
 const HotelTurismoSchema = new mongoose.Schema({

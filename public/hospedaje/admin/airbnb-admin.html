@@ -1,0 +1,1915 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrar Propiedades - Jalpan Turismo</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Variables CSS */
+        :root {
+            --primary-color: #3498db;
+            --primary-dark: #2980b9;
+            --secondary-color: #2c3e50;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --card-bg: #ffffff;
+            --border-color: #e0e0e0;
+            --text-color: #333333;
+            --text-muted: #666666;
+            --bg-color: #f0f2f5;
+        }
+
+        /* Reset y base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background: var(--bg-color);
+            min-height: 100vh;
+        }
+
+        /* Admin Container */
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            background: rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+        }
+
+        .sidebar-close {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+        }
+
+        /* User Info */
+        .user-info {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--success-color), #2ecc71);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            border: 3px solid rgba(255,255,255,0.2);
+        }
+
+        .user-name {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+
+        .user-role {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Sidebar Menu */
+        .sidebar-menu {
+            padding: 1rem 0;
+            list-style: none;
+        }
+
+        .menu-section {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 1rem 1.5rem 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .menu-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            position: relative;
+        }
+
+        .menu-link:hover,
+        .menu-link.active {
+            background: rgba(255,255,255,0.1);
+            border-left-color: var(--success-color);
+        }
+
+        .menu-link i {
+            margin-right: 0.75rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .menu-badge {
+            background: var(--success-color);
+            color: white;
+            font-size: 0.8rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            margin-left: auto;
+        }
+
+        /* Submenu para gestión de imágenes */
+        .submenu-item {
+            display: none;
+        }
+
+        .submenu-item.show {
+            display: block;
+        }
+
+        .submenu-link {
+            padding-left: 3rem;
+            background: rgba(255,255,255,0.05);
+            font-size: 0.9rem;
+        }
+
+        /* Sidebar Footer */
+        .sidebar-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem;
+            background: rgba(0,0,0,0.1);
+        }
+
+        .logout-btn {
+            width: 100%;
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(231, 76, 60, 0.3);
+        }
+
+        /* Sidebar Overlay para móviles */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            min-height: 100vh;
+            background: var(--bg-color);
+        }
+
+        /* Top Header */
+        .top-header {
+            background: white;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .page-title i {
+            color: var(--primary-color);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border-left: 4px solid var(--stat-color, var(--primary-color));
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--stat-color, var(--primary-color)), var(--primary-dark));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        /* Loading State */
+        .loading-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 2rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            text-align: center;
+            background: white;
+            margin: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            max-width: 400px;
+        }
+
+        /* Admin Card */
+        .admin-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin: 2rem;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1.5rem 2rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .card-content {
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .property-image {
+            position: relative;
+        }
+
+        .property-image img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .image-count-badge {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .property-details {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-item i {
+            color: var(--primary-color);
+            width: 20px;
+            text-align: center;
+        }
+
+        .text-success {
+            color: var(--success-color) !important;
+        }
+
+        .text-danger {
+            color: var(--danger-color) !important;
+        }
+
+        /* Botones */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn i {
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color), #2ecc71);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .btn-images {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+        }
+
+        .btn-images:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(155, 89, 182, 0.4);
+        }
+
+        /* ESTILOS DEL CUESTIONARIO SEMANAL */
+        .weekly-survey-section {
+            margin: 2rem;
+        }
+
+        .survey-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .survey-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .survey-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .survey-title i {
+            font-size: 1.5rem;
+        }
+
+        .survey-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .survey-property-name,
+        .survey-week {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .survey-form {
+            padding: 2rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group-full {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .question-number {
+            background: #3498db;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            margin-right: 0.5rem;
+            font-weight: 700;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #fafbfc;
+            font-family: inherit;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3498db;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .form-control.error {
+            border-color: #e74c3c;
+            background-color: #fdf2f2;
+        }
+
+        .form-control.success {
+            border-color: #27ae60;
+            background-color: #f0f9f4;
+        }
+
+        .form-hint {
+            display: block;
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .survey-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .survey-loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .survey-loading .btn {
+            position: relative;
+        }
+
+        .survey-loading .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Contador de caracteres */
+        .char-counter {
+            font-size: 0.8rem;
+            color: #6b7280;
+            text-align: right;
+            margin-top: 0.25rem;
+        }
+
+        .char-counter.warning {
+            color: var(--warning-color);
+        }
+
+        .char-counter.error {
+            color: var(--danger-color);
+        }
+
+        /* Alert Container */
+        .alert-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 400px;
+        }
+
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            animation: slideInRight 0.3s ease-out;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, var(--success-color), #2ecc71);
+        }
+
+        .alert-error {
+            background: linear-gradient(135deg, var(--danger-color), #c0392b);
+        }
+
+        .alert-warning {
+            background: linear-gradient(135deg, var(--warning-color), #e67e22);
+        }
+
+        .alert-info {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .card-content {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .form-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .sidebar-overlay.active {
+                display: block;
+            }
+
+            .sidebar-close {
+                display: block;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .top-header {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                padding: 1rem;
+                grid-template-columns: 1fr;
+            }
+
+            .admin-card {
+                margin: 1rem;
+            }
+
+            .weekly-survey-section {
+                margin: 1rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .survey-actions {
+                flex-direction: column;
+            }
+
+            .survey-info {
+                grid-template-columns: 1fr;
+            }
+
+            .survey-header {
+                padding: 1.5rem;
+            }
+
+            .survey-title {
+                font-size: 1.5rem;
+            }
+
+            .alert-container {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="../index.html" class="logo">
+                    <i class="fas fa-compass"></i>
+                    <span>Dirección de Turismo</span>
+                </a>
+                <button class="sidebar-close" id="sidebarClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div>
+                    <div class="user-name" id="userName">Administrador</div>
+                    <div class="user-role">
+                        <i class="fas fa-shield-alt"></i>
+                        <span id="userRole">Administrador</span>
+                    </div>
+                </div>
+            </div>
+
+            <ul class="sidebar-menu">
+                <!-- PRINCIPAL -->
+                <li class="menu-section">Principal</li>
+                <li class="menu-item">
+                    <a href="dashboard.html" class="menu-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+
+                <!-- GESTIÓN DE SERVICIOS -->
+                <li class="menu-section">Gestión de Servicios</li>
+                
+                <!-- Mis Airbnb - Enlace principal -->
+                <li class="menu-item">
+                    <a href="airbnb-admin.html" class="menu-link active">
+                        <i class="fas fa-house-user"></i>
+                        <span>Mis Airbnb</span>
+                        <span class="menu-badge" id="airbnbCount">0</span>
+                    </a>
+                </li>
+                
+                <!-- Gestión de Imágenes -->
+                <li class="menu-item submenu-item" id="menu-edicion-imagenes">
+                    <a href="manage-images-airbnb.html" class="menu-link submenu-link" id="image-management-link">
+                        <i class="fas fa-images"></i>
+                        <span>Gestión de Imágenes</span>
+                    </a>
+                </li>
+
+                <!-- CONFIGURACIÓN -->
+                <li class="menu-section">Configuración</li>
+                <li class="menu-item">
+                    <a href="perfil.html" class="menu-link">
+                        <i class="fas fa-user-cog"></i>
+                        <span>Mi Perfil</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Sidebar Footer -->
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Cerrar Sesión</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Overlay for mobile -->
+        <div class="sidebar-overlay" id="overlay"></div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="page-title">
+                        <i class="fas fa-house-user"></i>
+                        <span>Propiedades Airbnb</span>
+                    </div>
+                </div>
+            
+            </header>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card" style="--stat-color: #3498db;">
+                    <div class="stat-icon">
+                        <i class="fas fa-house-user"></i>
+                    </div>
+                    <div class="stat-number" id="totalPropiedades">0</div>
+                    <div class="stat-label">Propiedades Activas</div>
+                </div>
+                
+                <div class="stat-card" style="--stat-color: #27ae60;">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-number" id="totalHuespedes">0</div>
+                    <div class="stat-label">Capacidad Total</div>
+                </div>
+
+                <div class="stat-card" style="--stat-color: #9b59b6;">
+                    <div class="stat-icon">
+                        <i class="fas fa-images"></i>
+                    </div>
+                    <div class="stat-number" id="totalImagenes">0</div>
+                    <div class="stat-label">Imágenes Subidas</div>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div class="loading-state" id="loadingState">
+                <div class="spinner"></div>
+                <h3>Cargando información de la propiedad...</h3>
+                <p>Por favor espera mientras obtenemos los datos</p>
+            </div>
+
+            <!-- Airbnb Content -->
+            <div id="airbnbContent" style="display: none;">
+                <!-- Content will be populated here -->
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <i class="fas fa-house-user"></i>
+                <h3>No tienes propiedades registradas</h3>
+                <p>Comienza registrando tu primera propiedad para aparecer en el directorio turístico</p>
+                <a href="crear-anuncio.html?tipo=airbnb" class="btn btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Registrar mi primera propiedad
+                </a>
+            </div>
+
+            <!-- ✅ NUEVA SECCIÓN: Cuestionario Semanal para Airbnb -->
+            <div class="weekly-survey-section" style="margin: 2rem 0;">
+                <div class="survey-card">
+                    <div class="survey-header">
+                        <h2 class="survey-title">
+                            <i class="fas fa-clipboard-list"></i>
+                            Cuestionario Semanal
+                        </h2>
+                        <div class="survey-info">
+                            <div class="survey-property-name">
+                                <strong>Propiedad:</strong> <span id="surveyPropertyName">Cargando...</span>
+                            </div>
+                            <div class="survey-week">
+                                <strong>Semana del:</strong> <span id="surveyWeekDates">Cargando...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form id="weeklySurveyForm" class="survey-form">
+                        <!-- Input hidden para airbnb ID -->
+                        <input type="hidden" name="airbnbId" id="airbnbId" value="">
+                        
+                        <div class="form-grid">
+                            <!-- Pregunta 1 -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <span class="question-number">1.</span>
+                                    Número total de ocupaciones durante la semana:
+                                </label>
+                                <input type="number" class="form-control" id="ocupacionesSemana" name="ocupacionesSemana" min="0" required>
+                                <span class="form-hint">Indique cuántas veces fue ocupada la propiedad durante la semana.</span>
+                            </div>
+
+                            <!-- Pregunta 2 -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <span class="question-number">2.</span>
+                                    Número de ocupaciones por turistas residentes nacionales:
+                                </label>
+                                <input type="number" class="form-control" id="ocupacionesNacionales" name="ocupacionesNacionales" min="0" required>
+                                <span class="form-hint">Especifique cuántas ocupaciones fueron de turistas nacionales.</span>
+                            </div>
+
+                            <!-- Pregunta 3 -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <span class="question-number">3.</span>
+                                    Número de ocupaciones por turistas extranjeros:
+                                </label>
+                                <input type="number" class="form-control" id="ocupacionesExtranjeros" name="ocupacionesExtranjeros" min="0" required>
+                                <span class="form-hint">Especifique cuántas ocupaciones fueron de turistas extranjeros.</span>
+                            </div>
+
+                            <!-- Pregunta 4 -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <span class="question-number">4.</span>
+                                    Número total de personas hospedadas durante la semana:
+                                </label>
+                                <input type="number" class="form-control" id="totalPersonasSemana" name="totalPersonasSemana" min="0" required>
+                                <span class="form-hint">Indique el número total de personas que se hospedaron durante la semana.</span>
+                            </div>
+
+                            <!-- Pregunta 5 -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <span class="question-number">5.</span>
+                                    Número de personas residentes nacionales:
+                                </label>
+                                <input type="number" class="form-control" id="personasNacionales" name="personasNacionales" min="0" required>
+                                <span class="form-hint">De las personas hospedadas, cuántas son residentes nacionales.</span>
+                            </div>
+
+                            <!-- Pregunta 6 -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <span class="question-number">6.</span>
+                                    Número de personas extranjeras:
+                                </label>
+                                <input type="number" class="form-control" id="personasExtranjeros" name="personasExtranjeros" min="0" required>
+                                <span class="form-hint">De las personas hospedadas, cuántas son extranjeras.</span>
+                            </div>
+
+                            <!-- Pregunta 7 -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <span class="question-number">7.</span>
+                                    Número total de turistas que pernoctaron:
+                                </label>
+                                <input type="number" class="form-control" id="turistasPernoctaron" name="turistasPernoctaron" min="0" required>
+                                <span class="form-hint">Indique cuántos turistas pasaron al menos una noche en la propiedad.</span>
+                            </div>
+
+                            <!-- Pregunta 8 -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <span class="question-number">8.</span>
+                                    Número de turistas nacionales que pernoctaron:
+                                </label>
+                                <input type="number" class="form-control" id="turistasNacionalesPernoctaron" name="turistasNacionalesPernoctaron" min="0" required>
+                                <span class="form-hint">Especifique cuántos turistas nacionales pasaron al menos una noche.</span>
+                            </div>
+
+                            <!-- Pregunta 9 -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <span class="question-number">9.</span>
+                                    Número de turistas extranjeros que pernoctaron:
+                                </label>
+                                <input type="number" class="form-control" id="turistasExtranjerosPernoctaron" name="turistasExtranjerosPernoctaron" min="0" required>
+                                <span class="form-hint">Especifique cuántos turistas extranjeros pasaron al menos una noche.</span>
+                            </div>
+
+                            <!-- ✅ NUEVA PREGUNTA 10: Procedencia de turistas -->
+                            <div class="form-group form-group-full">
+                                <label class="form-label">
+                                    <span class="question-number">10.</span>
+                                    Lugar de procedencia de los turistas hospedados:
+                                </label>
+                                <textarea class="form-control" id="procedenciaTuristas" name="procedenciaTuristas" 
+                                          rows="4" required minlength="10" maxlength="500"
+                                          placeholder="Ejemplo: Ciudad de México (DF), Guadalajara (Jalisco), Estados Unidos, Francia, etc."></textarea>
+                                <span class="form-hint">Especifique los lugares de origen de los turistas que se hospedaron (mínimo 10 caracteres, máximo 500).</span>
+                                <div class="char-counter" id="procedenciaCounter">0/500 caracteres</div>
+                            </div>
+
+                            <!-- Notas adicionales -->
+                            <div class="form-group form-group-full">
+                                <label class="form-label">
+                                    Notas adicionales (opcional):
+                                </label>
+                                <textarea class="form-control" id="notas" name="notas" rows="3" maxlength="500" placeholder="Agregue cualquier observación o comentario sobre la semana..."></textarea>
+                                <span class="form-hint">Máximo 500 caracteres</span>
+                            </div>
+                        </div>
+
+                        <div class="survey-actions">
+                            <button type="button" class="btn btn-secondary" onclick="resetSurveyForm()">
+                                <i class="fas fa-redo"></i>
+                                Limpiar Formulario
+                            </button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-paper-plane"></i>
+                                Enviar Cuestionario
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Alert Container -->
+    <div id="alertContainer" class="alert-container"></div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/alerts.js"></script>
+    <script>
+        // Variables globales
+        // ✅ CONFIGURACIÓN DINÁMICA DE baseURL
+        const baseURL = (() => {
+            const hostname = window.location.hostname;
+            
+            console.log('🌐 Hostname detectado en airbnb-admin:', hostname);
+            
+            if (hostname === 'localhost' || hostname === '127.0.0.1') {
+                console.log('🛠️ Modo desarrollo detectado');
+                return '/api/hospedaje';
+            }
+            
+            console.log('🚀 Modo producción detectado');
+            return `${window.location.protocol}//${window.location.host}/api`;
+        })();
+
+        console.log('✅ BaseURL configurado para airbnb-admin:', baseURL);
+        
+        let authToken = localStorage.getItem('hospAuthToken');
+        let currentUser = JSON.parse(localStorage.getItem('hospCurrentUser') || '{}');
+        let currentAirbnb = null;
+
+        // Elementos del DOM
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const loadingState = document.getElementById('loadingState');
+        const airbnbContent = document.getElementById('airbnbContent');
+        const emptyState = document.getElementById('emptyState');
+
+        // Función para construir URLs de imágenes correctamente
+        function getImageUrl(imagePath) {
+            console.log('🔍 getImageUrl recibió:', imagePath);
+            
+            // Si no hay imagen, usar imagen por defecto
+            if (!imagePath) {
+                console.log('⚠️ No hay imagen, usando por defecto');
+                return 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+            }
+            
+            // Si ya es una URL completa (http/https), devolverla tal como está
+            if (imagePath.startsWith('http')) {
+                console.log('✅ URL completa:', imagePath);
+                return imagePath;
+            }
+            
+            // ✅ PATRÓN CORRECTO siguiendo el modelo de cabañas
+            const finalUrl = `${baseURL.replace('/api/hospedaje', '')}${imagePath}`;
+            console.log('✅ URL construida:', finalUrl);
+            return finalUrl;
+        }
+
+        // Manejo global de errores de imágenes
+        function addImageErrorHandling() {
+            document.addEventListener('error', function(e) {
+                if (e.target.tagName === 'IMG') {
+                    console.warn('Error cargando imagen:', e.target.src);
+                    e.target.src = 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+                }
+            }, true);
+        }
+
+        // Verificar autenticación al cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🏠 Inicializando airbnb-admin...');
+            
+            if (!authToken) {
+                window.location.href = '../login.html';
+                return;
+            }
+            
+            addImageErrorHandling();
+            initializePage();
+        });
+
+        function initializePage() {
+            setupUserInfo();
+            setupMobileMenu();
+            loadAirbnbInfo();
+            initializeWeeklySurvey(); // ✅ NUEVO: Inicializar cuestionario
+        }
+
+        function setupUserInfo() {
+            const userData = currentUser || {};
+            document.getElementById('userName').textContent = userData.nombre || 'Usuario';
+            document.getElementById('userRole').textContent = userData.isSuperAdmin ? 'Administrador' : 'Usuario';
+            
+            const initials = userData.nombre ? userData.nombre.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'AD';
+            document.getElementById('userAvatar').innerHTML = `<span>${initials}</span>`;
+        }
+
+        function setupMobileMenu() {
+            if (mobileMenuToggle) {
+                mobileMenuToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('active');
+                    overlay.classList.toggle('active');
+                });
+            }
+
+            overlay.addEventListener('click', function() {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+        }
+
+        // ✅ FUNCIÓN MEJORADA: Asegurar que el campo airbnbId exista
+        function ensureAirbnbIdField() {
+            // Verificar si el campo oculto airbnbId ya existe
+            let airbnbIdField = document.getElementById('airbnbId');
+            
+            if (!airbnbIdField) {
+                // Crear el campo oculto si no existe
+                airbnbIdField = document.createElement('input');
+                airbnbIdField.type = 'hidden';
+                airbnbIdField.id = 'airbnbId';
+                airbnbIdField.name = 'airbnbId';
+                
+                // Agregarlo al formulario del cuestionario
+                const surveyForm = document.querySelector('#weeklySurveyForm, .survey-form form');
+                if (surveyForm) {
+                    surveyForm.appendChild(airbnbIdField);
+                    console.log('✅ Campo airbnbId creado y agregado al formulario');
+                }
+            }
+            
+            // Establecer el valor del campo si tenemos el ID disponible
+            if (currentAirbnb && currentAirbnb._id) {
+                airbnbIdField.value = currentAirbnb._id;
+                console.log('✅ Campo airbnbId actualizado con valor:', currentAirbnb._id);
+            } else {
+                const storedId = localStorage.getItem('currentAirbnbId');
+                if (storedId && storedId !== 'null') {
+                    airbnbIdField.value = storedId;
+                    console.log('✅ Campo airbnbId actualizado desde localStorage:', storedId);
+                }
+            }
+        }
+
+        // Configurar menú de gestión de imágenes siguiendo el patrón de cabañas
+        function setupImageManagementMenu() {
+            const menuEdicionImagenes = document.getElementById('menu-edicion-imagenes');
+            const imageManagementLink = document.getElementById('image-management-link');
+            
+            console.log('🖼️ Configurando menú de gestión de imágenes para Airbnb...');
+            
+            // Verificar que existe el alojamiento actual
+            if (currentAirbnb && currentAirbnb._id) {
+                console.log('🏠 Habilitando menú de gestión de imágenes para:', currentAirbnb.nombre);
+                
+                // Mostrar el menú
+                if (menuEdicionImagenes) {
+                    menuEdicionImagenes.classList.add('show');
+                }
+                
+                // Actualizar el href del enlace CON EL ID siguiendo el patrón
+                if (imageManagementLink) {
+                    imageManagementLink.href = `manage-images-airbnb.html?airbnbId=${currentAirbnb._id}`;
+                    console.log('✅ Enlace actualizado:', imageManagementLink.href);
+                }
+                
+                // Crear función global manageImages
+                window.manageImages = function(airbnbId = currentAirbnb._id) {
+                    console.log('🖼️ Navegando a gestión de imágenes:', airbnbId);
+                    window.location.href = `manage-images-airbnb.html?airbnbId=${airbnbId}`;
+                };
+                
+            } else {
+                console.log('⚠️ No se encontró alojamiento activo, ocultando menú');
+                if (menuEdicionImagenes) {
+                    menuEdicionImagenes.classList.remove('show');
+                }
+            }
+        }
+
+        // Cargar información de propiedades Airbnb
+        async function loadAirbnbInfo() {
+            try {
+                showLoading();
+                
+                const response = await fetch(`${baseURL}/airbnb/mis-alojamientos`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                const data = await response.json();
+                console.log('📊 Datos recibidos:', data);
+                
+                if (data.status === 'success' && data.data.alojamientos.length > 0) {
+                    const propiedad = data.data.alojamientos[0];
+                    currentAirbnb = propiedad;
+                    
+                    // ✅ NUEVO: Guardar en localStorage para referencia futura
+                    localStorage.setItem('currentAirbnbId', propiedad._id);
+                    
+                    updateStats([propiedad]);
+                    displayAirbnb(propiedad);
+                    showAirbnbContent();
+                    
+                    // ✅ NUEVO: Actualizar información del cuestionario
+                    updateSurveyInfo(propiedad);
+                    
+                    // ✅ NUEVO: Asegurar que el campo del formulario esté configurado
+                    ensureAirbnbIdField();
+                    
+                    // Configurar menú de gestión de imágenes después de cargar la propiedad
+                    setupImageManagementMenu();
+                } else {
+                    showEmpty();
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showError();
+            }
+        }
+
+        function updateStats(alojamientos) {
+            const totalPropiedades = alojamientos.length;
+            let totalHuespedes = 0;
+            let totalImagenes = 0;
+
+            alojamientos.forEach(alojamiento => {
+                if (alojamiento.capacidad?.huespedes) {
+                    totalHuespedes += alojamiento.capacidad.huespedes;
+                }
+                
+                if (alojamiento.imagenes?.length) {
+                    totalImagenes += alojamiento.imagenes.length;
+                }
+            });
+
+            document.getElementById('totalPropiedades').textContent = totalPropiedades;
+            document.getElementById('totalHuespedes').textContent = totalHuespedes;
+            document.getElementById('totalImagenes').textContent = totalImagenes;
+            document.getElementById('airbnbCount').textContent = totalPropiedades;
+        }
+
+        function displayAirbnb(propiedad) {
+            const imageUrl = getImageUrl(propiedad.imagenes?.[0]);
+            const imageCount = propiedad.imagenes?.length || 0;
+            const tipoPropiedad = formatTipoPropiedad(propiedad.tipoPropiedad);
+            
+            const airbnbCard = `
+                <div class="admin-card">
+                    <div class="card-header">
+                        <h3>${propiedad.nombre || 'Propiedad sin nombre'}</h3>
+                        <div class="card-actions">
+                            <a href="actualizar-airbnb.html?id=${propiedad._id}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-edit"></i>
+                                Editar
+                            </a>
+                            <a href="manage-images-airbnb.html?airbnbId=${propiedad._id}" class="btn btn-sm btn-images">
+                                <i class="fas fa-images"></i>
+                                Imágenes
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="card-content">
+                        <div class="property-image">
+                            <img src="${imageUrl}" alt="${propiedad.nombre}" loading="lazy">
+                            ${imageCount > 0 ? `
+                                <div class="image-count-badge">
+                                    <i class="fas fa-images"></i>
+                                    ${imageCount}
+                                </div>
+                            ` : ''}
+                        </div>
+                        
+                        <div class="property-details">
+                            <div class="detail-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>${propiedad.ubicacion?.ciudad || 'No especificada'}, ${propiedad.ubicacion?.estado || ''}</span>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <i class="fas fa-home"></i>
+                                <span>${tipoPropiedad}</span>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <i class="fas fa-users"></i>
+                                <span>Capacidad: ${propiedad.capacidad?.huespedes || 0} huéspedes</span>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <i class="fas fa-dollar-sign"></i>
+                                <span>$${propiedad.precioPorNoche?.toLocaleString('es-MX') || 0} por noche</span>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <i class="fas fa-${propiedad.activo ? 'check-circle text-success' : 'times-circle text-danger'}"></i>
+                                <span>${propiedad.activo ? 'Activo' : 'Inactivo'}</span>
+                            </div>
+
+                            <div class="detail-item">
+                                <i class="fas fa-images"></i>
+                                <span>Imágenes: ${imageCount} foto${imageCount !== 1 ? 's' : ''}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            airbnbContent.innerHTML = airbnbCard;
+        }
+
+        function formatTipoPropiedad(tipo) {
+            const tipos = {
+                'casa_completa': 'Casa Completa',
+                'apartamento': 'Apartamento',  
+                'habitacion_privada': 'Habitación Privada',
+                'cuarto_privado': 'Cuarto Privado',
+                'habitacion_compartida': 'Habitación Compartida',
+                'zona_camping': 'Zona de Camping',
+                'casa_rural': 'Casa Rural',
+                'cabana': 'Cabaña',
+                'otro': 'Otro'
+            };
+            return tipos[tipo] || tipo;
+        }
+
+        function showLoading() {
+            loadingState.style.display = 'block';
+            airbnbContent.style.display = 'none';
+            emptyState.style.display = 'none';
+        }
+
+        function showAirbnbContent() {
+            loadingState.style.display = 'none';
+            airbnbContent.style.display = 'block';
+            emptyState.style.display = 'none';
+        }
+
+        function showEmpty() {
+            loadingState.style.display = 'none';
+            airbnbContent.style.display = 'none';
+            emptyState.style.display = 'block';
+        }
+
+        function showError() {
+            loadingState.style.display = 'none';
+            airbnbContent.style.display = 'none';
+            emptyState.style.display = 'block';
+        }
+
+        // ===================== CUESTIONARIO SEMANAL =====================
+
+        // ✅ NUEVA FUNCIÓN: Inicializar cuestionario semanal
+        function initializeWeeklySurvey() {
+            loadCurrentWeekDates();
+            setupSurveyForm();
+            setupFormValidations();
+            setupCharacterCounter();
+        }
+
+        // ✅ NUEVA FUNCIÓN: Actualizar información del cuestionario
+        function updateSurveyInfo(propiedad) {
+            document.getElementById('surveyPropertyName').textContent = propiedad.nombre || 'Propiedad';
+            document.getElementById('airbnbId').value = propiedad._id;
+        }
+
+        // ✅ NUEVA FUNCIÓN: Cargar fechas de la semana actual
+        function loadCurrentWeekDates() {
+            const today = new Date();
+            const monday = new Date(today);
+            const dayOfWeek = today.getDay();
+            const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+            monday.setDate(today.getDate() + diff);
+            
+            const sunday = new Date(monday);
+            sunday.setDate(monday.getDate() + 6);
+            
+            const options = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            
+            const mondayStr = monday.toLocaleDateString('es-ES', options);
+            const sundayStr = sunday.toLocaleDateString('es-ES', options);
+            
+            document.getElementById('surveyWeekDates').textContent = `${mondayStr} - ${sundayStr}`;
+        }
+
+        // ✅ NUEVA FUNCIÓN: Configurar formulario
+        function setupSurveyForm() {
+            const form = document.getElementById('weeklySurveyForm');
+            if (form) {
+                form.addEventListener('submit', handleSurveySubmit);
+            }
+        }
+
+        // ✅ NUEVA FUNCIÓN: Configurar contador de caracteres
+        function setupCharacterCounter() {
+            const procedenciaTextarea = document.getElementById('procedenciaTuristas');
+            const counter = document.getElementById('procedenciaCounter');
+            
+            if (procedenciaTextarea && counter) {
+                procedenciaTextarea.addEventListener('input', function() {
+                    const currentLength = this.value.length;
+                    const maxLength = 500;
+                    
+                    counter.textContent = `${currentLength}/${maxLength} caracteres`;
+                    
+                    // Cambiar color según el límite
+                    if (currentLength > maxLength * 0.9) {
+                        counter.className = 'char-counter error';
+                    } else if (currentLength > maxLength * 0.7) {
+                        counter.className = 'char-counter warning';
+                    } else {
+                        counter.className = 'char-counter';
+                    }
+                });
+            }
+        }
+
+        // ✅ NUEVA FUNCIÓN: Configurar validaciones
+        function setupFormValidations() {
+            const ocupacionesSemana = document.getElementById('ocupacionesSemana');
+            const ocupacionesNacionales = document.getElementById('ocupacionesNacionales');
+            const ocupacionesExtranjeros = document.getElementById('ocupacionesExtranjeros');
+            const totalPersonasSemana = document.getElementById('totalPersonasSemana');
+            const personasNacionales = document.getElementById('personasNacionales');
+            const personasExtranjeros = document.getElementById('personasExtranjeros');
+
+            function validateOcupaciones() {
+                const total = parseInt(ocupacionesSemana.value) || 0;
+                const nacionales = parseInt(ocupacionesNacionales.value) || 0;
+                const extranjeros = parseInt(ocupacionesExtranjeros.value) || 0;
+
+                if (nacionales + extranjeros > total) {
+                    showAlert('La suma de ocupaciones nacionales y extranjeras no puede ser mayor al total', 'warning');
+                    return false;
+                }
+                return true;
+            }
+
+            function validatePersonas() {
+                const total = parseInt(totalPersonasSemana.value) || 0;
+                const nacionales = parseInt(personasNacionales.value) || 0;
+                const extranjeros = parseInt(personasExtranjeros.value) || 0;
+
+                if (nacionales + extranjeros > total) {
+                    showAlert('La suma de personas nacionales y extranjeras no puede ser mayor al total', 'warning');
+                    return false;
+                }
+                return true;
+            }
+
+            [ocupacionesSemana, ocupacionesNacionales, ocupacionesExtranjeros].forEach(input => {
+                input.addEventListener('input', validateOcupaciones);
+            });
+
+            [totalPersonasSemana, personasNacionales, personasExtranjeros].forEach(input => {
+                input.addEventListener('input', validatePersonas);
+            });
+        }
+
+        // ✅ NUEVA FUNCIÓN: Obtener fechas de la semana
+        function getCurrentWeekDates() {
+            const today = new Date();
+            const dayOfWeek = today.getDay();
+            
+            const monday = new Date(today);
+            const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+            monday.setDate(today.getDate() + diff);
+            monday.setHours(0, 0, 0, 0);
+            
+            const sunday = new Date(monday);
+            sunday.setDate(monday.getDate() + 6);
+            sunday.setHours(23, 59, 59, 999);
+            
+            return {
+                fechaInicio: monday.toISOString(),
+                fechaFin: sunday.toISOString()
+            };
+        }
+
+        // ✅ FUNCIÓN CORREGIDA: Obtener ID del Airbnb
+        function getCurrentAirbnbId() {
+            // Opción 1: Desde la variable global currentAirbnb
+            if (currentAirbnb && currentAirbnb._id) {
+                console.log('✅ ID obtenido desde currentAirbnb:', currentAirbnb._id);
+                return currentAirbnb._id;
+            }
+            
+            // Opción 2: Desde un campo oculto en el DOM
+            const airbnbIdElement = document.getElementById('airbnbId');
+            if (airbnbIdElement && airbnbIdElement.value) {
+                console.log('✅ ID obtenido desde elemento DOM:', airbnbIdElement.value);
+                return airbnbIdElement.value;
+            }
+            
+            // Opción 3: Desde localStorage
+            const storedId = localStorage.getItem('currentAirbnbId');
+            if (storedId && storedId !== 'null' && storedId !== 'undefined') {
+                console.log('✅ ID obtenido desde localStorage:', storedId);
+                return storedId;
+            }
+            
+            // Si no encontramos el ID en ningún lugar
+            console.error('❌ No se pudo obtener el ID del alojamiento');
+            throw new Error('No se pudo obtener el ID del alojamiento. Asegúrate de que el alojamiento esté cargado correctamente.');
+        }
+
+        // ✅ FUNCIÓN COMPLETAMENTE CORREGIDA: Manejar envío del cuestionario
+        async function handleSurveySubmit(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const formData = new FormData(form);
+            
+            // ✅ VERIFICACIÓN TEMPRANA del ID del alojamiento
+            try {
+                const airbnbId = getCurrentAirbnbId();
+                console.log('🆔 ID del alojamiento verificado:', airbnbId);
+            } catch (error) {
+                showAlert('Error: ' + error.message, 'error');
+                return;
+            }
+            
+            // Validación de procedencia
+            const procedenciaInput = document.getElementById('procedenciaTuristas');
+            const procedenciaValue = procedenciaInput.value.trim();
+            
+            if (!procedenciaValue || procedenciaValue.length < 10) {
+                procedenciaInput.classList.add('error');
+                showAlert('Por favor, proporcione información detallada sobre la procedencia de los turistas (mínimo 10 caracteres).', 'error');
+                return;
+            } else {
+                procedenciaInput.classList.remove('error');
+                procedenciaInput.classList.add('success');
+            }
+            
+            // Validar campos requeridos
+            const requiredFields = ['ocupacionesSemana', 'ocupacionesNacionales', 'ocupacionesExtranjeros', 
+                                    'totalPersonasSemana', 'personasNacionales', 'personasExtranjeros', 
+                                    'turistasPernoctaron', 'turistasNacionalesPernoctaron', 'turistasExtranjerosPernoctaron'];
+            
+            for (let field of requiredFields) {
+                if (!formData.get(field) || formData.get(field) === '') {
+                    showAlert('Por favor complete todos los campos requeridos', 'error');
+                    return;
+                }
+            }
+            
+            // Validaciones de lógica de negocio
+            const ocupacionesSemana = parseInt(formData.get('ocupacionesSemana'));
+            const ocupacionesNacionales = parseInt(formData.get('ocupacionesNacionales'));
+            const ocupacionesExtranjeros = parseInt(formData.get('ocupacionesExtranjeros'));
+            const totalPersonasSemana = parseInt(formData.get('totalPersonasSemana'));
+            const personasNacionales = parseInt(formData.get('personasNacionales'));
+            const personasExtranjeros = parseInt(formData.get('personasExtranjeros'));
+            const turistasPernoctaron = parseInt(formData.get('turistasPernoctaron'));
+            const turistasNacionalesPernoctaron = parseInt(formData.get('turistasNacionalesPernoctaron'));
+            const turistasExtranjerosPernoctaron = parseInt(formData.get('turistasExtranjerosPernoctaron'));
+            
+            // Validar sumas
+            if (ocupacionesNacionales + ocupacionesExtranjeros !== ocupacionesSemana) {
+                showAlert('Error: La suma de ocupaciones nacionales y extranjeras debe ser igual al total', 'error');
+                return;
+            }
+            
+            if (personasNacionales + personasExtranjeros !== totalPersonasSemana) {
+                showAlert('Error: La suma de personas nacionales y extranjeras debe ser igual al total', 'error');
+                return;
+            }
+            
+            if (turistasNacionalesPernoctaron + turistasExtranjerosPernoctaron !== turistasPernoctaron) {
+                showAlert('Error: La suma de turistas nacionales y extranjeros que pernoctaron debe ser igual al total', 'error');
+                return;
+            }
+            
+            form.classList.add('survey-loading');
+            
+            try {
+                const airbnbId = getCurrentAirbnbId();
+                const { fechaInicio, fechaFin } = getCurrentWeekDates();
+                
+                // ✅ ESTRUCTURA COMPLETAMENTE CORREGIDA del cuestionario
+                const cuestionarioData = {
+                    airbnbId: airbnbId,  // ✅ CAMBIO PRINCIPAL: usar airbnbId en lugar de alojamientoId
+                    fechaInicio: fechaInicio,
+                    fechaFin: fechaFin,
+                    datos: {
+                        // ✅ Incluir procedencia de turistas
+                        procedenciaTuristas: procedenciaValue,
+                        
+                        // Campos específicos para Airbnb
+                        ocupacionesSemana: ocupacionesSemana,
+                        ocupacionesNacionales: ocupacionesNacionales,
+                        ocupacionesExtranjeros: ocupacionesExtranjeros,
+                        totalPersonasSemana: totalPersonasSemana,
+                        personasNacionales: personasNacionales,
+                        personasExtranjeros: personasExtranjeros,
+                        turistasPernoctaron: turistasPernoctaron,
+                        turistasNacionalesPernoctaron: turistasNacionalesPernoctaron,
+                        turistasExtranjerosPernoctaron: turistasExtranjerosPernoctaron
+                    },
+                    notas: formData.get('notas') || ''
+                };
+                
+                console.log('📤 Enviando cuestionario de Airbnb:', cuestionarioData);
+                
+                const response = await fetch(`${baseURL}/cuestionarios`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(cuestionarioData)
+                });
+                
+                const result = await response.json();
+                console.log('📥 Respuesta del servidor:', result);
+                
+                if (response.ok && result.status === 'success') {
+                    form.classList.remove('survey-loading');
+                    showAlert('¡Cuestionario enviado correctamente!', 'success');
+                    
+                    // Resetear formulario
+                    form.reset();
+                    
+                    // Limpiar clases de validación
+                    const inputs = form.querySelectorAll('input, textarea');
+                    inputs.forEach(input => {
+                        input.classList.remove('error', 'success');
+                    });
+                    
+                    // Resetear contador de caracteres
+                    const counter = document.getElementById('procedenciaCounter');
+                    if (counter) {
+                        counter.textContent = '0/500 caracteres';
+                        counter.className = 'char-counter';
+                    }
+                    
+                    console.log('✅ Cuestionario guardado exitosamente:', result.data);
+                    
+                } else {
+                    throw new Error(result.message || 'Error al enviar el cuestionario');
+                }
+                
+            } catch (error) {
+                form.classList.remove('survey-loading');
+                console.error('❌ Error al enviar cuestionario:', error);
+                
+                // Manejo específico de errores
+                if (error.message.includes('Ya existe un cuestionario')) {
+                    showAlert('Ya existe un cuestionario para esta semana. Solo se puede enviar un cuestionario por semana.', 'warning');
+                } else if (error.message.includes('No tienes permiso')) {
+                    showAlert('No tienes permisos para enviar este cuestionario.', 'error');
+                } else if (error.message.includes('not authenticated')) {
+                    showAlert('Sesión expirada. Redirigiendo al login...', 'error');
+                    setTimeout(() => window.location.href = '../login.html', 2000);
+                } else {
+                    showAlert(error.message || 'Error al enviar el cuestionario. Inténtelo de nuevo.', 'error');
+                }
+            }
+        }
+
+        // ✅ NUEVA FUNCIÓN: Resetear formulario
+        function resetSurveyForm() {
+            const form = document.getElementById('weeklySurveyForm');
+            form.reset();
+            
+            const inputs = form.querySelectorAll('input, textarea');
+            inputs.forEach(input => {
+                input.classList.remove('error', 'success');
+            });
+            
+            // Resetear contador de caracteres
+            const counter = document.getElementById('procedenciaCounter');
+            if (counter) {
+                counter.textContent = '0/500 caracteres';
+                counter.className = 'char-counter';
+            }
+            
+            showAlert('Formulario limpiado correctamente.', 'info');
+        }
+
+        // Sistema de alertas
+        function showAlert(message, type = 'info') {
+            const alertContainer = document.getElementById('alertContainer');
+            if (!alertContainer) {
+                console.error('Alert container not found');
+                return;
+            }
+
+            const alertId = 'alert-' + Date.now();
+            const alertElement = document.createElement('div');
+            alertElement.id = alertId;
+            alertElement.className = `alert alert-${type}`;
+            
+            const icons = {
+                success: 'fas fa-check-circle',
+                error: 'fas fa-exclamation-circle',
+                warning: 'fas fa-exclamation-triangle',
+                info: 'fas fa-info-circle'
+            };
+            
+            alertElement.innerHTML = `
+                <i class="${icons[type] || icons.info}"></i>
+                <span>${message}</span>
+            `;
+            
+            alertContainer.appendChild(alertElement);
+            
+            setTimeout(() => {
+                const element = document.getElementById(alertId);
+                if (element) {
+                    element.style.animation = 'slideOutRight 0.3s ease-in';
+                    setTimeout(() => {
+                        if (element.parentNode) {
+                            element.parentNode.removeChild(element);
+                        }
+                    }, 300);
+                }
+            }, 5000);
+        }
+
+        function logout() {
+            localStorage.removeItem('hospAuthToken');
+            localStorage.removeItem('hospCurrentUser');
+            localStorage.removeItem('currentAirbnbId'); // ✅ NUEVO: Limpiar también este dato
+            window.location.href = '../login.html';
+        }
+
+        // ✅ NUEVO: Llamar ensureAirbnbIdField después de cargar datos
+        setTimeout(() => {
+            if (currentAirbnb || localStorage.getItem('currentAirbnbId')) {
+                ensureAirbnbIdField();
+            }
+        }, 2000);
+    </script>
+</body>
+</html>

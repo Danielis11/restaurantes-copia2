@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Tour Operadora - Jalpan Turismo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8fafc;
+            color: #2d3748;
+            line-height: 1.6;
+        }
+
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .sidebar-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+
+        .sidebar-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            border-left-color: #ffd700;
+        }
+
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .image-management-menu {
+            margin: 1rem 1.5rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            display: none;
+        }
+
+        .image-management-menu.show {
+            display: block;
+        }
+
+        .image-management-menu h4 {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .image-management-menu a {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            transition: background 0.3s;
+        }
+
+        .image-management-menu a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .user-role {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Overlay */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 0;
+            min-height: 100vh;
+            background: #f8fafc;
+        }
+
+        .top-header {
+            background: white;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .mobile-menu-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: none;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            cursor: pointer;
+            color: #4a5568;
+            transition: all 0.3s;
+        }
+
+        .mobile-menu-toggle:hover {
+            background: #f7fafc;
+            border-color: #cbd5e0;
+        }
+
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .page-title i {
+            color: #f39c12;
+        }
+
+        .top-actions .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #e67e22;
+            transform: translateY(-1px);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            background: var(--stat-color, #f39c12);
+        }
+
+        .stat-content {
+            flex: 1;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3748;
+            line-height: 1;
+        }
+
+        .stat-label {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            color: #718096;
+        }
+
+        .loading i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1.1rem;
+        }
+
+        /* No Data State */
+        .no-data {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .no-data-content i {
+            font-size: 4rem;
+            color: #cbd5e0;
+            margin-bottom: 1.5rem;
+        }
+
+        .no-data-content h3 {
+            font-size: 1.5rem;
+            color: #4a5568;
+            margin-bottom: 0.5rem;
+        }
+
+        .no-data-content p {
+            color: #718096;
+            margin-bottom: 2rem;
+        }
+
+        /* Content Section */
+        .content-section {
+            display: none;
+            padding: 2rem;
+        }
+
+        .admin-card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+        }
+
+        .card-header h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            color: #2d3748;
+        }
+
+        .card-header i {
+            color: #f39c12;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn-secondary {
+            background: #edf2f7;
+            color: #4a5568;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        /* Property Details */
+        .property-details {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .property-main-info {
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .property-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .property-header h4 {
+            font-size: 1.5rem;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .property-badges {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .badge-error {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .badge-verified {
+            background: #bee3f8;
+            color: #2a4365;
+        }
+
+        .property-description {
+            color: #4a5568;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .property-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .stat-item i {
+            color: #f39c12;
+        }
+
+        .property-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .detail-section {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .detail-section h5 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            color: #2d3748;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .detail-section h5 i {
+            color: #f39c12;
+        }
+
+        .detail-section p {
+            color: #4a5568;
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-section p:last-child {
+            margin-bottom: 0;
+        }
+
+        .text-muted {
+            color: #a0aec0;
+            font-style: italic;
+        }
+
+        /* Weekly Survey */
+        .weekly-survey-section {
+            margin-top: 2rem;
+        }
+
+        .survey-card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        .survey-header {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .survey-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .survey-info {
+            padding: 1.5rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .survey-description h4 {
+            color: #2d3748;
+            margin-bottom: 0.75rem;
+        }
+
+        .survey-description p {
+            color: #4a5568;
+            margin-bottom: 1rem;
+        }
+
+        .survey-description ul {
+            color: #718096;
+            padding-left: 1.5rem;
+        }
+
+        .survey-description li {
+            margin-bottom: 0.5rem;
+        }
+
+        .survey-status {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .survey-modal {
+            max-width: 700px;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+        }
+
+        .modal-header h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #2d3748;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #718096;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .modal-close:hover {
+            background: #edf2f7;
+            color: #2d3748;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        .question-number {
+            background: #f39c12;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #f39c12;
+            box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.1);
+        }
+
+        .form-hint {
+            display: block;
+            font-size: 0.85rem;
+            color: #718096;
+            margin-top: 0.25rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        /* Responsive */
+        @media (min-width: 1024px) {
+            .sidebar {
+                position: relative;
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 280px;
+            }
+
+            .mobile-menu-toggle {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .top-header {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 1.25rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+
+            .content-section {
+                padding: 1rem;
+            }
+
+            .card-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .card-actions {
+                width: 100%;
+                justify-content: stretch;
+            }
+
+            .card-actions .btn {
+                flex: 1;
+                justify-content: center;
+            }
+
+            .property-stats {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .property-details-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .survey-info {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .survey-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .modal-content {
+                margin: 1rem;
+                width: calc(100% - 2rem);
+            }
+
+            .modal-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-bus"></i>
+                    <span>Jalpan Turismo</span>
+                </div>
+                <button class="sidebar-close" id="sidebarClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="hoteles-admin.html" class="nav-item">
+                    <i class="fas fa-hotel"></i>
+                    <span>Hoteles</span>
+                </a>
+                <a href="cabanas-admin.html" class="nav-item">
+                    <i class="fas fa-mountain"></i>
+                    <span>Cabañas</span>
+                </a>
+                <a href="airbnb-admin.html" class="nav-item">
+                    <i class="fas fa-house-user"></i>
+                    <span>Propiedades Airbnb</span>
+                </a>
+                <a href="tourOperadora-admin.html" class="nav-item active">
+                    <i class="fas fa-bus"></i>
+                    <span>Tour Operadoras</span>
+                </a>
+                <a href="guias-admin.html" class="nav-item">
+                    <i class="fas fa-user-tie"></i>
+                    <span>Guías Turísticos</span>
+                </a>
+            </nav>
+
+            <!-- Menú de Gestión de Imágenes -->
+            <div class="image-management-menu" id="menu-edicion-imagenes">
+                <h4>
+                    <i class="fas fa-images"></i>
+                    Gestión de Imágenes
+                </h4>
+                <a href="#" id="image-management-link">
+                    <i class="fas fa-photo-video"></i>
+                    <span>Administrar Imágenes</span>
+                </a>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">
+                        <span>TO</span>
+                    </div>
+                    <div class="user-details">
+                        <div class="user-name" id="userName">Tour Operadora</div>
+                        <div class="user-role" id="userRole">Administrador</div>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Cerrar Sesión</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Overlay for mobile -->
+        <div class="sidebar-overlay" id="overlay"></div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="page-title">
+                        <i class="fas fa-bus"></i>
+                        <span>Gestión de Tour Operadora</span>
+                    </div>
+                </div>
+                
+                <div class="top-actions">
+                    <a href="crear-anuncio.html?tipo=touroperadora" class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        Nueva Operadora
+                    </a>
+                </div>
+            </header>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid" id="statsGrid">
+                <!-- Se llenan dinámicamente desde JavaScript -->
+            </div>
+
+            <!-- Loading State -->
+            <div class="loading" id="loadingState">
+                <i class="fas fa-spinner"></i>
+                <div class="loading-text">Cargando información de tu operadora...</div>
+            </div>
+
+            <!-- No Data State -->
+            <div class="no-data" id="noDataState">
+                <div class="no-data-content">
+                    <i class="fas fa-bus"></i>
+                    <h3>No tienes operadora registrada</h3>
+                    <p>Crea tu perfil de tour operadora</p>
+                    <a href="crear-anuncio.html?tipo=touroperadora" class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        Crear Tour Operadora
+                    </a>
+                </div>
+            </div>
+
+            <!-- Operadora Content -->
+            <div class="content-section" id="operadoraContent">
+                <!-- Información de la Operadora -->
+                <div class="admin-card">
+                    <div class="card-header">
+                        <h3>
+                            <i class="fas fa-bus"></i>
+                            Mi Tour Operadora
+                        </h3>
+                        <div class="card-actions">
+                            <a href="actualizar-tourOperadora.html" class="btn btn-primary">
+                                <i class="fas fa-edit"></i>
+                                Actualizar Información
+                            </a>
+                            <button class="btn btn-secondary" onclick="manageImages()">
+                                <i class="fas fa-images"></i>
+                                Gestionar Fotos
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-content" id="operadoraInfo">
+                        <!-- Se llena dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- Cuestionario Semanal -->
+                <div class="weekly-survey-section">
+                    <div class="survey-card">
+                        <div class="survey-header">
+                            <h3 class="survey-title">
+                                <i class="fas fa-clipboard-list"></i>
+                                Reporte Semanal de Actividades
+                            </h3>
+                            <button class="btn btn-primary" id="openSurveyBtn">
+                                <i class="fas fa-plus"></i>
+                                Nuevo Reporte
+                            </button>
+                        </div>
+                        <div class="survey-info">
+                            <div class="survey-description">
+                                <h4>Registro de Servicios de Tours</h4>
+                                <p>Registra tu actividad semanal como tour operadora para mantener actualizadas las estadísticas de turismo.</p>
+                                <ul>
+                                    <li>Número de turistas atendidos</li>
+                                    <li>Tours realizados</li>
+                                    <li>Servicios proporcionados</li>
+                                    <li>Ingresos por tours</li>
+                                </ul>
+                            </div>
+                            <div class="survey-status" id="surveyStatus">
+                                <!-- Se llena dinámicamente -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Survey Modal -->
+    <div class="modal" id="surveyModal">
+        <div class="modal-content survey-modal">
+            <div class="modal-header">
+                <h3>
+                    <i class="fas fa-clipboard-list"></i>
+                    Reporte Semanal de Tour Operadora
+                </h3>
+                <button class="modal-close" id="closeSurveyModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="surveyForm">
+                    <div class="form-group">
+                        <label class="form-label">Semana del reporte:</label>
+                        <input type="week" class="form-control" id="weekSelector" required>
+                        <span class="form-hint">Selecciona la semana para la cual deseas reportar.</span>
+                    </div>
+
+                    <!-- Pregunta 1 -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span class="question-number">1.</span>
+                            Número total de turistas atendidos:
+                        </label>
+                        <input type="number" class="form-control" id="totalTuristas" name="totalTuristas" min="0" required>
+                        <span class="form-hint">Indique el número total de turistas que atendió durante la semana.</span>
+                    </div>
+
+                    <!-- Pregunta 2 -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span class="question-number">2.</span>
+                            Tours realizados:
+                        </label>
+                        <input type="number" class="form-control" id="toursRealizados" name="toursRealizados" min="0" required>
+                        <span class="form-hint">Número total de tours que organizó y realizó.</span>
+                    </div>
+
+                    <!-- Pregunta 3 -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span class="question-number">3.</span>
+                            Ingresos aproximados por tours:
+                        </label>
+                        <input type="number" class="form-control" id="ingresosTours" name="ingresosTours" min="0" step="0.01">
+                        <span class="form-hint">Monto aproximado de ingresos generados por los tours (opcional).</span>
+                    </div>
+
+                    <!-- Notas Adicionales -->
+                    <div class="form-group">
+                        <label class="form-label">Observaciones o comentarios:</label>
+                        <textarea class="form-control" id="notas" name="notas" rows="3" maxlength="500"></textarea>
+                        <span class="form-hint">Agregue cualquier información adicional relevante (opcional).</span>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelSurvey">
+                            <i class="fas fa-times"></i>
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-primary" id="submitSurvey">
+                            <i class="fas fa-save"></i>
+                            Guardar Reporte
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let currentOperadora = null;
+      // ✅ REEMPLAZAR POR:
+const baseURL = (() => {
+    const hostname = window.location.hostname;
+    
+    console.log('🌐 Hostname detectado en tour-operadora:', hostname);
+    
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+        console.log('🛠️ Modo desarrollo detectado');
+        return '/api/hospedaje';
+    }
+    
+    console.log('🚀 Modo producción detectado');
+    return `${window.location.protocol}//${window.location.host}/api`;
+})();
+
+console.log('✅ BaseURL configurado para actualizar-tourOperadora:', baseURL);
+        const userData = JSON.parse(localStorage.getItem('hospUserData') || '{}');
+
+        // Elementos del DOM
+        const loadingState = document.getElementById('loadingState');
+        const noDataState = document.getElementById('noDataState');
+        const operadoraContent = document.getElementById('operadoraContent');
+        const statsGrid = document.getElementById('statsGrid');
+        const operadoraInfo = document.getElementById('operadoraInfo');
+        const surveyModal = document.getElementById('surveyModal');
+
+        // Inicializar página
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚌 Inicializando tourOperadora-admin...');
+            
+            if (!authToken) {
+                window.location.href = '../login.html';
+                return;
+            }
+            
+            initializePage();
+        });
+
+        function initializePage() {
+            setupUserInfo();
+            setupMobileMenu();
+            loadOperadoraInfo();
+            initializeWeeklySurvey();
+        }
+
+        function setupUserInfo() {
+            document.getElementById('userName').textContent = userData.nombre || 'Tour Operadora';
+            document.getElementById('userRole').textContent = userData.isSuperAdmin ? 'Administrador' : 'Operadora';
+            
+            const initials = userData.nombre ? userData.nombre.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'TO';
+            document.getElementById('userAvatar').innerHTML = `<span>${initials}</span>`;
+        }
+
+        function setupMobileMenu() {
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+
+            if (mobileMenuToggle) {
+                mobileMenuToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('active');
+                    overlay.classList.toggle('active');
+                });
+            }
+
+            overlay.addEventListener('click', function() {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+        }
+
+        // Configurar menú de gestión de imágenes
+        function setupImageManagementMenu() {
+            const menuEdicionImagenes = document.getElementById('menu-edicion-imagenes');
+            const imageManagementLink = document.getElementById('image-management-link');
+            
+            if (currentOperadora && currentOperadora._id) {
+                console.log('🚌 Habilitando menú de gestión de imágenes para:', currentOperadora.nombre);
+                
+                if (menuEdicionImagenes) {
+                    menuEdicionImagenes.classList.add('show');
+                }
+                
+                if (imageManagementLink) {
+                    imageManagementLink.href = `manage-images-tours.html?tourId=${currentOperadora._id}`;
+                }
+                
+                window.manageImages = function(tourId = currentOperadora._id) {
+                    console.log('🖼️ Navegando a gestión de imágenes:', tourId);
+                    window.location.href = `manage-images-tours.html?tourId=${tourId}`;
+                };
+                
+            } else {
+                console.log('⚠️ No se encontró operadora activa, ocultando menú');
+                if (menuEdicionImagenes) {
+                    menuEdicionImagenes.classList.remove('show');
+                }
+            }
+        }
+
+        // Cargar información de la tour operadora
+        async function loadOperadoraInfo() {
+            try {
+                showLoading();
+                
+                const response = await fetch(`${baseURL}/tours/mis-operadoras`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                const data = await response.json();
+                console.log('📊 Datos recibidos:', data);
+                
+                if (data.status === 'success' && data.data.tourOperadoras.length > 0) {
+                    const operadora = data.data.tourOperadoras[0];
+                    currentOperadora = operadora;
+                    updateStats([operadora]);
+                    displayOperadora(operadora);
+                    showOperadoraContent();
+                    
+                    setupImageManagementMenu();
+                } else {
+                    showNoData();
+                }
+            } catch (error) {
+                console.error('❌ Error cargando información:', error);
+                showError('Error al cargar la información de la operadora');
+                showNoData();
+            }
+        }
+
+        function updateStats(operadoras) {
+            const stats = [
+                {
+                    icon: 'fas fa-bus',
+                    label: 'Operadora Activa',
+                    value: operadoras.length,
+                    color: '#f39c12'
+                },
+                {
+                    icon: 'fas fa-route',
+                    label: 'Tours Disponibles',
+                    value: operadoras[0]?.tours?.length || 0,
+                    color: '#e67e22'
+                },
+                {
+                    icon: 'fas fa-phone',
+                    label: 'Contacto',
+                    value: operadoras[0]?.contacto?.telefono ? 'Activo' : 'Faltante',
+                    color: '#27ae60'
+                },
+                {
+                    icon: 'fas fa-map-marker-alt',
+                    label: 'Ubicación',
+                    value: operadoras[0]?.ubicacion?.ciudad ? 'Configurada' : 'Pendiente',
+                    color: '#3498db'
+                }
+            ];
+
+            statsGrid.innerHTML = stats.map(stat => `
+                <div class="stat-card" style="--stat-color: ${stat.color};">
+                    <div class="stat-icon">
+                        <i class="${stat.icon}"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number">${stat.value}</div>
+                        <div class="stat-label">${stat.label}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function displayOperadora(operadora) {
+            operadoraInfo.innerHTML = `
+                <div class="property-details">
+                    <div class="property-main-info">
+                        <div class="property-header">
+                            <h4>${operadora.nombre}</h4>
+                            <div class="property-badges">
+                                ${operadora.activo ? '<span class="badge badge-success">Activo</span>' : '<span class="badge badge-error">Inactivo</span>'}
+                                ${operadora.verificada ? '<span class="badge badge-verified">Verificada</span>' : ''}
+                            </div>
+                        </div>
+                        <p class="property-description">${operadora.descripcion || 'Sin descripción'}</p>
+                        
+                        <div class="property-stats">
+                            <div class="stat-item">
+                                <i class="fas fa-phone"></i>
+                                <span>Teléfono: ${operadora.contacto?.telefono || 'No especificado'}</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>Email: ${operadora.contacto?.email || 'No especificado'}</span>
+                            </div>
+                            ${operadora.contacto?.sitioWeb ? `
+                                <div class="stat-item">
+                                    <i class="fas fa-globe"></i>
+                                    <span>Sitio Web: ${operadora.contacto.sitioWeb}</span>
+                                </div>
+                            ` : ''}
+                            ${operadora.ubicacion?.ciudad ? `
+                                <div class="stat-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>Ubicación: ${operadora.ubicacion.ciudad}, ${operadora.ubicacion.estado || ''}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                    
+                    <div class="property-details-grid">
+                        <div class="detail-section">
+                            <h5><i class="fas fa-phone"></i> Información de Contacto</h5>
+                            <p><strong>Teléfono:</strong> ${operadora.contacto?.telefono || 'No especificado'}</p>
+                            <p><strong>Email:</strong> ${operadora.contacto?.email || 'No especificado'}</p>
+                            ${operadora.contacto?.sitioWeb ? `<p><strong>Sitio Web:</strong> <a href="${operadora.contacto.sitioWeb}" target="_blank">${operadora.contacto.sitioWeb}</a></p>` : ''}
+                            ${operadora.contacto?.whatsapp ? `<p><strong>WhatsApp:</strong> ${operadora.contacto.whatsapp}</p>` : ''}
+                        </div>
+                        
+                        ${operadora.ubicacion?.ciudad ? `
+                            <div class="detail-section">
+                                <h5><i class="fas fa-map-marker-alt"></i> Ubicación de Operaciones</h5>
+                                <p><strong>Ciudad:</strong> ${operadora.ubicacion.ciudad}</p>
+                                ${operadora.ubicacion.estado ? `<p><strong>Estado:</strong> ${operadora.ubicacion.estado}</p>` : ''}
+                                ${operadora.ubicacion.direccion ? `<p><strong>Dirección:</strong> ${operadora.ubicacion.direccion}</p>` : ''}
+                                ${operadora.ubicacion.cobertura ? `<p><strong>Área de Cobertura:</strong> ${operadora.ubicacion.cobertura}</p>` : ''}
+                            </div>
+                        ` : ''}
+                        
+                        <div class="detail-section">
+                            <h5><i class="fas fa-route"></i> Tours Disponibles</h5>
+                            ${operadora.tours && operadora.tours.length > 0 ? 
+                                `<p>Tienes <strong>${operadora.tours.length}</strong> tours registrados</p>` :
+                                '<p class="text-muted">No hay tours registrados</p>'
+                            }
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showLoading() {
+            loadingState.style.display = 'flex';
+            noDataState.style.display = 'none';
+            operadoraContent.style.display = 'none';
+        }
+
+        function showNoData() {
+            loadingState.style.display = 'none';
+            noDataState.style.display = 'flex';
+            operadoraContent.style.display = 'none';
+        }
+
+        function showOperadoraContent() {
+            loadingState.style.display = 'none';
+            noDataState.style.display = 'none';
+            operadoraContent.style.display = 'block';
+        }
+
+        function showError(message) {
+            console.error(message);
+        }
+
+        // Inicializar cuestionario semanal
+        function initializeWeeklySurvey() {
+            const openSurveyBtn = document.getElementById('openSurveyBtn');
+            const closeSurveyModal = document.getElementById('closeSurveyModal');
+            const cancelSurvey = document.getElementById('cancelSurvey');
+            const surveyForm = document.getElementById('surveyForm');
+
+            openSurveyBtn?.addEventListener('click', openSurveyModal);
+            closeSurveyModal?.addEventListener('click', closeSurveyModalFunc);
+            cancelSurvey?.addEventListener('click', closeSurveyModalFunc);
+            surveyForm?.addEventListener('submit', handleSurveySubmit);
+
+            // Configurar fecha por defecto
+            const weekSelector = document.getElementById('weekSelector');
+            if (weekSelector) {
+                const today = new Date();
+                const currentWeek = getWeekString(today);
+                weekSelector.value = currentWeek;
+            }
+        }
+
+        function openSurveyModal() {
+            surveyModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSurveyModalFunc() {
+            surveyModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            document.getElementById('surveyForm').reset();
+        }
+
+        async function handleSurveySubmit(e) {
+            e.preventDefault();
+            
+            if (!currentOperadora) {
+                showError('No se encontró información de la operadora');
+                return;
+            }
+
+            const formData = new FormData(e.target);
+            const weekValue = formData.get('weekSelector');
+            const [year, week] = weekValue.split('-W');
+
+            const surveyData = {
+                tourOperadoraId: currentOperadora._id,
+                fechaInicio: getWeekStartDate(year, week),
+                fechaFin: getWeekEndDate(year, week),
+                datos: {
+                    totalTuristas: parseInt(formData.get('totalTuristas')),
+                    toursRealizados: parseInt(formData.get('toursRealizados')),
+                    ingresosTours: parseFloat(formData.get('ingresosTours')) || 0
+                },
+                notas: formData.get('notas')
+            };
+
+            try {
+                const response = await fetch(`${baseURL}/cuestionarios`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(surveyData)
+                });
+
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    showSuccess('Reporte guardado exitosamente');
+                    closeSurveyModalFunc();
+                } else {
+                    showError(result.message || 'Error al guardar el reporte');
+                }
+            } catch (error) {
+                console.error('Error enviando reporte:', error);
+                showError('Error de conexión al enviar el reporte');
+            }
+        }
+
+        // Funciones auxiliares para fechas
+        function getWeekString(date) {
+            const year = date.getFullYear();
+            const weekNumber = getWeekNumber(date);
+            return `${year}-W${weekNumber.toString().padStart(2, '0')}`;
+        }
+
+        function getWeekNumber(date) {
+            const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+            const dayNum = d.getUTCDay() || 7;
+            d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+            const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+            return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+        }
+
+        function getWeekStartDate(year, week) {
+            const simple = new Date(year, 0, 1 + (week - 1) * 7);
+            const dow = simple.getDay();
+            const ISOweekStart = simple;
+            if (dow <= 4) {
+                ISOweekStart.setDate(simple.getDate() - simple.getDay() + 1);
+            } else {
+                ISOweekStart.setDate(simple.getDate() + 8 - simple.getDay());
+            }
+            return ISOweekStart;
+        }
+
+        function getWeekEndDate(year, week) {
+            const start = getWeekStartDate(year, week);
+            const end = new Date(start);
+            end.setDate(start.getDate() + 6);
+            return end;
+        }
+
+        function showSuccess(message) {
+            console.log('✅', message);
+        }
+
+        // Función de logout
+        function logout() {
+            localStorage.removeItem('hospAuthToken');
+            localStorage.removeItem('hospUserData');
+            window.location.href = '../login.html';
+        }
+    </script>
+</body>
+</html>

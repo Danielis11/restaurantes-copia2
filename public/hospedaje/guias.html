@@ -1,0 +1,1597 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guías Turísticas - Dirección de Turismo</title>
+    <link rel="stylesheet" href="css/auth-navbar.css">
+    
+    <!-- AOS CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        /* Header y Navegación */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 0.75rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--gray-800);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-image {
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+            border-radius: var(--radius-sm);
+            background: var(--white);
+            padding: 3px;
+            box-shadow: var(--shadow-sm);
+            border: none;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #52525b;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: #f4f4f5;
+            color: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            min-width: 200px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            border-radius: 15px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1001;
+            padding: 0.75rem 0;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 0.7rem 1.5rem;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .dropdown-item:hover {
+            background: #fafafa;
+            color: #2563eb;
+            padding-left: 1.5rem;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        /* Boton de cerrar movil */
+        .mobile-close-btn {
+            display: none;
+            justify-content: flex-end;
+            padding: 1rem;
+            border-bottom: 1px solid #e4e4e7;
+        }
+
+        .close-menu-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #3f3f46;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .close-menu-btn:hover {
+            background: #f4f4f5;
+            color: #2563eb;
+        }
+
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-login {
+            background: #2563eb;
+            color: white;
+            border: 1px solid #2563eb;
+            border-radius: 8px;
+        }
+
+        .btn-login:hover {
+            background: #1d4ed8;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.2);
+        }
+
+        /* ===== BOTÓN DE MENÚ MÓVIL ===== */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #333;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-toggle:hover {
+            background: #f4f4f5;
+            color: #2563eb;
+        }
+
+        /* ===== OVERLAY PARA MÓVIL ===== */
+        .mobile-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Page Header */
+    /* Page Header */
+        .page-header {
+            margin-top: 80px;
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            padding: 3rem 2rem;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="guide" x="0" y="0" width="25" height="25" patternUnits="userSpaceOnUse"><circle cx="12.5" cy="12.5" r="3" fill="rgba(255,255,255,0.1)"/><path d="M8 16 L17 16 M12.5 20 L12.5 24" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23guide)"/></svg>');
+            z-index: 1;
+        }
+
+        .page-header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .page-header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            /* AOS Override for initial load effect */
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+
+        .page-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Search and Filters */
+        .search-section {
+            background: white;
+            padding: 2rem;
+            margin: -2rem 2rem 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 100;
+        }
+
+        .search-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-control {
+            padding: 0.8rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #2196F3;
+            box-shadow: 0 0 10px rgba(33, 150, 243, 0.2);
+        }
+
+        .btn-search {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-search:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.4);
+        }
+
+        .btn-clear {
+            background: #f8f9fa;
+            color: #666;
+            border: 2px solid #e0e0e0;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 0.5rem;
+        }
+
+        .btn-clear:hover {
+            background: #e9ecef;
+            border-color: #ccc;
+        }
+
+        /* Guides Grid */
+        .guides-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .results-info {
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        .sort-dropdown {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .guides-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .guide-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .guide-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(33, 150, 243, 0.15);
+            border-color: #2196F3;
+        }
+
+        .guide-header {
+            padding: 2rem 1.5rem 1rem;
+            text-align: center;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-bottom: 1px solid #f0f0f0;
+            position: relative;
+        }
+
+        .guide-photo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: bold;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(33, 150, 243, 0.2);
+        }
+
+        .guide-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .verified-badge-guide {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(76, 175, 80, 0.9);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .guide-name {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .guide-name:hover {
+            color: #2196F3;
+        }
+
+        .guide-location {
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .guide-info {
+            padding: 1.5rem;
+        }
+
+        .guide-description {
+            color: #666;
+            margin-bottom: 1.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.5;
+        }
+
+        .guide-specialties {
+            margin-bottom: 1.5rem;
+        }
+
+        .specialties-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.8rem;
+        }
+
+        .specialties-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .specialty-tag {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            color: #1976D2;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: 1px solid #90caf9;
+        }
+
+        .guide-footer {
+            padding-top: 1rem;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        /* Estilos para contacto como texto */
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .contact-text {
+            font-weight: 500;
+            color: #333;
+            min-width: 80px;
+        }
+
+        .contact-link {
+            color: #2196F3;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            word-break: break-all;
+        }
+
+        .contact-link:hover {
+            color: #1976D2;
+            text-decoration: underline;
+        }
+
+        /* Loading and Empty States */
+        .loading {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #666;
+        }
+
+        .loading i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: spin 1s linear infinite;
+            color: #2196F3;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #ddd;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        /* Search feedback */
+        .search-feedback {
+            background: #e3f2fd;
+            border: 1px solid #90caf9;
+            color: #1976D2;
+            padding: 0.8rem 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            display: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .mobile-close-btn {
+                display: flex;
+            }
+
+            .nav-menu {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 90vw;
+                max-width: 320px;
+                height: 100vh;
+                background: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 2rem 0;
+                padding-top: 4rem;
+                z-index: 1000;
+                transition: all 0.3s ease;
+                box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-menu.active {
+                right: 0;
+            }
+
+            .nav-item {
+                width: 100%;
+                margin: 0;
+                border-bottom: 1px solid #f0f0f0;
+            }
+
+            .nav-link {
+                width: 100%;
+                padding: 1rem 2rem;
+                border-radius: 0;
+                justify-content: space-between;
+                font-size: 1.1rem;
+            }
+
+            .nav-link:hover {
+                background: #f4f4f5;
+                transform: none;
+                padding-left: 2.5rem;
+                color: #2563eb;
+            }
+
+            .dropdown-menu {
+                position: static;
+                opacity: 1;
+                visibility: visible;
+                transform: none;
+                box-shadow: none;
+                background: #f8f9fa;
+                border-radius: 0;
+                margin: 0;
+                padding: 0;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease;
+            }
+
+            .dropdown.active .dropdown-menu {
+                max-height: 300px;
+            }
+
+            .dropdown-item {
+                padding: 0.8rem 2rem;
+                padding-left: 3rem;
+                border-bottom: 1px solid #e0e0e0;
+                font-size: 1rem;
+            }
+
+            .dropdown-item:hover {
+                background: rgba(37, 99, 235, 0.05);
+                color: #2563eb;
+                border-left: none;
+                padding-left: 3.5rem;
+            }
+
+            .auth-buttons {
+                display: flex;
+                gap: 1rem;
+                padding: 1rem 2rem;
+                border-top: 1px solid #f0f0f0;
+                margin-top: auto;
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(10px);
+            }
+
+            .nav-menu.active .auth-buttons {
+                display: flex;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .search-form {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .guides-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: #000000;
+            color: #ecf0f1;
+            padding: 3rem 0 1rem 0;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.5fr;
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-brand {
+            max-width: 280px;
+        }
+
+        .footer-logo-section {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #ecf0f1;
+            margin-bottom: 1rem;
+        }
+
+        .footer-logo-section i {
+            font-size: 1.6rem;
+            color: #2563eb;
+        }
+
+        .footer-description {
+            color: #bdc3c7;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .footer-social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: #2563eb;
+            color: white;
+            border-radius: 50%;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .footer-social-link:hover {
+            background: #3b82f6;
+            transform: translateY(-2px);
+        }
+
+        .footer-section h3 {
+            color: #ecf0f1;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            display: block;
+            padding: 0.25rem 0;
+        }
+
+        .footer-links a:hover {
+            color: #3b82f6;
+            padding-left: 0.5rem;
+        }
+
+        .footer-contact-info {
+            font-size: 0.9rem;
+        }
+
+        .footer-contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            color: #bdc3c7;
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-contact-item i {
+            color: #3b82f6;
+            width: 16px;
+            margin-top: 0.1rem;
+            flex-shrink: 0;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #34495e;
+            padding-top: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-copyright {
+            color: #95a5a6;
+            font-size: 0.85rem;
+        }
+
+        .footer-bottom-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-bottom-links a {
+            color: #95a5a6;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .footer-bottom-links a:hover {
+            color: #3b82f6;
+        }
+
+        @media (max-width: 768px) {
+            .footer-content-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+
+                <img src="/hospedaje/img_jalpan/logo_pueblos_magicos.jpg" alt="Logo Turismo" class="logo-image">
+                Dirección de Turismo
+            </a>
+
+            <!-- Botón de menú móvil -->
+            <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <!-- Menú de navegación -->
+            <ul class="nav-menu" id="navMenu">
+                <!-- Boton cerrar (solo movil) -->
+                <li class="nav-item mobile-close-btn">
+                    <button class="close-menu-btn" id="closeMenuBtn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">
+
+                        Inicio
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="/mapa.html" class="nav-link">
+
+                        Mapa
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="hospedaje.html" class="nav-link">
+                        Hospedaje
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="/" class="nav-link">
+
+                        Alimentos
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="/experiencias.html" class="nav-link">
+
+                        Experiencias
+                    </a>
+                </li>
+
+                <!-- Selector de Idiomas -->
+                <li class="nav-item">
+                    <select id="lang-select" class="form-control"
+                        style="padding: 0.5rem; border-radius: 5px; border: 1px solid #ccc; font-weight: bold; cursor: pointer; background: white;">
+                        <option value="ES">🇪🇸 ES</option>
+                        <option value="EN">🇺🇸 EN</option>
+                        <option value="FR">🇫🇷 FR</option>
+                    </select>
+                </li>
+
+                <li class="nav-item auth-buttons">
+                    <a href="login.html" class="btn btn-login">Iniciar Sesión</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Overlay para móvil -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="page-header-content">
+            <h1 data-aos="fade-up" data-aos-duration="1000"><i class="fas fa-user-tie"></i> Guías Turísticas</h1>
+            <p data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">Conecta con guías locales expertos y certificados. Descubre destinos auténticos con profesionales
+                apasionados por compartir la cultura e historia de la región.</p>
+        </div>
+    </section>
+
+    <!-- Search and Filters -->
+    <section class="search-section" data-aos="fade-up" data-aos-delay="400">
+        <div class="search-container">
+            <form class="search-form" id="searchForm">
+                <div class="form-group">
+                    <label for="searchQuery">Buscar guía</label>
+                    <input type="text" id="searchQuery" class="form-control"
+                        placeholder="Buscar por nombre del guía o ciudad...">
+                </div>
+
+                <div style="display: flex; gap: 0.5rem;">
+                    <button type="submit" class="btn-search">
+                        <i class="fas fa-search"></i>
+                        Buscar
+                    </button>
+                    <button type="button" class="btn-clear" onclick="clearFilters()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </form>
+
+            <div class="search-feedback" id="searchFeedback"></div>
+        </div>
+    </section>
+
+    <!-- Guides Section -->
+    <section class="guides-section">
+        <div class="section-header" data-aos="fade-up">
+            <div class="results-info" id="resultsInfo">
+                Cargando guías turísticas...
+            </div>
+            <select class="sort-dropdown" id="sortBy">
+                <option value="newest">Más recientes</option>
+                <option value="name">Nombre A-Z</option>
+                <option value="rating">Mejor calificados</option>
+                <option value="experience">Más experiencia</option>
+            </select>
+        </div>
+
+        <!-- Loading State -->
+        <div class="loading" id="loadingState">
+            <i class="fas fa-spinner"></i>
+            <h3>Cargando guías turísticas...</h3>
+            <p>Por favor espera mientras obtenemos la información</p>
+        </div>
+
+        <!-- Guides Grid -->
+        <div class="guides-grid" id="guidesGrid" data-aos="fade-up" data-aos-delay="200" style="display: none;">
+            <!-- Las guías se cargarán aquí dinámicamente -->
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <i class="fas fa-user-tie"></i>
+            <h3>No se encontraron guías turísticas</h3>
+            <p>Intenta ajustar tus filtros de búsqueda</p>
+        </div>
+    </section>
+
+    <script>
+        // Variables globales
+        let allGuides = [];
+        let filteredGuides = [];
+        // ✅ CORREGIDO: URL dinámica igual que manage-images-cabana.html
+        const baseURL = window.location.hostname === 'localhost'
+            ? '/api/hospedaje'
+            : '/api/hospedaje';
+
+        // Elementos del DOM
+        const loadingState = document.getElementById('loadingState');
+        const guidesGrid = document.getElementById('guidesGrid');
+        const emptyState = document.getElementById('emptyState');
+        const resultsInfo = document.getElementById('resultsInfo');
+        const searchForm = document.getElementById('searchForm');
+        const sortBy = document.getElementById('sortBy');
+        const searchFeedback = document.getElementById('searchFeedback');
+
+        // Datos de ejemplo para demostración (se usarán si falla la API)
+        const exampleGuides = [
+            {
+                _id: '1',
+                nombre: 'María',
+                apellidos: 'González',
+                descripcion: 'Guía especializada en turismo cultural y aventura. Con más de 8 años de experiencia mostrando los mejores destinos de la región.',
+                especialidades: ['Excursionismo', 'Guia_cultural'],
+                ubicacion: {
+                    ciudadesOperacion: ['San Luis Potosí', 'Real de Catorce']
+                },
+                contacto: {
+                    telefono: '+52 444 123 4567',
+                    email: 'maria.gonzalez@email.com',
+                    whatsapp: '5244412345567'
+                },
+                verificado: { identidad: true },
+                createdAt: '2024-01-15'
+            },
+            {
+                _id: '2',
+                nombre: 'Carlos',
+                apellidos: 'Hernández',
+                descripcion: 'Experto en misiones franciscanas y patrimonio histórico. Ofrece tours educativos y culturales únicos.',
+                especialidades: ['Misiones_franciscanas', 'Guia_cultural'],
+                ubicacion: {
+                    ciudadesOperacion: ['Rioverde', 'Ciudad Valles']
+                },
+                contacto: {
+                    telefono: '+52 444 765 4321',
+                    email: 'carlos.hernandez@email.com',
+                    whatsapp: '5244476543221'
+                },
+                verificado: { identidad: false },
+                createdAt: '2024-02-10'
+            },
+            {
+                _id: '3',
+                nombre: 'Ana',
+                apellidos: 'Martínez',
+                descripcion: 'Guía certificada en excursionismo y aventura. Conoce todos los senderos y rutas de montaña de la región.',
+                especialidades: ['Excursionismo'],
+                ubicacion: {
+                    ciudadesOperacion: ['Matehuala', 'Real de Catorce']
+                },
+                contacto: {
+                    telefono: '+52 444 555 1234',
+                    email: 'ana.martinez@email.com',
+                    whatsapp: '52445551234'
+                },
+                verificado: { identidad: true },
+                createdAt: '2024-03-05'
+            }
+        ];
+
+        // Cargar guías al iniciar la página
+        document.addEventListener('DOMContentLoaded', function () {
+            loadGuides();
+            setupEventListeners();
+
+            // ===== CONFIGURAR MENÚ MÓVIL RESPONSIVO =====
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const navMenu = document.getElementById('navMenu');
+            const mobileOverlay = document.getElementById('mobileOverlay');
+            const hospedajeDropdown = document.getElementById('hospedajeDropdown');
+
+            // Toggle del menú móvil
+            if (mobileMenuToggle) {
+                mobileMenuToggle.addEventListener('click', () => {
+                    navMenu.classList.toggle('active');
+                    mobileOverlay.classList.toggle('active');
+
+                    // Cambiar icono
+                    const icon = mobileMenuToggle.querySelector('i');
+                    if (navMenu.classList.contains('active')) {
+                        icon.classList.remove('fa-bars');
+                        icon.classList.add('fa-times');
+                    } else {
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                });
+            }
+
+            // Cerrar menú al hacer click en overlay
+            if (mobileOverlay) {
+                mobileOverlay.addEventListener('click', closeMenu);
+            }
+
+            // Cerrar menú con botón X
+            const closeMenuBtn = document.getElementById('closeMenuBtn');
+            if (closeMenuBtn) {
+                closeMenuBtn.addEventListener('click', closeMenu);
+            }
+
+            // Función para cerrar el menú
+            function closeMenu() {
+                if (navMenu) navMenu.classList.remove('active');
+                if (mobileOverlay) mobileOverlay.classList.remove('active');
+                if (hospedajeDropdown) hospedajeDropdown.classList.remove('active');
+
+                const icon = mobileMenuToggle?.querySelector('i');
+                if (icon) {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            }
+
+            // Toggle del dropdown en hospedaje en móvil
+            if (hospedajeDropdown) {
+                hospedajeDropdown.addEventListener('click', (e) => {
+                    if (window.innerWidth <= 768) {
+                        if (e.target.closest('.nav-link') && !e.target.closest('.dropdown-item')) {
+                            e.preventDefault();
+                            hospedajeDropdown.classList.toggle('active');
+                        }
+                    }
+                });
+            }
+
+            // Cerrar menú al redimensionar ventana
+            window.addEventListener('resize', () => {
+                if (window.innerWidth > 768) {
+                    closeMenu();
+                }
+            });
+
+            // Cerrar menú al hacer clic en un enlace (excepto dropdown)
+            const navLinks = document.querySelectorAll('.nav-link:not(.dropdown .nav-link)');
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth <= 768) {
+                        closeMenu();
+                    }
+                });
+            });
+        });
+
+        // Configurar event listeners
+        function setupEventListeners() {
+            // Prevenir envío del formulario
+            searchForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                handleSearch();
+            });
+
+            // Búsqueda en tiempo real
+            document.getElementById('searchQuery').addEventListener('input', debounce(handleSearch, 300));
+
+            // Ordenamiento
+            sortBy.addEventListener('change', handleSort);
+        }
+
+        // Función debounce para optimizar búsquedas
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Cargar guías desde la API
+        async function loadGuides() {
+            try {
+                showLoading();
+
+                // Intentar cargar desde la API
+                try {
+                    const response = await fetch(`${baseURL}/guias`);
+                    const data = await response.json();
+
+                    if (data.status === 'success' && data.data && data.data.guias) {
+                        allGuides = data.data.guias;
+                    } else {
+                        throw new Error('Datos no válidos de la API');
+                    }
+                } catch (apiError) {
+                    console.warn('API no disponible, usando datos de ejemplo:', apiError);
+                    // Usar datos de ejemplo si la API falla
+                    allGuides = exampleGuides;
+                    showSearchFeedback('Mostrando datos de ejemplo. API no disponible.', 'warning');
+                }
+
+                filteredGuides = [...allGuides];
+                displayGuides();
+                updateResultsInfo();
+
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Error al cargar las guías turísticas. Por favor recarga la página.');
+            }
+        }
+
+        // Limpiar filtros
+        function clearFilters() {
+            document.getElementById('searchQuery').value = '';
+            document.getElementById('sortBy').value = 'newest';
+
+            filteredGuides = [...allGuides];
+            handleSort(); // Aplicar ordenamiento por defecto
+            hideSearchFeedback();
+        }
+
+        // Manejar búsqueda
+        function handleSearch() {
+            const searchQuery = document.getElementById('searchQuery').value.toLowerCase().trim();
+
+            console.log('Búsqueda:', { searchQuery }); // Debug
+
+            filteredGuides = allGuides.filter(guia => {
+                // Verificar que el objeto guía tenga las propiedades necesarias
+                if (!guia || !guia.nombre || !guia.apellidos) {
+                    return false;
+                }
+
+                // Filtro por texto
+                let matchesSearch = true;
+                if (searchQuery) {
+                    const fullName = `${guia.nombre} ${guia.apellidos}`.toLowerCase();
+                    const description = (guia.descripcion || '').toLowerCase();
+                    const cities = guia.ubicacion?.ciudadesOperacion?.join(' ').toLowerCase() || '';
+                    const specialties = guia.especialidades?.map(s => formatSpecialty(s)).join(' ').toLowerCase() || '';
+
+                    matchesSearch = fullName.includes(searchQuery) ||
+                        description.includes(searchQuery) ||
+                        cities.includes(searchQuery) ||
+                        specialties.includes(searchQuery);
+                }
+
+                return matchesSearch;
+            });
+
+            console.log('Resultados filtrados:', filteredGuides.length); // Debug
+
+            displayGuides();
+            updateResultsInfo();
+
+            // Mostrar feedback de búsqueda
+            if (searchQuery) {
+                showSearchFeedback(`Búsqueda activa: "${searchQuery}"`, 'info');
+            } else {
+                hideSearchFeedback();
+            }
+        }
+
+        // Manejar ordenamiento
+        function handleSort() {
+            const sortValue = sortBy.value;
+
+            switch (sortValue) {
+                case 'name':
+                    filteredGuides.sort((a, b) => {
+                        const nameA = `${a.nombre} ${a.apellidos}`.toLowerCase();
+                        const nameB = `${b.nombre} ${b.apellidos}`.toLowerCase();
+                        return nameA.localeCompare(nameB);
+                    });
+                    break;
+                case 'rating':
+                    filteredGuides.sort((a, b) => (b.calificacion?.promedio || 0) - (a.calificacion?.promedio || 0));
+                    break;
+                case 'experience':
+                    filteredGuides.sort((a, b) => (b.experiencia?.anosExperiencia || 0) - (a.experiencia?.anosExperiencia || 0));
+                    break;
+                case 'newest':
+                default:
+                    filteredGuides.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    break;
+            }
+
+            displayGuides();
+        }
+
+        // Mostrar guías
+        function displayGuides() {
+            if (filteredGuides.length === 0) {
+                showEmpty();
+                return;
+            }
+
+            showGuides();
+
+            const guidesHTML = filteredGuides.map((guia, index) => createGuideCard(guia, index)).join('');
+            guidesGrid.innerHTML = guidesHTML;
+        }
+
+        // Función para crear elementos de contacto con texto
+        const createContactItem = (text, value, link) => {
+            if (!value) return '';
+            return `
+                <div class="contact-item">
+                    <span class="contact-text">${text}:</span>
+                    <a href="${link}" class="contact-link">${value}</a>
+                </div>
+            `;
+        };
+
+        // Crear tarjeta de guía 
+        function createGuideCard(guia, index) {
+            const initials = `${guia.nombre.charAt(0)}${guia.apellidos.charAt(0)}`;
+            const delay = (index % 4) * 100 + 100;
+
+            return `
+                <div class="guide-card" onclick="viewGuideDetails('${guia._id}')" data-aos="fade-up" data-aos-delay="${delay}">
+                    <div class="guide-header">
+                        ${guia.verificado?.identidad ? '<div class="verified-badge-guide"><i class="fas fa-shield-check"></i> Verificado</div>' : ''}                      
+                        <div class="guide-photo">
+                            ${guia.foto ?
+                    `<img src="${guia.foto}" alt="${guia.nombre} ${guia.apellidos}" onerror="this.style.display='none'; this.parentElement.textContent='${initials}';">` :
+                    initials
+                }
+                        </div>                    
+                        <h3 class="guide-name" onclick="event.stopPropagation(); showGuideInfo('${guia._id}')">
+                            ${guia.nombre} ${guia.apellidos}
+                        </h3>
+                        
+                        <div class="guide-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            ${guia.ubicacion?.ciudadesOperacion?.slice(0, 2).join(', ') || 'Múltiples ubicaciones'}
+                        </div>
+                    </div>               
+                    <div class="guide-info">
+                        <p class="guide-description">${guia.descripcion}</p>
+                        
+                        ${guia.especialidades && guia.especialidades.length > 0 ? `
+                        <div class="guide-specialties">
+                            <div class="specialties-title">Especialidades:</div>
+                            <div class="specialties-list">
+                                ${guia.especialidades.slice(0, 4).map(specialty =>
+                    `<span class="specialty-tag">${formatSpecialty(specialty)}</span>`
+                ).join('')}
+                            </div>
+                        </div>
+                        ` : ''}             
+                        <div class="guide-footer">
+                            <div class="contact-info">
+                                ${createContactItem('Teléfono', guia.contacto?.telefono, `tel:${guia.contacto?.telefono}`)}
+                                ${createContactItem('Email', guia.contacto?.email, `mailto:${guia.contacto?.email}`)}
+                                ${createContactItem('WhatsApp', guia.contacto?.whatsapp, `https://wa.me/${guia.contacto?.whatsapp}`)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Formatear especialidades
+        function formatSpecialty(specialty) {
+            const specialties = {
+                'Excursionismo': 'Excursionismo',
+                'Misiones_franciscanas': 'Misiones franciscanas',
+                'Guia_cultural': 'Guía cultural',
+            };
+            return specialties[specialty] || specialty.charAt(0).toUpperCase() + specialty.slice(1);
+        }
+
+        // Ver detalles del guía
+        function viewGuideDetails(guiaId) {
+            // Por ahora mostrar alert, después se puede crear página de detalles
+            alert(`Ver página completa del guía con ID: ${guiaId}`);
+            // En el futuro: window.location.href = `guia-detalle.html?id=${guiaId}`;
+        }
+
+        // Mostrar información del guía (al hacer clic en el nombre)
+        function showGuideInfo(guiaId) {
+            const guia = allGuides.find(g => g._id === guiaId);
+            if (guia) {
+                const specialties = guia.especialidades?.map(s => formatSpecialty(s)).join(', ') || 'No especificadas';
+                const cities = guia.ubicacion?.ciudadesOperacion?.join(', ') || 'No especificadas';
+
+                alert(`${guia.nombre} ${guia.apellidos}\n\n` +
+                    `📍 Ciudades: ${cities}\n` +
+                    `🎯 Especialidades: ${specialties}\n` +
+                    `📧 ${guia.contacto?.email || 'No disponible'}\n` +
+                    `📞 ${guia.contacto?.telefono || 'No disponible'}`);
+            }
+        }
+
+        // Actualizar información de resultados
+        function updateResultsInfo() {
+            const count = filteredGuides.length;
+            const total = allGuides.length;
+
+            if (count === total) {
+                resultsInfo.textContent = `Mostrando ${count} guía${count !== 1 ? 's' : ''} turística${count !== 1 ? 's' : ''}`;
+            } else {
+                resultsInfo.textContent = `Mostrando ${count} de ${total} guía${total !== 1 ? 's' : ''} turística${total !== 1 ? 's' : ''}`;
+            }
+        }
+
+        // Feedback de búsqueda
+        function showSearchFeedback(message, type = 'info') {
+            searchFeedback.textContent = message;
+            searchFeedback.className = `search-feedback ${type}`;
+            searchFeedback.style.display = 'block';
+        }
+
+        function hideSearchFeedback() {
+            searchFeedback.style.display = 'none';
+        }
+
+        // Estados de la interfaz
+        function showLoading() {
+            loadingState.style.display = 'block';
+            guidesGrid.style.display = 'none';
+            emptyState.style.display = 'none';
+        }
+
+        function showGuides() {
+            loadingState.style.display = 'none';
+            guidesGrid.style.display = 'grid';
+            emptyState.style.display = 'none';
+        }
+
+        function showEmpty() {
+            loadingState.style.display = 'none';
+            guidesGrid.style.display = 'none';
+            emptyState.style.display = 'block';
+        }
+
+        function showError(message) {
+            loadingState.innerHTML = `
+                <i class="fas fa-exclamation-triangle" style="color: #ff6b6b;"></i>
+                <h3>Error</h3>
+                <p>${message}</p>
+                <button onclick="location.reload()" class="btn-search" style="margin-top: 1rem;">
+                    <i class="fas fa-refresh"></i>
+                    Reintentar
+                </button>
+            `;
+        }
+    </script>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content-grid">
+                <!-- Sección principal -->
+                <div class="footer-brand">
+                    <div class="footer-logo-section">
+                        <img src="/hospedaje/img_jalpan/logo_fondo_negro.png" alt="Logo Turismo" class="logo-image"
+                            style="width: 40px; height: 40px; background: black;">
+                        Dirección de Turismo
+                    </div>
+                    <p class="footer-description">
+                        Conectamos a las personas con los mejores destinos, alojamientos y experiencias gastronómicas de
+                        Jalpan de Serra, Pueblo Mágico.
+                    </p>
+                    <div class="footer-social">
+                        <a href="https://www.facebook.com/profile.php?id=61573849871475" class="footer-social-link"
+                            title="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://www.instagram.com/jalpan_pueblomagico?igsh=MWpmdDVnMndpbnB1dQ=="
+                            class="footer-social-link" title="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Navegación -->
+                <div class="footer-section">
+                    <h3>Navegación</h3>
+                    <ul class="footer-links">
+                        <li><a href="/">Alimentos</a></li>
+                        <li><a href="hospedaje.html">Hospedaje</a></li>
+                        <li><a href="/experiencias.html">Experiencias</a></li>
+                        <li><a href="/mapa.html">Mapa</a></li>
+                    </ul>
+                </div>
+
+                <!-- Soporte: Política -->
+                <div class="footer-section">
+                    <h3>Soporte: Política</h3>
+                    <ul class="footer-links">
+                        <li><a href="#gastronomia">Gastronomía Local</a></li>
+                        <li><a href="#atractivos">Atractivos Naturales</a></li>
+                        <li><a href="#misiones">Misiones Franciscanas</a></li>
+                        <li><a href="#cultura">Historia y Cultura</a></li>
+                        <li><a href="#eventos">Eventos Especiales</a></li>
+                        <li><a href="#tradiciones">Tradiciones</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contacto -->
+                <div class="footer-section">
+                    <h3>Contacto</h3>
+                    <div class="footer-contact-info">
+                        <div class="footer-contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>direcciondeturismojalpan@gmail.com</span>
+                        </div>
+                        <div class="footer-contact-item">
+                            <i class="fas fa-phone"></i>
+                            <span>+52 441-296-0285</span>
+                        </div>
+                        <div class="footer-contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Plaza Principal, Jalpan de Serra, Querétaro</span>
+                        </div>
+                        <div class="footer-contact-item">
+                            <i class="fas fa-clock"></i>
+                            <span>Lun - Vie: 8:00 AM - 3:30 PM</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Línea inferior -->
+            <div class="footer-bottom">
+                <p class="footer-copyright">
+                    © 2024 Dirección de Turismo - Jalpan de Serra. Todos los derechos reservados.
+                </p>
+                <div class="footer-bottom-links">
+                    <a href="https://www.facebook.com/jenni.munoz.5011">Desarrollado por</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="js/translation.js"></script>
+    <script src="js/auth-navbar.js"></script>
+
+    <!-- AOS Script -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            AOS.init({
+                once: true, // Animates only once
+                offset: 50, // Trigger offset
+                duration: 800, // Animation duration
+                easing: 'ease-out-cubic' // Easing curve
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Imágenes - Airbnb</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #FF5A5F;
+            --secondary-color: #00A699;
+            --accent-color: #FC642D;
+            --success-color: #00A699;
+            --warning-color: #FFB400;
+            --error-color: #FF5A5F;
+            --gray-900: #222222;
+            --gray-800: #484848;
+            --gray-700: #717171;
+            --gray-600: #919191;
+            --gray-500: #B0B0B0;
+            --gray-300: #DDDDDD;
+            --gray-200: #EBEBEB;
+            --gray-100: #F7F7F7;
+            --gray-50: #FDFDFD;
+            --white: #FFFFFF;
+            --border-radius: 8px;
+            --border-radius-lg: 12px;
+            --shadow: 0 2px 16px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 6px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #F7F7F7 0%, #EBEBEB 100%);
+            color: var(--gray-900);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: var(--white);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-btn {
+            background: var(--gray-200);
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--gray-700);
+        }
+
+        .back-btn:hover {
+            background: var(--gray-300);
+            transform: translateX(-2px);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .user-role {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+        }
+
+        /* Main Content */
+        .main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .page-title i {
+            color: var(--primary-color);
+        }
+
+        .page-subtitle {
+            font-size: 1.125rem;
+            color: var(--gray-600);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Airbnb Selector */
+        .airbnb-selector {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--gray-200);
+        }
+
+        .selector-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .selector-title i {
+            color: var(--primary-color);
+        }
+
+        .select-wrapper {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .select-wrapper select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--gray-300);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            background: var(--white);
+            cursor: pointer;
+            transition: all 0.2s;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1rem;
+            padding-right: 3rem;
+        }
+
+        .select-wrapper select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 90, 95, 0.1);
+        }
+
+        /* Airbnb Info Card */
+        .airbnb-info-card {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--gray-200);
+        }
+
+        .airbnb-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .airbnb-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-radius: var(--border-radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .airbnb-details h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.75rem;
+        }
+
+        .airbnb-meta {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .airbnb-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gray-600);
+            font-size: 0.95rem;
+        }
+
+        .airbnb-meta i {
+            color: var(--primary-color);
+            width: 16px;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--gray-200);
+        }
+
+        .upload-area {
+            border: 3px dashed var(--gray-300);
+            border-radius: var(--border-radius-lg);
+            padding: 3rem 2rem;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            background: var(--gray-50);
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary-color);
+            background: rgba(255, 90, 95, 0.05);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--primary-color);
+            background: rgba(255, 90, 95, 0.1);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--gray-400);
+            margin-bottom: 1rem;
+        }
+
+        .upload-area:hover .upload-icon {
+            color: var(--primary-color);
+        }
+
+        .upload-text {
+            font-size: 1.1rem;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-hint {
+            font-size: 0.9rem;
+            color: var(--gray-500);
+            margin-bottom: 1.5rem;
+        }
+
+        .upload-button {
+            background: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .upload-button:hover {
+            background: #E00007;
+            transform: translateY(-2px);
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-top: 1.5rem;
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--gray-200);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .progress-text {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--gray-600);
+        }
+
+        /* Gallery Section */
+        .gallery-section {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            border: 1px solid var(--gray-200);
+        }
+
+        .gallery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .gallery-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .gallery-title i {
+            color: var(--primary-color);
+        }
+
+        .gallery-stats {
+            background: var(--gray-100);
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            color: var(--gray-700);
+            font-weight: 600;
+        }
+
+        /* Gallery Grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .image-card {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.3s;
+            border: 1px solid var(--gray-200);
+        }
+
+        .image-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .image-container {
+            position: relative;
+            aspect-ratio: 16/10;
+            overflow: hidden;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .image-card:hover .image-container img {
+            transform: scale(1.05);
+        }
+
+        .main-badge {
+            position: absolute;
+            top: 0.75rem;
+            left: 0.75rem;
+            background: var(--primary-color);
+            color: var(--white);
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--border-radius);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            z-index: 2;
+        }
+
+        .image-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .image-card:hover .image-overlay {
+            opacity: 1;
+        }
+
+        .image-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .action-btn {
+            background: var(--white);
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+
+        .action-btn.primary {
+            color: var(--primary-color);
+        }
+
+        .action-btn.danger {
+            color: var(--error-color);
+        }
+
+        .action-btn:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow);
+        }
+
+        .image-info {
+            padding: 1rem;
+        }
+
+        .image-filename {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+
+        .image-meta {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+        }
+
+        /* Loading & Empty States */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray-600);
+        }
+
+        .spinner {
+            border: 3px solid var(--gray-200);
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray-500);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: var(--gray-300);
+        }
+
+        .empty-state h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--gray-700);
+        }
+
+        /* Messages */
+        .message {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+            max-width: 400px;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s;
+        }
+
+        .message.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .message.success {
+            background: var(--success-color);
+            color: var(--white);
+        }
+
+        .message.error {
+            background: var(--error-color);
+            color: var(--white);
+        }
+
+        .message.warning {
+            background: var(--warning-color);
+            color: var(--white);
+        }
+
+        .message {
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            font-weight: 500;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav {
+                padding: 1rem;
+            }
+
+            .main {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .airbnb-info {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .airbnb-meta {
+                justify-content: center;
+                gap: 1rem;
+            }
+
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gallery-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-left">
+                <button class="back-btn" onclick="goBack()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <a href="airbnb-admin.html" class="logo">
+                    <i class="fas fa-images"></i>
+                    Gestión de Imágenes
+                </a>
+            </div>
+            
+            <div class="user-section">
+                <div class="user-info">
+                    <div class="user-name" id="user-name">Cargando...</div>
+                    <div class="user-role" id="user-role">admin</div>
+                </div>
+                <div class="user-avatar" id="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-home"></i>
+                Gestión de Imágenes - Airbnb
+            </h1>
+            <p class="page-subtitle">
+                Administra las imágenes de tus alojamientos Airbnb de forma fácil y organizada
+            </p>
+        </div>
+
+        <!-- Messages -->
+        <div id="message" class="message"></div>
+
+        <!-- Airbnb Info -->
+        <div class="airbnb-info-card" id="airbnb-info-card" style="display: none;">
+            <div class="airbnb-info">
+                <div class="airbnb-icon">
+                    <i class="fas fa-home"></i>
+                </div>
+                <div class="airbnb-details">
+                    <h3 id="airbnb-name">Cargando alojamiento...</h3>
+                    <div class="airbnb-meta">
+                        <span><i class="fas fa-map-marker-alt"></i> <span id="airbnb-location">-</span></span>
+                        <span><i class="fas fa-home"></i> <span id="airbnb-type">-</span></span>
+                        <span><i class="fas fa-users"></i> <span id="airbnb-capacity">-</span> huéspedes</span>
+                        <span><i class="fas fa-images"></i> <span id="airbnb-images">0</span> imágenes</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload Section -->
+        <div id="upload-section" class="upload-section">
+            <h2 class="selector-title">
+                <i class="fas fa-cloud-upload-alt"></i>
+                Subir Nuevas Imágenes
+            </h2>
+            
+            <div class="upload-area" id="upload-area">
+                <div class="upload-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <div class="upload-text">
+                    <strong>Haz clic aquí</strong> o arrastra las imágenes para subirlas
+                </div>
+                <div class="upload-hint">
+                    Formatos soportados: JPG, PNG, GIF, WebP • Máximo 5MB por imagen • Hasta 10 imágenes
+                </div>
+                <button type="button" class="upload-button" onclick="document.getElementById('file-input').click()">
+                    <i class="fas fa-plus"></i>
+                    Seleccionar Imágenes
+                </button>
+            </div>
+            
+            <input type="file" id="file-input" multiple accept="image/*">
+            
+            <div class="progress-container" id="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <div class="progress-text" id="progress-text">Subiendo imágenes...</div>
+            </div>
+        </div>
+
+        <!-- Gallery Section -->
+        <div id="gallery-section" class="gallery-section">
+            <div class="gallery-header">
+                <h2 class="gallery-title">
+                    <i class="fas fa-images"></i>
+                    Galería de Imágenes
+                </h2>
+                <div class="gallery-stats" id="gallery-stats">
+                    <span id="image-count">0</span> imágenes
+                </div>
+            </div>
+            
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>Cargando imágenes...</p>
+            </div>
+            
+            <div id="gallery-grid" class="gallery-grid" style="display: none;">
+                <!-- Las imágenes se cargarán aquí dinámicamente -->
+            </div>
+            
+            <div id="empty-state" class="empty-state" style="display: none;">
+                <i class="fas fa-images"></i>
+                <h3>No hay imágenes</h3>
+                <p>Sube tus primeras imágenes para comenzar</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        //  URL dinámico
+      // ✅ REEMPLAZAR POR:
+const API_BASE = (() => {
+    const hostname = window.location.hostname;
+    
+    console.log('🌐 Hostname detectado en manage-images-airbnb:', hostname);
+    
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+        console.log('🛠️ Modo desarrollo detectado');
+        return '/api/hospedaje';
+    }
+    
+    console.log('🚀 Modo producción detectado');
+    return `${window.location.protocol}//${window.location.host}/api`;
+})();
+
+
+        //  getImageUrl para construir URLs correctamente
+        function getImageUrl(imagePath) {
+            console.log(' getImageUrl recibió:', imagePath);
+            
+            if (!imagePath) {
+                console.log(' No hay imagen, usando por defecto');
+                return 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+            }       
+            if (imagePath.startsWith('http')) {
+                console.log('URL completa:', imagePath);
+                return imagePath;
+            }            
+            const finalUrl = `${API_BASE.replace('/api/hospedaje', '')}${imagePath}`;
+            console.log(' URL construida:', finalUrl);
+            return finalUrl;
+        }
+        //  Manejo global de errores de imágenes
+        function addImageErrorHandling() {
+            document.addEventListener('error', function(e) {
+                if (e.target.tagName === 'IMG') {
+                    console.warn('Error cargando imagen:', e.target.src);
+                    e.target.src = 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+                }
+            }, true);
+        }
+            
+        let currentUser = null;
+        let currentAirbnb = null;
+        let images = [];
+
+        // Elementos del DOM
+        const airbnbInfoCard = document.getElementById('airbnb-info-card');
+        const uploadSection = document.getElementById('upload-section');
+        const gallerySection = document.getElementById('gallery-section');
+        const fileInput = document.getElementById('file-input');
+        const uploadArea = document.getElementById('upload-area');
+        const progressContainer = document.getElementById('progress-container');
+        const progressFill = document.getElementById('progress-fill');
+        const progressText = document.getElementById('progress-text');
+        const galleryGrid = document.getElementById('gallery-grid');
+        const loadingElement = document.getElementById('loading');
+        const emptyState = document.getElementById('empty-state');
+        const imageCount = document.getElementById('image-count');
+        const messageDiv = document.getElementById('message');
+
+        // ✅ FUNCIÓN CORREGIDA: Verificación rápida (igual que otras páginas)
+        function quickAuthCheck() {
+            const token = localStorage.getItem('hospAuthToken');
+            if (!token) {
+                console.log('❌ No hay token en quickAuthCheck');
+                window.location.href = '../login.html';
+                return false;
+            }
+            return true;
+        }
+
+        // ✅ FUNCIÓN CORREGIDA: Cargar información del usuario
+        async function loadUserInfo() {
+            const userData = JSON.parse(localStorage.getItem('hospUserData') || '{}');
+            
+            if (userData && userData.nombre) {
+                currentUser = userData;
+                updateUserInfo();
+                console.log('✅ Usuario cargado desde localStorage:', userData.email || userData.nombre);
+                return;
+            }
+
+            // Si no hay datos locales, intentar obtener del servidor
+            try {
+                const token = localStorage.getItem('hospAuthToken');
+                const response = await fetch(`${API_BASE}/auth/me`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    currentUser = data.data.user;
+                    localStorage.setItem('hospUserData', JSON.stringify(currentUser));
+                    updateUserInfo();
+                    console.log('✅ Usuario verificado con servidor:', currentUser.email);
+                }
+            } catch (error) {
+                console.warn('⚠️ Error obteniendo info del usuario, pero continuando:', error);
+            }
+        }
+
+        // ✅ FUNCIÓN AGREGADA: Actualizar información del usuario
+        function updateUserInfo() {
+            if (currentUser) {
+                document.getElementById('user-name').textContent = currentUser.nombre || currentUser.email || 'Usuario';
+            }
+        }
+
+        // ✅ FUNCIÓN CORREGIDA: Cargar alojamiento desde URL
+        async function loadAirbnbFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const airbnbId = urlParams.get('airbnbId');
+
+            if (!airbnbId) {
+                showMessage('warning', 'No se especificó el alojamiento. Redirigiendo...');
+                setTimeout(() => {
+                    window.location.href = 'airbnb-admin.html';
+                }, 3000);
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('hospAuthToken');
+                const response = await fetch(`${API_BASE}/airbnb/${airbnbId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.status === 'success' && data.data.alojamiento) {
+                        currentAirbnb = data.data.alojamiento;
+                        console.log('✅ Alojamiento cargado:', currentAirbnb.nombre);
+                        return true;
+                    } else {
+                        throw new Error('Alojamiento no encontrado en respuesta');
+                    }
+                } else if (response.status === 404) {
+                    showMessage('warning', 'Alojamiento no encontrado o no tienes permisos');
+                    setTimeout(() => {
+                        window.location.href = 'airbnb-admin.html';
+                    }, 3000);
+                    return false;
+                } else if (response.status === 401) {
+                    localStorage.removeItem('hospAuthToken');
+                    localStorage.removeItem('hospUserData');
+                    showMessage('error', 'Sesión expirada, redirigiendo al login...');
+                    setTimeout(() => {
+                        window.location.href = '../login.html';
+                    }, 2000);
+                    return false;
+                } else {
+                    throw new Error(`Error del servidor: ${response.status}`);
+                }
+            } catch (error) {
+                console.error('Error cargando alojamiento:', error);
+                
+                if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+                    showMessage('warning', 'Error de conexión. Verifica tu internet e inténtalo de nuevo.');
+                } else {
+                    showMessage('error', 'Error cargando información del alojamiento');
+                }
+                return false;
+            }
+        }
+
+        // ✅ FUNCIÓN MEJORADA: Mostrar información del alojamiento
+        function displayAirbnbInfo() {
+            if (!currentAirbnb) return;
+
+            document.getElementById('airbnb-name').textContent = currentAirbnb.nombre;
+            document.getElementById('airbnb-location').textContent = 
+                currentAirbnb.ubicacion || 'Sin ubicación';
+            document.getElementById('airbnb-type').textContent = 
+                currentAirbnb.tipo || 'Sin especificar';
+            document.getElementById('airbnb-capacity').textContent = 
+                currentAirbnb.capacidad?.huespedes || '0';
+            document.getElementById('airbnb-images').textContent = 
+                currentAirbnb.imagenes?.length || '0';
+
+            airbnbInfoCard.style.display = 'block';
+        }
+
+        // ✅ FUNCIÓN CORREGIDA: Cargar imágenes
+        async function loadImages() {
+            if (!currentAirbnb) {
+                console.warn('⚠️ No hay alojamiento actual para cargar imágenes');
+                return;
+            }
+
+            try {
+                loadingElement.style.display = 'block';
+                galleryGrid.style.display = 'none';
+                emptyState.style.display = 'none';
+
+                const token = localStorage.getItem('hospAuthToken');
+                const response = await fetch(`${API_BASE}/airbnb/${currentAirbnb._id}/images`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('🖼️ Respuesta completa del servidor:', data);
+                    
+                    // ✅ CORRECCIÓN CLAVE: manejar la nueva estructura de respuesta del backend
+                    images = data.data || [];
+                    console.log('🖼️ Imágenes procesadas:', images);
+                    
+                    renderImages();
+                    updateImageCount();
+                    
+                    // Actualizar contador en info card
+                    document.getElementById('airbnb-images').textContent = images.length;
+                    
+                } else if (response.status === 401) {
+                    localStorage.removeItem('hospAuthToken');
+                    localStorage.removeItem('hospUserData');
+                    showMessage('error', 'Sesión expirada, redirigiendo...');
+                    setTimeout(() => {
+                        window.location.href = '../login.html';
+                    }, 2000);
+                } else {
+                    throw new Error(`Error del servidor: ${response.status}`);
+                }
+            } catch (error) {
+                console.error('Error cargando imágenes:', error);
+                showEmptyState();
+                
+                if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+                    showMessage('warning', 'Error de conexión cargando imágenes');
+                } else {
+                    showMessage('warning', 'Error al cargar las imágenes del alojamiento');
+                }
+            }
+        }
+
+        // ✅ FUNCIÓN CORREGIDA: Renderizar imágenes
+        function renderImages() {
+            loadingElement.style.display = 'none';
+            
+            if (!images || images.length === 0) {
+                showEmptyState();
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            galleryGrid.style.display = 'grid';
+            
+            console.log('🎨 Renderizando', images.length, 'imágenes');
+            
+            galleryGrid.innerHTML = images.map((image, index) => `
+                <div class="image-card">
+                    ${index === 0 ? '<div class="main-badge">Principal</div>' : ''}
+                    <div class="image-container">
+                        <img src="${getImageUrl(image)}" alt="Imagen ${index + 1}" loading="lazy" 
+                             onerror="this.src='https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'"
+                             onload="console.log('✅ Imagen cargada:', '${image}')">
+                        <div class="image-overlay">
+                            <div class="image-actions">
+                                ${index !== 0 ? `
+                                    <button class="action-btn primary" onclick="setMainImage(${index})" title="Establecer como principal">
+                                        <i class="fas fa-star"></i>
+                                    </button>
+                                ` : ''}
+                                <button class="action-btn danger" onclick="deleteImage(${index})" title="Eliminar imagen">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="image-info">
+                        <div class="image-filename">imagen-${index + 1}.jpg</div>
+                        <div class="image-meta">
+                            <span>Posición: ${index + 1}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            console.log('✅ Galería renderizada con', images.length, 'imágenes');
+        }
+
+        // ✅ FUNCIÓN AGREGADA: Mostrar estado vacío
+        function showEmptyState() {
+            loadingElement.style.display = 'none';
+            galleryGrid.style.display = 'none';
+            emptyState.style.display = 'block';
+            imageCount.textContent = '0';
+            console.log('📭 Mostrando estado vacío');
+        }
+
+        // ✅ FUNCIÓN AGREGADA: Actualizar contador
+        function updateImageCount() {
+            const count = images ? images.length : 0;
+            imageCount.textContent = count;
+            console.log('🔢 Contador actualizado:', count);
+        }
+
+        // ✅ FUNCIÓN MEJORADA: Configurar drag and drop
+        function setupDragAndDrop() {
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                const files = Array.from(e.dataTransfer.files);
+                handleFileSelection(files);
+            });
+
+            uploadArea.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                const files = Array.from(e.target.files);
+                handleFileSelection(files);
+            });
+        }
+
+        // ✅ FUNCIÓN MEJORADA: Manejar selección de archivos
+        function handleFileSelection(files) {
+            if (!currentAirbnb) {
+                showMessage('error', 'Primero se debe cargar el alojamiento');
+                return;
+            }
+
+            const validFiles = files.filter(file => {
+                if (!file.type.startsWith('image/')) {
+                    console.warn(`${file.name} no es una imagen válida`);
+                    return false;
+                }
+                if (file.size > 5 * 1024 * 1024) {
+                    console.warn(`${file.name} es muy grande (máximo 5MB)`);
+                    return false;
+                }
+                return true;
+            });
+
+            if (validFiles.length === 0) {
+                showMessage('warning', 'No hay archivos válidos para subir');
+                return;
+            }
+
+            if (validFiles.length !== files.length) {
+                showMessage('warning', `Se subirán ${validFiles.length} de ${files.length} archivos válidos`);
+            }
+
+            if (validFiles.length > 10) {
+                showMessage('warning', 'Máximo 10 imágenes por vez, se subirán las primeras 10');
+                validFiles.splice(10);
+            }
+
+            uploadImages(validFiles);
+        }
+
+        // ✅ FUNCIÓN CORREGIDA: Subir imágenes CON PROGRESO
+        async function uploadImages(files) {
+            const token = localStorage.getItem('hospAuthToken');
+            if (!token || !currentAirbnb) return;
+
+            try {
+                const formData = new FormData();
+                files.forEach(file => {
+                    formData.append('images', file);
+                });
+
+                progressContainer.style.display = 'block';
+                progressFill.style.width = '0%';
+                progressText.textContent = 'Preparando subida...';
+
+                const xhr = new XMLHttpRequest();
+                
+                xhr.upload.addEventListener('progress', (e) => {
+                    if (e.lengthComputable) {
+                        const percentComplete = (e.loaded / e.total) * 100;
+                        progressFill.style.width = percentComplete + '%';
+                        progressText.textContent = `Subiendo: ${Math.round(percentComplete)}%`;
+                    }
+                });
+
+                xhr.addEventListener('load', async () => {
+                    progressContainer.style.display = 'none';
+                    
+                    if (xhr.status === 200) {
+                        const data = JSON.parse(xhr.responseText);
+                        showMessage('success', data.message || 'Imágenes subidas exitosamente');
+                        // ✅ CLAVE: Recargar galería después de subir
+                        await loadImages();
+                        fileInput.value = ''; // Limpiar input
+                    } else {
+                        const error = JSON.parse(xhr.responseText);
+                        showMessage('error', error.message || 'Error subiendo imágenes');
+                    }
+                });
+
+                xhr.addEventListener('error', () => {
+                    progressContainer.style.display = 'none';
+                    showMessage('error', 'Error de conexión');
+                });
+
+                xhr.open('POST', `${API_BASE}/airbnb/${currentAirbnb._id}/upload-images`);
+                xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+                xhr.send(formData);
+
+            } catch (error) {
+                progressContainer.style.display = 'none';
+                console.error('Error subiendo imágenes:', error);
+                showMessage('error', 'Error subiendo imágenes');
+            }
+        }
+
+        // ✅ FUNCIÓN AGREGADA: Establecer imagen principal
+        async function setMainImage(imageIndex) {
+            const token = localStorage.getItem('hospAuthToken');
+            if (!token || !currentAirbnb) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/airbnb/${currentAirbnb._id}/images/set-main`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ imageIndex })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage('success', data.message || 'Imagen principal actualizada');
+                    await loadImages(); // Recargar galería
+                } else {
+                    showMessage('error', data.message || 'Error estableciendo imagen principal');
+                }
+            } catch (error) {
+                console.error('Error estableciendo imagen principal:', error);
+                showMessage('error', 'Error de conexión');
+            }
+        }
+
+        // ✅ FUNCIÓN AGREGADA: Eliminar imagen
+        async function deleteImage(imageIndex) {
+            const confirmed = confirm('¿Estás seguro de que quieres eliminar esta imagen?');
+            if (!confirmed) return;
+
+            const token = localStorage.getItem('hospAuthToken');
+            if (!token || !currentAirbnb) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/airbnb/${currentAirbnb._id}/images/${imageIndex}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage('success', data.message || 'Imagen eliminada');
+                    await loadImages(); // Recargar galería
+                } else {
+                    showMessage('error', data.message || 'Error eliminando imagen');
+                }
+            } catch (error) {
+                console.error('Error eliminando imagen:', error);
+                showMessage('error', 'Error de conexión');
+            }
+        }
+
+        // ✅ FUNCIÓN MEJORADA: Mostrar mensajes
+        function showMessage(type, text) {
+            messageDiv.className = `message ${type}`;
+            messageDiv.textContent = text;
+            messageDiv.classList.add('show');
+            
+            setTimeout(() => {
+                messageDiv.classList.remove('show');
+            }, 5000);
+        }
+
+        // ✅ FUNCIÓN AGREGADA: Navegación
+        function goBack() {
+            window.location.href = 'airbnb-admin.html';
+        }
+
+        // ✅ FUNCIÓN AGREGADA: Debug para troubleshooting
+        function debugAirbnbImages() {
+            console.log('🔍 === DEBUG AIRBNB IMÁGENES ===');
+            console.log('CurrentAirbnb:', currentAirbnb);
+            console.log('Images array:', images);
+            console.log('Images length:', images ? images.length : 'undefined');
+            console.log('Gallery grid display:', galleryGrid.style.display);
+            console.log('Empty state display:', emptyState.style.display);
+            console.log('Loading display:', loadingElement.style.display);
+            
+            if (images && images.length > 0) {
+                images.forEach((img, index) => {
+                    console.log(`Imagen ${index + 1}:`, img, '-> URL:', getImageUrl(img));
+                });
+            }
+            console.log('================================');
+        }
+
+        // ✅ FUNCIÓN PRINCIPAL: Inicialización corregida
+        async function init() {
+            try {
+                console.log('🚀 Iniciando manage-images-airbnb...');
+                
+                // Verificar autenticación
+                if (!quickAuthCheck()) return;
+                
+                // Configurar manejo de errores de imágenes
+                addImageErrorHandling();
+                
+                // Configurar drag and drop
+                setupDragAndDrop();
+                
+                // Cargar información del usuario
+                await loadUserInfo();
+                
+                // Cargar información del alojamiento desde URL
+                const airbnbLoaded = await loadAirbnbFromUrl();
+                
+                // Si hay alojamiento, mostrar info y cargar imágenes
+                if (airbnbLoaded && currentAirbnb) {
+                    console.log('🏠 Alojamiento cargado:', currentAirbnb.nombre);
+                    displayAirbnbInfo();
+                    await loadImages(); // ✅ CLAVE: cargar imágenes después de cargar alojamiento
+                } else {
+                    console.warn('⚠️ No se pudo cargar el alojamiento');
+                    showMessage('error', 'No se pudo cargar la información del alojamiento');
+                }
+                
+                // Exponer función de debug globalmente
+                window.debugAirbnbImages = debugAirbnbImages;
+                
+            } catch (error) {
+                console.error('❌ Error en inicialización:', error);
+                showMessage('error', 'Error al inicializar la página');
+            }
+        }
+
+        // ✅ INICIALIZACIÓN: Cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', init);
+
+        // ✅ VERIFICACIÓN PERIÓDICA: Menos agresiva
+        setInterval(() => {
+            const token = localStorage.getItem('hospAuthToken');
+            if (!token) {
+                console.log('⚠️ Token eliminado durante la sesión, redirigiendo...');
+                window.location.href = '../login.html';
+            }
+        }, 60000); // Verificar cada minuto
+    </script>
+</body>
+</html>

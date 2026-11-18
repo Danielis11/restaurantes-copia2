@@ -1,0 +1,2281 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actualizar Alojamiento - Panel de Administración</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Mapbox GL JS -->
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js'></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f0f2f5;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            background: rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        .user-info {
+            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .user-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .user-role {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 1rem 0;
+        }
+
+        .menu-section {
+            padding: 0.5rem 1.5rem;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            opacity: 0.6;
+            color: #bdc3c7;
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+        }
+
+        .menu-item {
+            margin: 0.2rem 0;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .menu-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left-color: #3498db;
+            transform: translateX(4px);
+        }
+
+        .menu-link.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border-left-color: #f39c12;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            background: #f0f2f5;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            background: white;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #e0e0e0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .breadcrumb {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb i {
+            margin: 0 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1100;
+            background: #3498db;
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        /* Messages */
+        .message {
+            padding: 1rem;
+            margin: 1rem 2rem;
+            border-radius: 8px;
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Form Container */
+        .form-container {
+            margin: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-header {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-header p {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        .form-body {
+            padding: 2rem;
+        }
+
+        /* Form Sections */
+        .form-section {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #ff6b6b;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title i {
+            color: #ff6b6b;
+        }
+
+        /* Form Groups */
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        .form-control {
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            resize: vertical;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.1);
+        }
+
+        .form-hint {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+
+        /* Radio Groups */
+        .radio-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .radio-item:hover {
+            border-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.05);
+        }
+
+        .radio-item input[type="radio"] {
+            margin-right: 0.5rem;
+        }
+
+        .radio-item input[type="radio"]:checked+label {
+            color: #ff6b6b;
+            font-weight: 600;
+        }
+
+        .radio-item:has(input[type="radio"]:checked) {
+            border-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+        }
+
+        /* Services Grid */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .service-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .service-item:hover {
+            border-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.05);
+        }
+
+        .service-item input[type="checkbox"] {
+            margin-right: 0.5rem;
+        }
+
+        .service-item:has(input[type="checkbox"]:checked) {
+            border-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+        }
+
+        /* Buttons */
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Loading */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #6c757d;
+        }
+
+        .loading i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-text {
+            font-size: 1.2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .overlay.active {
+                display: block;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .radio-group,
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .form-container {
+                margin: 1rem;
+            }
+
+            .top-bar {
+                padding: 1rem;
+                margin-top: 60px;
+            }
+        }
+
+        /* Métodos de Pago */
+        .payment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .payment-option {
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .payment-option input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .payment-option label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 20px 15px;
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-weight: 500;
+            min-height: 80px;
+            justify-content: center;
+        }
+
+        .payment-option:hover label {
+            border-color: #FF6B6B;
+            background: #fff5f5;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.1);
+        }
+
+        .payment-option input[type="checkbox"]:checked+label {
+            border-color: #FF6B6B;
+            background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .payment-icon {
+            font-size: 24px;
+            color: #6c757d;
+            transition: all 0.3s ease;
+        }
+
+        .payment-option:hover .payment-icon {
+            color: #FF6B6B;
+            transform: scale(1.1);
+        }
+
+        .payment-option input[type="checkbox"]:checked+label .payment-icon {
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .payment-option label {
+            font-size: 14px;
+            margin: 0;
+        }
+
+
+        /* Sección Ecológica */
+        .eco-section {
+            background: linear-gradient(135deg, #f8fdf8, #e8f5e8);
+            border: 2px solid #28a745;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+
+        .eco-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .eco-checkbox input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .eco-label {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            border: 2px solid #dee2e6;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin: 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .eco-label:hover {
+            border-color: #28a745;
+            background: #f8fff8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.15);
+        }
+
+        .eco-checkbox input[type="checkbox"]:checked+.eco-label {
+            border-color: #28a745;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
+        }
+
+        .eco-main-icon {
+            font-size: 28px;
+            color: #28a745;
+            transition: all 0.3s ease;
+        }
+
+        .eco-checkbox input[type="checkbox"]:checked+.eco-label .eco-main-icon {
+            color: white;
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
+        }
+
+        .eco-text {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .eco-text strong {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .eco-text small {
+            font-size: 13px;
+            opacity: 0.9;
+            line-height: 1.3;
+        }
+
+        .eco-checkbox input[type="checkbox"]:checked+.eco-label .eco-text small {
+            opacity: 0.95;
+        }
+
+        /* Animación para el checkbox */
+        @keyframes eco-pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .eco-checkbox input[type="checkbox"]:checked+.eco-label {
+            animation: eco-pulse 0.6s ease-in-out;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .eco-label {
+                padding: 12px;
+                gap: 12px;
+            }
+
+            .eco-main-icon {
+                font-size: 24px;
+            }
+
+            .eco-text strong {
+                font-size: 14px;
+            }
+
+            .eco-text small {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="../index.html" class="logo">
+                <i class="fas fa-compass"></i>
+                <span>Dirección de Turismo</span>
+            </a>
+        </div>
+
+        <div class="user-info">
+            <div class="user-avatar" id="userAvatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="user-name" id="userName">Administrador</div>
+            <div class="user-role">
+                <i class="fas fa-shield-alt"></i>
+                <span id="userRole">Administrador</span>
+            </div>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li class="menu-section">Principal</li>
+            <li class="menu-item">
+                <a href="dashboard.html" class="menu-link">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+
+            <li class="menu-section">Gestión de Servicios</li>
+            <li class="menu-item">
+                <a href="airbnb-admin.html" class="menu-link active">
+                    <i class="fas fa-home"></i>
+                    <span>Mis Alojamientos</span>
+                </a>
+            </li>
+
+            <li class="menu-section">Configuración</li>
+            <li class="menu-item">
+                <a href="perfil.html" class="menu-link">
+                    <i class="fas fa-user-cog"></i>
+                    <span>Mi Perfil</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div>
+                <h1 class="page-title">Actualizar Alojamiento Airbnb</h1>
+                <div class="breadcrumb">
+                    <a href="dashboard.html">Dashboard</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <a href="airbnb-admin.html">Mis Alojamientos</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <span>Actualizar Detalles</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        <div class="message success-message" id="successMessage">
+            <i class="fas fa-check-circle"></i>
+            <span id="successText">¡Alojamiento actualizado exitosamente!</span>
+        </div>
+
+        <div class="message error-message" id="errorMessage">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span id="errorText">Error al actualizar el alojamiento</span>
+        </div>
+
+        <!-- Loading State -->
+        <div class="loading" id="loadingState">
+            <i class="fas fa-spinner"></i>
+            <div class="loading-text">Cargando información del alojamiento...</div>
+        </div>
+
+        <!-- Form Container -->
+        <div class="form-container" id="formContainer">
+            <div class="form-header">
+                <h2>
+                    <i class="fas fa-edit"></i>
+                    Actualizar Información del Alojamiento
+                </h2>
+                <p>Modifica los detalles de tu alojamiento para mantener la información actualizada</p>
+            </div>
+
+            <div class="form-body">
+                <form id="updateForm">
+                    <!-- Información Básica -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-info-circle"></i>
+                            Información Básica
+                        </h3>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Nombre del Alojamiento <span class="required">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="nombre" name="nombre" required>
+                                <span class="form-hint">Nombre descriptivo de tu alojamiento</span>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Descripción <span class="required">*</span>
+                                </label>
+                                <textarea class="form-control" id="descripcion" name="descripcion" rows="4"
+                                    required></textarea>
+                                <span class="form-hint">Describe tu alojamiento, sus características y lo que lo hace
+                                    especial</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tipo de Alojamiento -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-home"></i>
+                            Tipo de Alojamiento
+                        </h3>
+
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" id="casa" name="tipoAlojamiento" value="casa">
+                                <label for="casa">Casa completa</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="apartamento" name="tipoAlojamiento" value="apartamento">
+                                <label for="apartamento">Apartamento completo</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="habitacion_privada" name="tipoAlojamiento"
+                                    value="habitacion_privada">
+                                <label for="habitacion_privada">Habitación privada</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="habitacion_compartida" name="tipoAlojamiento"
+                                    value="habitacion_compartida">
+                                <label for="habitacion_compartida">Habitación compartida</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                Tipo de Propiedad <span class="required">*</span>
+                            </label>
+                            <select class="form-control" id="tipoPropiedad" name="tipoPropiedad" required>
+                                <option value="">Selecciona el tipo de propiedad</option>
+                                <option value="cabana">Cabaña</option>
+                                <option value="casa">Casa</option>
+                                <option value="zona_camping">Zona de Camping</option>
+                            </select>
+                            <span class="form-hint">Tipo específico de tu propiedad</span>
+                        </div>
+                    </div>
+            </div>
+
+            <!-- Capacidad y Tarifas -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-bed"></i>
+                    Capacidad y Tarifas
+                </h3>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">
+                            Número de Huéspedes <span class="required">*</span>
+                        </label>
+                        <input type="number" class="form-control" id="huespedes" name="huespedes" min="1" required>
+                        <span class="form-hint">Capacidad máxima de huéspedes</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            Habitaciones <span class="required">*</span>
+                        </label>
+                        <input type="number" class="form-control" id="habitaciones" name="habitaciones" min="1"
+                            required>
+                        <span class="form-hint">Número de habitaciones</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            Camas <span class="required">*</span>
+                        </label>
+                        <input type="number" class="form-control" id="camas" name="camas" min="1" required>
+                        <span class="form-hint">Número total de camas</span>
+                    </div>
+                </div>
+
+                <!-- Descripción de Habitaciones (Nuevo) -->
+                <div class="form-row" style="margin-top: 15px;">
+                    <div class="form-group" style="width: 100%;">
+                        <label class="form-label">
+                            Detalle de camas y distribución
+                        </label>
+                        <textarea class="form-control" id="descripcionHabitaciones" name="descripcionHabitaciones"
+                            rows="3" placeholder="Ej: 1 Cama King y 2 Individuales por habitación..."></textarea>
+                        <span class="form-hint">Describe cómo están distribuidas las habitaciones y el tipo de
+                            camas.</span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">
+                            Baños <span class="required">*</span>
+                        </label>
+                        <input type="number" class="form-control" id="banos" name="banos" min="0.5" step="0.5" required>
+                        <span class="form-hint">Número de baños (puede incluir medios baños)</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            Metros Cuadrados
+                        </label>
+                        <input type="number" class="form-control" id="metrosCuadrados" name="metrosCuadrados" min="1">
+                        <span class="form-hint">Tamaño aproximado en m²</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            Precio por Noche <span class="required">*</span>
+                        </label>
+                        <input type="number" class="form-control" id="precio" name="precio" min="0" step="0.01"
+                            required>
+                        <span class="form-hint">Precio en MXN por noche</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hacer Reservaciones (Nuevo) -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-calendar-check"></i>
+                    Hacer Reservaciones
+                </h3>
+                <span class="form-hint">Proporciona los canales mediante los cuales los clientes pueden reservar.</span>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fab fa-whatsapp" style="color:#25D366;"></i> WhatsApp
+                        </label>
+                        <input type="text" class="form-control" id="res_whatsapp" name="res_whatsapp"
+                            placeholder="Ej: 4421234567">
+                        <span class="form-hint">Número con código de área para botón directo</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-phone"></i> Teléfono Directo
+                        </label>
+                        <input type="text" class="form-control" id="res_telefono" name="res_telefono"
+                            placeholder="Ej: 4421234567">
+                        <span class="form-hint">Número de recepción o reservas</span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group" style="flex: 2;">
+                        <label class="form-label">
+                            <i class="fas fa-link"></i> Link de Reserva (Booking, Airbnb, Web)
+                        </label>
+                        <input type="url" class="form-control" id="res_url" name="res_url" placeholder="https://">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group" style="width: 100%;">
+                        <label class="form-label">
+                            <i class="fas fa-info-circle"></i> Indicaciones adicionales
+                        </label>
+                        <input type="text" class="form-control" id="res_indicaciones" name="res_indicaciones"
+                            placeholder="Ej: Mandar mensaje especificando fechas y número de personas.">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Métodos de Pago -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-credit-card"></i>
+                    Métodos de Pago
+                </h3>
+                <span class="form-hint">Selecciona los métodos de pago que aceptas</span>
+
+                <div class="payment-grid">
+                    <div class="payment-option" data-payment="efectivo">
+                        <input type="checkbox" id="efectivo" name="metodosPago" value="efectivo">
+                        <label for="efectivo">
+                            <i class="fas fa-money-bill-wave payment-icon"></i>
+                            Efectivo
+                        </label>
+                    </div>
+
+                    <div class="payment-option" data-payment="transferencia">
+                        <input type="checkbox" id="transferencia" name="metodosPago" value="transferencia">
+                        <label for="transferencia">
+                            <i class="fas fa-exchange-alt payment-icon"></i>
+                            Transferencia
+                        </label>
+                    </div>
+
+                    <div class="payment-option" data-payment="tarjeta">
+                        <input type="checkbox" id="tarjeta" name="metodosPago" value="tarjeta">
+                        <label for="tarjeta">
+                            <i class="fas fa-credit-card payment-icon"></i>
+                            Tarjeta
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Promociones y Anuncios -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-bullhorn"></i>
+                    Anuncios y Promociones
+                </h3>
+                <span class="form-hint">Agrega promociones especiales, eventos o anuncios. Las imágenes se subirán junto con el resto de la información.</span>
+
+                <div id="promocionesContainer" style="margin-top: 15px;">
+                    <!-- Las promociones se generarán aquí dinámicamente -->
+                </div>
+                <button type="button" id="btnAddPromocion"
+                    style="margin-top: 15px; background: transparent; border: 1px dashed #3498db; color: #3498db; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; transition: all 0.3s;"
+                    onmouseover="this.style.background='#ebf5fb'" onmouseout="this.style.background='transparent'">
+                    <i class="fas fa-plus-circle"></i> Agregar Nueva Promoción
+                </button>
+            </div>
+
+            <!-- Ubicación -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-map-marker-alt"></i>
+                    Ubicación
+                </h3>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">
+                            Dirección <span class="required">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="direccion" name="direccion" required>
+                        <span class="form-hint">Dirección completa del alojamiento</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            Ciudad <span class="required">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="ciudad" name="ciudad" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">
+                            Estado <span class="required">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="estado" name="estado" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            Código Postal
+                        </label>
+                        <input type="text" class="form-control" id="codigoPostal" name="codigoPostal">
+                    </div>
+                </div>
+
+                <!-- 🗺️ NUEVO MAPA MAPBOX -->
+                <div class="form-group mapbox-container" style="margin-top: 20px;">
+                    <label class="form-label">Ubicación en el Mapa</label>
+                    <span class="form-hint">Mueve el mapa o arrastra el marcador para establecer la ubicación
+                        exacta.</span>
+                    <div id="map"
+                        style="width: 100%; height: 350px; border-radius: 8px; border: 1px solid #ccc; margin-top: 10px;">
+                    </div>
+                    <input type="hidden" id="lat" name="lat">
+                    <input type="hidden" id="lng" name="lng">
+                </div>
+            </div>
+
+            <!-- Comodidades e Instalaciones -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-concierge-bell"></i>
+                    Comodidades e Instalaciones
+                </h3>
+                <span class="form-hint">Selecciona todas las comodidades de este alojamiento</span>
+
+                <h4 style="margin-top:20px; color:#555;"><i class="fas fa-door-open"></i> En el Alojamiento</h4>
+                <div class="services-grid">
+                    <div class="service-item">
+                        <input type="checkbox" id="wifi" name="servicios" value="wifi">
+                        <label for="wifi"><i class="fas fa-wifi"></i> WiFi gratuito</label>
+                    </div>
+                    <div class="service-item">
+                        <input type="checkbox" id="aire_acondicionado" name="servicios" value="aire_acondicionado">
+                        <label for="aire_acondicionado"><i class="fas fa-snowflake"></i> Aire acondicionado</label>
+                    </div>
+                    <div class="service-item">
+                        <input type="checkbox" id="calefaccion" name="servicios" value="calefaccion">
+                        <label for="calefaccion"><i class="fas fa-thermometer-half"></i> Calefacción</label>
+                    </div>
+                    <div class="service-item">
+                        <input type="checkbox" id="cocina" name="servicios" value="cocina">
+                        <label for="cocina"><i class="fas fa-utensils"></i> Cocina completa</label>
+                    </div>
+                    <div class="service-item">
+                        <input type="checkbox" id="lavadora" name="servicios" value="lavadora">
+                        <label for="lavadora"><i class="fas fa-tshirt"></i> Lavadora</label>
+                    </div>
+                    <div class="service-item">
+                        <input type="checkbox" id="secadora" name="servicios" value="secadora">
+                        <label for="secadora"><i class="fas fa-wind"></i> Secadora</label>
+                    </div>
+                    <div class="service-item" data-instalacion="sala_estar">
+                        <input type="checkbox" id="inst_sala_estar" name="instalaciones" value="sala_estar">
+                        <label for="inst_sala_estar"><i class="fas fa-couch"></i> Sala de Estar</label>
+                    </div>
+                    <div class="service-item">
+                        <input type="checkbox" id="jacuzzi" name="servicios" value="jacuzzi">
+                        <label for="jacuzzi"><i class="fas fa-hot-tub"></i> Jacuzzi</label>
+                    </div>
+                </div>
+
+                <h4 style="margin-top:20px; color:#555;"><i class="fas fa-tree"></i> Áreas Comunes / Exteriores</h4>
+                <div class="services-grid">
+                    <div class="service-item">
+                        <input type="checkbox" id="estacionamiento" name="servicios" value="estacionamiento">
+                        <label for="estacionamiento"><i class="fas fa-parking"></i> Estacionamiento</label>
+                    </div>
+                    <div class="service-item" data-instalacion="piscina">
+                        <input type="checkbox" id="inst_piscina" name="instalaciones" value="piscina">
+                        <label for="inst_piscina"><i class="fas fa-swimming-pool"></i> Piscina</label>
+                    </div>
+                    <div class="service-item" data-instalacion="areas_verdes">
+                        <input type="checkbox" id="inst_areas_verdes" name="instalaciones" value="areas_verdes">
+                        <label for="inst_areas_verdes"><i class="fas fa-tree"></i> Áreas Verdes / Jardín</label>
+                    </div>
+                    <div class="service-item" data-instalacion="asadores">
+                        <input type="checkbox" id="inst_asadores" name="instalaciones" value="asadores">
+                        <label for="inst_asadores"><i class="fas fa-fire"></i> Asadores / BBQ</label>
+                    </div>
+                    <div class="service-item" data-instalacion="gimnasio">
+                        <input type="checkbox" id="inst_gimnasio" name="instalaciones" value="gimnasio">
+                        <label for="inst_gimnasio"><i class="fas fa-dumbbell"></i> Gimnasio</label>
+                    </div>
+                    <div class="service-item" data-instalacion="terraza">
+                        <input type="checkbox" id="inst_terraza" name="instalaciones" value="terraza">
+                        <label for="inst_terraza"><i class="fas fa-umbrella-beach"></i> Terraza</label>
+                    </div>
+                    <div class="service-item" data-instalacion="area_juegos">
+                        <input type="checkbox" id="inst_area_juegos" name="instalaciones" value="area_juegos">
+                        <label for="inst_area_juegos"><i class="fas fa-child"></i> Área de Juegos</label>
+                    </div>
+                    <div class="service-item" data-instalacion="zona_camping">
+                        <input type="checkbox" id="inst_zona_camping" name="instalaciones" value="zona_camping">
+                        <label for="inst_zona_camping"><i class="fas fa-campground"></i> Zona de Camping</label>
+                    </div>
+                    <div class="service-item" data-instalacion="mirador">
+                        <input type="checkbox" id="inst_mirador" name="instalaciones" value="mirador">
+                        <label for="inst_mirador"><i class="fas fa-binoculars"></i> Mirador</label>
+                    </div>
+                    <div class="service-item">
+                        <input type="checkbox" id="mascotas" name="servicios" value="mascotas">
+                        <label for="mascotas"><i class="fas fa-paw"></i> Se permiten mascotas</label>
+                    </div>
+                    <div class="service-item">
+                        <input type="checkbox" id="fumadores" name="servicios" value="fumadores">
+                        <label for="fumadores"><i class="fas fa-smoking"></i> Se permite fumar</label>
+                    </div>
+                </div>
+
+                <h4 style="margin-top:20px; color:#555;"><i class="fas fa-plus-circle"></i> Comodidades Adicionales</h4>
+                <div id="comodidadesExtraContainer">
+                    <!-- Puntos extra dinámicos -->
+                </div>
+                <button type="button" id="btnAddComodidadExtra"
+                    style="margin-top: 10px; background: transparent; border: 1px dashed #ccc; padding: 10px; border-radius: 6px; cursor: pointer; color: #555; width: 100%; transition: all 0.3s;"
+                    onmouseover="this.style.background='#f9f9f9'" onmouseout="this.style.background='transparent'">
+                    <i class="fas fa-plus"></i> Añadir otra comodidad
+                </button>
+            </div>
+
+            <!-- Información de Contacto -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-phone"></i>
+                    Información de Contacto
+                </h3>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">
+                            Teléfono <span class="required">*</span>
+                        </label>
+                        <input type="tel" class="form-control" id="telefono" name="telefono" required>
+                        <span class="form-hint">Número de contacto para los huéspedes</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            Email <span class="required">*</span>
+                        </label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                        <span class="form-hint">Email de contacto</span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">
+                            Sitio Web
+                        </label>
+                        <input type="url" class="form-control" id="sitioWeb" name="sitioWeb">
+                        <span class="form-hint">URL de tu sitio web (opcional)</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            Horario de Atención
+                        </label>
+                        <span class="form-hint">Ej: 9:00 AM - 6:00 PM</span>
+                    </div>
+                </div>
+
+                <!-- Redes Sociales -->
+                <h4 style="margin-top: 20px; color: #555; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+                    <i class="fas fa-share-alt"></i> Redes Sociales (Opcional)
+                </h4>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label"><i class="fab fa-facebook" style="color:#1877F2;"></i>
+                            Facebook</label>
+                        <input type="url" class="form-control" id="redes_facebook" name="redes_facebook"
+                            placeholder="https://facebook.com/tu-pagina">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><i class="fab fa-instagram" style="color:#E4405F;"></i>
+                            Instagram</label>
+                        <input type="url" class="form-control" id="redes_instagram" name="redes_instagram"
+                            placeholder="https://instagram.com/tu-perfil">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label"><i class="fab fa-twitter" style="color:#1DA1F2;"></i> Twitter /
+                            X</label>
+                        <input type="url" class="form-control" id="redes_twitter" name="redes_twitter"
+                            placeholder="https://twitter.com/tu-usuario">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><i class="fab fa-tiktok" style="color:#000000;"></i> TikTok</label>
+                        <input type="url" class="form-control" id="redes_tiktok" name="redes_tiktok"
+                            placeholder="https://tiktok.com/@tu-usuario">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Políticas y Horarios -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-clock"></i>
+                    Políticas y Horarios
+                </h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Hora de Check-in</label>
+                        <input type="time" class="form-control" id="checkIn" name="checkIn" value="15:00">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Hora de Check-out</label>
+                        <input type="time" class="form-control" id="checkOut" name="checkOut" value="12:00">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Política de Cancelación</label>
+                        <select class="form-control" id="cancelacion" name="cancelacion">
+                            <option value="moderada">Moderada — Hasta 5 días antes</option>
+                            <option value="flexible">Flexible — Hasta 24h antes</option>
+                            <option value="estricta">Estricta — Sin reembolso</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Horario de Recepción</label>
+                        <input type="text" class="form-control" id="recepcion" name="recepcion"
+                            placeholder="Ej: 24 horas, 8:00 - 22:00">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Reglas Adicionales</label>
+                        <textarea class="form-control" id="reglasAdicionales" name="reglasAdicionales" rows="3"
+                            placeholder="Ej: No fumar, No mascotas, Silencio después de las 22:00"></textarea>
+                        <span class="form-hint">Separa cada regla con una coma</span>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- Accesibilidad -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-wheelchair"></i>
+                    Accesibilidad
+                </h3>
+                <span class="form-hint">Indica las facilidades de accesibilidad disponibles</span>
+                <div class="services-grid">
+                    <div class="service-item" data-accesibilidad="rampas"><input type="checkbox" id="acc_rampas"
+                            name="accesibilidad_items" value="rampas"><label for="acc_rampas"><i
+                                class="fas fa-wheelchair"></i> Rampas de acceso</label></div>
+                    <div class="service-item" data-accesibilidad="plantaBaja"><input type="checkbox" id="acc_plantaBaja"
+                            name="accesibilidad_items" value="plantaBaja"><label for="acc_plantaBaja"><i
+                                class="fas fa-building"></i> Habitaciones en planta baja</label></div>
+                    <div class="service-item" data-accesibilidad="banoAdaptado"><input type="checkbox"
+                            id="acc_banoAdaptado" name="accesibilidad_items" value="banoAdaptado"><label
+                            for="acc_banoAdaptado"><i class="fas fa-restroom"></i> Baño adaptado</label></div>
+                    <div class="service-item" data-accesibilidad="elevador"><input type="checkbox" id="acc_elevador"
+                            name="accesibilidad_items" value="elevador"><label for="acc_elevador"><i
+                                class="fas fa-sort"></i> Elevador</label></div>
+                    <div class="service-item" data-accesibilidad="senalizacionBraille"><input type="checkbox"
+                            id="acc_senalizacionBraille" name="accesibilidad_items" value="senalizacionBraille"><label
+                            for="acc_senalizacionBraille"><i class="fas fa-braille"></i> Señalización Braille</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Distancias a Puntos Clave -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-route"></i>
+                    Distancias a Puntos Clave
+                </h3>
+                <span class="form-hint">Indica la distancia aproximada (ej: 500m, 2 km, 15 min caminando)</span>
+
+                <h4 style="margin-top:20px; color:#555;"><i class="fas fa-tree"></i> Naturaleza y Cultura</h4>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label"><i class="fas fa-landmark"></i> Centro Histórico</label>
+                        <input type="text" class="form-control" id="dist_centroHistorico" name="dist_centroHistorico"
+                            placeholder="Ej: 500m">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><i class="fas fa-church"></i> Misiones</label>
+                        <input type="text" class="form-control" id="dist_misiones" name="dist_misiones"
+                            placeholder="Ej: 1 km">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label"><i class="fas fa-leaf"></i> Atractivo Natural</label>
+                        <input type="text" class="form-control" id="dist_naturaleza" name="dist_naturaleza"
+                            placeholder="Ej: 3 km">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><i class="fas fa-map-signs"></i> Zona Turística</label>
+                        <input type="text" class="form-control" id="dist_zonaTuristica" name="dist_zonaTuristica"
+                            placeholder="Ej: 200m">
+                    </div>
+                </div>
+
+                <h4 style="margin-top:20px; color:#555;"><i class="fas fa-car"></i> Transporte (Opcional)</h4>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label"><i class="fas fa-bus"></i> Terminal de Autobuses</label>
+                        <input type="text" class="form-control" id="dist_terminalAutobuses"
+                            name="dist_terminalAutobuses" placeholder="Ej: 2 km">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><i class="fas fa-plane"></i> Aeropuerto</label>
+                        <input type="text" class="form-control" id="dist_aeropuerto" name="dist_aeropuerto"
+                            placeholder="Ej: 45 km">
+                    </div>
+                </div>
+
+                <h4 style="margin-top:20px; color:#555;"><i class="fas fa-map-marker-alt"></i> Puntos de Interés
+                    Adicionales</h4>
+                <div id="puntosExtraContainer"></div>
+                <button type="button" id="btnAddPuntoExtra"
+                    style="margin-top: 10px; background: transparent; border: 1px dashed #ccc; padding: 10px; border-radius: 6px; cursor: pointer; color: #555; width: 100%; transition: all 0.3s;"
+                    onmouseover="this.style.background='#f9f9f9'" onmouseout="this.style.background='transparent'">
+                    <i class="fas fa-plus"></i> Añadir otro punto de interés
+                </button>
+            </div>
+
+            <!-- Compromiso Ecológico -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-leaf"></i>
+                    Compromiso Ecológico
+                </h3>
+
+                <div class="eco-section">
+                    <div class="eco-checkbox">
+                        <input type="checkbox" id="esEcologico" name="esEcologico" value="true">
+                        <label for="esEcologico" class="eco-label">
+                            <i class="fas fa-leaf eco-main-icon"></i>
+                            <span class="eco-text">
+                                <strong>Alojamiento Ecológico</strong>
+                                <small>Mi alojamiento implementa prácticas sostenibles y responsables con el medio
+                                    ambiente</small>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <!-- Buttons -->
+            <div class="btn-group">
+                <a href="airbnb-admin.html" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i>
+                    Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary" id="updateBtn">
+                    <i class="fas fa-save"></i>
+                    Actualizar Alojamiento
+                </button>
+            </div>
+            </form>
+        </div>
+        </div>
+    </main>
+
+    <script>
+        // Global variables
+        let airbnbId = null;
+        const baseURL = (() => {
+            const hostname = window.location.hostname;
+
+            console.log('🌐 Hostname detectado:', hostname);
+
+            if (hostname === 'localhost' || hostname === '127.0.0.1') {
+                console.log('🛠️ Modo desarrollo detectado');
+                return '/api/hospedaje';
+            }
+
+            console.log('🚀 Modo producción detectado');
+            return `${window.location.protocol}//${window.location.host}/api`;
+        })();
+
+        console.log('✅ BaseURL configurado:', baseURL);
+        const authToken = localStorage.getItem('hospAuthToken');
+        const userData = JSON.parse(localStorage.getItem('hospUserData') || '{}');
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function () {
+            if (!authToken) {
+                window.location.href = '../login.html';
+                return;
+            }
+
+            // Update user info
+            document.getElementById('userName').textContent = userData.nombre || 'Administrador';
+            document.getElementById('userRole').textContent = userData.role === 'admin' ? 'Administrador' : 'Usuario';
+
+            // Initials for avatar
+            const initials = userData.nombre ?
+                userData.nombre.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'AD';
+            document.getElementById('userAvatar').innerHTML = `<span>${initials}</span>`;
+
+            // Setup mobile menu
+            setupMobileMenu();
+
+            // Load user's Airbnb
+            loadUserAirbnb();
+
+            // Setup form handler
+            setupFormHandler();
+
+            // Init Mapbox
+            initMapbox();
+        });
+
+        // 🗺️ Configuración e Inicialización de Mapbox
+        function initMapbox() {
+            mapboxgl.accessToken = 'pk.eyJ1IjoiZGFuaWVsMTIzMiIsImEiOiJjbWlnb2R3MW4wM21nM2VwcmZ3ZnIxd3QzIn0.zyMq4wzSi9Zi7CuWo6oDCQ';
+
+            // Coordenadas default: Jalpan de Serra
+            const defaultLng = -99.4752;
+            const defaultLat = 21.2185;
+
+            window.mapboxMap = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/streets-v11',
+                center: [defaultLng, defaultLat],
+                zoom: 14
+            });
+
+            window.mapboxMap.addControl(new mapboxgl.NavigationControl());
+
+            window.mapboxMarker = new mapboxgl.Marker({
+                draggable: true,
+                color: "#27ae60"
+            })
+                .setLngLat([defaultLng, defaultLat])
+                .addTo(window.mapboxMap);
+
+            document.getElementById('lng').value = defaultLng;
+            document.getElementById('lat').value = defaultLat;
+
+            function onDragEnd() {
+                const lngLat = window.mapboxMarker.getLngLat();
+                document.getElementById('lng').value = lngLat.lng;
+                document.getElementById('lat').value = lngLat.lat;
+            }
+
+            window.mapboxMarker.on('dragend', onDragEnd);
+
+            window.mapboxMap.on('click', (e) => {
+                window.mapboxMarker.setLngLat([e.lngLat.lng, e.lngLat.lat]);
+                document.getElementById('lng').value = e.lngLat.lng;
+                document.getElementById('lat').value = e.lngLat.lat;
+            });
+
+            setTimeout(() => window.mapboxMap.resize(), 500);
+        }
+
+        // Setup mobile menu
+        function setupMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+
+            mobileMenuToggle.addEventListener('click', function () {
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+            });
+
+            overlay.addEventListener('click', function () {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+        }
+
+        // Setup form submission
+        function setupFormHandler() {
+            document.getElementById('updateForm').addEventListener('submit', updateAirbnb);
+        }
+
+        // Show/hide loading
+        function showLoading() {
+            document.getElementById('loadingState').style.display = 'block';
+            document.getElementById('formContainer').style.display = 'none';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('formContainer').style.display = 'block';
+            if (window.mapboxMap) {
+                setTimeout(() => window.mapboxMap.resize(), 100);
+            }
+        }
+
+        // Show success message
+        function showSuccess(message) {
+            const successMessage = document.getElementById('successMessage');
+            document.getElementById('successText').textContent = message;
+            successMessage.style.display = 'flex';
+
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        // Show error message
+        function showError(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            document.getElementById('errorText').textContent = message;
+            errorMessage.style.display = 'flex';
+
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        // Load user's Airbnb
+        async function loadUserAirbnb() {
+            try {
+                showLoading();
+
+                const response = await fetch(`${baseURL}/airbnb/mis-alojamientos`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success' && data.data.alojamientos.length > 0) {
+                    const airbnb = data.data.alojamientos[0];
+                    airbnbId = airbnb._id;
+
+                    await loadAirbnbDetails(airbnbId);
+                } else {
+                    showError('No tienes ningún alojamiento registrado');
+                    setTimeout(() => {
+                        window.location.href = 'crear-anuncio.html?tipo=airbnb';
+                    }, 2000);
+                }
+            } catch (error) {
+                console.error('Error cargando alojamiento:', error);
+                showError('Error al cargar tu alojamiento');
+                hideLoading();
+            }
+        }
+
+        // Load Airbnb details
+        async function loadAirbnbDetails(id) {
+            try {
+                const response = await fetch(`${baseURL}/airbnb/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    const airbnb = data.data.alojamiento;
+
+                    // Update form header
+                    document.querySelector('.form-header h2').innerHTML = `
+                        <i class="fas fa-edit"></i>
+                        ${airbnb.nombre}
+                    `;
+
+                    populateForm(airbnb);
+                    hideLoading();
+                } else {
+                    throw new Error(data.message || 'Error al cargar detalles del alojamiento');
+                }
+            } catch (error) {
+                console.error('Error loading Airbnb details:', error);
+                showError(error.message || 'Error al cargar detalles del alojamiento');
+                hideLoading();
+            }
+        }
+
+        // Populate form with Airbnb data
+
+        function populateForm(airbnb) {
+            // Basic information
+            document.getElementById('nombre').value = airbnb.nombre || '';
+            document.getElementById('descripcion').value = airbnb.descripcion || '';
+            document.getElementById('precio').value = airbnb.precioPorNoche || '';
+
+            // Property type
+            if (airbnb.tipoPropiedad) {
+                document.getElementById('tipoPropiedad').value = airbnb.tipoPropiedad;
+            }
+
+            // Accommodation type
+            if (airbnb.caracteristicas?.tipoAlojamiento) {
+                const radioElement = document.getElementById(airbnb.caracteristicas.tipoAlojamiento);
+                if (radioElement) {
+                    radioElement.checked = true;
+                }
+            }
+
+            // Capacity
+            if (airbnb.capacidad) {
+                document.getElementById('huespedes').value = airbnb.capacidad.huespedes || '';
+                document.getElementById('habitaciones').value = airbnb.capacidad.habitaciones || '';
+                document.getElementById('camas').value = airbnb.capacidad.camas || '';
+                document.getElementById('banos').value = airbnb.capacidad.banos || '';
+            }
+
+            // Descripción Habitaciones
+            if (airbnb.descripcionHabitaciones) {
+                const descHab = document.getElementById('descripcionHabitaciones');
+                if (descHab) descHab.value = airbnb.descripcionHabitaciones;
+            }
+
+            // Reservaciones
+            if (airbnb.reservaciones) {
+                if (document.getElementById('res_whatsapp')) document.getElementById('res_whatsapp').value = airbnb.reservaciones.whatsapp || '';
+                if (document.getElementById('res_telefono')) document.getElementById('res_telefono').value = airbnb.reservaciones.telefono || '';
+                if (document.getElementById('res_url')) document.getElementById('res_url').value = airbnb.reservaciones.url || '';
+                if (document.getElementById('res_indicaciones')) document.getElementById('res_indicaciones').value = airbnb.reservaciones.indicaciones || '';
+            }
+
+            // Characteristics
+            if (airbnb.caracteristicas) {
+                document.getElementById('metrosCuadrados').value = airbnb.caracteristicas.metrosCuadrados || '';
+            }
+
+            // Location
+            if (airbnb.ubicacion) {
+                document.getElementById('direccion').value = airbnb.ubicacion.direccion || '';
+                document.getElementById('ciudad').value = airbnb.ubicacion.ciudad || '';
+                document.getElementById('estado').value = airbnb.ubicacion.estado || '';
+                document.getElementById('codigoPostal').value = airbnb.ubicacion.codigoPostal || '';
+
+                if (airbnb.ubicacion.coordenadas && airbnb.ubicacion.coordenadas.latitud && airbnb.ubicacion.coordenadas.longitud) {
+                    const lat = airbnb.ubicacion.coordenadas.latitud;
+                    const lng = airbnb.ubicacion.coordenadas.longitud;
+                    document.getElementById('lat').value = lat;
+                    document.getElementById('lng').value = lng;
+                    if (window.mapboxMarker && window.mapboxMap) {
+                        window.mapboxMarker.setLngLat([lng, lat]);
+                        window.mapboxMap.setCenter([lng, lat]);
+                    }
+                }
+            }
+
+            // Contact
+            if (airbnb.contacto) {
+                document.getElementById('telefono').value = airbnb.contacto.telefono || '';
+                document.getElementById('email').value = airbnb.contacto.email || '';
+                document.getElementById('sitioWeb').value = airbnb.contacto.sitioWeb || '';
+                if (document.getElementById('horario')) document.getElementById('horario').value = airbnb.contacto.horario || '';
+
+                if (airbnb.contacto.redesSociales) {
+                    if (document.getElementById('redes_facebook')) document.getElementById('redes_facebook').value = airbnb.contacto.redesSociales.facebook || '';
+                    if (document.getElementById('redes_instagram')) document.getElementById('redes_instagram').value = airbnb.contacto.redesSociales.instagram || '';
+                    if (document.getElementById('redes_twitter')) document.getElementById('redes_twitter').value = airbnb.contacto.redesSociales.twitter || '';
+                    if (document.getElementById('redes_tiktok')) document.getElementById('redes_tiktok').value = airbnb.contacto.redesSociales.tiktok || '';
+                }
+            }
+
+            // ✅ CORREGIDO: Services - manejar tanto array como objeto (compatibility)
+            if (airbnb.servicios) {
+                if (Array.isArray(airbnb.servicios)) {
+                    // Nueva lógica: servicios como array de strings
+                    airbnb.servicios.forEach(servicio => {
+                        const checkbox = document.querySelector(`input[name="servicios"][value="${servicio}"]`);
+                        if (checkbox) {
+                            checkbox.checked = true;
+                        }
+                    });
+                } else {
+                    // Lógica legacy: servicios como objeto con propiedades booleanas
+                    Object.keys(airbnb.servicios).forEach(servicio => {
+                        if (airbnb.servicios[servicio]) {
+                            const checkbox = document.querySelector(`input[name="servicios"][value="${servicio}"]`);
+                            if (checkbox) {
+                                checkbox.checked = true;
+                            }
+                        }
+                    });
+                }
+            }
+
+            // Comodidades Extra
+            const comodidadesCont = document.getElementById('comodidadesExtraContainer');
+            if (comodidadesCont) {
+                comodidadesCont.innerHTML = '';
+                if (airbnb.comodidadesExtra && airbnb.comodidadesExtra.length > 0) {
+                    airbnb.comodidadesExtra.forEach(comod => addComodidadExtraDynamic(comod));
+                }
+            }
+
+            // Promociones
+            const promosCont = document.getElementById('promocionesContainer');
+            if (promosCont) {
+                promosCont.innerHTML = '';
+                if (airbnb.promociones && airbnb.promociones.length > 0) {
+                    airbnb.promociones.forEach(promo => addPromocionDynamic(promo));
+                }
+            }
+
+            // ✅ CORREGIDO: Métodos de Pago - AHORA DENTRO de populateForm
+            if (airbnb.metodosPago && Array.isArray(airbnb.metodosPago)) {
+                airbnb.metodosPago.forEach(metodo => {
+                    const checkbox = document.querySelector(`input[name="metodosPago"][value="${metodo}"]`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                        // Agregar clase visual para mostrar selección
+                        const paymentOption = checkbox.closest('.payment-option');
+                        if (paymentOption) {
+                            paymentOption.classList.add('selected');
+                        }
+                    }
+                });
+            }
+
+
+            // ✅ NUEVO: Campo Ecológico
+            if (airbnb.esEcologico) {
+                const ecoCheckbox = document.getElementById('esEcologico');
+                if (ecoCheckbox) {
+                    ecoCheckbox.checked = true;
+                }
+            }
+
+            // Políticas y Horarios
+            if (airbnb.politicas) {
+                if (airbnb.politicas.checkIn) document.getElementById('checkIn').value = airbnb.politicas.checkIn;
+                if (airbnb.politicas.checkOut) document.getElementById('checkOut').value = airbnb.politicas.checkOut;
+                if (airbnb.politicas.cancelacion) document.getElementById('cancelacion').value = airbnb.politicas.cancelacion;
+                if (airbnb.politicas.recepcion) document.getElementById('recepcion').value = airbnb.politicas.recepcion;
+                if (airbnb.politicas.reglasAdicionales && airbnb.politicas.reglasAdicionales.length > 0) {
+                    document.getElementById('reglasAdicionales').value = airbnb.politicas.reglasAdicionales.join(', ');
+                }
+            }
+
+            // Instalaciones
+            if (airbnb.instalaciones && airbnb.instalaciones.length > 0) {
+                airbnb.instalaciones.forEach(inst => {
+                    const cb = document.getElementById('inst_' + inst);
+                    const item = document.querySelector(`[data-instalacion="${inst}"]`);
+                    if (cb && item) { cb.checked = true; item.classList.add('selected'); }
+                });
+            }
+
+            // Accesibilidad
+            if (airbnb.accesibilidad) {
+                ['rampas', 'plantaBaja', 'banoAdaptado', 'elevador', 'senalizacionBraille'].forEach(key => {
+                    if (airbnb.accesibilidad[key]) {
+                        const cb = document.getElementById('acc_' + key);
+                        const item = document.querySelector(`[data-accesibilidad="${key}"]`);
+                        if (cb && item) { cb.checked = true; item.classList.add('selected'); }
+                    }
+                });
+            }
+
+            // Distancias
+            if (airbnb.distancias) {
+                if (airbnb.distancias.centroHistorico) document.getElementById('dist_centroHistorico').value = airbnb.distancias.centroHistorico;
+                if (airbnb.distancias.terminalAutobuses) document.getElementById('dist_terminalAutobuses').value = airbnb.distancias.terminalAutobuses;
+                if (airbnb.distancias.aeropuerto) document.getElementById('dist_aeropuerto').value = airbnb.distancias.aeropuerto;
+                if (airbnb.distancias.zonaTuristica) document.getElementById('dist_zonaTuristica').value = airbnb.distancias.zonaTuristica;
+
+                if (airbnb.distancias.misiones) document.getElementById('dist_misiones').value = airbnb.distancias.misiones;
+                if (airbnb.distancias.naturaleza) document.getElementById('dist_naturaleza').value = airbnb.distancias.naturaleza;
+
+                const container = document.getElementById('puntosExtraContainer');
+                if (container) {
+                    container.innerHTML = '';
+                    if (airbnb.distancias.puntosExtra && airbnb.distancias.puntosExtra.length > 0) {
+                        airbnb.distancias.puntosExtra.forEach(punto => addPuntoExtraDynamic(punto.nombre, punto.distancia));
+                    }
+                }
+            }
+
+            console.log('Datos cargados en formulario:', {
+                servicios: airbnb.servicios,
+                metodosPago: airbnb.metodosPago,
+                esEcologico: airbnb.esEcologico
+            });
+        }
+
+
+
+        // Update Airbnb
+        async function updateAirbnb(event) {
+            event.preventDefault();
+
+            if (!airbnbId) {
+                showError('No se pudo identificar el alojamiento a actualizar');
+                return;
+            }
+
+            try {
+                const updateBtn = document.getElementById('updateBtn');
+                updateBtn.disabled = true;
+                updateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Actualizando...';
+
+                const formData = new FormData(event.target);
+
+                // Build update data
+                const updateData = {
+                    nombre: formData.get('nombre'),
+                    descripcion: formData.get('descripcion'),
+                    precio: parseFloat(formData.get('precio')),
+
+
+
+                    //  tipoPropiedad en el nivel raíz
+                    tipoPropiedad: formData.get('tipoPropiedad'),
+
+                    capacidad: {
+                        huespedes: parseInt(formData.get('huespedes')) || 0,
+                        habitaciones: parseInt(formData.get('habitaciones')) || 0,
+                        camas: parseInt(formData.get('camas')) || 0,
+                        banos: parseFloat(formData.get('banos')) || 0
+                    },
+
+                    caracteristicas: {
+                        metrosCuadrados: parseInt(formData.get('metrosCuadrados')) || 0,
+                        tipoAlojamiento: formData.get('tipoAlojamiento')
+                    },
+
+                    descripcionHabitaciones: formData.get('descripcionHabitaciones') || '',
+
+                    reservaciones: {
+                        whatsapp: formData.get('res_whatsapp') || '',
+                        telefono: formData.get('res_telefono') || '',
+                        url: formData.get('res_url') || '',
+                        indicaciones: formData.get('res_indicaciones') || ''
+                    },
+
+                    ubicacion: {
+                        direccion: formData.get('direccion'),
+                        ciudad: formData.get('ciudad'),
+                        estado: formData.get('estado'),
+                        codigoPostal: formData.get('codigoPostal'),
+                        coordenadas: {
+                            latitud: formData.get('lat') ? parseFloat(formData.get('lat')) : undefined,
+                            longitud: formData.get('lng') ? parseFloat(formData.get('lng')) : undefined
+                        }
+                    },
+
+                    contacto: {
+                        telefono: formData.get('telefono'),
+                        email: formData.get('email'),
+                        sitioWeb: formData.get('sitioWeb'),
+                        horario: formData.get('horario')
+                    },
+
+                    // Usar array en lugar de objeto
+                    servicios: [],
+                    metodosPago: [],
+                    esEcologico: formData.get('esEcologico') === 'true',
+
+                    // Políticas y Horarios
+                    politicas: {
+                        checkIn: formData.get('checkIn') || '15:00',
+                        checkOut: formData.get('checkOut') || '12:00',
+                        cancelacion: formData.get('cancelacion') || 'moderada',
+                        recepcion: formData.get('recepcion') || '',
+                        reglasAdicionales: (formData.get('reglasAdicionales') || '').split(',').map(r => r.trim()).filter(r => r)
+                    },
+
+                    // Instalaciones
+                    instalaciones: Array.from(document.querySelectorAll('input[name="instalaciones"]:checked')).map(cb => cb.value),
+
+                    // Comodidades Extra
+                    comodidadesExtra: Array.from(document.querySelectorAll('.comodidad-extra-input')).map(input => input.value.trim()).filter(v => v !== ''),
+
+                    // Accesibilidad
+                    accesibilidad: {
+                        rampas: document.getElementById('acc_rampas')?.checked || false,
+                        plantaBaja: document.getElementById('acc_plantaBaja')?.checked || false,
+                        banoAdaptado: document.getElementById('acc_banoAdaptado')?.checked || false,
+                        elevador: document.getElementById('acc_elevador')?.checked || false,
+                        senalizacionBraille: document.getElementById('acc_senalizacionBraille')?.checked || false
+                    },
+
+                    // Distancias
+                    distancias: {
+                        centroHistorico: formData.get('dist_centroHistorico') || '',
+                        terminalAutobuses: formData.get('dist_terminalAutobuses') || '',
+                        aeropuerto: formData.get('dist_aeropuerto') || '',
+                        zonaTuristica: formData.get('dist_zonaTuristica') || '',
+                        misiones: formData.get('dist_misiones') || '',
+                        naturaleza: formData.get('dist_naturaleza') || '',
+                        puntosExtra: Array.from(document.querySelectorAll('#puntosExtraContainer .form-row')).map(row => ({
+                            nombre: row.querySelector('.punto-extra-nombre').value,
+                            distancia: row.querySelector('.punto-extra-dist').value
+                        })).filter(p => p.nombre || p.distancia)
+                    },
+
+                    // Promociones
+                    promociones: Array.from(document.querySelectorAll('.promo-item')).map(item => ({
+                        titulo: item.querySelector('.promo-titulo').value.trim(),
+                        descripcion: item.querySelector('.promo-desc').value.trim(),
+                        fechaInicio: item.querySelector('.promo-inicio').value || null,
+                        fechaFin: item.querySelector('.promo-fin').value || null,
+                        imagen: item.querySelector('.promo-img-base64').value
+                    })).filter(p => p.titulo !== '' && p.imagen !== '')
+
+                };
+
+
+
+                //  CORRECCIÓN: Recopilar servicios como array de strings
+                document.querySelectorAll('input[name="servicios"]:checked').forEach(checkbox => {
+                    updateData.servicios.push(checkbox.value);
+                });
+
+                //  NUEVO: Recopilar métodos de pago seleccionados
+                document.querySelectorAll('input[name="metodosPago"]:checked').forEach(checkbox => {
+                    updateData.metodosPago.push(checkbox.value);
+                });
+
+
+
+                console.log('Datos a enviar:', updateData); // Para debug
+
+                // Update Airbnb
+                const response = await fetch(`${baseURL}/airbnb/editar/${airbnbId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updateData)
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    showSuccess('¡Alojamiento actualizado exitosamente!');
+
+                    setTimeout(() => {
+                        window.location.href = 'airbnb-admin.html';
+                    }, 2000);
+                } else {
+                    throw new Error(data.message);
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                showError(error.message || 'Error al actualizar el alojamiento');
+            } finally {
+                const updateBtn = document.getElementById('updateBtn');
+                updateBtn.disabled = false;
+                updateBtn.innerHTML = '<i class="fas fa-save"></i> Actualizar Alojamiento';
+            }
+        }
+
+
+        // Add Comodidad Extra Helper
+        function addComodidadExtraDynamic(valor = '') {
+            const container = document.getElementById('comodidadesExtraContainer');
+            if (!container) return;
+            const inputGroup = document.createElement('div');
+            inputGroup.style.display = 'flex';
+            inputGroup.style.gap = '10px';
+            inputGroup.style.marginBottom = '10px';
+            inputGroup.innerHTML = `
+                <input type="text" class="form-control comodidad-extra-input" placeholder="Ej: Minibar, Vista al mar..." value="${valor}">
+                <button type="button" class="btn-remove-comodidad" style="background:#ff4d4f; color:white; border:none; border-radius:4px; padding:0 15px; cursor:pointer;"><i class="fas fa-trash"></i></button>
+            `;
+            inputGroup.querySelector('.btn-remove-comodidad').addEventListener('click', () => inputGroup.remove());
+            container.appendChild(inputGroup);
+        }
+
+        // Add Promociones Helper
+        function addPromocionDynamic(promo = null) {
+            const container = document.getElementById('promocionesContainer');
+            if (!container) return;
+            
+            const promoDiv = document.createElement('div');
+            promoDiv.className = 'promo-item';
+            promoDiv.style.border = '1px solid #ddd';
+            promoDiv.style.padding = '15px';
+            promoDiv.style.borderRadius = '8px';
+            promoDiv.style.marginBottom = '15px';
+            promoDiv.style.backgroundColor = '#f9f9f9';
+            promoDiv.style.position = 'relative';
+            
+            promoDiv.innerHTML = `
+                <button type="button" class="btn-remove-promo" style="position:absolute; top:10px; right:10px; background:#ff4d4f; color:white; border:none; border-radius:4px; padding:5px 10px; cursor:pointer;"><i class="fas fa-trash"></i></button>
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <label class="form-label">Título de la Promoción <span class="required">*</span></label>
+                    <input type="text" class="form-control promo-titulo" placeholder="Ej: Jueves de Cerveza 2x1" value="${promo ? promo.titulo : ''}" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <label class="form-label">Descripción</label>
+                    <textarea class="form-control promo-desc" rows="2" placeholder="Detalles del anuncio...">${promo && promo.descripcion ? promo.descripcion : ''}</textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Válido Desde (Opcional)</label>
+                        <input type="date" class="form-control promo-inicio" value="${promo && promo.fechaInicio ? promo.fechaInicio.split('T')[0] : ''}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Válido Hasta (Opcional)</label>
+                        <input type="date" class="form-control promo-fin" value="${promo && promo.fechaFin ? promo.fechaFin.split('T')[0] : ''}">
+                    </div>
+                </div>
+                <div class="form-group" style="margin-top: 10px;">
+                    <label class="form-label">Imagen de la Promoción <span class="required">*</span></label>
+                    <input type="file" class="form-control promo-img-input" accept="image/jpeg, image/png, image/webp" ${promo && promo.imagen ? '' : 'required'}>
+                    <input type="hidden" class="promo-img-base64" value="${promo && promo.imagen ? promo.imagen : ''}">
+                    <div class="promo-img-preview" style="margin-top: 10px; max-width: 200px; max-height: 150px; overflow: hidden; border-radius: 8px; ${promo && promo.imagen ? '' : 'display: none;'}">
+                        <img src="${promo && promo.imagen ? promo.imagen : ''}" style="width: 100%; height: auto; object-fit: cover;">
+                    </div>
+                </div>
+            `;
+            
+            // Image upload logic
+            const imgInput = promoDiv.querySelector('.promo-img-input');
+            const imgBase64 = promoDiv.querySelector('.promo-img-base64');
+            const imgPreview = promoDiv.querySelector('.promo-img-preview');
+            const imgTag = promoDiv.querySelector('.promo-img-preview img');
+            
+            imgInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        imgBase64.value = event.target.result;
+                        imgTag.src = event.target.result;
+                        imgPreview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            promoDiv.querySelector('.btn-remove-promo').addEventListener('click', () => promoDiv.remove());
+            container.appendChild(promoDiv);
+        }
+
+        // ✅ NUEVO: Interactividad visual para métodos de pago
+        document.addEventListener('DOMContentLoaded', function () {
+            // Comodidad extra button
+            const btnAddComodidadExtra = document.getElementById('btnAddComodidadExtra');
+            if (btnAddComodidadExtra) {
+                btnAddComodidadExtra.addEventListener('click', () => addComodidadExtraDynamic());
+            }
+
+            // Promocion button
+            const btnAddPromocion = document.getElementById('btnAddPromocion');
+            if (btnAddPromocion) {
+                btnAddPromocion.addEventListener('click', () => addPromocionDynamic());
+            }
+
+            // Agregar listeners para métodos de pago
+            const paymentCheckboxes = document.querySelectorAll('input[name="metodosPago"]');
+
+            paymentCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function () {
+                    const paymentOption = this.closest('.payment-option');
+
+                    if (this.checked) {
+                        paymentOption.classList.add('selected');
+                    } else {
+                        paymentOption.classList.remove('selected');
+                    }
+                });
+            });
+
+            // También agregar clase CSS para el estado selected
+            const style = document.createElement('style');
+            style.textContent = `
+        .payment-option.selected label {
+            border-color: #FF6B6B !important;
+            background: linear-gradient(135deg, #FF6B6B, #FF8E8E) !important;
+            color: white !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.3);
+        }
+        
+        .payment-option.selected .payment-icon {
+            color: white !important;
+            transform: scale(1.1);
+        }
+    `;
+            document.head.appendChild(style);
+        });
+
+
+
+        // Interactividad para campo ecológico
+        document.addEventListener('DOMContentLoaded', function () {
+            const ecoCheckbox = document.getElementById('esEcologico');
+
+            if (ecoCheckbox) {
+                ecoCheckbox.addEventListener('change', function () {
+                    const ecoSection = this.closest('.eco-section');
+
+                    if (this.checked) {
+                        // Animación cuando se activa
+                        ecoSection.style.background = 'linear-gradient(135deg, #d4edda, #c3e6cb)';
+                        ecoSection.style.borderColor = '#28a745';
+
+                        // Mostrar mensaje de confirmación visual
+                        setTimeout(() => {
+                            console.log(' Alojamiento marcado como ecológico');
+                        }, 300);
+                    } else {
+                        // Volver al estado normal
+                        ecoSection.style.background = 'linear-gradient(135deg, #f8fdf8, #e8f5e8)';
+                        ecoSection.style.borderColor = '#28a745';
+
+                        console.log('Alojamiento desmarcado como ecológico');
+                    }
+                });
+
+                // Animación al hacer hover sobre la label
+                const ecoLabel = document.querySelector('.eco-label');
+                if (ecoLabel) {
+                    ecoLabel.addEventListener('mouseenter', function () {
+                        if (!ecoCheckbox.checked) {
+                            this.style.transform = 'translateY(-3px) scale(1.02)';
+                        }
+                    });
+
+                    ecoLabel.addEventListener('mouseleave', function () {
+                        if (!ecoCheckbox.checked) {
+                            this.style.transform = 'translateY(0) scale(1)';
+                        }
+                    });
+                }
+            }
+        });
+
+        // Puntos Extra Helper & Listener
+        document.addEventListener('DOMContentLoaded', function () {
+            const btnAddPuntoExtra = document.getElementById('btnAddPuntoExtra');
+            if (btnAddPuntoExtra) {
+                btnAddPuntoExtra.addEventListener('click', () => addPuntoExtraDynamic());
+            }
+        });
+
+        function addPuntoExtraDynamic(nombre = '', distancia = '') {
+            const container = document.getElementById('puntosExtraContainer');
+            if (!container) return;
+            const row = document.createElement('div');
+            row.className = 'form-row';
+            row.innerHTML = `
+                <div class="form-group" style="flex: 1;">
+                    <label class="form-label">Nombre del Lugar</label>
+                    <input type="text" class="form-control punto-extra-nombre" placeholder="Ej: Cueva del Agua" value="${nombre}">
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label class="form-label">Distancia</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" class="form-control punto-extra-dist" placeholder="Ej: 15 min caminando" value="${distancia}">
+                        <button type="button" class="btn-remove-punto" style="background:#ff4d4f; color:white; border:none; border-radius:4px; padding:0 15px; cursor:pointer;"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `;
+            row.querySelector('.btn-remove-punto').addEventListener('click', () => row.remove());
+            container.appendChild(row);
+        }
+
+    </script>
+</body>
+
+</html>

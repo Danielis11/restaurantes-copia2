@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Hospedaje - Dirección de Turismo</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/hospedaje/css/auth-navbar.css">
+    <link rel="stylesheet" href="/hospedaje/css/favorite-heart.css">
+    <!-- Mapbox GL JS -->
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js'></script>
+    <link rel="stylesheet" href="/hospedaje/css/hospedaje-detalle.css?v=6.0">
+
+    <!-- AOS CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="/hospedaje/img_jalpan/logo_pueblos_magicos.jpg" alt="Logo Turismo" class="logo-image">
+                Dirección de Turismo
+            </a>
+            <button class="mobile-menu-toggle" id="mobileMenuToggle"><i class="fas fa-bars"></i></button>
+            <ul class="nav-menu" id="navMenu">
+                <!-- Boton cerrar (solo movil) -->
+                <li class="nav-item mobile-close-btn">
+                    <button class="close-menu-btn" id="closeMenuBtn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </li>
+                <li class="nav-item"><a href="index.html" class="nav-link">Inicio</a></li>
+                <li class="nav-item"><a href="/mapa.html" class="nav-link">Mapa</a></li>
+                <li class="nav-item">
+                    <a href="hospedaje.html" class="nav-link">
+                        Hospedaje
+                    </a>
+                </li>
+                <li class="nav-item"><a href="/"
+                        class="nav-link">Alimentos</a></li>
+                <li class="nav-item"><a href="/experiencias.html" class="nav-link">Experiencias</a></li>
+                <!-- Selector de Idiomas -->
+                <li class="nav-item">
+                    <select id="lang-select" class="form-control"
+                        style="padding: 0.5rem; border-radius: 5px; border: 1px solid #ccc; font-weight: bold; cursor: pointer; background: white;">
+                        <option value="ES">🇪🇸 ES</option>
+                        <option value="EN">🇺🇸 EN</option>
+                        <option value="FR">🇫🇷 FR</option>
+                    </select>
+                </li>
+            </ul>
+            <div class="auth-buttons">
+                <a href="login.html" class="btn-login">Iniciar Sesión</a>
+            </div>
+        </div>
+    </nav>
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="loading-state">
+        <i class="fas fa-spinner"></i>
+        <h3>Cargando información...</h3>
+    </div>
+
+    <!-- Error State -->
+    <div id="errorState" class="error-state" style="display:none">
+        <i class="fas fa-exclamation-circle"></i>
+        <h3>Error al cargar</h3>
+        <p>No se pudo cargar la información del hospedaje.</p>
+        <a href="index.html" class="back-btn" style="margin-top:1rem"><i class="fas fa-home"></i> Volver al inicio</a>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent" style="display:none">
+
+        <!-- Header Info Layout -->
+        <div class="header-info-section" data-aos="fade-down" style="max-width: 1200px; margin: 90px auto 20px; padding: 0 2rem;">
+            <div class="tipo-badge" id="tipoBadge" style="margin-bottom: 10px;"></div>
+            <div class="hospedaje-name-row" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                <h1 id="hospedajeName" style="font-size: 2.2rem; font-weight: 800; color: #1a1a2e; margin: 0;"></h1>
+                <div class="con-like" id="favBtnContainer" style="display:none" title="Agregar a favoritos">
+                    <input class="like" type="checkbox" id="favCheckbox" title="like">
+                    <div class="checkmark">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="outline" viewBox="0 0 24 24">
+                            <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="filled" viewBox="0 0 24 24">
+                            <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="celebrate">
+                            <polygon class="poly" points="10,10 20,20"></polygon>
+                            <polygon class="poly" points="10,50 20,50"></polygon>
+                            <polygon class="poly" points="20,80 30,70"></polygon>
+                            <polygon class="poly" points="90,10 80,20"></polygon>
+                            <polygon class="poly" points="90,50 80,50"></polygon>
+                            <polygon class="poly" points="80,80 70,70"></polygon>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="info-meta" id="infoMeta" style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap; font-size: 0.95rem; color: #555;">
+            </div>
+        </div>
+
+        <!-- Gallery Section -->
+        <section class="gallery-section" data-aos="fade-in" data-aos-duration="1200" style="max-width: 1200px; margin: 0 auto 30px; padding: 0 2rem;">
+            <div class="hero-gallery" style="border-radius: 16px; overflow: hidden; position: relative; height: 500px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);">
+                <img id="heroImage" class="hero-image" src="" alt="Imagen principal" style="width: 100%; height: 100%; object-fit: cover;">
+                <div class="hero-overlay" style="background: linear-gradient(to top, rgba(0,0,0,0.5), transparent); position: absolute; inset: 0; pointer-events: none;"></div>
+                <button class="hero-nav-btn hero-prev" onclick="changeSlide(-1)"><i class="fas fa-chevron-left"></i></button>
+                <button class="hero-nav-btn hero-next" onclick="changeSlide(1)"><i class="fas fa-chevron-right"></i></button>
+                <div class="hero-counter" id="heroCounter" style="position: absolute; bottom: 20px; left: 20px; background: rgba(0,0,0,0.6); color: white; padding: 5px 12px; border-radius: 15px; font-size: 0.9rem;"></div>
+                <div class="hero-thumbnails" id="heroThumbnails" style="position: absolute; bottom: 20px; right: 20px; display: flex; gap: 10px;"></div>
+            </div>
+        </section>
+
+        <!-- Two-column Header Grid for About and Contact -->
+        <div class="top-cards-grid" data-aos="fade-up" style="max-width: 1200px; margin: 0 auto 30px; padding: 0 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <!-- About Card -->
+            <div class="detail-section" style="margin-bottom: 0;">
+                <h3 class="section-title"><i class="fas fa-info-circle" style="color: #3b82f6;"></i> Sobre el establecimiento</h3>
+                <p class="about-text" id="aboutText"></p>
+            </div>
+            <!-- Contact Card -->
+            <div class="detail-section" style="margin-bottom: 0;">
+                <h3 class="section-title"><i class="fas fa-id-card-alt" style="color: #3b82f6;"></i> Contacto</h3>
+                <div id="topContactContainer"></div>
+            </div>
+        </div>
+
+        <!-- Back Bar -->
+        <div class="back-bar" style="margin-top: 0; padding-top: 0;">
+            <a id="backBtn" href="hoteles.html" class="back-btn"><i class="fas fa-arrow-left"></i> Volver al listado</a>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="detail-container">
+            <!-- Main Column -->
+            <div class="main-column">
+                <!-- Removed About since it was moved above -->
+
+                <!-- Check-in / Check-out -->
+                <div class="detail-section" data-aos="fade-up" data-aos-delay="100">
+                    <h3 class="section-title"><i class="fas fa-clock"></i> Horarios de Check-in y Check-out</h3>
+                    <div class="checkin-grid">
+                        <div class="checkin-item">
+                            <div class="icon-circle in"><i class="fas fa-sign-in-alt"></i></div>
+                            <div>
+                                <div class="time-label">Check-in</div>
+                                <div class="time-value" id="checkInTime">15:00</div>
+                            </div>
+                        </div>
+                        <div class="checkin-item checkout">
+                            <div class="icon-circle out"><i class="fas fa-sign-out-alt"></i></div>
+                            <div>
+                                <div class="time-label">Check-out</div>
+                                <div class="time-value" id="checkOutTime">12:00</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="recepcion-info">
+                        <i class="fas fa-concierge-bell"></i>
+                        <span><strong>Recepción:</strong> <span id="recepcionInfo">24 horas</span></span>
+                    </div>
+                </div>
+
+                <!-- Policies & Rules -->
+                <div class="detail-section" data-aos="fade-up">
+                    <h3 class="section-title"><i class="fas fa-clipboard-list"></i> Políticas y Reglas</h3>
+                    <div class="policy-grid">
+                        <div class="policy-item">
+                            <div class="policy-icon cancel"><i class="fas fa-calendar-times"></i></div>
+                            <div>
+                                <div class="policy-label">Cancelación</div>
+                                <div class="policy-value" id="cancelPolicy">Política moderada</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rules-list" id="rulesContainer"></div>
+                </div>
+
+                <!-- Room Description (Nuevo) -->
+                <div class="detail-section" id="roomsDescSection" style="display:none" data-aos="fade-up">
+                    <h3 class="section-title"><i class="fas fa-bed"></i> Descripción de Habitaciones</h3>
+                    <p class="rooms-text" id="roomsDescText"></p>
+                </div>
+
+
+
+                <!-- Accessibility -->
+                <div class="detail-section" id="accessSection" style="display:none" data-aos="fade-up">
+                    <h3 class="section-title"><i class="fas fa-wheelchair"></i> Accesibilidad</h3>
+                    <div class="access-grid" id="accessContainer"></div>
+                </div>
+
+                <!-- Distances -->
+                <div class="detail-section" id="distancesSection" style="display:none" data-aos="fade-up">
+                    <h3 class="section-title"><i class="fas fa-route"></i> Distancias a Puntos Clave</h3>
+                    <div class="distances-grid" id="distancesContainer"></div>
+                </div>
+
+                <!-- Comodidades e Instalaciones -->
+                <div class="detail-section" id="amenitiesSection" style="display:none" data-aos="fade-up">
+                    <h3 class="section-title"><i class="fas fa-concierge-bell"></i> Comodidades e Instalaciones</h3>
+                    <div class="services-grid" id="amenitiesContainer"></div>
+                </div>
+
+                <!-- Detalles Individuales Cabañas -->
+                <div class="detail-section" id="cabanasIndividualesSection" style="display:none" data-aos="fade-up">
+                    <h3 class="section-title"><i class="fas fa-home"></i> Cabañas Disponibles en el Conjunto</h3>
+                    <div class="cabanas-grid" id="cabanasIndividualesContainer"></div>
+                </div>
+
+                <!-- Reviews -->
+                <div class="detail-section" id="reviewsSection" data-aos="fade-up">
+                    <h3 class="section-title"><i class="fas fa-star"></i> Reseñas de Turistas</h3>
+                    <div id="reviewsList" class="reviews-list">
+                        <!-- Las reseñas se cargarán aquí -->
+                    </div>
+
+                    <!-- Write Review Section -->
+                    <div class="write-review-container"
+                        style="margin-top: 30px; border-top: 1px solid #ddd; padding-top: 20px;">
+                        <div id="reviewFormContainer" style="display:none">
+                            <h4 style="margin-bottom: 15px;">Escribir una Reseña</h4>
+                            <form id="reviewForm">
+                                <div class="rating-input" style="margin-bottom: 15px;">
+                                    <label style="font-weight: bold; margin-right: 10px;">Calificación:</label>
+                                    <div class="stars-select" id="starSelect"
+                                        style="display: inline-block; font-size: 1.2rem;">
+                                        <i class="fas fa-star" data-val="1"></i>
+                                        <i class="fas fa-star" data-val="2"></i>
+                                        <i class="fas fa-star" data-val="3"></i>
+                                        <i class="fas fa-star" data-val="4"></i>
+                                        <i class="fas fa-star" data-val="5"></i>
+                                    </div>
+                                    <input type="hidden" id="reviewRating" value="5" required>
+                                </div>
+                                <div class="form-group">
+                                    <textarea id="reviewComment" rows="3"
+                                        placeholder="Comparte tu experiencia... ¿Qué te gustó más?" required
+                                        style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ccc; font-family: inherit; resize: vertical;"></textarea>
+                                </div>
+                                <button type="submit" class="submit-review-btn"
+                                    style="margin-top: 15px; background-color: #2e8b57; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: background 0.3s;"><i
+                                        class="fas fa-paper-plane"></i> Publicar Reseña</button>
+                            </form>
+                        </div>
+                        <div id="loginPromptContainer" class="login-prompt"
+                            style="display:none; text-align: center; padding: 25px; background: #f8f9fa; border-radius: 10px; border: 1px dashed #ccc;">
+                            <i class="fas fa-lock"
+                                style="font-size: 2rem; color: #aaa; margin-bottom: 15px; display: block;"></i>
+                            <p style="margin-bottom: 15px; color: #555;">¿Te hospedaste aquí? Inicia sesión para dejar
+                                tu opinión.</p>
+                            <a href="login.html" class="btn-login"
+                                style="display: inline-block; background: var(--secondary-color, #e67e22); color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-weight: bold;">Iniciar
+                                Sesión</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Te Podría Interesar (Experiencias del compañero) -->
+                <div class="detail-section" id="experienciasSection" data-aos="fade-up">
+                    <h3 class="section-title" style="display: flex; align-items: center; gap: 10px;">
+                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: #3b82f6; border-radius: 50%; color: white; font-size: 1rem;">
+                            <i class="fas fa-compass"></i>
+                        </span>
+                        Te podría interesar
+                    </h3>
+                    <div class="experiencias-grid" id="experienciasContainer">
+                        <div style="grid-column: 1/-1; text-align: center; color: #999; padding: 2rem;">
+                            <i class="fas fa-spinner fa-spin fa-2x"></i>
+                            <p style="margin-top: 1rem;">Cargando experiencias...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar" data-aos="fade-left" data-aos-delay="200">
+                <!-- Additional Info -->
+                <div class="sidebar-card">
+                    <h3 class="section-title"><i class="fas fa-info-circle"></i> Información Adicional</h3>
+                    <div id="sidebarInfo"></div>
+                </div>
+
+                <!-- Payment Methods -->
+                <div class="sidebar-card" id="paymentSection" style="display:none">
+                    <h3 class="section-title"><i class="fas fa-credit-card"></i> Opciones de Pago</h3>
+                    <div class="payment-grid" id="paymentContainer"></div>
+                </div>
+
+                <!-- Reservations (Nuevo) -->
+                <div class="sidebar-card" id="reservationsSection" style="display:none">
+                    <h3 class="section-title"><i class="fas fa-calendar-check"></i> Reservaciones</h3>
+                    <div class="reservations-content" id="reservationsContainer"></div>
+                </div>
+
+                <!-- Removed Contact since it was moved above -->
+
+                <!-- Promociones (Nuevo) -->
+                <div class="sidebar-card promotions-card" id="promotionsSection" style="display:none; padding: 0; overflow: hidden; position: relative; border: 1px solid #eee; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); background-color: #fff;">
+                    
+                    <div class="promotions-carousel-container" style="position: relative; width: 100%; height: auto;">
+                        <div class="promotions-carousel" id="promotionsContainer" style="display: flex; transition: transform 0.5s ease; width: 100%;">
+                            <!-- Las promociones se inyectarán aquí -->
+                        </div>
+                        
+                        <!-- Controles -->
+                        <button class="promo-nav-btn promo-prev" id="promoPrevBtn" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.8); border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; z-index: 10; font-size: 16px; color: #333; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: none; align-items: center; justify-content: center;"><i class="fas fa-chevron-left"></i></button>
+                        <button class="promo-nav-btn promo-next" id="promoNextBtn" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.8); border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; z-index: 10; font-size: 16px; color: #333; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: none; align-items: center; justify-content: center;"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                    
+                    <!-- Paginación -->
+                    <div class="promo-dots" id="promoDots" style="display: flex; justify-content: center; gap: 8px; padding: 10px; position: absolute; bottom: 0; width: 100%; z-index: 10;"></div>
+                </div>
+
+                <!-- Ubicación (Nuevo) -->
+                <div class="sidebar-card location-card" id="locationSection" style="display:none; padding: 15px; overflow: hidden; position: relative; border: 1px solid #eee; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); background-color: #fff;">
+                    <div style="margin-bottom: 12px;">
+                        <h3 class="section-title" style="margin: 0; color: #2c3e50; font-size: 1.15rem; font-weight: bold; border-bottom: none; padding-bottom: 0px; display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-map-marked-alt" style="color: #295ab0; font-size: 1.1rem;"></i> Ubicación
+                        </h3>
+                    </div>
+                    
+                    <div style="border-radius: 10px; overflow: hidden; margin-bottom: 15px; position: relative;">
+                        <div id="mapboxContainer" style="width: 100%; height: 200px; background-color: #e5e5e5;">
+                            <!-- El mapa se inyectará aquí -->
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; border-top: 1px solid #eee; padding-top: 12px;">
+                        <a id="verMapaBtn" href="#" target="_blank" style="color: #295ab0; text-decoration: none; font-weight: bold; font-size: 0.95rem; display: inline-flex; align-items: center; justify-content: center; transition: color 0.3s ease;">
+                            <i class="fas fa-map-marked-alt" style="margin-right: 8px;"></i> Ver en el Mapa
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Eco Badge -->
+                <div class="sidebar-card eco-card" id="ecoSection" style="display:none">
+                    <h3 class="section-title"><i class="fas fa-leaf"></i> Compromiso Ecológico</h3>
+                    <div id="ecoContainer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content-grid">
+                <!-- Sección principal -->
+                <div class="footer-brand">
+                    <div class="footer-logo-section">
+                        <img src="/hospedaje/img_jalpan/logo_fondo_negro.png" alt="Logo Turismo" class="logo-image"
+                            style="width: 40px; height: 40px; background: black;">
+                        Dirección de Turismo
+                    </div>
+                    <p class="footer-description">
+                        Conectamos a las personas con los mejores destinos, alojamientos y experiencias gastronómicas de
+                        Jalpan de Serra, Pueblo Mágico.
+                    </p>
+                    <div class="footer-social">
+                        <a href="https://www.facebook.com/profile.php?id=61573849871475" class="footer-social-link"
+                            title="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://www.instagram.com/jalpan_pueblomagico?igsh=MWpmdDVnMndpbnB1dQ=="
+                            class="footer-social-link" title="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Navegación -->
+                <div class="footer-section">
+                    <h3>Navegación</h3>
+                    <ul class="footer-links">
+                        <li><a href="/">Alimentos</a></li>
+                        <li><a href="hospedaje.html">Hospedaje</a></li>
+                        <li><a href="/experiencias.html">Experiencias</a></li>
+                        <li><a href="/mapa.html">Mapa</a></li>
+                    </ul>
+                </div>
+
+                <!-- Soporte: Política -->
+                <div class="footer-section">
+                    <h3>Soporte: Política</h3>
+                    <ul class="footer-links">
+                        <li><a href="#gastronomia">Gastronomía Local</a></li>
+                        <li><a href="#atractivos">Atractivos Naturales</a></li>
+                        <li><a href="#misiones">Misiones Franciscanas</a></li>
+                        <li><a href="#cultura">Historia y Cultura</a></li>
+                        <li><a href="#eventos">Eventos Especiales</a></li>
+                        <li><a href="#tradiciones">Tradiciones</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contacto -->
+                <div class="footer-section">
+                    <h3>Contacto</h3>
+                    <div class="footer-contact-info">
+                        <div class="footer-contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>direcciondeturismojalpan@gmail.com</span>
+                        </div>
+                        <div class="footer-contact-item">
+                            <i class="fas fa-phone"></i>
+                            <span>+52 441-296-0285</span>
+                        </div>
+                        <div class="footer-contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Plaza Principal, Jalpan de Serra, Querétaro</span>
+                        </div>
+                        <div class="footer-contact-item">
+                            <i class="fas fa-clock"></i>
+                            <span>Lun - Vie: 8:00 AM - 3:30 PM</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Línea inferior -->
+            <div class="footer-bottom">
+                <p class="footer-copyright">
+                    © 2024 Dirección de Turismo - Jalpan de Serra. Todos los derechos reservados.
+                </p>
+                <div class="footer-bottom-links">
+                    <a href="https://www.facebook.com/jenni.munoz.5011">Desarrollado por</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/hospedaje/js/hospedaje-detalle.js"></script>
+    <script src="/hospedaje/js/sub-cabana-carousel.js"></script>
+    <script src="/hospedaje/js/translation.js"></script>
+    <script src="/hospedaje/js/auth-navbar.js"></script>
+    <script src="/hospedaje/js/favorite-heart.js"></script>
+
+    <!-- AOS Script -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            AOS.init({
+                once: true, // Animates only once
+                offset: 50, // Trigger offset
+                duration: 800, // Animation duration
+                easing: 'ease-out-cubic' // Easing curve
+            });
+        });
+    </script>
+</body>
+
+</html>
