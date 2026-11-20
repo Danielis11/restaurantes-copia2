@@ -1328,18 +1328,13 @@ async function editAdmin(adminId) {
         document.getElementById('admin-telefono').value = admin.telefono || '';
         document.getElementById('admin-rol').value = admin.rol || 'admin';
         
-        // Mostrar contraseña actual si existe
+        // Las contraseñas solo se guardan cifradas: no se pueden mostrar, solo cambiar
         const pwField = document.getElementById('admin-password');
         pwField.required = false;
-        if (admin.passwordPlano) {
-            pwField.value = admin.passwordPlano;
-            pwField.placeholder = 'Contraseña actual mostrada';
-        } else {
-            pwField.value = '';
-            pwField.placeholder = 'Dejar vacío para mantener la actual';
-        }
+        pwField.value = '';
+        pwField.placeholder = 'Dejar vacío para mantener la actual';
         const pwHint = document.getElementById('password-hint');
-        if (pwHint) pwHint.textContent = admin.passwordPlano ? 'Contraseña actual. Modifícala si deseas cambiarla.' : 'Dejar vacío para mantener la contraseña actual';
+        if (pwHint) pwHint.textContent = 'Dejar vacío para mantener la contraseña actual. Escribe una nueva para cambiarla.';
         document.getElementById('password-group').style.display = 'block';
         
         document.getElementById('admin-modal-title').textContent = 'Editar Administrador';
@@ -2941,14 +2936,14 @@ async function exportRestaurantsCSVMinimal() {
 
         const headers = [
             'Nombre', 'Dirección', 'Teléfono Establecimiento', 'Correo Establecimiento', 'Administrador/Propietario',
-            'Correo Administrador', 'Contraseña Administrador',
+            'Correo Administrador',
             'RNT / Registro', 'Pet Friendly', 'Se admiten mascotas', 'Capacidad',
             'Facebook', 'Instagram'
         ];
 
         const allRows = [];
         // Título general
-        allRows.push(['ALIMENTOS Y BEBIDAS  -  JALPAN DE SERRA', '', '', '', '', '', '', '', '', '', '', '', '']);
+        allRows.push(['ALIMENTOS Y BEBIDAS  -  JALPAN DE SERRA', '', '', '', '', '', '', '', '', '', '', '']);
         allRows.push([]); // fila vacía
         allRows.push(headers);
 
@@ -2961,14 +2956,13 @@ async function exportRestaurantsCSVMinimal() {
             const items = tipoMap[tipo];
             const label = tipoLabels[tipo] || tipo.toUpperCase();
             // Fila separadora con el nombre del tipo
-            allRows.push([label, '', '', '', '', '', '', '', '', '', '', '', '']);
+            allRows.push([label, '', '', '', '', '', '', '', '', '', '', '']);
 
             items.forEach(r => {
                 const adminName = r.adminId
                     ? `${r.adminId.nombre || ''} ${r.adminId.apellido || ''}`.trim()
                     : '';
                 const adminEmail = r.adminId?.email || '';
-                const adminPassword = r.adminId?.passwordPlano || 'Protegida / No disponible';
 
                 const direccionParts = [];
                 if (r.direccion?.calle) direccionParts.push(r.direccion.calle);
@@ -3006,7 +3000,6 @@ async function exportRestaurantsCSVMinimal() {
                     correoEstablecimiento,
                     adminName,
                     adminEmail,
-                    adminPassword,
                     rnt,
                     petFriendly,
                     admiteMascotas,

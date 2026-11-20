@@ -27,10 +27,6 @@ const adminSchema = new mongoose.Schema({
     minlength: [6, 'La contraseña debe tener al menos 6 caracteres'],
     select: false // No incluir en consultas por defecto
   },
-  passwordPlano: {
-    type: String,
-    select: false // Solo disponible para super-admin
-  },
   telefono: {
     type: String,
     required: [true, 'El teléfono es obligatorio'],
@@ -81,8 +77,7 @@ adminSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
   
   try {
-    // Guardar contraseña en texto plano para referencia del super-admin
-    this.passwordPlano = this.password;
+    // Solo se guarda el hash: ya no se conserva una copia legible de la contraseña
     // Hashear contraseña con costo de 12
     const salt = await bcrypt.genSalt(12);
     this.password = await bcrypt.hash(this.password, salt);

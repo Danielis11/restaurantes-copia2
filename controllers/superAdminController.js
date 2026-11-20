@@ -48,7 +48,7 @@ exports.getDashboardStats = async (req, res) => {
 
 exports.getAdmins = async (req, res) => {
   try {
-    const admins = await Admin.find().select('-password +passwordPlano');
+    const admins = await Admin.find().select('-password');
     res.json({ success: true, data: { admins } });
   } catch (error) {
     console.error('Error fetching admins:', error);
@@ -144,7 +144,7 @@ exports.getRestaurants = async (req, res) => {
   try {
     const restaurants = await Restaurant.find().populate({
       path: 'adminId',
-      select: '+passwordPlano nombre apellido email'
+      select: 'nombre apellido email'
     });
     res.json({ success: true, data: { restaurants } });
   } catch (error) {
