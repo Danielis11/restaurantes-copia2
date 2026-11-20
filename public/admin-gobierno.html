@@ -105,6 +105,11 @@
             .acciones select { flex: 1; }
             .grafica { height: 240px; }
         }
+        /* Mientras se arma el PDF descargable: mismo aspecto que la impresión */
+        body.modo-pdf .acciones, body.modo-pdf .herramientas, body.modo-pdf .no-imprimir { display: none !important; }
+        body.modo-pdf .solo-impresion { display: block; }
+        body.modo-pdf .kpi, body.modo-pdf .caja { box-shadow: none; border-color: #ddd; }
+        .btn:disabled { opacity: .6; cursor: wait; }
         @media print {
             body { background: #fff; }
             .cabecera, .acciones, .herramientas, .no-imprimir { display: none !important; }
@@ -142,7 +147,8 @@
                     <option value="24">Últimos 24 meses</option>
                 </select>
                 <button class="btn" id="btnCsv" type="button"><i class="fas fa-file-excel" style="color:#047857"></i> Exportar Excel</button>
-                <button class="btn primario" id="btnImprimir" type="button"><i class="fas fa-print"></i> Imprimir / PDF</button>
+                <button class="btn" id="btnImprimir" type="button" title="Imprimir" aria-label="Imprimir"><i class="fas fa-print"></i></button>
+                <button class="btn primario" id="btnPdf" type="button"><i class="fas fa-file-pdf"></i> Descargar PDF</button>
             </div>
         </div>
         <p class="solo-impresion nota" id="pieImpresion"></p>
@@ -386,6 +392,42 @@
         });
         $('btnCsv').addEventListener('click', () => { if (datos) { exportarTodo(); avisar('Archivo descargado'); } });
         $('btnImprimir').addEventListener('click', () => window.print());
+
+        // PDF descargable (no depende del cuadro de impresión del navegador)
+        function cargarScript(src) {
+            return new Promise((ok, mal) => {
+                if (window.html2pdf) return ok();
+                const s = document.createElement('script');
+                s.src = src; s.onload = ok; s.onerror = () => mal(new Error('No se pudo cargar el generador de PDF'));
+                document.head.appendChild(s);
+            });
+        }
+        $('btnPdf').addEventListener('click', async () => {
+            if (!datos) return;
+            const btn = $('btnPdf');
+            const antes = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando…';
+            try {
+                await cargarScript('https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js');
+                document.body.classList.add('modo-pdf');
+                await window.html2pdf().set({
+                    margin: [10, 8, 12, 8],
+                    filename: 'jalpan-indicadores-' + hoy() + '.pdf',
+                    image: { type: 'jpeg', quality: 0.95 },
+                    html2canvas: { scale: 2, useCORS: true, windowWidth: 1200, backgroundColor: '#ffffff' },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                    pagebreak: { mode: ['css', 'legacy'], avoid: ['.kpi', '.caja', 'tr'] }
+                }).from(document.querySelector('main')).save();
+                avisar('PDF descargado');
+            } catch (e) {
+                avisar(e.message || 'No se pudo generar el PDF');
+            } finally {
+                document.body.classList.remove('modo-pdf');
+                btn.disabled = false;
+                btn.innerHTML = antes;
+            }
+        });
         $('periodo').addEventListener('change', cargar);
         window.addEventListener('beforeprint', () => { if (grafica) grafica.resize(); });
 
