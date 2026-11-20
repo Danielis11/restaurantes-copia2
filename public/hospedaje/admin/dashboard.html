@@ -1,1559 +1,492 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Administración - Dirección de Turismo</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <title>Mi panel de hospedaje - Turismo Jalpan</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/panel-socio.css">
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background: #f0f2f5;
-            min-height: 100vh;
-            display: flex;
-        }
-        /* Sidebar */
-        .sidebar {
-            width: 280px;
-            background: linear-gradient(135deg, #1f2937 0%, #2563eb 100%);
-            color: white;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-            z-index: 1000;
-            transition: transform 0.3s ease;
-        }
-        .sidebar-header {
-            padding: 2rem 1.5rem;
-            background: rgba(0,0,0,0.1);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-decoration: none;
-            color: white;
-        }
-        .logo i {
-            font-size: 2rem;
-        }
-        .user-info {
-            padding: 1.5rem;
-            background: rgba(0,0,0,0.1);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        .user-avatar {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #2563eb, #1e40af);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            border: 3px solid rgba(255,255,255,0.2);
-        }
-        .user-name {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.3rem;
-        }
-        .user-role {
-            font-size: 0.9rem;
-            opacity: 0.8;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .sidebar-menu {
-            list-style: none;
-            padding: 1rem 0;
-        }
-        .menu-section {
-            padding: 0.5rem 1.5rem;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            opacity: 0.6;
-            font-weight: 600;
-            letter-spacing: 1px;
-            margin-top: 1rem;
-        }
-        .menu-item {
-            margin: 0.2rem 0;
-        }
-        .menu-link {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem 1.5rem;
-            color: white;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            position: relative;
-            font-weight: 500;
-        }
-        .menu-link:hover {
-            background: rgba(255,255,255,0.1);
-            padding-left: 2rem;
-        }
-        .menu-link.active {
-            background: rgba(255,255,255,0.15);
-            border-left: 4px solid #2563eb;
-        }
-        .menu-link i {
-            width: 20px;
-            text-align: center;
-            font-size: 1.1rem;
-        }
-        .menu-badge {
-            margin-left: auto;
-            background: #e74c3c;
-            color: white;
-            padding: 0.2rem 0.6rem;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-        /* ✅ NUEVOS ESTILOS para submenu de gestión de imágenes */
-        .submenu-item {
-            margin-left: 0;
-            border-left: 3px solid transparent;
-            position: relative;
-        }
-        .submenu-link {
-            padding-left: 3rem !important;
-            background: rgba(0, 0, 0, 0.02);
-            font-size: 0.9rem;
-            border-left: 3px solid #e2e8f0;
-            transition: all 0.3s ease;
-        }
-        .submenu-link:hover {
-            background: rgba(255, 255, 255, 0.15);
-            border-left-color: #2563eb;
-            transform: translateX(2px);
-            padding-left: 3.5rem !important;
-        }
-        .submenu-link.active {
-            background: rgba(255, 255, 255, 0.2);
-            border-left-color: #2563eb;
-            color: #2563eb;
-        }
-        .submenu-link i {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.9rem;
-            transition: color 0.3s ease;
-        }
-        .submenu-link.active i,
-        .submenu-link:hover i {
-            color: #2563eb;
-        }
-        /* Indicador visual para mostrar que es un submenu */
-        .submenu-item::before {
-            content: "";
-            position: absolute;
-            left: 1.5rem;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 8px;
-            height: 1px;
-            background: rgba(255, 255, 255, 0.4);
-            transition: all 0.3s ease;
-        }
-        .submenu-item:hover::before {
-            background: #2563eb;
-            width: 12px;
-        }
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            margin-left: 280px;
-            padding: 2rem;
-            overflow-y: auto;
-        }
-        /* Top Bar */
-        .top-bar {
-            background: white;
-            padding: 1.5rem 2rem;
-            margin: -2rem -2rem 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .page-title {
-            font-size: 1.8rem;
-            color: #1f2937;
-            font-weight: 600;
-        }
-        .top-bar-actions {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-        .search-box {
-            position: relative;
-        }
-        .search-input {
-            padding: 0.7rem 1rem 0.7rem 2.5rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 25px;
-            width: 250px;
-            transition: all 0.3s ease;
-        }
-        .search-input:focus {
-            outline: none;
-            border-color: #2563eb;
-            width: 300px;
-        }
-        .search-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #999;
-        }
-        .notification-btn, .logout-btn {
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            color: #666;
-            cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        .notification-btn:hover, .logout-btn:hover {
-            background: #f0f2f5;
-            color: #333;
-        }
-        .notification-badge {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: #e74c3c;
-            color: white;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            font-size: 0.7rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-        /* Warning Banner */
-        .warning-banner {
-            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 10px;
-            margin-bottom: 2rem;
-            display: none;
-            align-items: center;
-            gap: 1rem;
-            box-shadow: 0 5px 15px rgba(243, 156, 18, 0.3);
-        }
-        .warning-banner.show {
-            display: flex;
-        }
-        .warning-banner i {
-            font-size: 1.5rem;
-        }
-        /* Dashboard Stats */
-        .dashboard-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        .stat-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100px;
-            height: 100px;
-            background: var(--stat-color);
-            opacity: 0.1;
-            border-radius: 50%;
-            transform: translate(30px, -30px);
-        }
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            background: var(--stat-color);
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: white;
-            margin-bottom: 1rem;
-        }
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #1f2937;
-            margin-bottom: 0.5rem;
-        }
-        .stat-label {
-            color: #666;
-            font-size: 1rem;
-            font-weight: 500;
-        }
-        .stat-change {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-        .stat-change.positive {
-            color: #2563eb;
-        }
-        .stat-change.negative {
-            color: #e74c3c;
-        }
-        /* Quick Actions */
-        .quick-actions {
-            background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-            margin-bottom: 2rem;
-        }
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-        .section-title {
-            font-size: 1.3rem;
-            color: #1f2937;
-            font-weight: 600;
-        }
-        .view-all-btn {
-            color: #2563eb;
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-        .view-all-btn:hover {
-            color: #1e40af;
-            text-decoration: underline;
-        }
-        .actions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-        }
-        .action-btn {
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            border: none;
-            padding: 1.5rem 1rem;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-            text-decoration: none;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.8rem;
-        }
-        .action-btn:hover {
-            background: linear-gradient(135deg, var(--btn-color), var(--btn-color-dark));
-            color: white;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-        }
-        .action-btn i {
-            font-size: 2rem;
-            opacity: 0.8;
-        }
-        .action-btn span {
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
-        /* Recent Activity */
-        .recent-activity {
-            background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-        }
-        .activity-list {
-            list-style: none;
-        }
-        .activity-item {
-            display: flex;
-            align-items: start;
-            gap: 1rem;
-            padding: 1rem 0;
-            border-bottom: 1px solid #f0f2f5;
-            transition: background 0.3s ease;
-        }
-        .activity-item:hover {
-            background: #f8f9fa;
-            margin: 0 -1rem;
-            padding: 1rem;
-        }
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-        .activity-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--activity-color);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            flex-shrink: 0;
-        }
-        .activity-content {
-            flex: 1;
-        }
-        .activity-title {
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 0.3rem;
-        }
-        .activity-description {
-            color: #666;
-            font-size: 0.9rem;
-        }
-        .activity-time {
-            color: #999;
-            font-size: 0.8rem;
-            white-space: nowrap;
-        }
-        /* Mobile Menu Toggle */
-        .mobile-menu-toggle {
-            display: none;
-            position: fixed;
-            top: 1rem;
-            left: 1rem;
-            z-index: 1001;
-            background: #1f2937;
-            color: white;
-            border: none;
-            padding: 0.8rem;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 1.2rem;
-        }
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            .sidebar.active {
-                transform: translateX(0);
-            }
-            .main-content {
-                margin-left: 0;
-            }
-            .mobile-menu-toggle {
-                display: block;
-            }
-            .search-input {
-                width: 150px;
-            }
-            .search-input:focus {
-                width: 200px;
-            }
-        }
-        @media (max-width: 768px) {
-            .dashboard-stats {
-                grid-template-columns: 1fr;
-            }
-            .top-bar {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: stretch;
-            }
-            .top-bar-actions {
-                justify-content: space-between;
-            }
-            .actions-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        /* Overlay for mobile */
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 999;
-        }
-        .overlay.active {
-            display: block;
+        /* Mismo lenguaje visual que el panel de restaurantes (admin.html) */
+        .hero { padding: 22px 24px; display: grid; grid-template-columns: 1fr auto; gap: 16px 24px; align-items: center; }
+        .hero h1 { font-size: 1.65rem; letter-spacing: -.01em; margin-bottom: 6px; }
+        .hero-linea { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; color: var(--texto); font-size: .95rem; }
+        .hero-linea b { color: var(--tinta); }
+        .chip-tipo { font-size: .78rem; font-weight: 600; padding: 3px 10px; border-radius: 99px; background: var(--azul-claro); color: var(--azul); }
+        .estado-hoy { display: inline-flex; align-items: center; gap: 7px; font-size: .84rem; font-weight: 600; padding: 4px 10px; border-radius: 99px; }
+        .estado-hoy .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+        .estado-hoy.visible { background: var(--verde-claro); color: var(--verde); }
+        .estado-hoy.oculto { background: var(--rojo-claro); color: var(--rojo); }
+        .hero-acciones { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+        .selector { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: .88rem; color: var(--gris); }
+        .selector .select { width: auto; min-height: 36px; padding: 6px 10px; font-size: .9rem; }
+        .progreso { grid-column: 1 / -1; border-top: 1px solid var(--borde-suave); padding-top: 16px; display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; align-items: center; }
+        .progreso-num { font-size: 1.5rem; font-weight: 700; color: var(--azul); line-height: 1; }
+        .barra { height: 8px; background: var(--borde-suave); border-radius: 99px; overflow: hidden; }
+        .barra > span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--azul), #60a5fa); border-radius: 99px; transition: width .8s var(--ease); }
+        .progreso-txt { grid-column: 2; font-size: .86rem; color: var(--texto); display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+        .falta { border: 1px dashed #cbd5e1; border-radius: 99px; padding: 2px 10px; font-size: .8rem; color: var(--texto); text-decoration: none; }
+        .falta:hover { border-color: var(--azul); color: var(--azul); }
+
+        .pendientes { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; margin-top: 14px; }
+        .pendiente { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; background: var(--ambar-claro); border: 1px solid #fde68a; color: var(--tinta); text-decoration: none; font-size: .9rem; animation: subir .4s var(--ease) both; transition: transform .2s var(--ease), box-shadow .2s; }
+        a.pendiente:hover { transform: translateY(-2px); box-shadow: var(--sombra); }
+        .pendiente.rojo { background: var(--rojo-claro); border-color: #fecaca; }
+        .pendiente > i:first-child { color: var(--ambar); font-size: 1.1rem; width: 20px; text-align: center; }
+        .pendiente.rojo > i:first-child { color: var(--rojo); }
+        .pendiente span { flex: 1; }
+        .pendiente .fa-chevron-right { color: var(--gris-claro); font-size: .8rem; }
+
+        .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .kpi { padding: 16px 18px; }
+        .kpi-top { display: flex; align-items: center; gap: 10px; color: var(--gris); font-size: .86rem; font-weight: 500; }
+        .kpi-ico { width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: .95rem; flex-shrink: 0; }
+        .kpi-num { font-size: 1.8rem; font-weight: 700; margin: 10px 0 2px; letter-spacing: -.02em; }
+        .kpi small { color: var(--gris); font-size: .8rem; }
+        .kpi small.sube { color: var(--verde); }
+        .kpi small.baja { color: var(--rojo); }
+
+        .grupos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+        .grupo { padding: 8px; }
+        .grupo-cab { padding: 10px 10px 8px; }
+        .grupo-cab h3 { font-size: 1rem; }
+        .grupo-cab p { color: var(--gris); font-size: .84rem; margin-top: 2px; }
+        .accion { display: flex; align-items: center; gap: 12px; width: 100%; padding: 11px 10px; border: none; background: none; border-radius: 10px; text-align: left; text-decoration: none; color: var(--tinta); cursor: pointer; transition: background .2s; }
+        .accion:hover { background: var(--fondo); }
+        .accion:hover .fa-chevron-right { transform: translateX(3px); color: var(--azul); }
+        .accion .ico { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1rem; }
+        .accion .txt { flex: 1; min-width: 0; }
+        .accion .txt b { display: block; font-weight: 600; font-size: .94rem; }
+        .accion .txt small { display: block; color: var(--gris); font-size: .8rem; line-height: 1.3; }
+        .accion .fa-chevron-right { color: #cbd5e1; font-size: .78rem; transition: transform .2s var(--ease), color .2s; }
+        .badge { background: var(--rojo); color: #fff; font-size: .72rem; font-weight: 700; border-radius: 99px; padding: 1px 7px; min-width: 20px; text-align: center; }
+        .c-azul { background: var(--azul-claro); color: var(--azul); }
+        .c-verde { background: var(--verde-claro); color: var(--verde); }
+        .c-ambar { background: var(--ambar-claro); color: var(--ambar); }
+        .c-rojo { background: var(--rojo-claro); color: var(--rojo); }
+        .c-morado { background: #f5f3ff; color: #7c3aed; }
+        .c-cian { background: #ecfeff; color: #0891b2; }
+        .c-gris { background: var(--borde-suave); color: var(--texto); }
+
+        .sin-anuncio { padding: 36px 24px; text-align: center; }
+        .sin-anuncio i { font-size: 2.2rem; color: #cbd5e1; margin-bottom: 10px; display: block; }
+        .sin-anuncio p { color: var(--gris); margin: 6px 0 16px; }
+
+        @media (max-width: 1000px) {
+            .grupos { grid-template-columns: 1fr 1fr; }
+            .kpis { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 720px) {
+            .hero { grid-template-columns: 1fr; padding: 18px; }
+            .hero h1 { font-size: 1.35rem; }
+            .hero-acciones { justify-content: stretch; }
+            .hero-acciones .btn { flex: 1; }
+            .grupos { grid-template-columns: 1fr; }
+            .kpi { padding: 14px; }
+            .kpi-num { font-size: 1.5rem; }
+            .kpi-top span { font-size: .8rem; }
         }
     </style>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
-    <style>body, button, input, select, textarea { font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }</style>
-    <link rel="stylesheet" href="/hospedaje/css/tema-panel.css">
-    <script src="/hospedaje/js/encabezado-panel.js" defer></script>
 </head>
-<body>
-    <!-- Mobile Menu Toggle -->
-    <button class="mobile-menu-toggle" id="mobileMenuToggle">
-        <i class="fas fa-bars"></i>
-    </button>
-    <!-- Overlay -->
-    <div class="overlay" id="overlay"></div>
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <a href="/" class="logo">
-                <i class="fas fa-compass"></i>
-                <span>Dirección de Turismo</span>
-            </a>
-        </div>
-        <div class="user-info">
-            <div class="user-avatar" id="userAvatar">
-                <i class="fas fa-user"></i>
-            </div>
-            <div class="user-name" id="userName">Administrador</div>
-            <div class="user-role">
-                <i class="fas fa-shield-alt"></i>
-                <span id="userRole">Administrador</span>
-            </div>
-        </div>
-        <ul class="sidebar-menu">
-            <li class="menu-section">Principal</li>
-            <li class="menu-item">
-                <a href="#" class="menu-link active">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
-                </a>
-            </li>
-            <li class="menu-section">Gestión de Servicios</li>
-            <li class="menu-item">
-                <a href="hoteles-admin.html" class="menu-link">
-                    <i class="fas fa-hotel"></i>
-                    <span>Mis Hoteles</span>
-                    <span class="menu-badge" id="hotelCount">0</span>
-                </a>
-            </li>
-            <li class="menu-item">
-                <a href="cabanas-admin.html" class="menu-link">
-                    <i class="fas fa-tree"></i>
-                    <span>Mis Cabañas</span>
-                    <span class="menu-badge" id="cabanaCount">0</span>
-                </a>
-            </li>
-            <li class="menu-item">
-                <a href="airbnb-admin.html" class="menu-link">
-                    <i class="fas fa-home"></i>
-                    <span>Mis Airbnb</span>
-                    <span class="menu-badge" id="airbnbCount">0</span>
-                </a>
-            </li>
-            <li class="menu-item">
-                <a href="tourOperadora-admin.html" class="menu-link">
-                    <i class="fas fa-route"></i>
-                    <span>Mis Tours</span>
-                    <span class="menu-badge" id="tourCount">0</span>
-                </a>
-            </li>
-            <li class="menu-item">
-                <a href="guias-admin.html" class="menu-link">
-                    <i class="fas fa-user-tie"></i>
-                    <span>Mi Perfil de Guía</span>
-                </a>
-            </li>
-            <li class="menu-item">
-                <a href="opiniones.html" class="menu-link">
-                    <i class="fas fa-star"></i>
-                    <span>Opiniones</span>
-                </a>
-            </li>
-            <li class="menu-item">
-                <a href="estadisticas.html" class="menu-link">
-                    <i class="fas fa-chart-bar"></i>
-                    <span>Estadísticas</span>
-                </a>
-            </li>
-            <li class="menu-section">Configuración</li>
-            <li class="menu-item">
-                <a href="perfil.html" class="menu-link">
-                    <i class="fas fa-user-cog"></i>
-                    <span>Mi Perfil</span>
-                </a>
-            </li>
-          
-        </ul>
-    </aside>
-    <!-- Main Content -->
-    <main class="main-content">
-        <!-- Top Bar -->
-        <div class="top-bar">
-            <h1 class="page-title">Dashboard</h1>
-            
 
-                
-                <button class="logout-btn" id="logoutBtn">
-                    <i class="fas fa-sign-out-alt"></i>
-                </button>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <a href="/index.html" class="logo" title="Ir al sitio de turismo">
+                <img src="/images/PueblosMágicos.svg.png" alt="Logo Turismo">
+                <span>Turismo Admin</span>
+            </a>
+            <div class="nav-links">
+                <a href="dashboard.html" class="nav-link activo"><i class="fas fa-home"></i> Panel</a>
+                <a href="#" class="nav-link" id="nav-editar"><i class="fas fa-bed"></i> Mi anuncio</a>
+                <a href="#" class="nav-link" id="nav-fotos"><i class="fas fa-images"></i> Fotos</a>
+                <a href="opiniones.html" class="nav-link"><i class="fas fa-star"></i> Opiniones</a>
             </div>
-        </div>
-        <!-- Warning Banner -->
-        <div class="warning-banner" id="warningBanner">
-            <i class="fas fa-info-circle"></i>
-            <span id="warningText">Mantén actualizados los detalles de tu negocio</span>
-        </div>
-        <!-- Dashboard Stats -->
-        <div class="dashboard-stats" id="dashboardStats">
-            <!-- Las estadísticas se generarán dinámicamente según el tipo de usuario -->
-        </div>
-        <!-- Quick Actions -->
-        <div class="quick-actions">
-            <div class="section-header">
-                <h2 class="section-title">Acciones Rápidas</h2>
+            <div class="user-section">
+                <div class="user-info">
+                    <div class="user-name" id="user-name">Cargando…</div>
+                    <div class="user-role" id="user-role">Socio de hospedaje</div>
+                </div>
+                <a class="user-avatar" id="user-avatar" href="perfil.html" title="Mi perfil" style="text-decoration:none"><i class="fas fa-user"></i></a>
+                <button class="icono-btn peligro" id="logout-btn" type="button" title="Cerrar sesión" aria-label="Cerrar sesión"><i class="fas fa-sign-out-alt"></i></button>
             </div>
-            
-            <div class="actions-grid" id="actionsGrid">
-                <!-- Las acciones se generarán dinámicamente según el tipo de usuario -->
+        </nav>
+    </header>
+
+    <main>
+        <!-- Encabezado -->
+        <section class="tarjeta hero">
+            <div>
+                <p class="eyebrow">Panel de tu hospedaje</p>
+                <h1 id="saludo">Hola</h1>
+                <div class="hero-linea" id="hero-linea">
+                    <span class="esqueleto" style="display:inline-block;width:180px;height:16px;border-radius:6px"></span>
+                </div>
+                <label class="selector" id="selector" hidden>
+                    <span>Anuncio:</span>
+                    <select class="select" id="sel-anuncio"></select>
+                </label>
             </div>
-        </div>
-        <!-- Recent Activity -->
-        <div class="recent-activity">
-            <div class="section-header">
-                <h2 class="section-title">Actividad Reciente</h2>
-                <a href="#" class="view-all-btn">Ver todo</a>
+            <div class="hero-acciones" id="hero-acciones" hidden>
+                <button class="btn" type="button" id="btn-copiar"><i class="fas fa-link"></i> Copiar enlace</button>
+                <a class="btn btn-primario" id="btn-ver" href="#" target="_blank" rel="noopener"><i class="fas fa-arrow-up-right-from-square"></i> Ver mi página</a>
             </div>
-            
-            <ul class="activity-list" id="activityList">
-                <!-- La actividad se generará dinámicamente -->
-            </ul>
+            <div class="progreso" id="progreso" hidden>
+                <div class="progreso-num" id="prog-num">0%</div>
+                <div class="barra" role="progressbar" aria-label="Anuncio completo" aria-valuemin="0" aria-valuemax="100" id="prog-barra"><span></span></div>
+                <div class="progreso-txt" id="prog-txt"></div>
+            </div>
+        </section>
+
+        <!-- Sin anuncios todavía -->
+        <section class="tarjeta sin-anuncio" id="sin-anuncio" hidden>
+            <i class="fas fa-hotel"></i>
+            <h2>Aún no tienes anuncios publicados</h2>
+            <p>Publica tu hotel, cabaña o alojamiento para que los turistas te encuentren.</p>
+            <a class="btn btn-primario" href="crear-anuncio.html"><i class="fas fa-plus"></i> Publicar mi anuncio</a>
+        </section>
+
+        <div id="contenido" hidden>
+            <!-- Lo que necesita tu atención -->
+            <div class="pendientes" id="pendientes"></div>
+
+            <!-- Este mes -->
+            <div class="titulo-sec">
+                <div><h2>Este mes</h2><p>Cómo te encuentran los viajeros.</p></div>
+                <a href="estadisticas.html">Ver estadísticas completas <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="kpis">
+                <div class="tarjeta kpi">
+                    <div class="kpi-top"><span class="kpi-ico c-morado"><i class="fas fa-eye"></i></span><span>Visitas a tu página</span></div>
+                    <div class="kpi-num" id="k-vistas">–</div>
+                    <small id="k-vistas-sub">&nbsp;</small>
+                </div>
+                <div class="tarjeta kpi">
+                    <div class="kpi-top"><span class="kpi-ico c-verde"><i class="fab fa-whatsapp"></i></span><span>WhatsApp y llamadas</span></div>
+                    <div class="kpi-num" id="k-contacto">–</div>
+                    <small id="k-contacto-sub">&nbsp;</small>
+                </div>
+                <div class="tarjeta kpi">
+                    <div class="kpi-top"><span class="kpi-ico c-cian"><i class="fas fa-location-dot"></i></span><span>Clics en "Cómo llegar"</span></div>
+                    <div class="kpi-num" id="k-mapa">–</div>
+                    <small id="k-mapa-sub">&nbsp;</small>
+                </div>
+                <div class="tarjeta kpi">
+                    <div class="kpi-top"><span class="kpi-ico c-ambar"><i class="fas fa-star"></i></span><span>Calificación</span></div>
+                    <div class="kpi-num" id="k-calif">–</div>
+                    <small id="k-calif-sub">&nbsp;</small>
+                </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="titulo-sec"><div><h2>¿Qué quieres hacer hoy?</h2></div></div>
+            <div class="grupos">
+                <section class="tarjeta grupo">
+                    <div class="grupo-cab"><h3>Tu anuncio</h3><p>Lo que ven los viajeros de tu hospedaje.</p></div>
+                    <a class="accion" id="a-editar" href="#">
+                        <span class="ico c-azul"><i class="fas fa-pen"></i></span>
+                        <span class="txt"><b>Editar mi anuncio</b><small id="a-editar-sub">Descripción, precio, servicios, contacto y ubicación</small></span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                    <a class="accion" id="a-fotos" href="#">
+                        <span class="ico c-morado"><i class="fas fa-images"></i></span>
+                        <span class="txt"><b>Fotos</b><small id="a-fotos-sub">Sube y elige tu foto de portada</small></span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                    <a class="accion" id="a-habitaciones" href="actualizar-habitaciones.html" hidden>
+                        <span class="ico c-cian"><i class="fas fa-door-open"></i></span>
+                        <span class="txt"><b>Habitaciones</b><small>Tipos de cuarto, precios y lo que incluye cada uno</small></span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </section>
+
+                <section class="tarjeta grupo">
+                    <div class="grupo-cab"><h3>Tus huéspedes</h3><p>Lo que opinan y cómo te encuentran.</p></div>
+                    <a class="accion" href="opiniones.html">
+                        <span class="ico c-ambar"><i class="fas fa-comments"></i></span>
+                        <span class="txt"><b>Opiniones</b><small>Lee y responde lo que publican de ti</small></span>
+                        <span class="badge" id="badge-opiniones" hidden></span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                    <a class="accion" href="estadisticas.html">
+                        <span class="ico c-verde"><i class="fas fa-chart-column"></i></span>
+                        <span class="txt"><b>Estadísticas</b><small>Visitas y contactos de los últimos 6 meses</small></span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </section>
+
+                <section class="tarjeta grupo">
+                    <div class="grupo-cab"><h3>Tu cuenta</h3><p>Tus anuncios y tus datos.</p></div>
+                    <a class="accion" id="a-lista" href="#">
+                        <span class="ico c-gris"><i class="fas fa-list"></i></span>
+                        <span class="txt"><b>Mis anuncios</b><small id="a-lista-sub">Todos los hospedajes de tu cuenta</small></span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                    <a class="accion" href="crear-anuncio.html">
+                        <span class="ico c-azul"><i class="fas fa-plus"></i></span>
+                        <span class="txt"><b>Publicar otro anuncio</b><small>Hotel, cabaña o alojamiento</small></span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                    <a class="accion" href="perfil.html">
+                        <span class="ico c-gris"><i class="fas fa-user-gear"></i></span>
+                        <span class="txt"><b>Mi perfil</b><small>Nombre, correo y contraseña</small></span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </section>
+            </div>
         </div>
     </main>
+
     <script>
-        // Variables globales
-        const userData = JSON.parse(localStorage.getItem('hospUserData')) || {};
-        const authToken = localStorage.getItem('hospAuthToken');
-        const baseURL = (() => {
-    const hostname = window.location.hostname;
-    
-    console.log('🌐 Hostname detectado en dashboard:', hostname);
-    
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-        console.log('🛠️ Modo desarrollo detectado');
-        return '/api/hospedaje';
-    }
-    
-    console.log('🚀 Modo producción detectado');
-    return `${window.location.protocol}//${window.location.host}/api`;
-})();
+    (function () {
+        'use strict';
+        const API = '/api/hospedaje';
+        const token = localStorage.getItem('hospAuthToken');
+        const $ = (id) => document.getElementById(id);
+        const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const num = (n) => Number(n || 0).toLocaleString('es-MX');
+        const leerSocio = () => { try { return JSON.parse(localStorage.getItem('hospUserData') || 'null') || {}; } catch (e) { return {}; } };
 
-console.log('✅ BaseURL configurado para dashboard:', baseURL);
+        // Páginas de cada tipo (las de edición ya existen; aquí solo se enlazan)
+        const TIPOS = {
+            hotel: { texto: 'Hotel', editar: 'actualizar-detalles.html', fotos: (id) => 'manage-images-hotel.html?hotelId=' + id, lista: 'hoteles-admin.html', idLocal: 'currentHotelId', ruta: '/hoteles/mis-hoteles', clave: 'hoteles' },
+            cabana: { texto: 'Cabaña', editar: 'actualizar-cabanas.html', fotos: (id) => 'manage-images-cabana.html?cabanaId=' + id, lista: 'cabanas-admin.html', idLocal: 'currentCabanaId', ruta: '/cabanas/mis-cabanas', clave: 'cabanas' },
+            airbnb: { texto: 'Airbnb', editar: 'actualizar-airbnb.html', fotos: (id) => 'manage-images-airbnb.html?airbnbId=' + id, lista: 'airbnb-admin.html', idLocal: 'currentAirbnbId', ruta: '/airbnb/mis-alojamientos', clave: 'alojamientos' }
+        };
+        const ROL = { hotel: 'Hotel', cabana: 'Cabaña', airbnb: 'Airbnb', ayb: 'Airbnb', guiaturistica: 'Guía turística', touroperadora: 'Tour operadora' };
 
+        let anuncios = [];   // de /estadisticas/mias: _id, tipo, nombre, activo, imagen, totales, meses
+        let opiniones = { lista: [], pendientes: 0 };
+        const detalles = {}; // tipo -> documentos completos
 
-
-// ✅ FUNCIÓN PARA MANEJAR ERRORES DE CONEXIÓN
-async function loadBusinessDataWithRetry() {
-    console.log('📥 Cargando datos del negocio con reintento...');
-    
-    try {
-        switch(userData.tipoNegocio) {
-            case 'airbnb':
-            case 'ayb':
-                console.log('🏠 Intentando cargar datos de Airbnb...');
-                console.log('URL completa:', `${baseURL}/airbnb/mis-alojamientos`);
-                
-                const airbnbResponse = await fetch(`${baseURL}/airbnb/mis-alojamientos`, {
-                    headers: { 
-                        'Authorization': `Bearer ${authToken}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                if (!airbnbResponse.ok) {
-                    throw new Error(`HTTP ${airbnbResponse.status}: ${airbnbResponse.statusText}`);
-                }
-                
-                const airbnbData = await airbnbResponse.json();
-                console.log('✅ Respuesta exitosa de Airbnb:', airbnbData);
-                
-                if (airbnbData.status === 'success' && airbnbData.data.alojamientos.length > 0) {
-                    const airbnb = airbnbData.data.alojamientos[0];
-                    currentAirbnb = airbnb;
-                    localStorage.setItem('currentAirbnbId', airbnb._id);
-                    console.log('✅ Airbnb cargado exitosamente:', airbnb.nombre, 'ID:', airbnb._id);
-                    
-                    // Reconfigurar el menú después de cargar datos
-                    setupImageManagementMenu();
-                    return true;
-                } else {
-                    console.warn('⚠️ No se encontraron alojamientos:', airbnbData);
-                    return false;
-                }
-                break;
-                
-            // Agregar otros casos si es necesario
-            case 'cabana':
-            case 'hotel':
-                console.log(`📋 Carga de ${userData.tipoNegocio} no implementada en esta función`);
-                return false;
+        // ---------- sesión ----------
+        function salir() {
+            ['hospAuthToken', 'hospUserData', 'hospCurrentUser', 'currentCabanaId', 'currentHotelId', 'currentAirbnbId'].forEach((k) => {
+                try { localStorage.removeItem(k); } catch (e) { /* ignorar */ }
+            });
+            location.href = '/hospedaje/login.html';
         }
-    } catch (error) {
-        console.error('❌ Error cargando datos del negocio:', error);
-        
-        // Si hay error de conexión, mostrar mensaje útil
-        if (error.message.includes('Failed to fetch') || error.message.includes('CONNECTION_REFUSED')) {
-            console.error('🚨 Error de conexión al servidor');
-            showConnectionError();
-        }
-        
-        return false;
-    }
-}
+        $('logout-btn').addEventListener('click', () => { if (confirm('¿Cerrar sesión?')) salir(); });
 
-// ✅ FUNCIÓN PARA MOSTRAR ERROR DE CONEXIÓN
-function showConnectionError() {
-    const warningBanner = document.getElementById('warningBanner');
-    if (warningBanner) {
-        const warningText = document.getElementById('warningText');
-        warningText.textContent = '⚠️ No se pudo conectar al servidor. Verifica tu conexión.';
-        warningBanner.style.backgroundColor = '#f8d7da';
-        warningBanner.style.color = '#721c24';
-        warningBanner.style.display = 'flex';
-    }
-}
-
-// ✅ FUNCIÓN MEJORADA PARA CREAR LA FUNCIÓN manageImages
-function createManageImagesFunction() {
-    if (userData.tipoNegocio === 'ayb' || userData.tipoNegocio === 'airbnb') {
-        const airbnbId = currentAirbnb?._id || localStorage.getItem('currentAirbnbId');
-        
-        if (airbnbId) {
-            window.manageImages = function() {
-                console.log('🖼️ Navegando a gestión de imágenes con ID:', airbnbId);
-                window.location.href = `manage-images-airbnb.html?airbnbId=${airbnbId}`;
-            };
-            console.log('✅ Función manageImages creada exitosamente');
-        } else {
-            console.warn('⚠️ No se pudo crear manageImages - falta ID del alojamiento');
+        async function api(ruta) {
+            const r = await fetch(API + ruta, { headers: { 'Authorization': 'Bearer ' + token } });
+            if (r.status === 401) { salir(); throw new Error('sin sesión'); }
+            const j = await r.json().catch(() => ({}));
+            if (!r.ok) throw new Error(j.message || 'Error del servidor');
+            return j;
         }
-    }
-}
 
-        // ✅ VARIABLES GLOBALES para almacenar datos de negocio
-        let currentCabana = null;
-        let currentHotel = null;
-        let currentAirbnb = null;
-        // Verificar autenticación
-        if (!authToken) {
-            window.location.href = '../login.html';
+        function pintarUsuario(u) {
+            const nombre = (u.nombre || 'Socio').trim();
+            $('user-name').textContent = nombre;
+            $('user-role').textContent = ROL[u.tipoNegocio] || 'Socio de hospedaje';
+            $('user-avatar').textContent = nombre.split(/\s+/).slice(0, 2).map((p) => p.charAt(0)).join('').toUpperCase() || '?';
+            $('saludo').textContent = 'Hola, ' + nombre.split(/\s+/)[0];
         }
-        // Elementos del DOM
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
-        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-        const logoutBtn = document.getElementById('logoutBtn');
-        // Actualizar información del usuario
-        document.getElementById('userName').textContent = userData.nombre || 'Administrador';
-        document.getElementById('userRole').textContent = userData.role === 'admin' ? 'Administrador' : 'Usuario';
-        
-        // Iniciales para avatar
-        const initials = userData.nombre ? userData.nombre.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'AD';
-        document.getElementById('userAvatar').innerHTML = `<span>${initials}</span>`;
-        // Toggle mobile menu
-        mobileMenuToggle.addEventListener('click', function() {
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
-        });
-        overlay.addEventListener('click', function() {
-            sidebar.classList.remove('active');
-            overlay.classList.remove('active');
-        });
-        // Logout
-        logoutBtn.addEventListener('click', function() {
-            if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-                localStorage.removeItem('hospAuthToken');
-                localStorage.removeItem('hospUserData');
-                localStorage.removeItem('currentCabanaId'); // ✅ LIMPIAR ID guardado
-                localStorage.removeItem('currentHotelId');
-                localStorage.removeItem('currentAirbnbId');
-                    // Redirigir al login
-        window.location.href = '../login.html';
-        
-        console.log('🔄 Redirigiendo al login...');
-    }
-        });
-        // Función para formatear tiempo relativo
-        function formatTimeAgo(date) {
-            const now = new Date();
-            const diff = now - date;
-            const seconds = Math.floor(diff / 1000);
-            const minutes = Math.floor(seconds / 60);
-            const hours = Math.floor(minutes / 60);
-            const days = Math.floor(hours / 24);
-            const weeks = Math.floor(days / 7);
-            const months = Math.floor(days / 30);
-            const years = Math.floor(days / 365);
-            if (seconds < 60) {
-                return 'Hace unos segundos';
-            } else if (minutes < 60) {
-                return `Hace ${minutes} minuto${minutes > 1 ? 's' : ''}`;
-            } else if (hours < 24) {
-                return `Hace ${hours} hora${hours > 1 ? 's' : ''}`;
-            } else if (days < 7) {
-                return `Hace ${days} día${days > 1 ? 's' : ''}`;
-            } else if (weeks < 4) {
-                return `Hace ${weeks} semana${weeks > 1 ? 's' : ''}`;
-            } else if (months < 12) {
-                return `Hace ${months} mes${months > 1 ? 'es' : ''}`;
+
+        // ---------- anuncio actual ----------
+        const claveActual = 'hospPanelAnuncio';
+        function actual() {
+            let id = null;
+            try { id = localStorage.getItem(claveActual); } catch (e) { /* ignorar */ }
+            return anuncios.find((a) => String(a._id) === id) || anuncios[0];
+        }
+        function urlPublica(a) { return location.origin + '/hospedaje/hospedaje-detalle.html?tipo=' + a.tipo + '&id=' + a._id; }
+
+        async function detalleDe(a) {
+            const t = TIPOS[a.tipo];
+            if (!detalles[a.tipo]) {
+                try { detalles[a.tipo] = ((await api(t.ruta)).data || {})[t.clave] || []; } catch (e) { detalles[a.tipo] = []; }
+            }
+            return detalles[a.tipo].find((d) => String(d._id) === String(a._id)) || null;
+        }
+
+        // Qué le falta al anuncio, con el enlace donde se arregla
+        function revisar(a, d) {
+            const t = TIPOS[a.tipo];
+            const fotos = (d && d.imagenes ? d.imagenes.length : 0);
+            const u = (d && d.ubicacion) || {};
+            const c = (d && d.capacidad) || {};
+            const precio = d ? (a.tipo === 'airbnb' ? d.precioPorNoche : d.precio) : 0;
+            const puntos = [
+                { ok: d && String(d.descripcion || '').trim().length >= 60, texto: 'Descripción completa', ir: t.editar },
+                { ok: Number(precio) > 0, texto: 'Precio por noche', ir: t.editar },
+                { ok: fotos >= 3, texto: fotos ? 'Al menos 3 fotos (tienes ' + fotos + ')' : 'Fotos', ir: t.fotos(a._id) },
+                { ok: d && d.contacto && /^\d{10}$/.test(String(d.contacto.telefono || '')), texto: 'Teléfono de contacto', ir: t.editar },
+                { ok: !!(u.direccion && String(u.direccion).trim()), texto: 'Dirección', ir: t.editar },
+                { ok: !!((u.lat && u.lng) || (u.coordenadas && u.coordenadas.latitud)), texto: 'Ubicación en el mapa', ir: t.editar },
+                { ok: d && Array.isArray(d.servicios) && d.servicios.length > 0, texto: 'Servicios (wifi, estacionamiento…)', ir: t.editar },
+                { ok: a.tipo === 'hotel' ? Number(c.habitaciones) > 0 : Number(c.huespedes) > 0, texto: a.tipo === 'hotel' ? 'Número de habitaciones' : 'Huéspedes que caben', ir: a.tipo === 'hotel' ? 'actualizar-habitaciones.html' : t.editar }
+            ];
+            return { puntos, fotos, calificacion: d && d.calificacion ? d.calificacion : null };
+        }
+
+        function comparar(ahora, antes) {
+            if (!antes && !ahora) return { txt: 'Sin datos todavía', clase: '' };
+            if (!antes) return { txt: 'Primer mes con datos', clase: '' };
+            const p = Math.round(((ahora - antes) / antes) * 100);
+            if (p === 0) return { txt: 'Igual que el mes pasado', clase: '' };
+            return { txt: (p > 0 ? '▲ ' : '▼ ') + Math.abs(p) + '% vs. mes pasado', clase: p > 0 ? 'sube' : 'baja' };
+        }
+        function kpi(id, ahora, antes) {
+            $(id).textContent = num(ahora);
+            const c = comparar(ahora, antes);
+            const s = $(id + '-sub');
+            s.textContent = c.txt;
+            s.className = c.clase;
+        }
+
+        async function pintar() {
+            const a = actual();
+            if (!a) return;
+            try { localStorage.setItem(claveActual, String(a._id)); localStorage.setItem(TIPOS[a.tipo].idLocal, String(a._id)); } catch (e) { /* ignorar */ }
+            const t = TIPOS[a.tipo];
+
+            // Encabezado
+            $('hero-linea').innerHTML = '<b>' + esc(a.nombre) + '</b><span class="chip-tipo">' + esc(t.texto) + '</span>' +
+                '<span class="estado-hoy ' + (a.activo ? 'visible' : 'oculto') + '"><span class="dot"></span>' + (a.activo ? 'Visible en el sitio' : 'Oculto') + '</span>';
+            $('hero-acciones').hidden = false;
+            $('btn-ver').href = urlPublica(a);
+
+            // Enlaces según el tipo
+            $('nav-editar').href = $('a-editar').href = t.editar;
+            $('nav-fotos').href = $('a-fotos').href = t.fotos(a._id);
+            $('a-habitaciones').hidden = a.tipo !== 'hotel';
+            $('a-lista').href = t.lista;
+            $('a-lista-sub').textContent = anuncios.length > 1 ? 'Tienes ' + anuncios.length + ' anuncios en tu cuenta' : 'Todos los hospedajes de tu cuenta';
+
+            // Números del mes (el último de los 6 meses es el actual)
+            const m = a.meses || [];
+            const ahora = m[m.length - 1] || {}, antes = m[m.length - 2] || {};
+            kpi('k-vistas', ahora.vistas, antes.vistas);
+            kpi('k-contacto', (ahora.whatsapp || 0) + (ahora.telefono || 0), (antes.whatsapp || 0) + (antes.telefono || 0));
+            kpi('k-mapa', ahora.mapa, antes.mapa);
+
+            // Ficha completa
+            const d = await detalleDe(a);
+            if (actual() !== a) return; // cambió de anuncio mientras cargaba
+            const r = revisar(a, d);
+            const hechos = r.puntos.filter((p) => p.ok).length;
+            const pct = Math.round((hechos / r.puntos.length) * 100);
+            $('progreso').hidden = false;
+            $('prog-num').textContent = pct + '%';
+            $('prog-barra').setAttribute('aria-valuenow', pct);
+            requestAnimationFrame(() => { $('prog-barra').firstElementChild.style.width = pct + '%'; });
+            const faltan = r.puntos.filter((p) => !p.ok);
+            $('prog-txt').innerHTML = faltan.length
+                ? '<span>Para atraer más viajeros, completa:</span>' + faltan.map((p) => '<a class="falta" href="' + esc(p.ir) + '">' + esc(p.texto) + '</a>').join('')
+                : '<span><i class="fas fa-circle-check" style="color:var(--verde)"></i> Tu anuncio está completo. ¡Buen trabajo!</span>';
+            $('a-fotos-sub').textContent = r.fotos ? r.fotos + ' foto' + (r.fotos === 1 ? '' : 's') + ' publicada' + (r.fotos === 1 ? '' : 's') : 'Aún no tienes fotos: súbelas aquí';
+
+            const cal = r.calificacion || {};
+            if (cal.totalReviews) {
+                $('k-calif').textContent = Number(cal.promedio || 0).toFixed(1);
+                $('k-calif-sub').textContent = num(cal.totalReviews) + ' opinión' + (cal.totalReviews === 1 ? '' : 'es');
             } else {
-                return `Hace ${years} año${years > 1 ? 's' : ''}`; 
+                $('k-calif').textContent = '–';
+                $('k-calif-sub').textContent = 'Aún sin opiniones';
             }
+            $('k-calif-sub').className = '';
+
+            pintarPendientes(a, r);
         }
-        
-        // ✅ FUNCIÓN CORREGIDA: Configurar menú de gestión de imágenes para TODOS los tipos de negocio
-        function setupImageManagementMenu() {
-            console.log('🖼️ Configurando menú de gestión de imágenes...');
-            
-            // Buscar dónde insertar el menú
-            let targetElement = null;
-            
-            switch(userData.tipoNegocio) {
-                case 'cabana':
-                    targetElement = document.querySelector('a[href="cabanas-admin.html"]')?.parentElement;
-                    break;
-                case 'hotel':
-                    targetElement = document.querySelector('a[href="hoteles-admin.html"]')?.parentElement;
-                    break;
-                case 'airbnb':
-                case 'ayb':
-                    targetElement = document.querySelector('a[href="airbnb-admin.html"]')?.parentElement;
-                    break;
-            }
-            
-            // ✅ BUSCAR LA ENTIDAD ACTUAL PARA TODOS LOS TIPOS DE NEGOCIO
-            let entidadActual = null;
-            
-            switch(userData.tipoNegocio) {
-                case 'cabana':
-                    // Opción 1: Desde la variable global currentCabana
-                    if (currentCabana && currentCabana._id) {
-                        entidadActual = currentCabana;
-                        console.log('✅ Cabaña encontrada en variable global:', entidadActual.nombre);
-                    }
-                    // Opción 2: Desde localStorage
-                    else if (localStorage.getItem('currentCabanaId')) {
-                        const cabanaId = localStorage.getItem('currentCabanaId');
-                        if (cabanaId && cabanaId !== 'null' && cabanaId !== 'undefined') {
-                            entidadActual = { _id: cabanaId, nombre: 'Cabaña guardada' };
-                            console.log('✅ Cabaña encontrada en localStorage:', cabanaId);
-                        }
-                    }
-                    break;
-                    
-                case 'hotel':
-                    // ✅ NUEVA LÓGICA PARA HOTELES
-                    // Opción 1: Desde la variable global currentHotel
-                    if (currentHotel && currentHotel._id) {
-                        entidadActual = currentHotel;
-                        console.log('✅ Hotel encontrado en variable global:', entidadActual.nombre);
-                    }
-                    // Opción 2: Desde localStorage
-                    else if (localStorage.getItem('currentHotelId')) {
-                        const hotelId = localStorage.getItem('currentHotelId');
-                        if (hotelId && hotelId !== 'null' && hotelId !== 'undefined') {
-                            entidadActual = { _id: hotelId, nombre: 'Hotel guardado' };
-                            console.log('✅ Hotel encontrado en localStorage:', hotelId);
-                        }
-                    }
-                    break;
-                    
-                case 'airbnb':
-                case 'ayb':
-                    // ✅ NUEVA LÓGICA PARA AIRBNB
-                    // Opción 1: Desde la variable global currentAirbnb
-                    if (currentAirbnb && currentAirbnb._id) {
-                        entidadActual = currentAirbnb;
-                        console.log('✅ Airbnb encontrado en variable global:', entidadActual.nombre);
-                    }
-                    // Opción 2: Desde localStorage
-                    else if (localStorage.getItem('currentAirbnbId')) {
-                        const airbnbId = localStorage.getItem('currentAirbnbId');
-                        if (airbnbId && airbnbId !== 'null' && airbnbId !== 'undefined') {
-                            entidadActual = { _id: airbnbId, nombre: 'Airbnb guardado' };
-                            console.log('✅ Airbnb encontrado en localStorage:', airbnbId);
-                        }
-                    }
-                    break;
-            }
-            
-            // Si tenemos la entidad y el elemento objetivo, configurar menú
-            if (entidadActual && entidadActual._id && targetElement) {
-                console.log('🖼️ Habilitando menú de gestión de imágenes para:', entidadActual.nombre);
-                
-                // Verificar si ya existe para evitar duplicados
-                const existingImageManagement = document.getElementById('menu-gestion-imagenes-dashboard');
-                if (existingImageManagement) {
-                    existingImageManagement.remove();
-                }
-                
-                // Crear el elemento de gestión de imágenes
-                const imageManagementElement = document.createElement('li');
-                imageManagementElement.className = 'menu-item submenu-item';
-                imageManagementElement.id = 'menu-gestion-imagenes-dashboard';
-                
-                let href = '';
-                switch(userData.tipoNegocio) {
-                    case 'cabana':
-                        href = `manage-images-cabana.html?cabanaId=${entidadActual._id}`;
-                        break;
-                    case 'hotel':
-                        href = `manage-images-hotel.html?hotelId=${entidadActual._id}`;
-                        break;
-                    case 'airbnb':
-                    case 'ayb':
-                        href = `manage-images-airbnb.html?airbnbId=${entidadActual._id}`;
-                        break;
-                }
-                
-                imageManagementElement.innerHTML = `
-                    <a href="${href}" class="menu-link submenu-link">
-                        <i class="fas fa-images"></i>
-                        <span>Gestión de Imágenes</span>
-                    </a>
-                `;
-                
-                // Insertar después del elemento principal
-                targetElement.parentNode.insertBefore(imageManagementElement, targetElement.nextSibling);
-                
-                console.log('✅ Enlace de gestión de imágenes actualizado:', href);
-                
-                // Crear función global para navegar
-                window.manageImages = function(entityId = entidadActual._id) {
-                    console.log('🖼️ Navegando a gestión de imágenes:', entityId);
-                    window.location.href = href;
-                };
-                
-            } else {
-                console.log('⚠️ No se encontró entidad específica o elemento objetivo');
-                if (!entidadActual) console.log('  - No hay entidad actual para:', userData.tipoNegocio);
-                if (!targetElement) console.log('  - No se encontró elemento objetivo');
-            }
+
+        function pintarPendientes(a, r) {
+            const items = [];
+            if (!a.activo) items.push({ rojo: true, ico: 'fa-eye-slash', html: '<b>Tu anuncio está oculto</b> y los viajeros no lo ven. Escribe a la Dirección de Turismo para reactivarlo.' });
+            const sinResp = opiniones.lista.filter((o) => String(o.hospedajeId) === String(a._id) && !o.respuesta).length;
+            if (sinResp) items.push({ ico: 'fa-comment-dots', html: 'Tienes <b>' + sinResp + '</b> opinión' + (sinResp === 1 ? '' : 'es') + ' sin responder', ir: 'opiniones.html' });
+            if (r.fotos < 3) items.push({ ico: 'fa-camera', html: r.fotos ? 'Sube más fotos: los anuncios con <b>3 o más</b> reciben más visitas' : '<b>Tu anuncio no tiene fotos</b>. Súbelas para aparecer mejor', ir: TIPOS[a.tipo].fotos(a._id) });
+            if (opiniones.pendientes) items.push({ ico: 'fa-hourglass-half', html: '<b>' + opiniones.pendientes + '</b> opinión' + (opiniones.pendientes === 1 ? '' : 'es') + ' nueva' + (opiniones.pendientes === 1 ? '' : 's') + ' en revisión por Turismo', ir: 'opiniones.html' });
+            $('pendientes').innerHTML = items.map((p, i) => {
+                const etiqueta = p.ir ? 'a' : 'div';
+                return '<' + etiqueta + ' class="pendiente' + (p.rojo ? ' rojo' : '') + '"' + (p.ir ? ' href="' + esc(p.ir) + '"' : '') + ' style="animation-delay:' + (i * 60) + 'ms">' +
+                    '<i class="fas ' + p.ico + '"></i><span>' + p.html + '</span>' + (p.ir ? '<i class="fas fa-chevron-right"></i>' : '') + '</' + etiqueta + '>';
+            }).join('');
+
+            const total = opiniones.lista.filter((o) => !o.respuesta).length;
+            $('badge-opiniones').hidden = !total;
+            $('badge-opiniones').textContent = total;
         }
-        
-        // ✅ FUNCIÓN CORREGIDA: Agregar gestión de imágenes al menú dinámicamente con IDs
-        async function addImageManagementToMenu() {
-            try {
-                switch(userData.tipoNegocio) {
-                    case 'cabana':
-                        // ✅ CARGAR Y GUARDAR información de cabaña
-                        const cabanaResponse = await fetch(`${baseURL}/cabanas/mis-cabanas`, {
-                            headers: { 'Authorization': `Bearer ${authToken}` }
-                        });
-                        const cabanaData = await cabanaResponse.json();
-                        
-                        if (cabanaData.status === 'success' && cabanaData.data.cabanas.length > 0) {
-                            const cabana = cabanaData.data.cabanas[0];
-                            currentCabana = cabana; // ✅ Guardar en variable global
-                            localStorage.setItem('currentCabanaId', cabana._id); // ✅ Guardar en localStorage
-                            console.log('🏔️ Cabaña cargada y guardada:', cabana.nombre, 'ID:', cabana._id);
-                        }
-                        break;
-                        
-                    case 'hotel':
-                        const hotelResponse = await fetch(`${baseURL}/hoteles/mis-hoteles`, {
-                            headers: { 'Authorization': `Bearer ${authToken}` }
-                        });
-                        const hotelData = await hotelResponse.json();
-                        
-                        if (hotelData.status === 'success' && hotelData.data.hoteles.length > 0) {
-                            const hotel = hotelData.data.hoteles[0];
-                            currentHotel = hotel;
-                            localStorage.setItem('currentHotelId', hotel._id);
-                            console.log('🏨 Hotel cargado y guardado:', hotel.nombre, 'ID:', hotel._id);
-                        }
-                        break;
-                        
-                    case 'airbnb':
-                    case 'ayb':
-                        const airbnbResponse = await fetch(`${baseURL}/airbnb/mis-alojamientos`, {
-                            headers: { 'Authorization': `Bearer ${authToken}` }
-                        });
-                        const airbnbData = await airbnbResponse.json();
-                        
-                        if (airbnbData.status === 'success' && airbnbData.data.alojamientos.length > 0) {
-                            const airbnb = airbnbData.data.alojamientos[0];
-                            currentAirbnb = airbnb;
-                            localStorage.setItem('currentAirbnbId', airbnb._id);
-                            console.log('🏠 Airbnb cargado y guardado:', airbnb.nombre, 'ID:', airbnb._id);
-                        }
-                        break;
-                }
-                
-                // ✅ Después de cargar datos, configurar el menú
-                setupImageManagementMenu();
-                
-            } catch (error) {
-                console.error('❌ Error cargando datos para gestión de imágenes:', error);
-                // En caso de error, intentar configurar con datos del localStorage
-                setupImageManagementMenu();
-            }
-        }
-        // Personalizar dashboard según tipo de negocio
-        async function customizeDashboard() {
-            const dashboardStats = document.getElementById('dashboardStats');
-            const actionsGrid = document.getElementById('actionsGrid');
-            const pageTitle = document.querySelector('.page-title');
-            const warningBanner = document.getElementById('warningBanner');
-            
-            // Limpiar contenido actual
-            dashboardStats.innerHTML = '';
-            actionsGrid.innerHTML = '';
-            
-            // Configuración específica por tipo de negocio
-            let statsHTML = '';
-            let actionsHTML = '';
-            let title = 'Dashboard';
-            
-            switch(userData.tipoNegocio) {
-                case 'hotel':
-                    title = 'Panel de Hoteles';
-                    warningBanner.classList.add('show');
-                    document.getElementById('warningText').textContent = 'Recuerda mantener actualizados los detalles de tus hoteles';
-                    
-                    statsHTML = `
-                        <div class="stat-card" style="--stat-color: #2563eb;">
-                            <div class="stat-icon">
-                                <i class="fas fa-hotel"></i>
-                            </div>
-                            <div class="stat-number" id="totalServicios">0</div>
-                            <div class="stat-label">Mis Hoteles</div>
-                            <div class="stat-change positive">
-                                <i class="fas fa-arrow-up"></i>
-                                <span>12%</span>
-                            </div>
-                        </div>
-                    `;
-                    
-                    actionsHTML = `
-                        <a href="actualizar-detalles.html" class="action-btn" style="--btn-color: #2563eb; --btn-color-dark: #1e40af;">
-                            <i class="fas fa-edit"></i>
-                            <span>Actualizar Detalles</span>
-                        </a>
-                        <button onclick="manageImages()" class="action-btn" style="--btn-color: #2563eb; --btn-color-dark: #229954; border: none;">
-                            <i class="fas fa-images"></i>
-                            <span>Gestionar Imágenes</span>
-                        </button>
-                    `;
-                    break;
-                    
-                case 'cabana':
-                    title = 'Panel de Cabañas';
-                    warningBanner.classList.add('show');
-                    document.getElementById('warningText').textContent = 'Recuerda mantener actualizados los detalles de tus cabañas';
-                    
-                    statsHTML = `
-                        <div class="stat-card" style="--stat-color: #2563eb;">
-                            <div class="stat-icon">
-                                <i class="fas fa-tree"></i>
-                            </div>
-                            <div class="stat-number" id="totalServicios">0</div>
-                            <div class="stat-label">Mis Cabañas</div>
-                            <div class="stat-change positive">
-                                <i class="fas fa-arrow-up"></i>
-                                <span>8%</span>
-                            </div>
-                        </div>
-                    `;
-                    
-                    actionsHTML = `
-                        <a href="actualizar-cabanas.html" class="action-btn" style="--btn-color: #2563eb; --btn-color-dark: #229954;">
-                            <i class="fas fa-edit"></i>
-                            <span>Actualizar Detalles</span>
-                        </a>
-                        <button onclick="manageImages()" class="action-btn" style="--btn-color: #e67e22; --btn-color-dark: #d35400; border: none;">
-                            <i class="fas fa-images"></i>
-                            <span>Gestionar Imágenes</span>
-                        </button>
-                    `;
-                    break;
-                    
-                case 'airbnb':
-                case 'ayb': 
-                    title = 'Panel de Airbnb';
-                    warningBanner.classList.add('show');
-                    document.getElementById('warningText').textContent = 'Recuerda mantener actualizados los detalles de tus alojamientos';
-                    
-                    statsHTML = `
-                        <div class="stat-card" style="--stat-color: #e74c3c;">
-                            <div class="stat-icon">
-                                <i class="fas fa-home"></i>
-                            </div>
-                            <div class="stat-number" id="totalServicios">0</div>
-                            <div class="stat-label">Mis Alojamientos</div>
-                            <div class="stat-change positive">
-                                <i class="fas fa-arrow-up"></i>
-                                <span>10%</span>
-                            </div>
-                        </div>
-                    `;
-                    
-                    actionsHTML = `
-                        <a href="actualizar-airbnb.html" class="action-btn" style="--btn-color: #e74c3c; --btn-color-dark: #c0392b;">
-                            <i class="fas fa-edit"></i>
-                            <span>Actualizar Detalles</span>
-                        </a>
-                        <button onclick="manageImages()" class="action-btn" style="--btn-color: #9b59b6; --btn-color-dark: #8e44ad; border: none;">
-                            <i class="fas fa-images"></i>
-                            <span>Gestionar Imágenes</span>
-                        </button>
-                    `;
-                    break;
-                    
-                case 'touroperadora':
-                    title = 'Panel de Tour Operadora';
-                    warningBanner.classList.add('show');
-                    document.getElementById('warningText').textContent = 'Recuerda mantener actualizados los detalles de tus tours';
-                    
-                    statsHTML = `
-                        <div class="stat-card" style="--stat-color: #f39c12;">
-                            <div class="stat-icon">
-                                <i class="fas fa-route"></i>
-                            </div>
-                            <div class="stat-number" id="totalServicios">0</div>
-                            <div class="stat-label">Tours Activos</div>
-                            <div class="stat-change positive">
-                                <i class="fas fa-arrow-up"></i>
-                                <span>15%</span>
-                            </div>
-                        </div>
-                    `;
-                    
-                    actionsHTML = `
-                        <a href="actualizar-tourOperadora.html" class="action-btn" style="--btn-color: #f39c12; --btn-color-dark: #d68910;">
-                            <i class="fas fa-edit"></i>
-                            <span>Actualizar Detalles</span>
-                        </a>
-                        <a href="manage-images-tour.html" class="action-btn" style="--btn-color: #2563eb; --btn-color-dark: #1e40af;">
-                            <i class="fas fa-images"></i>
-                            <span>Gestionar Imágenes</span>
-                        </a>
-                    `;
-                    break;
-                    
-                case 'guiaturistica':
-                    title = 'Panel de Guía Turística';
-                    warningBanner.classList.add('show');
-                    document.getElementById('warningText').textContent = 'Recuerda mantener actualizado tu perfil y especialidades';
-                    
-                    statsHTML = `
-                        <div class="stat-card" style="--stat-color: #2563eb;">
-                            <div class="stat-icon">
-                                <i class="fas fa-user-tie"></i>
-                            </div>
-                            <div class="stat-number" id="perfilActivo">1</div>
-                            <div class="stat-label">Perfil Activo</div>
-                            <div class="stat-change positive">
-                                <i class="fas fa-check-circle"></i>
-                            </div>
-                        </div>
-                    `;
-                    
-                    actionsHTML = `
-                        <a href="actualizar-guias.html" class="action-btn" style="--btn-color: #2563eb; --btn-color-dark: #1e40af;">
-                            <i class="fas fa-edit"></i>
-                            <span>Actualizar Detalles</span>
-                        </a>
-                        <a href="manage-images-guia.html" class="action-btn" style="--btn-color: #ff9800; --btn-color-dark: #f57c00;">
-                            <i class="fas fa-images"></i>
-                            <span>Gestionar Imágenes</span>
-                        </a>
-                    `;
-                    break;
-                    
-                default:
-                    // Si es admin general o no tiene tipo de negocio
-                    title = 'Panel de Administración';
-                    break;
-            }
-            
-            // Actualizar el DOM
-            pageTitle.textContent = title;
-            dashboardStats.innerHTML = statsHTML;
-            actionsGrid.innerHTML = actionsHTML;
-            
-            // gestión de imágenes (ahora async y mejorado)
-            await addImageManagementToMenu();
-        }
-        // Ocultar opciones del menú según el tipo de negocio - SOLO MUESTRA LAS CORRESPONDIENTES
-        function customizeMenuByBusinessType() {
-            const menuItems = document.querySelectorAll('.sidebar-menu .menu-item');
-            
-            if (userData.tipoNegocio) {
-                menuItems.forEach(item => {
-                    const link = item.querySelector('.menu-link');
-                    if (!link) return;
-                    
-                    const span = link.querySelector('span');
-                    if (!span) return;
-                    
-                    const text = span.textContent.toLowerCase();
-                    
-                    // Ocultar TODOS los items del menú que no corresponden al tipo de negocio
-                    switch(userData.tipoNegocio) {
-                        case 'hotel':
-                            if (text.includes('cabaña') || text.includes('airbnb') || text.includes('tour') || text.includes('guía')) {
-                                item.style.display = 'none';
-                            }
-                            break;
-                        case 'cabana':
-                            if (text.includes('hotel') || text.includes('airbnb') || text.includes('tour') || text.includes('guía')) {
-                                item.style.display = 'none';
-                            }
-                            break;
-                        case 'ayb':
-                            if (text.includes('hotel') || text.includes('cabaña') || text.includes('tour') || text.includes('guía')) {
-                                item.style.display = 'none';
-                            }
-                            break;
-                        case 'touroperadora':
-                            if (text.includes('hotel') || text.includes('cabaña') || text.includes('airbnb') || text.includes('guía')) {
-                                item.style.display = 'none';
-                            }
-                            break;
-                        case 'guiaturistica':
-                            if (text.includes('hotel') || text.includes('cabaña') || text.includes('airbnb') || text.includes('tour')) {
-                                item.style.display = 'none';
-                            }
-                            break;
-                    }
-                });
-            }
-        }
-        // Cargar estadísticas del negocio del usuario
-        async function loadUserBusinessStats() {
-            const headers = {
-                'Authorization': `Bearer ${authToken}`
-            };
-            try {
-                let totalServicios = 0;
-                
-                switch (userData.tipoNegocio) {
-                    case 'hotel':
-                        const hotelRes = await fetch(`${baseURL}/hoteles/mis-hoteles`, { headers });
-                        const hotelData = await hotelRes.json();
-                        
-                        console.log('Respuesta de hoteles:', hotelData);
-                        
-                        if (hotelData.status === 'success') {
-                            totalServicios = hotelData.results || 0;
-                            
-                            const hotelCountElement = document.getElementById('hotelCount');
-                            if (hotelCountElement) {
-                                hotelCountElement.textContent = totalServicios;
-                            }
-                        } else {
-                            console.error('Error en respuesta de hoteles:', hotelData);
-                        }
-                        break;
-                    case 'cabana':
-                        const cabanaRes = await fetch(`${baseURL}/cabanas/mis-cabanas`, { headers });
-                        const cabanaData = await cabanaRes.json();
-                        if (cabanaData.status === 'success') {
-                            totalServicios = cabanaData.results || 0;
-                            const cabanaCountElement = document.getElementById('cabanaCount');
-                            if (cabanaCountElement) {
-                                cabanaCountElement.textContent = totalServicios;
-                            }
-                        }
-                        break;
-                    case 'airbnb':
-                        const airbnbRes = await fetch(`${baseURL}/airbnb/mis-alojamientos`, { headers });
-                        const airbnbData = await airbnbRes.json();
-                        if (airbnbData.status === 'success') {
-                            totalServicios = airbnbData.results || 0;
-                            const airbnbCountElement = document.getElementById('airbnbCount');
-                            if (airbnbCountElement) {
-                                airbnbCountElement.textContent = totalServicios;
-                            }
-                        }
-                        break;
-                    case 'touroperadora':
-                        const tourRes = await fetch(`${baseURL}/tours/mis-operadoras`, { headers });
-                        const tourData = await tourRes.json();
-                        if (tourData.status === 'success') {
-                            totalServicios = 0;
-                            if (tourData.data?.tourOperadoras) {
-                                tourData.data.tourOperadoras.forEach(operadora => {
-                                    totalServicios += operadora.tours?.filter(t => t.activo !== false).length || 0;
-                                });
-                            }
-                            const tourCountElement = document.getElementById('tourCount');
-                            if (tourCountElement) {
-                                tourCountElement.textContent = totalServicios;
-                            }
-                        }
-                        break;
-                    case 'guiaturistica':
-                        const guiaRes = await fetch(`${baseURL}/guias/mis-guias`, { headers });
-                        const guiaData = await guiaRes.json();
-                        if (guiaData.status === 'success' && guiaData.data?.guias?.[0]) {
-                            totalServicios = 1; // Perfil activo
-                        }
-                        break;
-                }
-                
-                // Actualizar estadísticas en el DOM
-                if (document.getElementById('totalServicios')) {
-                    document.getElementById('totalServicios').textContent = totalServicios;
-                }
-                
-                console.log('Total servicios actualizado:', totalServicios);
-                
-            } catch (error) {
-                console.error('Error cargando estadísticas del negocio:', error);
-            }
-        }
-        // Cargar estadísticas generales (admin)
-        async function loadGeneralStats() {
-            try {
-                const [hotelRes, cabanaRes, airbnbRes, tourRes] = await Promise.all([
-                    fetch(`${baseURL}/hoteles`),
-                    fetch(`${baseURL}/cabanas`),
-                    fetch(`${baseURL}/airbnb`),
-                    fetch(`${baseURL}/tours`)
-                ]);
-                const hotelData = await hotelRes.json();
-                const cabanaData = await cabanaRes.json();
-                const airbnbData = await airbnbRes.json();
-                const tourData = await tourRes.json();
-                document.getElementById('hotelCount').textContent = hotelData.results || 0;
-                document.getElementById('cabanaCount').textContent = cabanaData.results || 0;
-                document.getElementById('airbnbCount').textContent = airbnbData.results || 0;
-                document.getElementById('tourCount').textContent = tourData.results || 0;
-            } catch (error) {
-                console.error('Error cargando estadísticas generales:', error);
-            }
-        }
-        // Cargar estadísticas
-        async function loadDashboardStats() {
-            try {
-                if (userData.tipoNegocio) {
-                    await loadUserBusinessStats();
-                } else {
-                    await loadGeneralStats();
-                }
-            } catch (error) {
-                console.error('Error cargando estadísticas:', error);
-            }
-        }
-        // Actualizar actividad reciente
-        async function updateRecentActivity() {
-            const activityList = document.getElementById('activityList');
-            const activities = [];
-            
-            try {
-                const headers = {
-                    'Authorization': `Bearer ${authToken}`
-                };
-                if (userData.tipoNegocio || userData.role === 'admin') {
-                    if (userData.tipoNegocio === 'hotel' || userData.role === 'admin') {
-                        const hotelRes = await fetch(`${baseURL}/hoteles/mis-hoteles`, { headers });
-                        const hotelData = await hotelRes.json();
-                        if (hotelData.status === 'success' && hotelData.data?.hoteles) {
-                            hotelData.data.hoteles.forEach(hotel => {
-                                activities.push({
-                                    type: 'hotel',
-                                    icon: 'fa-hotel',
-                                    color: '#2563eb',
-                                    name: hotel.nombre,
-                                    action: 'registrado',
-                                    date: hotel.createdAt,
-                                    updateDate: hotel.updatedAt
-                                });
-                            });
-                        }
-                    }
-                    if (userData.tipoNegocio === 'cabana' || userData.role === 'admin') {
-                        const cabanaRes = await fetch(`${baseURL}/cabanas/mis-cabanas`, { headers });
-                        const cabanaData = await cabanaRes.json();
-                        if (cabanaData.status === 'success' && cabanaData.data?.cabanas) {
-                            cabanaData.data.cabanas.forEach(cabana => {
-                                activities.push({
-                                    type: 'cabaña',
-                                    icon: 'fa-tree',
-                                    color: '#2563eb',
-                                    name: cabana.nombre,
-                                    action: 'registrada',
-                                    date: cabana.createdAt,
-                                    updateDate: cabana.updatedAt
-                                });
-                            });
-                        }
-                    }
-                    if (userData.tipoNegocio === 'airbnb' || userData.role === 'admin') {
-                        const airbnbRes = await fetch(`${baseURL}/airbnb/mis-alojamientos`, { headers });
-                        const airbnbData = await airbnbRes.json();
-                        if (airbnbData.status === 'success' && airbnbData.data?.alojamientos) {
-                            airbnbData.data.alojamientos.forEach(airbnb => {
-                                activities.push({
-                                    type: 'Airbnb',
-                                    icon: 'fa-home',
-                                    color: '#e74c3c',
-                                    name: airbnb.nombre,
-                                    action: 'registrado',
-                                    date: airbnb.createdAt,
-                                    updateDate: airbnb.updatedAt
-                                });
-                            });
-                        }
-                    }
-                    if (userData.tipoNegocio === 'touroperadora' || userData.role === 'admin') {
-                        const tourRes = await fetch(`${baseURL}/tours/mis-operadoras`, { headers });
-                        const tourData = await tourRes.json();
-                        if (tourData.status === 'success' && tourData.data?.tourOperadoras) {
-                            tourData.data.tourOperadoras.forEach(tour => {
-                                activities.push({
-                                    type: 'Tour operadora',
-                                    icon: 'fa-route',
-                                    color: '#f39c12',
-                                    name: tour.nombre,
-                                    action: 'registrada',
-                                    date: tour.createdAt,
-                                    updateDate: tour.updatedAt
-                                });
-                            });
-                        }
-                    }
-                }
-                activities.sort((a, b) => {
-                    const dateA = new Date(a.updateDate || a.date);
-                    const dateB = new Date(b.updateDate || b.date);
-                    return dateB - dateA;
-                });
-                const recentActivities = activities.slice(0, 5);
-                activityList.innerHTML = '';
-                if (recentActivities.length === 0) {
-                    activityList.innerHTML = `
-                        <li class="activity-item">
-                            <div class="activity-icon" style="--activity-color: #999;">
-                                <i class="fas fa-info-circle"></i>
-                            </div>
-                            <div class="activity-content">
-                                <div class="activity-title">Sin actividad reciente</div>
-                                <div class="activity-description">Comienza agregando tu primer servicio</div>
-                            </div>
-                        </li>
-                    `;
-                } else {
-                    recentActivities.forEach(activity => {
-                        const createdDate = new Date(activity.date);
-                        const updatedDate = new Date(activity.updateDate);
-                        const isUpdated = updatedDate > createdDate && (updatedDate - createdDate) > 60000;
-                        
-                        const activityHTML = `
-                            <li class="activity-item">
-                                <div class="activity-icon" style="--activity-color: ${activity.color};">
-                                    <i class="fas ${activity.icon}"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <div class="activity-title">${activity.name}</div>
-                                    <div class="activity-description">
-                                        ${activity.type} ${isUpdated ? 'ha modificado su información' : activity.action}
-                                    </div>
-                                </div>
-                                <div class="activity-time">${formatTimeAgo(isUpdated ? updatedDate : createdDate)}</div>
-                            </li>
-                        `;
-                        activityList.innerHTML += activityHTML;
-                    });
-                }
-            } catch (error) {
-                console.error('Error cargando actividad reciente:', error);
-                activityList.innerHTML = `
-                    <li class="activity-item">
-                        <div class="activity-icon" style="--activity-color: #e74c3c;">
-                            <i class="fas fa-exclamation-triangle"></i>
-                        </div>
-                        <div class="activity-content">
-                            <div class="activity-title">Error al cargar actividades</div>
-                            <div class="activity-description">No se pudo obtener la actividad reciente</div>
-                        </div>
-                    </li>
-                `;
-            }
-        }
-        // ✅ INICIALIZAR dashboard con gestión de imágenes (ahora async)
-        document.addEventListener('DOMContentLoaded', async function() {
-            console.log('🚀 Inicializando dashboard para:', userData.tipoNegocio || 'sin tipo');
-            
-            await customizeDashboard(); // ✅ Ahora es async y incluye gestión de imágenes
-            customizeMenuByBusinessType();
-            
-            try {
-                await loadDashboardStats();
-                await updateRecentActivity();
-            } catch (error) {
-                console.error('❌ Error en carga inicial:', error);
-            }
-            
-            console.log('✅ Dashboard inicializado completamente');
+
+        $('sel-anuncio').addEventListener('change', (e) => {
+            try { localStorage.setItem(claveActual, e.target.value); } catch (err) { /* ignorar */ }
+            $('progreso').hidden = true;
+            pintar();
         });
-        // Auto-refresh cada 5 minutos
-        setInterval(loadDashboardStats, 300000);
-        // Función para testing (puedes cambiar el tipo de negocio)
-        function setBusinessTypeForDemo(tipo) {
-            userData.tipoNegocio = tipo;
-            localStorage.setItem('hospUserData', JSON.stringify(userData));
-            location.reload();
+
+        $('btn-copiar').addEventListener('click', async () => {
+            const a = actual();
+            if (!a) return;
+            const b = $('btn-copiar');
+            try {
+                await navigator.clipboard.writeText(urlPublica(a));
+                b.innerHTML = '<i class="fas fa-check"></i> Enlace copiado';
+            } catch (e) {
+                prompt('Copia el enlace de tu página:', urlPublica(a));
+            }
+            setTimeout(() => { b.innerHTML = '<i class="fas fa-link"></i> Copiar enlace'; }, 2000);
+        });
+
+        // ---------- arranque ----------
+        async function iniciar() {
+            if (!token) { location.href = '/hospedaje/login.html'; return; }
+            const guardado = leerSocio();
+            if (guardado.isSuperAdmin === true || guardado.isSuperAdmin === 'true') { location.href = 'super-admin-dashboard.html'; return; }
+            pintarUsuario(guardado);
+            try {
+                const me = await api('/auth/me');
+                const u = (me.data && me.data.user) || {};
+                if (u.isSuperAdmin) { location.href = 'super-admin-dashboard.html'; return; }
+                pintarUsuario(Object.assign({}, guardado, u));
+            } catch (e) {
+                if (e.message === 'sin sesión') return;
+            }
+
+            // Guías y tour operadoras siguen con sus páginas de siempre
+            if (guardado.tipoNegocio === 'guiaturistica' || guardado.tipoNegocio === 'touroperadora') {
+                const guia = guardado.tipoNegocio === 'guiaturistica';
+                $('hero-linea').textContent = guia ? 'Tu perfil de guía turística' : 'Tu tour operadora';
+                $('hero-acciones').hidden = false;
+                $('btn-copiar').hidden = true;
+                $('btn-ver').removeAttribute('target');
+                $('btn-ver').href = guia ? 'actualizar-guias.html' : 'actualizar-tourOperadora.html';
+                $('btn-ver').innerHTML = '<i class="fas fa-pen"></i> Editar mi perfil';
+                return;
+            }
+
+            try {
+                const [est, op] = await Promise.all([api('/estadisticas/mias'), api('/opiniones').catch(() => ({ data: [], pendientes: 0 }))]);
+                anuncios = (est.data || []).filter((a) => TIPOS[a.tipo]);
+                opiniones = { lista: op.data || [], pendientes: op.pendientes || 0 };
+            } catch (e) {
+                if (e.message === 'sin sesión') return;
+                $('hero-linea').innerHTML = '<span style="color:var(--rojo)"><i class="fas fa-circle-exclamation"></i> No pudimos cargar tu información. Recarga la página.</span>';
+                return;
+            }
+
+            if (!anuncios.length) {
+                $('hero-linea').textContent = 'Bienvenido a tu panel';
+                $('sin-anuncio').hidden = false;
+                return;
+            }
+            // El servidor los manda del más visitado al menos visitado: el primero es el que se abre
+            if (anuncios.length > 1) {
+                $('sel-anuncio').innerHTML = anuncios.map((a) => '<option value="' + esc(a._id) + '">' + esc(a.nombre) + ' · ' + esc(TIPOS[a.tipo].texto) + '</option>').join('');
+                $('sel-anuncio').value = String(actual()._id);
+                $('selector').hidden = false;
+            }
+            $('contenido').hidden = false;
+            pintar();
         }
-        // Para testing en consola:
-        // setBusinessTypeForDemo('cabana')
-        // setBusinessTypeForDemo('hotel')
-        // setBusinessTypeForDemo('airbnb')
-        // setBusinessTypeForDemo('touroperadora')
-        // setBusinessTypeForDemo('guiaturistica')
-        
-        console.log('📊 Dashboard inicializado. Tipo de negocio:', userData.tipoNegocio);
+        iniciar();
+    })();
     </script>
 </body>
 </html>
