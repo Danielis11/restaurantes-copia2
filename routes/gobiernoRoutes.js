@@ -9,6 +9,9 @@ router.use(verificarToken, verificarGobernamental);
 // Rutas de Dashboard de Solo Lectura
 router.get('/dashboard', gobiernoController.getDashboardStats);
 
+// Indicadores para informes (números reales; ?meses=6|12|24)
+router.get('/indicadores', require('../controllers/indicadoresGobierno').getIndicadores);
+
 // Rutas de Restaurantes de Solo Lectura
 router.get('/restaurants', gobiernoController.getRestaurantsReadOnly);
 

@@ -259,6 +259,8 @@ router.post('/hospedaje', async (req, res) => {
     } else {
       doc.capacidad = { huespedes: datos.huespedes, ...(datos.habitaciones >= 1 ? { habitaciones: datos.habitaciones } : {}) };
       doc.tipoPropiedad = datos.tipoPropiedad;
+      doc.precioPorNoche = datos.precio; // airbnb guarda el precio en otro campo
+      delete doc.precio;
     }
 
     let nuevo;

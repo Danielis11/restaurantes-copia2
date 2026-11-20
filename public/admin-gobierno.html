@@ -3,546 +3,394 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Gubernamental - RestauranteWeb</title>
-
-    <!-- Font Awesome -->
+    <title>Indicadores turísticos - Jalpan de Serra</title>
+    <meta name="robots" content="noindex">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Chart.js -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    
-    <!-- Mapbox GL JS -->
-    <script src='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js'></script>
-    <link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
-
     <style>
         :root {
-            --primary: #1e3a8a; /* Azul institucional */
-            --primary-dark: #1e40af;
-            --secondary: #0ea5e9;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --info: #3b82f6;
-            --gray-50: #f8fafc;
-            --gray-100: #f1f5f9;
-            --gray-200: #e2e8f0;
-            --gray-300: #cbd5e1;
-            --gray-400: #94a3b8;
-            --gray-500: #64748b;
-            --gray-600: #475569;
-            --gray-700: #334155;
-            --gray-800: #1e293b;
-            --gray-900: #0f172a;
-            --white: #ffffff;
-            --radius-md: 0.5rem;
-            --radius-lg: 1rem;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --azul: #2563eb; --azul-osc: #1e40af; --azul-claro: #eff6ff;
+            --tinta: #111827; --texto: #4b5563; --gris: #6b7280; --gris-claro: #9ca3af;
+            --borde: #e5e7eb; --borde-suave: #f3f4f6; --fondo: #f8fafc; --blanco: #fff;
+            --verde: #059669; --rojo: #dc2626; --ambar: #f59e0b;
+            --radio: 14px; --sombra: 0 1px 3px rgba(15,23,42,.06), 0 1px 2px rgba(15,23,42,.04);
         }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--fondo); color: var(--tinta); -webkit-font-smoothing: antialiased; }
+        button, input, select { font: inherit; color: inherit; }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        .cabecera { background: var(--blanco); border-bottom: 1px solid var(--borde); position: sticky; top: 0; z-index: 50; }
+        .cabecera-in { max-width: 1180px; margin: 0 auto; padding: 0 24px; height: 64px; display: flex; align-items: center; gap: 14px; }
+        .marca { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 700; font-size: 1.05rem; color: inherit; }
+        .marca img { width: 30px; height: 30px; object-fit: contain; }
+        .marca small { font-weight: 500; color: var(--gris); font-size: .85rem; }
+        .usuario { margin-left: auto; display: flex; align-items: center; gap: 10px; color: var(--texto); font-size: .9rem; }
+        .icono-btn { background: none; border: none; width: 38px; height: 38px; border-radius: 9px; color: var(--gris); cursor: pointer; }
+        .icono-btn:hover { background: var(--borde-suave); color: var(--tinta); }
 
-        body {
-            font-family: 'Outfit', sans-serif;
-            background-color: var(--gray-50);
-            color: var(--gray-900);
-            line-height: 1.6;
-        }
+        main { max-width: 1180px; margin: 0 auto; padding: 28px 24px 64px; }
+        .titulo { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+        h1 { font-size: 1.7rem; margin: 0 0 4px; letter-spacing: -.01em; }
+        h2 { font-size: 1.05rem; margin: 0; }
+        .sub { color: var(--gris); margin: 0; font-size: .95rem; }
+        .acciones { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+        select, .btn { border: 1px solid var(--borde); background: var(--blanco); border-radius: 10px; padding: 9px 14px; font-weight: 500; font-size: .9rem; cursor: pointer; }
+        .btn { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: var(--tinta); }
+        .btn:hover, select:hover { border-color: var(--gris-claro); }
+        .btn.primario { background: var(--azul); border-color: var(--azul); color: #fff; }
+        .btn.primario:hover { background: var(--azul-osc); }
+        .btn.chico { padding: 6px 11px; font-size: .82rem; }
 
-        /* Header Institucional */
-        .header {
-            background: linear-gradient(135deg, var(--gray-900) 0%, var(--primary) 100%);
-            color: var(--white);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
+        .seccion { margin-bottom: 28px; }
+        .seccion-cab { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+        .nota { color: var(--gris); font-size: .82rem; }
 
-        .nav {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 70px;
-        }
+        /* Indicadores */
+        .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+        .kpi { background: var(--blanco); border: 1px solid var(--borde-suave); border-radius: var(--radio); box-shadow: var(--sombra); padding: 18px; }
+        .kpi-etq { color: var(--gris); font-size: .85rem; display: flex; align-items: center; gap: 8px; }
+        .kpi-etq i { color: var(--azul); width: 16px; text-align: center; }
+        .kpi-num { font-size: 2rem; font-weight: 700; line-height: 1.1; margin: 10px 0 4px; font-variant-numeric: tabular-nums; }
+        .kpi-num small { font-size: 1rem; font-weight: 500; color: var(--gris); }
+        .kpi-pie { font-size: .82rem; color: var(--gris); }
+        .sube { color: var(--verde); font-weight: 600; }
+        .baja { color: var(--rojo); font-weight: 600; }
 
-        .logo { display: flex; align-items: center; gap: 0.5rem; color: var(--white); text-decoration: none; font-size: 1.25rem; font-weight: 700; }
-        .user-section { display: flex; align-items: center; gap: 1.5rem; }
+        .caja { background: var(--blanco); border: 1px solid var(--borde-suave); border-radius: var(--radio); box-shadow: var(--sombra); padding: 20px; }
+        .rejilla-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+        .rejilla-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .caja h3 { margin: 0 0 14px; font-size: .95rem; }
+        .caja, .kpi, .rejilla-2 > *, .rejilla-3 > * { min-width: 0; }
+        .grafica { position: relative; height: 300px; }
 
-        .btn-logout, .btn-primary {
-            background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);
-            padding: 0.5rem 1rem; border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s;
-            display: flex; align-items: center; gap: 0.5rem;
-        }
-        .btn-logout:hover { background: rgba(255,255,255,0.2); }
-        .btn-primary { background: var(--primary); color: white; border: none; font-weight: 500; }
-        .btn-primary:hover { background: var(--primary-dark); }
-        .btn-success { background: var(--success); color: white; border: none; font-weight: 500; padding: 0.5rem 1rem; border-radius: var(--radius-md); display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; }
-        .btn-success:hover { background: #059669; }
+        .barra-fila { display: grid; grid-template-columns: minmax(90px, 1.2fr) 2fr 44px; gap: 10px; align-items: center; font-size: .88rem; color: var(--texto); padding: 5px 0; }
+        .barra-fila span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .barra { height: 8px; background: var(--borde-suave); border-radius: 9999px; overflow: hidden; }
+        .barra div { height: 100%; background: var(--azul); border-radius: 9999px; }
+        .barra-fila b { text-align: right; color: var(--tinta); font-variant-numeric: tabular-nums; }
 
-        /* Tabs */
-        .nav-tabs { background: var(--white); border-bottom: 1px solid var(--gray-200); position: sticky; top: 70px; z-index: 99; }
-        .tabs-container { max-width: 1400px; margin: 0 auto; display: flex; gap: 2rem; padding: 0 1.5rem; overflow-x: auto; scrollbar-width: none; }
-        .tabs-container::-webkit-scrollbar { display: none; }
-        .tab-button {
-            background: none; border: none; padding: 1rem 0; color: var(--gray-500); font-weight: 500; cursor: pointer;
-            border-bottom: 2px solid transparent; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem; white-space: nowrap;
-        }
-        .tab-button.active { color: var(--primary); border-bottom-color: var(--primary); }
-
-        /* Main Context */
-        .main { max-width: 1400px; margin: 0 auto; padding: 2rem 1.5rem; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .page-header { margin-bottom: 2rem; border-bottom: 1px solid var(--gray-200); padding-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;}
-        .page-title { font-size: 1.8rem; font-weight: 700; color: var(--gray-900); }
-        .page-subtitle { color: var(--gray-500); font-size: 1rem; margin-top: 0.25rem; }
-
-        /* Stats Grid */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-        .stat-card { background: var(--white); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--gray-200); box-shadow: var(--shadow-sm); position: relative; overflow: hidden; }
-        .stat-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--primary); }
-        .stat-card.success::before { background: var(--success); }
-        .stat-card.warning::before { background: var(--warning); }
-        .stat-card.danger::before { background: var(--danger); }
-        .stat-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; }
-        .stat-title { color: var(--gray-500); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
-        .stat-value { font-size: 2.2rem; font-weight: 700; color: var(--gray-900); line-height: 1.2; }
-        .stat-icon { font-size: 1.5rem; color: var(--primary); opacity: 0.8; }
-        .stat-sub { font-size: 0.85rem; color: var(--gray-500); margin-top: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
-
-        /* Charts Grid */
-        .charts-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
-        .charts-grid.equal { grid-template-columns: 1fr 1fr; }
-        @media (max-width: 900px) { .charts-grid, .charts-grid.equal { grid-template-columns: 1fr; } }
-        
-        .chart-card { background: var(--white); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--gray-200); box-shadow: var(--shadow-sm); }
-        .chart-header { margin-bottom: 1rem; font-weight: 600; color: var(--gray-800); font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center; }
-        .chart-container { position: relative; height: 300px; width: 100%; }
-
-        /* Map Container */
-        .map-wrapper { height: 400px; width: 100%; border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--gray-200); position: relative; }
-        #heatMap { width: 100%; height: 100%; }
-
-        /* Table Styles */
-        .table-container { background: var(--white); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); border: 1px solid var(--gray-200); overflow: hidden; margin-bottom: 2rem; }
-        .table-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center; background: var(--gray-50); }
-        .table-title { font-size: 1.1rem; font-weight: 600; }
-        table { width: 100%; border-collapse: collapse; }
-        th { background: var(--white); padding: 1rem 1.5rem; text-align: left; font-weight: 600; color: var(--gray-600); border-bottom: 2px solid var(--gray-200); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
-        td { padding: 1rem 1.5rem; border-bottom: 1px solid var(--gray-200); color: var(--gray-800); font-size: 0.95rem; }
+        table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+        th { text-align: left; color: var(--gris); font-weight: 500; font-size: .8rem; padding: 10px 12px; border-bottom: 1px solid var(--borde); white-space: nowrap; }
+        th[data-orden] { cursor: pointer; user-select: none; }
+        th[data-orden]:hover { color: var(--tinta); }
+        th .flecha { font-size: .7rem; margin-left: 4px; opacity: .5; }
+        td { padding: 10px 12px; border-bottom: 1px solid var(--borde-suave); font-variant-numeric: tabular-nums; }
         tr:last-child td { border-bottom: none; }
-        tr:hover { background: var(--gray-50); }
-        
-        /* Badges */
-        .badge { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
-        .badge.success { background: #d1fae5; color: #065f46; }
-        .badge.warning { background: #fef3c7; color: #92400e; }
-        .badge.danger { background: #fee2e2; color: #991b1b; }
-        .badge.info { background: #dbeafe; color: #1e40af; }
-        .badge.gray { background: #f1f5f9; color: #475569; }
+        td.num, th.num { text-align: right; }
+        .tabla-envoltura { overflow-x: auto; }
+        .inactivo { color: var(--gris-claro); }
+        .etq { font-size: .75rem; padding: 2px 8px; border-radius: 9999px; background: var(--borde-suave); color: var(--texto); white-space: nowrap; }
+        .herramientas { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+        .herramientas input { flex: 1; min-width: 200px; padding: 9px 12px; border: 1px solid var(--borde); border-radius: 10px; }
+        .herramientas input:focus, select:focus { outline: none; border-color: var(--azul); box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
 
-        /* Lists for Rankings */
-        .ranking-list { list-style: none; }
-        .ranking-item { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px dashed var(--gray-200); }
-        .ranking-item:last-child { border-bottom: none; }
-        .ranking-info { display: flex; flex-direction: column; }
-        .ranking-name { font-weight: 600; color: var(--gray-800); }
-        .ranking-desc { font-size: 0.85rem; color: var(--gray-500); }
-        .ranking-score { font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; gap: 0.25rem; }
-        .ranking-score i { color: var(--warning); font-size: 0.9rem; }
+        .cargando { color: var(--gris); text-align: center; padding: 60px 16px; }
+        .aviso { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--tinta); color: #fff; padding: 12px 20px; border-radius: 10px; font-size: .9rem; display: none; z-index: 100; }
+        .solo-impresion { display: none; }
 
-        /* Alerts List */
-        .alert-item { display: flex; gap: 1rem; padding: 1rem; border-radius: var(--radius-md); background: var(--white); border: 1px solid var(--gray-200); margin-bottom: 1rem; border-left: 4px solid var(--danger); }
-        .alert-item.warning { border-left-color: var(--warning); }
-        .alert-icon { font-size: 1.5rem; color: var(--danger); margin-top: 0.25rem; }
-        .alert-item.warning .alert-icon { color: var(--warning); }
-        .alert-content h4 { font-size: 1rem; margin-bottom: 0.25rem; }
-        .alert-content p { font-size: 0.85rem; color: var(--gray-600); }
-        .alert-meta { font-size: 0.75rem; color: var(--gray-400); margin-top: 0.5rem; display: flex; gap: 1rem; }
-
-        .loading-screen { position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .spinner { width: 50px; height: 50px; border: 4px solid var(--gray-200); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 1rem; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        @media (max-width: 960px) {
+            .kpis { grid-template-columns: repeat(2, 1fr); }
+            .rejilla-3 { grid-template-columns: 1fr; }
+            .rejilla-2 { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 560px) {
+            .cabecera-in, main { padding-left: 16px; padding-right: 16px; }
+            .marca small, .usuario span { display: none; }
+            h1 { font-size: 1.4rem; }
+            .kpi { padding: 14px; }
+            .kpi-num { font-size: 1.6rem; }
+            .acciones { width: 100%; }
+            .acciones select { flex: 1; }
+            .grafica { height: 240px; }
+        }
+        @media print {
+            body { background: #fff; }
+            .cabecera, .acciones, .herramientas, .no-imprimir { display: none !important; }
+            .solo-impresion { display: block; }
+            main { padding: 0; max-width: none; }
+            .kpi, .caja { box-shadow: none; border-color: #ddd; break-inside: avoid; }
+            .kpis { grid-template-columns: repeat(4, 1fr); }
+            .rejilla-3 { grid-template-columns: repeat(3, 1fr); }
+            .seccion { break-inside: avoid-page; }
+        }
     </style>
-    <!-- PWA: app instalable -->
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#2563eb">
-    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="Jalpan">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <script src="/js/pwa.js" defer></script>
 </head>
 <body>
-
-    <div id="startup-loading" class="loading-screen">
-        <div class="spinner"></div>
-        <h2 style="color:var(--gray-700)">Cargando Sistema Gubernamental...</h2>
-    </div>
-
-    <!-- Header -->
-    <header class="header">
-        <nav class="nav">
-            <a href="/" class="logo">
-                <i class="fas fa-landmark"></i>
-                Panel Gubernamental Jalpan
-            </a>
-            <div class="user-section">
-                <a href="/" class="btn-logout" style="border: none; background: transparent; padding: 0;">
-                    <i class="fas fa-home"></i> Inicio
-                </a>
-                <div style="width: 1px; height: 20px; background: rgba(255,255,255,0.3);"></div>
-                <div class="user-info">
-                    <div class="user-name" id="user-name">Funcionario</div>
-                    <div class="user-role" style="font-size:0.8rem; opacity:0.8;">Auditoría Ciega</div>
-                </div>
-                <button class="btn-logout" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i> Salir
-                </button>
+    <header class="cabecera">
+        <div class="cabecera-in">
+            <a href="/" class="marca" title="Ir al sitio"><img src="/images/PueblosMágicos.svg.png" alt=""> Jalpan <small>Indicadores turísticos</small></a>
+            <div class="usuario">
+                <span id="nombreUsuario"></span>
+                <a class="icono-btn" href="/mapa.html" title="Mapa de establecimientos" aria-label="Mapa"><i class="fas fa-map-marked-alt"></i></a>
+                <button class="icono-btn" id="salir" title="Cerrar sesión" aria-label="Cerrar sesión"><i class="fas fa-sign-out-alt"></i></button>
             </div>
-        </nav>
+        </div>
     </header>
 
-    <!-- Tabs -->
-    <nav class="nav-tabs">
-        <div class="tabs-container">
-            <button class="tab-button active" data-tab="dashboard" onclick="switchTab('dashboard')">
-                <i class="fas fa-chart-pie"></i> Resumen de Impacto
-            </button>
-            <button class="tab-button" data-tab="turismo" onclick="switchTab('turismo')">
-                <i class="fas fa-map-marked-alt"></i> Turismo y Guías
-            </button>
-            <button class="tab-button" data-tab="gastronomia" onclick="switchTab('gastronomia')">
-                <i class="fas fa-utensils"></i> Alimentos y Bebidas
-            </button>
-            <button class="tab-button" data-tab="hospedajes" onclick="switchTab('hospedajes')">
-                <i class="fas fa-hotel"></i> Hospedajes
-            </button>
-            <button class="tab-button" data-tab="heatmaps" onclick="switchTab('heatmaps')">
-                <i class="fas fa-fire"></i> Mapeo Territorial
-            </button>
-            <button class="tab-button" data-tab="restaurants" onclick="switchTab('restaurants')">
-                <i class="fas fa-store"></i> Padrón General
-            </button>
-            <button class="tab-button" data-tab="alertas" onclick="switchTab('alertas')" id="tab-alertas">
-                <i class="fas fa-bell"></i> Alertas y Calidad
-            </button>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <main class="main">
-        
-        <!-- Tab 1: Dashboard Resumen -->
-        <div id="dashboard" class="tab-content active">
-            <div class="page-header">
-                <div>
-                    <h1 class="page-title">Resumen de Impacto Económico</h1>
-                    <p class="page-subtitle">Indicadores macroeconómicos y crecimiento de la plataforma turística.</p>
-                </div>
-                <button class="btn-primary" onclick="window.print()">
-                    <i class="fas fa-print"></i> Imprimir Reporte
-                </button>
+    <main>
+        <div class="titulo">
+            <div>
+                <h1>Indicadores turísticos</h1>
+                <p class="sub" id="subtitulo">Jalpan de Serra, Querétaro</p>
             </div>
-
-            <div class="stats-grid" id="main-stats">
-                <!-- Se llena con JS -->
-            </div>
-
-            <div class="charts-grid">
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <span><i class="fas fa-chart-area" style="color:var(--primary)"></i> Crecimiento del Sector (Últimos 6 meses)</span>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="growthChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <span><i class="fas fa-chart-pie" style="color:var(--secondary)"></i> Distribución Comercial</span>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="typeChart"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <div class="charts-grid equal">
-                <div class="chart-card" style="border-top: 4px solid var(--success)">
-                    <div class="chart-header">
-                        <span><i class="fas fa-trophy" style="color:var(--warning)"></i> Top 5: Excelencia Turística</span>
-                    </div>
-                    <ul class="ranking-list" id="top-restaurants">
-                        <!-- JS -->
-                    </ul>
-                </div>
-
-                <div class="chart-card" style="border-top: 4px solid var(--danger)">
-                    <div class="chart-header">
-                        <span><i class="fas fa-exclamation-circle" style="color:var(--danger)"></i> Foco de Atención: Menor Calificación</span>
-                    </div>
-                    <ul class="ranking-list" id="bottom-restaurants">
-                        <!-- JS -->
-                    </ul>
-                </div>
+            <div class="acciones">
+                <select id="periodo" aria-label="Periodo">
+                    <option value="6">Últimos 6 meses</option>
+                    <option value="12" selected>Últimos 12 meses</option>
+                    <option value="24">Últimos 24 meses</option>
+                </select>
+                <button class="btn" id="btnCsv" type="button"><i class="fas fa-file-excel" style="color:#047857"></i> Exportar Excel</button>
+                <button class="btn primario" id="btnImprimir" type="button"><i class="fas fa-print"></i> Imprimir / PDF</button>
             </div>
         </div>
+        <p class="solo-impresion nota" id="pieImpresion"></p>
 
-        <!-- Tab 2: Turismo y Guías -->
-        <div id="turismo" class="tab-content">
-            <div class="page-header">
-                <div>
-                    <h1 class="page-title">Oferta Turística y Guías</h1>
-                    <p class="page-subtitle">Monitoreo del padrón de prestadores de servicios turísticos.</p>
-                </div>
-                <button class="btn-success" onclick="exportGuiasCSV()">
-                    <i class="fas fa-file-csv"></i> Exportar Padrón de Guías
-                </button>
-            </div>
-
-            <div class="stats-grid" id="turismo-stats">
-                <!-- JS -->
-            </div>
-
-            <div class="charts-grid equal">
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <span><i class="fas fa-hiking" style="color:var(--success)"></i> Tours por Categoría</span>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="tourCatChart"></canvas>
-                    </div>
-                </div>
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <span><i class="fas fa-route" style="color:var(--primary)"></i> Tipos de Recorridos</span>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="tourTypeChart"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <div class="table-container">
-                <div class="table-header">
-                    <h2 class="table-title">Padrón de Guías Certificados</h2>
-                </div>
-                <div style="overflow-x:auto;">
-                    <table id="guias-table">
-                        <thead>
-                            <tr>
-                                <th>Nombre Completo</th>
-                                <th>Estado</th>
-                                <th>Certificación SECTUR</th>
-                                <th>Especialidades</th>
-                                <th>Calificación</th>
-                                <th>Registro</th>
-                            </tr>
-                        </thead>
-                        <tbody><!-- JS --></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tab 3: Alimentos y Bebidas (Gastronomía) -->
-        <div id="gastronomia" class="tab-content">
-            <div class="page-header">
-                <div>
-                    <h1 class="page-title">Sector Gastronómico</h1>
-                    <p class="page-subtitle">Monitoreo específico de restaurantes, bares, cafeterías y centros de consumo.</p>
-                </div>
-            </div>
-
-            <div class="stats-grid" id="gastro-stats">
-                <!-- JS -->
-            </div>
-
-            <div class="charts-grid equal">
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <span><i class="fas fa-chart-bar" style="color:var(--primary)"></i> Calificaciones Promedio por Tipo</span>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="gastroRatingChart"></canvas>
-                    </div>
-                </div>
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <span><i class="fas fa-store-slash" style="color:var(--danger)"></i> Estado Operativo</span>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="gastroStatusChart"></canvas>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="table-container" style="margin-top: 2rem;">
-                <div class="table-header">
-                    <h2 class="table-title">Desglose Rápido del Sector</h2>
-                </div>
-                <div style="overflow-x:auto;">
-                    <table id="gastro-summary-table">
-                        <thead>
-                            <tr>
-                                <th>Giro Comercial</th>
-                                <th>Total Registrados</th>
-                                <th>Activos</th>
-                                <th>En Pausa / Inactivos</th>
-                                <th>Calificación Media</th>
-                            </tr>
-                        </thead>
-                        <tbody><!-- JS --></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tab 3.5: Hospedajes -->
-        <div id="hospedajes" class="tab-content">
-            <div class="page-header">
-                <div>
-                    <h1 class="page-title">Sector Hotelero y Hospedaje</h1>
-                    <p class="page-subtitle">Monitoreo de la capacidad instalada, hoteles, cabañas y plataformas AirBnb.</p>
-                </div>
-            </div>
-
-            <div class="stats-grid" id="hospedajes-stats">
-                <!-- JS -->
-            </div>
-
-            <div class="charts-grid equal">
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <span><i class="fas fa-chart-pie" style="color:var(--primary)"></i> Distribución de Capacidad instalada</span>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="hospedajesTypeChart"></canvas>
-                    </div>
-                </div>
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <span><i class="fas fa-star" style="color:var(--warning)"></i> Calificaciones Promedio</span>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="hospedajesRatingChart"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <div class="table-container" style="margin-top: 2rem;">
-                <div class="table-header">
-                    <h2 class="table-title">Desglose del Sector de Hospedaje</h2>
-                </div>
-                <div style="overflow-x:auto;">
-                    <table id="hospedajes-summary-table">
-                        <thead>
-                            <tr>
-                                <th>Tipo de Alojamiento</th>
-                                <th>Total Registrados</th>
-                                <th>Activos en Plataforma</th>
-                                <th>Calificación Media</th>
-                            </tr>
-                        </thead>
-                        <tbody><!-- JS --></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tab 4: Heatmaps -->
-        <div id="heatmaps" class="tab-content">
-            <div class="page-header">
-                <div>
-                    <h1 class="page-title">Mapeo Territorial Diferenciado</h1>
-                    <p class="page-subtitle">Distribución geográfica sectorial transversal del Padrón Municipal.</p>
-                </div>
-            </div>
-            
-            <div class="chart-card" style="padding: 0; overflow: hidden; border-radius: var(--radius-lg);">
-                <div class="map-wrapper" id="heatMap" style="height: 600px;"></div>
-                <div style="padding: 1rem; background: var(--gray-50); border-top: 1px solid var(--gray-200); display: flex; gap: 2rem; flex-wrap: wrap;">
-                    <span style="font-size: 0.9rem; color: var(--gray-600);"><i class="fas fa-circle" style="color: rgba(239, 68, 68, 0.8)"></i> Sector Alimentos / Gastronomía</span>
-                    <span style="font-size: 0.9rem; color: var(--gray-600);"><i class="fas fa-circle" style="color: rgba(59, 130, 246, 0.8)"></i> Sector Hospedajes (Múltiple)</span>
-                    <span style="font-size: 0.9rem; color: var(--gray-600);"><i class="fas fa-circle" style="color: rgba(16, 185, 129, 0.8)"></i> Otros giros</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tab 4: Restaurantes -->
-        <div id="restaurants" class="tab-content">
-            <div class="page-header">
-                <div>
-                    <h1 class="page-title">Padrón General Comercial</h1>
-                    <p class="page-subtitle">Directorio de sólo lectura de todos los perfiles de la plataforma.</p>
-                </div>
-                <button class="btn-success" onclick="exportRestaurantesCSV()">
-                    <i class="fas fa-file-csv"></i> Exportar Padrón Comercial
-                </button>
-            </div>
-
-            <div class="table-container">
-                <div class="table-header">
-                    <h2 class="table-title">Registros Actuales</h2>
-                    <input type="text" id="search-padrón" placeholder="Buscar por nombre o municipio..." style="padding:0.5rem 1rem; border:1px solid var(--gray-300); border-radius:var(--radius-md); width:300px;">
-                </div>
-                <div style="overflow-x:auto;">
-                    <table id="padrón-table">
-                        <thead>
-                            <tr>
-                                <th>Establecimiento</th>
-                                <th>Tipo</th>
-                                <th>Ubicación</th>
-                                <th>Rating</th>
-                                <th>Estado</th>
-                                <th>Admin Responsable</th>
-                            </tr>
-                        </thead>
-                        <tbody><!-- JS --></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tab 5: Alertas -->
-        <div id="alertas" class="tab-content">
-            <div class="page-header">
-                <div>
-                    <h1 class="page-title">Panel de Alertas y Calidad</h1>
-                    <p class="page-subtitle">Focos rojos y atención preventiva requerida en el sector.</p>
-                </div>
-            </div>
-
-            <div class="charts-grid equal">
-                <div>
-                    <h3 style="margin-bottom: 1rem; color: var(--gray-700);"><i class="fas fa-star-half-alt" style="color:var(--danger)"></i> Reseñas Críticas Recientes (Últimos 7 días)</h3>
-                    <div id="alertas-reseñas">
-                        <!-- JS -->
-                    </div>
-                </div>
-                <div>
-                    <h3 style="margin-bottom: 1rem; color: var(--gray-700);"><i class="fas fa-clipboard-check" style="color:var(--warning)"></i> Avisos Operativos</h3>
-                    <div id="alertas-operativas">
-                        <!-- JS -->
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        <div id="contenido"><div class="cargando"><i class="fas fa-spinner fa-spin"></i> Calculando indicadores…</div></div>
     </main>
 
-    <script src="js/admin-gobierno.js"></script>
+    <div class="aviso" id="aviso" role="status"></div>
+
+    <script>
+    (function () {
+        'use strict';
+        const token = localStorage.getItem('authToken');
+        const $ = (id) => document.getElementById(id);
+        const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const num = (n) => Number(n || 0).toLocaleString('es-MX');
+        const dinero = (n) => n ? '$' + Number(n).toLocaleString('es-MX') : '—';
+        let datos = null, grafica = null;
+        const tabla = { texto: '', sector: '', orden: 'vistasMes', dir: -1 };
+
+        function avisar(t) { const a = $('aviso'); a.textContent = t; a.style.display = 'block'; setTimeout(() => { a.style.display = 'none'; }, 2600); }
+
+        $('salir').addEventListener('click', () => { localStorage.removeItem('authToken'); localStorage.removeItem('currentUser'); location.href = '/login.html'; });
+
+        async function verificar() {
+            if (!token) { location.href = '/login.html'; return false; }
+            try {
+                const res = await fetch('/api/auth/profile', { headers: { 'Authorization': 'Bearer ' + token } });
+                const json = await res.json().catch(() => ({}));
+                const admin = json.data && json.data.admin;
+                if (!res.ok || !admin) { location.href = '/login.html'; return false; }
+                if (admin.rol !== 'gobernamental' && admin.rol !== 'super-admin') { location.href = '/admin.html'; return false; }
+                $('nombreUsuario').textContent = [admin.nombre, admin.apellido].filter(Boolean).join(' ');
+                return true;
+            } catch (e) { location.href = '/login.html'; return false; }
+        }
+
+        async function cargar() {
+            $('contenido').innerHTML = '<div class="cargando"><i class="fas fa-spinner fa-spin"></i> Calculando indicadores…</div>';
+            try {
+                const res = await fetch('/api/gobierno/indicadores?meses=' + $('periodo').value, { headers: { 'Authorization': 'Bearer ' + token } });
+                const json = await res.json().catch(() => ({}));
+                if (res.status === 401 || res.status === 403) { location.href = '/login.html'; return; }
+                if (!json.success) throw new Error(json.message);
+                datos = json.data;
+                pintar();
+            } catch (e) {
+                $('contenido').innerHTML = '<div class="cargando">No se pudieron cargar los indicadores. <button class="btn chico" id="reintentar">Reintentar</button></div>';
+                $('reintentar').onclick = cargar;
+            }
+        }
+
+        function variacion(v) {
+            if (v === null || v === undefined) return '';
+            if (v === 0) return '<span>igual que el mes pasado</span>';
+            return '<span class="' + (v > 0 ? 'sube' : 'baja') + '">' + (v > 0 ? '▲ ' : '▼ ') + Math.abs(v) + '%</span> vs. mes pasado';
+        }
+
+        function kpi(icono, etiqueta, valor, pie) {
+            return '<div class="kpi"><div class="kpi-etq"><i class="fas ' + icono + '"></i> ' + etiqueta + '</div><div class="kpi-num">' + valor + '</div><div class="kpi-pie">' + (pie || '&nbsp;') + '</div></div>';
+        }
+
+        function barras(obj, sinOrden) {
+            const filas = Object.entries(obj || {});
+            if (!sinOrden) filas.sort((a, b) => b[1] - a[1]);
+            if (!filas.length) return '<p class="nota">Sin datos.</p>';
+            const max = Math.max(...filas.map((f) => f[1]), 1);
+            return filas.map(([k, v]) => '<div class="barra-fila"><span title="' + esc(k) + '">' + esc(k) + '</span><div class="barra"><div style="width:' + (v / max * 100) + '%"></div></div><b>' + num(v) + '</b></div>').join('');
+        }
+
+        function pintar() {
+            const r = datos.resumen;
+            const fecha = new Date(datos.generado).toLocaleString('es-MX', { dateStyle: 'long', timeStyle: 'short' });
+            $('subtitulo').textContent = 'Jalpan de Serra, Querétaro · actualizado el ' + fecha;
+            $('pieImpresion').textContent = 'Informe generado el ' + fecha + ' · periodo ' + datos.periodo.desde + ' a ' + datos.periodo.hasta + ' · Fuente: plataforma turística de Jalpan de Serra.';
+            const precios = Object.entries(datos.precios.hospedaje).filter(([, p]) => p.conPrecio);
+            const precioProm = precios.length ? Math.round(precios.reduce((s, [, p]) => s + p.promedio * p.conPrecio, 0) / precios.reduce((s, [, p]) => s + p.conPrecio, 0)) : 0;
+
+            $('contenido').innerHTML =
+                '<section class="seccion"><div class="kpis">' +
+                    kpi('fa-store', 'Establecimientos activos', num(r.establecimientosActivos), num(r.comidaActivos) + ' de alimentos · ' + num(r.hospedajeActivos) + ' de hospedaje') +
+                    kpi('fa-bed', 'Cuartos de hospedaje', num(r.cuartos), num(r.plazas) + ' plazas (huéspedes)') +
+                    kpi('fa-moon', 'Tarifa promedio por noche', dinero(precioProm), 'MXN, según precios publicados') +
+                    kpi('fa-hiking', 'Experiencias activas', num(r.experiencias), num(r.guiasCertificados) + ' de ' + num(r.guias) + ' guías con credencial SECTUR') +
+                    kpi('fa-eye', 'Visitas a fichas este mes', num(r.vistasEsteMes), variacion(r.vistasVariacion) || 'Personas que abrieron un lugar') +
+                    kpi('fa-phone', 'Contactos este mes', num(r.contactoEsteMes), 'Clics a WhatsApp, teléfono, mapa o web') +
+                    kpi('fa-users', 'Viajeros registrados', num(r.viajeros), num(r.viajerosEsteMes) + ' nuevos este mes ' + (variacion(r.viajerosVariacion) ? '· ' + variacion(r.viajerosVariacion) : '')) +
+                    kpi('fa-star', 'Calificación promedio', (r.calificacion || '—') + ' <small>/ 5</small>', num(r.opiniones) + ' opiniones · ' + r.satisfaccion + '% de 4 o 5 estrellas') +
+                '</div></section>' +
+
+                '<section class="seccion"><div class="caja">' +
+                    '<div class="seccion-cab"><h2>Tendencia mensual</h2><button class="btn chico no-imprimir" type="button" data-csv="meses"><i class="fas fa-download"></i> Exportar</button></div>' +
+                    '<div class="grafica"><canvas id="graficaMeses"></canvas></div>' +
+                    '<p class="nota" style="margin:10px 0 0;">Visitas y contactos se registran desde que se activó la medición en cada sector; los meses anteriores aparecen en cero.</p>' +
+                '</div></section>' +
+
+                '<section class="seccion"><div class="seccion-cab"><h2>Oferta turística</h2></div><div class="rejilla-3">' +
+                    '<div class="caja"><h3><i class="fas fa-utensils" style="color:var(--azul)"></i> Alimentos por tipo</h3>' + barras(datos.oferta.comidaPorTipo) + '</div>' +
+                    '<div class="caja"><h3><i class="fas fa-bed" style="color:var(--azul)"></i> Hospedaje por tipo</h3>' + barras(datos.oferta.hospedajePorTipo) + '</div>' +
+                    '<div class="caja"><h3><i class="fas fa-hiking" style="color:var(--azul)"></i> Experiencias por categoría</h3>' + barras(datos.oferta.experienciasPorCategoria) + '</div>' +
+                '</div></section>' +
+
+                '<section class="seccion"><div class="rejilla-2">' +
+                    '<div class="caja"><h3>Tarifas publicadas (MXN)</h3><div class="tabla-envoltura"><table><thead><tr><th>Tipo</th><th class="num">Promedio</th><th class="num">Mínima</th><th class="num">Máxima</th><th class="num">Con precio</th></tr></thead><tbody>' +
+                        Object.entries(datos.precios.hospedaje).map(([t, p]) => '<tr><td>' + esc(t) + ' <span class="nota">/ noche</span></td><td class="num">' + dinero(p.promedio) + '</td><td class="num">' + dinero(p.minimo) + '</td><td class="num">' + dinero(p.maximo) + '</td><td class="num">' + num(p.conPrecio) + '</td></tr>').join('') +
+                        '<tr><td>Experiencias <span class="nota">/ persona</span></td><td class="num">' + dinero(datos.precios.experiencias.promedio) + '</td><td class="num">' + dinero(datos.precios.experiencias.minimo) + '</td><td class="num">' + dinero(datos.precios.experiencias.maximo) + '</td><td class="num">—</td></tr>' +
+                    '</tbody></table></div></div>' +
+                    '<div class="caja"><h3>Satisfacción de los visitantes</h3>' +
+                        barras(Object.fromEntries(datos.distribucion.slice().reverse().map((d) => ['★'.repeat(d.estrellas) + ' (' + d.estrellas + ')', d.n])), true) +
+                        '<p class="nota" style="margin:12px 0 0;">' + num(r.opiniones) + ' opiniones publicadas · ' + num(r.negativas) + ' con 1 o 2 estrellas · ' + num(r.favoritos) + ' lugares guardados en favoritos · ' + num(r.itinerarios) + ' itinerarios creados.</p>' +
+                    '</div>' +
+                '</div></section>' +
+
+                '<section class="seccion"><div class="caja">' +
+                    '<div class="seccion-cab"><h2>Establecimientos</h2><button class="btn chico no-imprimir" type="button" data-csv="establecimientos"><i class="fas fa-download"></i> Exportar</button></div>' +
+                    '<div class="herramientas"><input type="search" id="buscar" placeholder="Buscar por nombre"><select id="sector"><option value="">Todos los sectores</option><option>Alimentos</option><option>Hospedaje</option></select></div>' +
+                    '<p class="nota" id="contTabla" style="margin:0 0 8px;"></p>' +
+                    '<div class="tabla-envoltura"><table><thead><tr>' +
+                        '<th data-orden="nombre">Nombre<span class="flecha"></span></th><th data-orden="tipo">Tipo<span class="flecha"></span></th>' +
+                        '<th class="num" data-orden="calificacion">Calificación<span class="flecha"></span></th><th class="num" data-orden="opiniones">Opiniones<span class="flecha"></span></th>' +
+                        '<th class="num" data-orden="vistasMes">Visitas del mes<span class="flecha"></span></th><th class="num" data-orden="contactoMes">Contactos del mes<span class="flecha"></span></th>' +
+                        '<th class="num" data-orden="precio">Tarifa<span class="flecha"></span></th><th class="num" data-orden="capacidad">Plazas<span class="flecha"></span></th>' +
+                    '</tr></thead><tbody id="cuerpoTabla"></tbody></table></div>' +
+                '</div></section>';
+
+            dibujarGrafica();
+            $('buscar').addEventListener('input', (e) => { tabla.texto = e.target.value; pintarTabla(); });
+            $('sector').addEventListener('change', (e) => { tabla.sector = e.target.value; pintarTabla(); });
+            document.querySelectorAll('th[data-orden]').forEach((th) => th.addEventListener('click', () => {
+                const c = th.dataset.orden;
+                tabla.dir = tabla.orden === c ? -tabla.dir : (c === 'nombre' || c === 'tipo' ? 1 : -1);
+                tabla.orden = c;
+                pintarTabla();
+            }));
+            pintarTabla();
+        }
+
+        function filasTabla() {
+            const t = tabla.texto.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+            return datos.establecimientos
+                .filter((e) => (!tabla.sector || e.sector === tabla.sector) && (!t || String(e.nombre).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').includes(t)))
+                .sort((a, b) => {
+                    const x = a[tabla.orden], y = b[tabla.orden];
+                    if (typeof x === 'number' || typeof y === 'number') return ((Number(x) || 0) - (Number(y) || 0)) * tabla.dir;
+                    return String(x || '').localeCompare(String(y || ''), 'es') * tabla.dir;
+                });
+        }
+
+        function pintarTabla() {
+            const filas = filasTabla();
+            $('contTabla').textContent = filas.length + ' establecimientos';
+            document.querySelectorAll('th[data-orden] .flecha').forEach((f) => { f.textContent = f.parentElement.dataset.orden === tabla.orden ? (tabla.dir > 0 ? '▲' : '▼') : ''; });
+            $('cuerpoTabla').innerHTML = filas.map((e) => '<tr class="' + (e.activo ? '' : 'inactivo') + '">' +
+                '<td>' + esc(e.nombre) + (e.activo ? '' : ' <span class="etq">inactivo</span>') + '</td>' +
+                '<td><span class="etq">' + esc(e.tipo) + '</span></td>' +
+                '<td class="num">' + (e.calificacion ? e.calificacion.toFixed(1) : '—') + '</td>' +
+                '<td class="num">' + num(e.opiniones) + '</td>' +
+                '<td class="num">' + num(e.vistasMes) + '</td>' +
+                '<td class="num">' + num(e.contactoMes) + '</td>' +
+                '<td class="num">' + (e.precio ? dinero(e.precio) : '—') + '</td>' +
+                '<td class="num">' + (e.capacidad ? num(e.capacidad) : '—') + '</td></tr>').join('') ||
+                '<tr><td colspan="8" class="nota" style="text-align:center; padding:24px;">Sin resultados</td></tr>';
+        }
+
+        function dibujarGrafica() {
+            if (!window.Chart) return;
+            if (grafica) grafica.destroy();
+            const m = datos.meses;
+            const serie = (label, campo, color, eje) => ({ label, data: m.map((x) => x[campo]), borderColor: color, backgroundColor: color, tension: .3, pointRadius: 3, borderWidth: 2, yAxisID: eje });
+            grafica = new Chart($('graficaMeses'), {
+                type: 'line',
+                data: {
+                    labels: m.map((x) => x.texto),
+                    datasets: [
+                        serie('Visitas a fichas', 'vistas', '#2563eb', 'y'),
+                        serie('Contactos', 'contacto', '#059669', 'y'),
+                        serie('Viajeros nuevos', 'viajeros', '#f59e0b', 'y2'),
+                        serie('Opiniones', 'opiniones', '#7c3aed', 'y2')
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+                    plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, font: { family: 'Outfit' } } } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { font: { family: 'Outfit' } } },
+                        y: { beginAtZero: true, position: 'left', title: { display: true, text: 'Visitas y contactos' }, ticks: { precision: 0 } },
+                        y2: { beginAtZero: true, position: 'right', grid: { display: false }, title: { display: true, text: 'Viajeros y opiniones' }, ticks: { precision: 0 } }
+                    }
+                }
+            });
+        }
+
+        // ---------- Exportar (CSV que Excel abre con acentos) ----------
+        function csv(filas) {
+            const celda = (v) => { const s = v == null ? '' : String(v); return /[",\n;]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+            return '﻿' + filas.map((f) => f.map(celda).join(',')).join('\r\n');
+        }
+        function descargar(nombre, contenido) {
+            const url = URL.createObjectURL(new Blob([contenido], { type: 'text/csv;charset=utf-8' }));
+            const a = document.createElement('a');
+            a.href = url; a.download = nombre; document.body.appendChild(a); a.click(); a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
+        const hoy = () => new Date().toISOString().slice(0, 10);
+
+        function exportarMeses() {
+            descargar('jalpan-tendencia-mensual-' + hoy() + '.csv', csv([['Mes', 'Visitas a fichas', 'Contactos', 'Viajeros nuevos', 'Opiniones']].concat(datos.meses.map((m) => [m.clave, m.vistas, m.contacto, m.viajeros, m.opiniones]))));
+        }
+        function exportarEstablecimientos() {
+            descargar('jalpan-establecimientos-' + hoy() + '.csv', csv([['Sector', 'Tipo', 'Nombre', 'Activo', 'Calificación', 'Opiniones', 'Visitas del mes', 'Visitas totales', 'Contactos del mes', 'Tarifa por noche (MXN)', 'Plazas', 'Fecha de alta']]
+                .concat(filasTabla().map((e) => [e.sector, e.tipo, e.nombre, e.activo ? 'Sí' : 'No', e.calificacion || '', e.opiniones, e.vistasMes, e.vistasTotal, e.contactoMes, e.precio, e.capacidad, e.alta ? String(e.alta).slice(0, 10) : '']))));
+        }
+        function exportarTodo() {
+            const r = datos.resumen;
+            const filas = [
+                ['Indicadores turísticos de Jalpan de Serra'], ['Generado', new Date(datos.generado).toLocaleString('es-MX')], ['Periodo', datos.periodo.desde + ' a ' + datos.periodo.hasta], [],
+                ['Indicador', 'Valor'],
+                ['Establecimientos activos', r.establecimientosActivos], ['Alimentos activos', r.comidaActivos], ['Hospedajes activos', r.hospedajeActivos],
+                ['Cuartos de hospedaje', r.cuartos], ['Plazas de hospedaje', r.plazas], ['Experiencias activas', r.experiencias],
+                ['Guías', r.guias], ['Guías con credencial SECTUR', r.guiasCertificados], ['Agencias', r.agencias],
+                ['Viajeros registrados', r.viajeros], ['Viajeros nuevos este mes', r.viajerosEsteMes], ['Visitas a fichas este mes', r.vistasEsteMes],
+                ['Contactos este mes', r.contactoEsteMes], ['Opiniones publicadas', r.opiniones], ['Calificación promedio', r.calificacion],
+                ['% opiniones de 4 o 5 estrellas', r.satisfaccion], ['Opiniones de 1 o 2 estrellas', r.negativas], ['Lugares en favoritos', r.favoritos], ['Itinerarios creados', r.itinerarios], [],
+                ['Tendencia mensual'], ['Mes', 'Visitas a fichas', 'Contactos', 'Viajeros nuevos', 'Opiniones']
+            ].concat(datos.meses.map((m) => [m.clave, m.vistas, m.contacto, m.viajeros, m.opiniones]))
+             .concat([[], ['Tarifas publicadas (MXN)'], ['Tipo', 'Promedio', 'Mínima', 'Máxima', 'Con precio']])
+             .concat(Object.entries(datos.precios.hospedaje).map(([t, p]) => [t + ' por noche', p.promedio, p.minimo, p.maximo, p.conPrecio]))
+             .concat([['Experiencias por persona', datos.precios.experiencias.promedio, datos.precios.experiencias.minimo, datos.precios.experiencias.maximo, '']])
+             .concat([[], ['Oferta por tipo'], ['Sector', 'Tipo', 'Cantidad']])
+             .concat(Object.entries(datos.oferta.comidaPorTipo).map(([k, v]) => ['Alimentos', k, v]))
+             .concat(Object.entries(datos.oferta.hospedajePorTipo).map(([k, v]) => ['Hospedaje', k, v]))
+             .concat(Object.entries(datos.oferta.experienciasPorCategoria).map(([k, v]) => ['Experiencias', k, v]));
+            descargar('jalpan-indicadores-' + hoy() + '.csv', csv(filas));
+        }
+
+        document.addEventListener('click', (e) => {
+            const b = e.target.closest('[data-csv]');
+            if (!b || !datos) return;
+            if (b.dataset.csv === 'meses') exportarMeses(); else exportarEstablecimientos();
+            avisar('Archivo descargado');
+        });
+        $('btnCsv').addEventListener('click', () => { if (datos) { exportarTodo(); avisar('Archivo descargado'); } });
+        $('btnImprimir').addEventListener('click', () => window.print());
+        $('periodo').addEventListener('change', cargar);
+        window.addEventListener('beforeprint', () => { if (grafica) grafica.resize(); });
+
+        verificar().then((ok) => { if (ok) cargar(); });
+    })();
+    </script>
 </body>
 </html>
