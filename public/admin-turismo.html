@@ -755,6 +755,83 @@
                 display: none;
             }
         }
+        /* ===================== REDISEÑO MINIMALISTA (verde) ===================== */
+        :root { --borde: #e8ecf1; --verde-suave: rgba(16, 185, 129, .1); --texto: #0f172a; }
+        body { background: #f7f9fb; }
+        .header { box-shadow: none !important; }
+        .logo-icon { box-shadow: none !important; }
+        .main { max-width: 1240px; }
+        .page-header { margin-bottom: 1.5rem !important; }
+        .page-title { font-size: 1.6rem !important; font-weight: 700 !important; letter-spacing: -.02em; gap: .6rem !important; }
+        .page-title i { width: 38px; height: 38px; border-radius: 12px; background: var(--verde-suave); color: var(--primary); display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; }
+        .page-subtitle { font-size: .92rem !important; }
+
+        /* Tarjetas de resumen: compactas, icono a la izquierda, todo en verde */
+        .stats-grid { margin-bottom: 1.75rem !important; }
+        .stat-card { padding: 1rem 1.1rem !important; border: 1px solid var(--borde) !important; box-shadow: none !important; border-radius: 14px !important; display: grid !important; grid-template-columns: 42px 1fr; grid-template-rows: auto auto; column-gap: .85rem; align-items: center; transition: border-color .15s, transform .15s; }
+        .stat-card:hover { transform: none !important; border-color: #cfe9de !important; box-shadow: none !important; }
+        .stat-header { display: contents !important; }
+        .stat-icon { grid-column: 1; grid-row: 1 / span 2; width: 42px !important; height: 42px !important; border-radius: 12px !important; font-size: 1rem !important; }
+        .stat-icon.green, .stat-icon.purple, .stat-icon.amber { background: var(--verde-suave) !important; color: var(--primary-dark) !important; }
+        .stat-title { grid-column: 2; grid-row: 2; font-size: .8rem !important; color: var(--gray-500) !important; font-weight: 500 !important; }
+        .stat-value { grid-column: 2; grid-row: 1; font-size: 1.55rem !important; line-height: 1.1 !important; font-weight: 700 !important; color: var(--texto); }
+        .stat-ayuda { display: none; }
+        .stat-boton { border: 1px solid var(--borde); background: #fff; }
+        .stat-boton:hover { border-color: #fecaca !important; }
+        .stat-boton.activa { border-color: #fca5a5 !important; background: #fffafa; }
+
+        /* Pestañas tipo segmento */
+        .tabs { border: 1px solid var(--borde); box-shadow: none !important; padding: 4px !important; border-radius: 12px !important; background: #fff !important; }
+        .tab-btn { border-radius: 9px !important; font-weight: 500 !important; font-size: .88rem !important; color: var(--gray-500) !important; }
+        .tab-btn.active { background: var(--verde-suave) !important; color: var(--primary-dark) !important; box-shadow: none !important; font-weight: 600 !important; }
+
+        .list-header h2 { font-size: 1.15rem !important; font-weight: 600 !important; }
+        .search-box input { border-radius: 10px !important; border-color: var(--borde) !important; }
+        .search-box input:focus { border-color: var(--primary) !important; box-shadow: 0 0 0 3px var(--verde-suave) !important; }
+        .btn { border-radius: 10px !important; font-weight: 600; }
+        .btn-primary { box-shadow: none !important; }
+
+        /* Tabla */
+        .table-wrapper { border: 1px solid var(--borde) !important; box-shadow: none !important; border-radius: 14px !important; }
+        .table-wrapper th { background: #fafbfc !important; font-size: .7rem !important; letter-spacing: .06em; color: var(--gray-500) !important; font-weight: 600 !important; }
+        .table-wrapper td { border-bottom-color: #f1f4f7 !important; font-size: .88rem; vertical-align: middle; }
+        .table-wrapper tbody tr { transition: background .12s; }
+        .table-wrapper tbody tr:hover { background: #fbfdfc !important; }
+        .celda-tour { display: flex; align-items: center; gap: .85rem; min-width: 250px; }
+        .celda-foto { width: 46px; height: 46px; border-radius: 10px; overflow: hidden; flex-shrink: 0; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #cbd5e1; }
+        .celda-foto img { width: 100%; height: 100%; object-fit: cover; }
+        .celda-tour strong { display: block; font-size: .92rem; font-weight: 600; color: var(--texto); line-height: 1.3; }
+        .celda-sub { font-size: .76rem; color: var(--gray-400); margin-top: 2px; }
+        .tipo-chip { display: inline-flex; align-items: center; gap: .4rem; font-size: .78rem; color: var(--gray-600); white-space: nowrap; }
+        .tipo-chip::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--gray-300); }
+        .tipo-chip.comunitario::before { background: var(--primary); }
+        .tipo-chip.religioso::before { background: #f59e0b; }
+        .badge { font-weight: 500 !important; border-radius: 999px !important; white-space: nowrap; }
+        .badge-purple, .badge-blue { background: #f1f5f9 !important; color: var(--gray-600) !important; }
+        .actions-cell { white-space: nowrap; }
+        .actions-cell .btn-sm { width: 32px; height: 32px; padding: 0 !important; display: inline-flex !important; align-items: center; justify-content: center; border-radius: 9px !important; background: #fff !important; border: 1px solid var(--borde) !important; color: var(--gray-500) !important; box-shadow: none !important; }
+        .actions-cell .btn-outline:hover { color: var(--primary-dark) !important; border-color: #a7f3d0 !important; background: #f0fdf8 !important; }
+        .actions-cell .btn-danger:hover { color: #dc2626 !important; border-color: #fecaca !important; background: #fef2f2 !important; }
+
+        /* Formularios y modales */
+        .modal { max-width: 720px !important; border-radius: 18px !important; }
+        .modal-header { border-bottom-color: var(--borde) !important; }
+        .modal-footer { border-top-color: var(--borde) !important; }
+        .modal input:not([type=checkbox]):not([type=radio]):not([type=file]), .modal select, .modal textarea { border-radius: 10px !important; border-color: var(--borde) !important; }
+        .modal input:focus, .modal select:focus, .modal textarea:focus { border-color: var(--primary) !important; box-shadow: 0 0 0 3px var(--verde-suave) !important; outline: none; }
+        input[type=file] { width: 100%; padding: .85rem; border: 1.5px dashed #cfe0d8; border-radius: 12px; background: #fbfdfc; color: var(--gray-500); font: inherit; font-size: .85rem; cursor: pointer; transition: border-color .15s, background .15s; }
+        input[type=file]:hover { border-color: var(--primary); background: #f3fbf7; }
+        input[type=file]::file-selector-button { margin-right: .8rem; padding: .45rem .9rem; border: none; border-radius: 8px; background: var(--primary); color: #fff; font: inherit; font-weight: 600; font-size: .82rem; cursor: pointer; }
+
+        @media (max-width: 768px) {
+            .page-title { font-size: 1.3rem !important; }
+            .stat-card { grid-template-columns: 36px 1fr; padding: .85rem !important; column-gap: .65rem; }
+            .stat-icon { width: 36px !important; height: 36px !important; font-size: .9rem !important; }
+            .stat-value { font-size: 1.3rem !important; }
+            .tabs { width: 100%; }
+            .tab-btn { flex: 1; justify-content: center; white-space: nowrap; padding: .6rem .4rem !important; font-size: .82rem !important; }
+            .modal { border-radius: 16px 16px 0 0 !important; }
+        }
     </style>
     <!-- PWA: app instalable -->
     <link rel="manifest" href="/manifest.json">
@@ -771,7 +848,7 @@
     <header class="header">
         <nav class="nav">
             <a href="/" class="logo">
-                <div class="logo-icon"><i class="fas fa-mountain-sun"></i></div>
+                <div class="logo-icon"><i class="fas fa-mountain"></i></div>
                 <div class="logo-text">Turismo <span>Admin</span></div>
             </a>
             <div class="user-section">
@@ -991,7 +1068,7 @@
                         <div class="image-upload-wrapper">
                             <input type="file" id="tour-imagenes" accept="image/jpeg, image/png, image/webp" multiple class="form-input">
                             <p style="font-size:12px;color:var(--gray-500);margin-top:4px;">Nota: Puedes seleccionar
-                                múltiples fotos simultáneamente (Solo JPG/PNG, máx 5MB). La primera se usará como portada.</p>
+                                múltiples fotos simultáneamente (JPG, PNG o WebP, máx 5MB). La primera se usará como portada.</p>
 
                             <!-- Contenedor para pre-visualizar fotos existentes o recién seleccionadas -->
                             <div id="tour-images-preview" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
@@ -1235,7 +1312,7 @@
                         <label class="form-label">Foto de Perfil</label>
                         <div class="image-upload-wrapper">
                             <input type="file" id="guia-fotoperfil" accept="image/jpeg, image/png, image/webp" class="form-input">
-                            <p style="font-size:12px;color:var(--gray-500);margin-top:4px;">Solo JPG/PNG, máx 5MB.</p>
+                            <p style="font-size:12px;color:var(--gray-500);margin-top:4px;">JPG, PNG o WebP, máx 5MB.</p>
                             <div id="guia-foto-preview" style="margin-top:10px;"></div>
                         </div>
                     </div>
@@ -1293,7 +1370,7 @@
                         <div class="image-upload-wrapper">
                             <input type="file" id="guia-galeria" accept="image/jpeg, image/png, image/webp" multiple class="form-input">
                             <p style="font-size:12px;color:var(--gray-500);margin-top:4px;">Selecciona hasta 5 fotos
-                                para mostrar en el perfil del guía (Solo JPG/PNG, máx 5MB).</p>
+                                para mostrar en el perfil del guía (JPG, PNG o WebP, máx 5MB).</p>
                             <div id="guia-galeria-preview"
                                 style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;"></div>
                         </div>
@@ -1395,7 +1472,7 @@
                         <label class="form-label">Logo de la Agencia</label>
                         <div class="image-upload-wrapper">
                             <input type="file" id="agencia-logo" accept="image/jpeg, image/png, image/webp" class="form-input">
-                            <p style="font-size:12px;color:var(--gray-500);margin-top:4px;">Solo JPG/PNG, máx 5MB.</p>
+                            <p style="font-size:12px;color:var(--gray-500);margin-top:4px;">JPG, PNG o WebP, máx 5MB.</p>
                             <div id="agencia-foto-preview" style="margin-top:10px;"></div>
                         </div>
                     </div>
@@ -1439,7 +1516,7 @@
                         <div class="image-upload-wrapper">
                             <input type="file" id="agencia-galeria" accept="image/jpeg, image/png, image/webp" multiple class="form-input">
                             <p style="font-size:12px;color:var(--gray-500);margin-top:4px;">Selecciona hasta 5 fotos
-                                para mostrar en el perfil de la agencia (Solo JPG/PNG, máx 5MB).</p>
+                                para mostrar en el perfil de la agencia (JPG, PNG o WebP, máx 5MB).</p>
                             <div id="agencia-galeria-preview"
                                 style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;"></div>
                         </div>

@@ -668,6 +668,160 @@
                 transform: rotate(360deg);
             }
         }
+
+        /* ===================== REDISEÑO MINIMALISTA ===================== */
+        :root { --exp-borde: #e8ebf0; --exp-suave: rgba(37, 99, 235, .07); --exp-texto: #0f172a; }
+        body { background: #f8fafc; }
+
+        /* Cabecera */
+        .exp-cabecera { max-width: 1100px; margin: 88px auto 1.1rem; padding: 0 1.5rem; }
+        .exp-volver { display: inline-flex; align-items: center; gap: .45rem; font-size: .85rem; font-weight: 500; color: var(--gray-500); text-decoration: none; margin-bottom: .9rem; transition: color .15s; }
+        .exp-volver:hover { color: var(--primary); }
+        .exp-titulo-fila { display: flex; justify-content: space-between; align-items: flex-end; gap: 1.25rem; flex-wrap: wrap; }
+        .exp-titulo { min-width: 0; flex: 1 1 420px; }
+        .hero-badge { background: none !important; padding: 0 !important; margin: 0 0 .35rem !important; color: var(--primary) !important; font-size: .75rem !important; letter-spacing: .06em; }
+        .hero-name { font-family: 'Outfit', sans-serif !important; font-size: clamp(1.6rem, 3.2vw, 2.3rem) !important; font-weight: 700 !important; letter-spacing: -.02em; color: var(--exp-texto) !important; line-height: 1.15 !important; margin: 0 0 .65rem !important; }
+        .detail-badges { display: flex; flex-wrap: wrap; gap: .4rem; margin: 0; }
+        .chip { display: inline-flex; align-items: center; gap: .35rem; padding: .28rem .7rem; border-radius: 999px; font-size: .78rem; font-weight: 500; background: #fff; border: 1px solid var(--exp-borde); color: var(--gray-700); }
+        .chip i { font-size: .72rem; color: var(--gray-400); }
+        .chip-dif::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+        .chip-dif.easy { color: #047857; background: #ecfdf5; border-color: #d1fae5; }
+        .chip-dif.moderate { color: #b45309; background: #fffbeb; border-color: #fde68a; }
+        .chip-dif.hard { color: #b91c1c; background: #fef2f2; border-color: #fecaca; }
+        .chip-dif.extreme { color: #7f1d1d; background: #fef2f2; border-color: #fca5a5; }
+        .exp-acciones { display: flex; flex-direction: column; align-items: flex-end; gap: .6rem; }
+        .hero-price { margin: 0 !important; font-size: 1.6rem !important; font-weight: 700 !important; color: var(--exp-texto) !important; line-height: 1; white-space: nowrap; }
+        .hero-price small { font-size: .8rem; font-weight: 500; color: var(--gray-500); margin-left: .2rem; }
+        .exp-botones { display: flex; align-items: center; gap: .4rem; }
+        .exp-botones .share-btn { width: 36px !important; height: 36px !important; font-size: .85rem !important; background: #fff !important; color: var(--gray-600) !important; border: 1px solid var(--exp-borde) !important; box-shadow: none !important; transition: color .15s, border-color .15s, transform .15s; }
+        .exp-botones .share-btn:hover { transform: translateY(-1px); border-color: var(--gray-300) !important; }
+        .exp-botones .share-btn.whatsapp:hover { color: #16a34a !important; }
+        .exp-botones .share-btn.facebook:hover { color: #1877f2 !important; }
+        .exp-botones .share-btn.copy-link:hover, .exp-botones .share-btn.copy-link.copied { color: var(--primary) !important; }
+
+        /* Carrusel: fondo desenfocado de la misma foto en vez de franjas negras */
+        .detail-hero { max-width: 1052px; margin: 0 auto; border-radius: 18px; height: min(56vh, 520px); min-height: 320px; background: #0f172a; }
+        .tour-carousel-item .slide-fondo { position: absolute; inset: -30px; background-size: cover; background-position: center; filter: blur(26px) brightness(.65); z-index: 1; }
+        .tour-nav-btn { width: 40px; height: 40px; background: rgba(255, 255, 255, .92); color: var(--exp-texto); border: none; font-size: .9rem; box-shadow: 0 2px 10px rgba(15, 23, 42, .15); backdrop-filter: none; }
+        .tour-nav-btn:hover { background: #fff; }
+        .tour-indicator { background: rgba(15, 23, 42, .55); backdrop-filter: blur(4px); font-weight: 500; }
+
+        /* Tarjetas */
+        .page-container { max-width: 1100px; gap: 1.5rem; padding-top: 1.5rem; }
+        .content-card { border: 1px solid var(--exp-borde) !important; border-radius: 16px !important; box-shadow: none !important; margin-bottom: 1rem; }
+        .card-header-section { background: transparent !important; border-bottom: none !important; padding: 1.25rem 1.5rem 0 !important; justify-content: space-between; }
+        .card-header-section h3 { font-size: 1.02rem !important; font-weight: 600 !important; color: var(--exp-texto) !important; gap: .65rem !important; }
+        .card-header-section h3 i, .mapa-encuentro h3 i { width: 32px; height: 32px; border-radius: 10px; background: var(--exp-suave); color: var(--primary) !important; display: inline-flex; align-items: center; justify-content: center; font-size: .85rem !important; flex-shrink: 0; }
+        .card-body { padding: 1rem 1.5rem 1.5rem !important; }
+        .description-text { font-size: 1rem; line-height: 1.75; color: var(--gray-700); }
+
+        /* Datos rápidos */
+        #details-grid { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)) !important; gap: .6rem !important; }
+        .detail-meta-item { background: #fff !important; border: 1px solid var(--exp-borde); border-radius: 12px !important; padding: .8rem .9rem !important; gap: .7rem !important; align-items: center; box-shadow: none !important; }
+        .detail-meta-item i { width: 34px !important; height: 34px; border-radius: 10px; background: var(--exp-suave) !important; color: var(--primary) !important; display: inline-flex !important; align-items: center; justify-content: center; font-size: .85rem !important; flex-shrink: 0; }
+        .detail-meta-item .meta-label { font-size: .7rem !important; color: var(--gray-500) !important; letter-spacing: .04em; }
+        .detail-meta-item .meta-value { font-size: .9rem !important; font-weight: 600; color: var(--exp-texto) !important; line-height: 1.3; }
+
+        /* Calendario semanal */
+        .week-calendar { display: grid !important; grid-template-columns: repeat(7, 1fr) !important; gap: .4rem !important; margin-top: .9rem; }
+        .dia { text-align: center; padding: .55rem 0; border-radius: 10px; font-size: .72rem; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; border: 1px solid var(--exp-borde); color: var(--gray-400); background: #fff; }
+        .dia i { display: block; font-size: .7rem; margin-top: .2rem; }
+        .dia.on { background: var(--exp-suave); border-color: rgba(37, 99, 235, .18); color: var(--primary); }
+        .dia:not(.on) span { text-decoration: line-through; }
+        #availability-info i { width: 16px; text-align: center; }
+
+        /* Incluye / no incluye */
+        .list-column { background: #fff !important; border: 1px solid var(--exp-borde) !important; border-radius: 12px !important; padding: 1.1rem 1.2rem !important; }
+        .list-title { font-size: .95rem !important; font-weight: 600 !important; margin-bottom: .75rem !important; }
+        .detail-list li { font-size: .9rem; color: var(--gray-700); align-items: center; }
+        .detail-list li::before { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; font-size: .62rem !important; flex-shrink: 0; margin-top: 0 !important; }
+        .detail-list.includes-new li::before { background: #ecfdf5; color: #059669 !important; }
+        .detail-list.excludes-new li::before { background: #fef2f2; color: #dc2626 !important; }
+        .detail-list.bring li::before { content: '\f00c' !important; background: var(--exp-suave); color: var(--primary) !important; }
+        #list-requisitos li::before { content: '\f111'; font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: .35rem !important; width: 20px; height: 20px; color: var(--gray-400); display: inline-flex; align-items: center; justify-content: center; }
+
+        /* Información útil */
+        .useful-info-grid { gap: .75rem !important; }
+        .info-block { border: 1px solid var(--exp-borde); border-radius: 12px; padding: 1rem 1.1rem; background: #fff; }
+        .info-block h5 { font-size: .92rem !important; font-weight: 600 !important; color: var(--exp-texto) !important; gap: .55rem !important; margin-bottom: .45rem !important; }
+        .info-block h5 i { width: 28px; height: 28px; border-radius: 8px; background: var(--exp-suave); color: var(--primary) !important; display: inline-flex; align-items: center; justify-content: center; font-size: .78rem; flex-shrink: 0; }
+        .info-block .text-muted { font-size: .88rem; }
+
+        /* Barra lateral: reservar */
+        .cta-reserva { padding: 1.4rem !important; }
+        .cta-precio { display: flex; flex-wrap: wrap; align-items: baseline; gap: .1rem .4rem; padding-bottom: 1rem; margin-bottom: 1rem; border-bottom: 1px solid var(--exp-borde); }
+        .cta-precio strong { font-size: 1.75rem; font-weight: 700; color: var(--exp-texto); letter-spacing: -.02em; line-height: 1; }
+        .cta-desde { width: 100%; font-size: .75rem; color: var(--gray-500); text-transform: uppercase; letter-spacing: .06em; }
+        .cta-pp { font-size: .85rem; color: var(--gray-500); }
+        .cta-datos { list-style: none; padding: 0; margin: 0 0 1.1rem; display: grid; gap: .55rem; }
+        .cta-datos li { display: flex; align-items: center; gap: .6rem; font-size: .88rem; color: var(--gray-700); }
+        .cta-datos i { width: 16px; text-align: center; color: var(--gray-400); }
+        .cta-btn { display: flex; align-items: center; justify-content: center; gap: .5rem; width: 100%; padding: .8rem 1rem; border-radius: 12px; font-weight: 600; font-size: .95rem; text-decoration: none; transition: background .15s, border-color .15s, transform .15s; }
+        .cta-btn:active { transform: scale(.98); }
+        .cta-wa { background: #16a34a; color: #fff; margin-bottom: .55rem; }
+        .cta-wa i { font-size: 1.2rem; }
+        .cta-wa:hover { background: #15803d; color: #fff; }
+        .cta-sec { background: #fff; color: var(--gray-700); border: 1px solid var(--exp-borde); font-size: .9rem; padding: .7rem 1rem; }
+        .cta-sec:hover { border-color: var(--gray-300); color: var(--exp-texto); }
+
+        .mapa-encuentro { padding: 1.25rem !important; }
+        .mapa-encuentro h3 { display: flex; align-items: center; gap: .65rem; font-size: 1.02rem; font-weight: 600; color: var(--exp-texto); margin-bottom: .75rem; }
+        #meeting-map-container { height: 200px !important; border-radius: 12px !important; }
+        #meeting-map-link { color: var(--primary) !important; }
+
+        /* Preguntas frecuentes */
+        .faq-item { border-bottom-color: var(--exp-borde) !important; }
+        .faq-item:last-child { border-bottom: none !important; }
+        .faq-toggle span { font-weight: 500 !important; font-size: .9rem !important; }
+        .faq-toggle i { color: var(--gray-400) !important; font-size: .8rem; }
+        .faq-toggle:hover span { color: var(--primary) !important; }
+
+        /* Guías */
+        .guia-fila { display: flex; gap: .85rem; align-items: center; padding: .75rem; border: 1px solid var(--exp-borde); border-radius: 12px; text-decoration: none; color: inherit; transition: border-color .15s, background .15s; }
+        a.guia-fila:hover { border-color: rgba(37, 99, 235, .3); background: #fbfdff; }
+        .guia-foto { width: 52px; height: 52px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: var(--exp-suave); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; }
+        .guia-foto img { width: 100%; height: 100%; object-fit: cover; }
+        .guia-info { min-width: 0; flex: 1; }
+        .guia-info strong { display: block; font-size: .93rem; font-weight: 600; color: var(--exp-texto); line-height: 1.25; }
+        .guia-info span { display: block; font-size: .78rem; color: var(--gray-500); margin-top: .1rem; }
+        .guia-ir { color: var(--gray-400); font-size: .8rem; }
+        #guides-container { gap: .55rem !important; }
+
+        /* Recomendaciones */
+        .recos { background: #fff; border-top: 1px solid var(--exp-borde); padding: 2.25rem 1.5rem 2.5rem; margin-top: 1rem; }
+        .recos-in { max-width: 1100px; margin: 0 auto; }
+        .recos-cab { display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; margin-bottom: 1.1rem; }
+        .recos-cab h3 { font-size: 1.3rem; font-weight: 700; color: var(--exp-texto); letter-spacing: -.01em; margin: 0 0 .2rem; }
+        .recos-cab p { font-size: .9rem; color: var(--gray-500); margin: 0; }
+        .recos-flechas { display: flex; gap: .4rem; }
+        .recos-flechas button { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--exp-borde); background: #fff; color: var(--gray-600); cursor: pointer; transition: border-color .15s, color .15s; }
+        .recos-flechas button:hover { border-color: var(--gray-300); color: var(--exp-texto); }
+        #recomendaciones-scroll { display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding-bottom: .25rem; }
+        .reco { flex: 0 0 230px; scroll-snap-align: start; text-decoration: none; color: inherit; display: flex; flex-direction: column; }
+        .reco-img { position: relative; aspect-ratio: 4 / 3; border-radius: 14px; overflow: hidden; background: #eef2f7; }
+        .reco-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .35s ease; }
+        .reco:hover .reco-img img { transform: scale(1.04); }
+        .reco-sin { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #cbd5e1; font-size: 1.8rem; }
+        .reco-tipo { position: absolute; top: .55rem; left: .55rem; background: rgba(255, 255, 255, .94); color: var(--gray-700); font-size: .7rem; font-weight: 600; padding: .2rem .55rem; border-radius: 999px; }
+        .reco-tipo i { color: var(--primary); margin-right: .2rem; }
+        .reco h4 { font-size: .93rem; font-weight: 600; color: var(--exp-texto); margin: .6rem 0 .15rem; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .reco-pie { font-size: .82rem; color: var(--gray-500); display: flex; align-items: center; gap: .35rem; }
+        .reco-pie strong { color: var(--exp-texto); font-weight: 600; }
+        .reco-pie .fa-star { color: #f59e0b; }
+
+        @media (max-width: 768px) {
+            .exp-cabecera { margin-top: 76px; padding: 0 1rem; }
+            .exp-acciones { flex-direction: row; align-items: center; justify-content: space-between; width: 100%; }
+            .detail-hero { border-radius: 0; height: 300px; min-height: 0; }
+            .page-container { padding: 1rem; }
+            .card-header-section { padding: 1.1rem 1.1rem 0 !important; }
+            .card-body { padding: .9rem 1.1rem 1.1rem !important; }
+            .week-calendar { gap: .25rem !important; }
+            .dia { font-size: .62rem; padding: .45rem 0; }
+            .recos { padding: 1.75rem 1rem 2rem; }
+            .recos-flechas { display: none; }
+            .reco { flex-basis: 70%; }
+        }
     </style>
     <!-- Script de internacionalización -->
     <script src="/js/i18n.js" defer></script>
@@ -743,67 +897,47 @@
 
         <!-- Contenido real (oculto hasta cargar) -->
         <div id="tour-content" style="display:none;">
-            <!-- CABECERA DE INFORMACION (Fuera de la imagen) -->
-            <div class="restaurant-header" style="max-width: 1100px; margin: 90px auto 1rem auto; padding: 0 1.5rem;">
-                <!-- Insignias y Tipo -->
-                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                    <div class="hero-badge" id="hero-badge" style="background: rgba(37, 99, 235, 0.1); color: var(--primary); border: none; margin: 0; display: inline-flex; font-size: 0.75rem;">
-                        <i class="fas fa-map-marked-alt"></i>
-                        <span id="hero-tipo">Experiencia</span>
+            <!-- CABECERA -->
+            <div class="exp-cabecera">
+                <a href="/experiencias.html" class="exp-volver"><i class="fas fa-arrow-left"></i> <span data-i18n="navbar.tours">Experiencias</span></a>
+                <div class="exp-titulo-fila">
+                    <div class="exp-titulo">
+                        <div class="hero-badge" id="hero-badge"><i class="fas fa-compass"></i> <span id="hero-tipo">Experiencia</span></div>
+                        <h1 class="hero-name" id="hero-name">Nombre de la Experiencia</h1>
+                        <div class="detail-badges" id="hero-badges"></div>
                     </div>
-                </div>
-
-                <!-- Título y Botones -->
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 0.75rem;">
-                    <h1 class="hero-name" id="hero-name" style="font-size: 2.2rem; font-weight: 800; color: var(--gray-900); margin: 0; line-height: 1.1; font-family: 'Google Sans', sans-serif;">Nombre de la Experiencia</h1>
-                    
-                    <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <div class="hero-price" id="hero-price" style="font-size: 1.25rem; font-weight: 800; color: var(--primary); margin-right: 0.5rem; margin-bottom: 0;">$0 MXN</div>
-                        <div id="btn-toggle-like" class="con-like" title="Guardar en favoritos"
-                            style="display: none;">
-                            <input class="like" type="checkbox" title="like" id="favorite-checkbox">
-                            <div class="checkmark">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="outline" viewBox="0 0 24 24" style="fill: var(--gray-400)">
-                                    <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
-                                </svg>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="filled" viewBox="0 0 24 24">
-                                    <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
-                                </svg>
-                                <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="celebrate">
-                                    <polygon class="poly" points="10,10 20,20"></polygon>
-                                    <polygon class="poly" points="10,50 20,50"></polygon>
-                                    <polygon class="poly" points="20,80 30,70"></polygon>
-                                    <polygon class="poly" points="90,10 80,20"></polygon>
-                                    <polygon class="poly" points="90,50 80,50"></polygon>
-                                    <polygon class="poly" points="80,80 70,70"></polygon>
-                                </svg>
+                    <div class="exp-acciones">
+                        <div class="hero-price" id="hero-price">$0 MXN</div>
+                        <div class="exp-botones">
+                            <div id="btn-toggle-like" class="con-like" title="Guardar en favoritos" style="display: none;">
+                                <input class="like" type="checkbox" title="like" id="favorite-checkbox">
+                                <div class="checkmark">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="outline" viewBox="0 0 24 24" style="fill: var(--gray-400)">
+                                        <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.830,0C4.947,16.006,2,11.870,2,8.967a4.8,4.8,0,0,1,4.5-5.050A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.050A4.8,4.8,0,0,1,22,8.967C22,11.870,19.053,16.006,13.915,20.313Z"></path>
+                                    </svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="filled" viewBox="0 0 24 24">
+                                        <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
+                                    </svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="celebrate">
+                                        <polygon class="poly" points="10,10 20,20"></polygon>
+                                        <polygon class="poly" points="10,50 20,50"></polygon>
+                                        <polygon class="poly" points="20,80 30,70"></polygon>
+                                        <polygon class="poly" points="90,10 80,20"></polygon>
+                                        <polygon class="poly" points="90,50 80,50"></polygon>
+                                        <polygon class="poly" points="80,80 70,70"></polygon>
+                                    </svg>
+                                </div>
                             </div>
+                            <button class="share-btn whatsapp" id="share-whatsapp" title="Compartir en WhatsApp" aria-label="Compartir en WhatsApp"><i class="fab fa-whatsapp"></i></button>
+                            <button class="share-btn facebook" id="share-facebook" title="Compartir en Facebook" aria-label="Compartir en Facebook"><i class="fab fa-facebook-f"></i></button>
+                            <button class="share-btn copy-link" id="share-copy" title="Copiar enlace" aria-label="Copiar enlace"><i class="fas fa-link"></i></button>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Info Meta (Rating, Direccion, etc) -->
-                <div class="hero-meta" style="color: var(--gray-600); opacity: 1; font-size: 0.9rem; align-items: center; display: flex; flex-wrap: wrap; gap: 1rem;">
-                    <div class="detail-badges" id="hero-badges" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0;">
-                        <!-- Badges injected here -->
-                    </div>
-                    
-                    <div class="share-buttons" style="margin-top: 0; margin-left: auto; display: flex; align-items: center;">
-                        <button class="share-btn whatsapp" id="share-whatsapp" title="Compartir en WhatsApp" style="width: 28px; height: 28px; font-size: 0.8rem;">
-                            <i class="fab fa-whatsapp"></i>
-                        </button>
-                        <button class="share-btn facebook" id="share-facebook" title="Compartir en Facebook" style="width: 28px; height: 28px; font-size: 0.8rem;">
-                            <i class="fab fa-facebook-f"></i>
-                        </button>
-                        <button class="share-btn copy-link" id="share-copy" title="Copiar enlace" style="width: 28px; height: 28px; font-size: 0.8rem; background: var(--gray-100); color: var(--gray-700); border: 1px solid var(--gray-200);">
-                            <i class="fas fa-link"></i>
-                        </button>
                     </div>
                 </div>
             </div>
 
             <!-- CARRUSEL DE IMÁGENES -->
-            <div class="detail-hero" id="hero-section" style="max-width: 1100px; margin: 0 auto; border-radius: 12px; overflow: hidden; position: relative; height: 50vh; min-height: 400px;">
+            <div class="detail-hero" id="hero-section">
                 <div id="hero-carousel-items">
                     <!-- Images injected here -->
                 </div>
@@ -927,7 +1061,7 @@
                         <div class="card-body">
                             <div class="useful-info-grid">
                                 <div class="info-block" id="block-bring">
-                                    <h5><i class="fas fa-backpack" style="color: var(--warning);"></i> <span
+                                    <h5><i class="fas fa-suitcase"></i> <span
                                             data-i18n="experiencia.que_traer">¿Qué Traer?</span></h5>
                                     <ul class="detail-list bring" id="list-bring" style="margin-top:0.5rem;"></ul>
                                 </div>
@@ -985,21 +1119,6 @@
                                     </h3>
                                     <span id="gallery-user-count"
                                         style="font-size:0.85rem; color: var(--gray-500);"></span>
-                                </div>
-                                <div class="card-body">
-                                    <div id="user-gallery-grid"
-                                        style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.5rem;">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Galería de Fotos de Viajeros -->
-                            <div class="content-card" id="card-user-gallery" style="display:none; margin-top: 2rem;">
-                                <div class="card-header-section">
-                                    <h3><i class="fas fa-camera-retro" style="color: var(--primary);"></i> <span
-                                            data-i18n="experiencia.galeria_viajeros">Galería de Viajeros</span>
-                                    </h3>
-                                    <span id="gallery-user-count" style="font-size:0.85rem; color: var(--gray-500);"></span>
                                 </div>
                                 <div class="card-body">
                                     <div id="user-gallery-grid"
@@ -1140,11 +1259,25 @@
                 <!-- SIDEBAR -->
                 <div class="sidebar-column">
 
-                    <!-- Reservar / WhatsApp CTA -->
-                    <div class="content-card" id="card-meeting-map"
-                        style="padding: 1.5rem; margin-bottom: 1.5rem; display:none;">
-                        <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem;"><i class="fas fa-map-marked-alt"
-                                style="color: var(--primary);"></i> Punto de Encuentro</h3>
+                    <!-- Reservar -->
+                    <div class="content-card cta-reserva">
+                        <div class="cta-precio">
+                            <span class="cta-desde" id="cta-desde">Desde</span>
+                            <strong id="cta-precio">—</strong>
+                            <span class="cta-pp" id="cta-pp">por persona</span>
+                        </div>
+                        <ul class="cta-datos" id="cta-datos"></ul>
+                        <a id="sidebar-whatsapp-btn" href="#" target="_blank" rel="noopener" class="cta-btn cta-wa">
+                            <i class="fab fa-whatsapp"></i> <span data-i18n="experiencia_detalle.reservar_whatsapp">Reservar por WhatsApp</span>
+                        </a>
+                        <a href="/Contactos.html" class="cta-btn cta-sec">
+                            <i class="fas fa-envelope"></i> <span data-i18n="experiencia_detalle.contactar_correo">Contactar por Correo</span>
+                        </a>
+                    </div>
+
+                    <!-- Punto de encuentro -->
+                    <div class="content-card mapa-encuentro" id="card-meeting-map" style="display:none;">
+                        <h3><i class="fas fa-location-dot"></i> Punto de encuentro</h3>
                         <p id="meeting-address"
                             style="font-size:0.85rem; color:var(--gray-600); margin-bottom:0.75rem;"></p>
                         <div id="meeting-map-container"
@@ -1156,30 +1289,6 @@
                         </a>
                     </div>
 
-                    <!-- Reservar / WhatsApp CTA -->
-                    <div class="content-card"
-                        style="padding: 1.5rem; text-align: center; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white;">
-                        <h3 style="margin-bottom: 0.5rem; font-size: 1.2rem;"><i class="fas fa-calendar-check"></i>
-                            <span data-i18n="experiencia_detalle.te_interesa">¿Te interesa?</span>
-                        </h3>
-                        <p style="font-size: 0.9rem; margin-bottom: 1.2rem; opacity: 0.9;"
-                            data-i18n="experiencia_detalle.reserva_rapida">Reserva esta experiencia de forma
-                            rápida y
-                            sencilla.</p>
-                        <a id="sidebar-whatsapp-btn" href="#" target="_blank" class="btn"
-                            style="width:100%; background:#25D366; color:white; text-decoration:none; padding:0.8rem 1.2rem; border-radius:0.5rem; font-weight:700; display:flex; align-items:center; justify-content:center; gap:0.5rem; font-size:1rem; border:none; margin-bottom:0.75rem; transition: background 0.2s;"
-                            onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25D366'">
-                            <i class="fab fa-whatsapp" style="font-size:1.3rem;"></i> <span
-                                data-i18n="experiencia_detalle.reservar_whatsapp">Reservar por WhatsApp</span>
-                        </a>
-                        <a href="/Contactos.html" class="btn"
-                            style="width:100%; background:rgba(255,255,255,0.15); color:white; text-decoration:none; padding:0.6rem 1.2rem; border-radius:0.5rem; font-weight:600; display:inline-block; border:1px solid rgba(255,255,255,0.3); font-size:0.9rem; transition: background 0.2s;"
-                            onmouseover="this.style.background='rgba(255,255,255,0.25)'"
-                            onmouseout="this.style.background='rgba(255,255,255,0.15)'">
-                            <i class="fas fa-envelope" style="margin-right:0.3rem;"></i> <span
-                                data-i18n="experiencia_detalle.contactar_correo">Contactar por Correo</span>
-                        </a>
-                    </div>
 
                     <!-- FAQ Acordeón -->
                     <div class="content-card" id="card-faq">
@@ -1228,41 +1337,24 @@
     </div>
 
     <!-- Sugerencias Estilo TripAdvisor (Agregado Automáticamente) -->
-    <div class="content-card" id="recomendaciones-container" style="display: none; padding: 2rem 1.5rem; border: none; background: #ffffff; border-top: 1px solid #e2e8f0; border-radius: 0; margin-bottom: 0;">
-        <div style="max-width: 1200px; margin: 0 auto;">
-            <h3 style="font-size: 1.5rem; color: #1e293b; margin-bottom: 0.5rem;"><i class="fas fa-map-marked-alt" style="color: #3b82f6;"></i> Te podría interesar cerca de aquí</h3>
-            <p style="font-size: 0.95rem; color: #64748b; margin-bottom: 1.5rem;">Descubre lugares increíbles para hospedarte o visitar después de tu experiencia.</p>
-            
-            <div id="recomendaciones-scroll" style="display: flex; gap: 1.25rem; overflow-x: auto; padding-bottom: 1rem; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;">
+    <section id="recomendaciones-container" class="recos" style="display: none;">
+        <div class="recos-in">
+            <div class="recos-cab">
+                <div>
+                    <h3>Te podría interesar cerca de aquí</h3>
+                    <p>Más experiencias y lugares para comer después de tu visita.</p>
+                </div>
+                <div class="recos-flechas">
+                    <button type="button" aria-label="Anterior" onclick="document.getElementById('recomendaciones-scroll').scrollBy({left:-480,behavior:'smooth'})"><i class="fas fa-chevron-left"></i></button>
+                    <button type="button" aria-label="Siguiente" onclick="document.getElementById('recomendaciones-scroll').scrollBy({left:480,behavior:'smooth'})"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+            <div id="recomendaciones-scroll">
                 <!-- Las tarjetas de recomendación se inyectarán aquí vía JS -->
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Estilos en línea para el scrollbar (para que se vea más limpio) -->
-    <style>
-        #recomendaciones-scroll::-webkit-scrollbar {
-            display: none;
-        }
-        .recomendacion-card {
-            min-width: 200px;
-            max-width: 220px;
-            flex-shrink: 0;
-            scroll-snap-align: start;
-            text-decoration: none;
-            display: flex;
-            flex-direction: column;
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            border: 1px solid var(--gray-200);
-            background: var(--white);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .recomendacion-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-    </style>
 
     <!-- Footer -->
     <footer class="footer">

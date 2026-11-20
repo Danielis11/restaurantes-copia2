@@ -143,18 +143,17 @@ function renderToursTable(tours) {
         return `
         <tr>
             <td>
-                <div style="display:flex;align-items:center;gap:1.5rem;">
-                    <div style="width:48px;height:48px;border-radius:8px;overflow:hidden;flex-shrink:0;border:1px solid var(--gray-200);display:flex;align-items:center;justify-content:center;background:var(--gray-100);">
-                        ${principalImg ? `<img src="${mini(principalImg, 160)}" alt="" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;">` : `<i class="fas fa-image" style="color:var(--gray-400);font-size:1.2rem;"></i>`}
+                <div class="celda-tour">
+                    <div class="celda-foto">
+                        ${principalImg ? `<img src="${mini(principalImg, 160)}" alt="" loading="lazy" decoding="async">` : `<i class="fas fa-image"></i>`}
                     </div>
                     <div>
-                        <strong style="font-size:1.05rem;color:var(--gray-800);">${tour.nombre?.es || 'Sin nombre'}</strong>
-                        ${tour.nombre?.en ? `<div style="font-size:0.75rem;color:var(--gray-400);margin-top:2px;">${tour.nombre.en}</div>` : ''}
-                        ${principalImg ? '' : `<button type="button" class="aviso-fotos" title="Agregar fotos" onclick="openTourModal('${tour._id}', true)"><i class="fas fa-camera"></i> Sin fotos</button>`}
+                        <strong>${tour.nombre?.es || 'Sin nombre'}</strong>
+                        ${principalImg ? `<div class="celda-sub">${tour.imagenes.length} foto${tour.imagenes.length === 1 ? '' : 's'}</div>` : `<button type="button" class="aviso-fotos" title="Agregar fotos" onclick="openTourModal('${tour._id}', true)"><i class="fas fa-camera"></i> Sin fotos</button>`}
                     </div>
                 </div>
             </td>
-            <td><span class="badge badge-purple">${tour.tipo || 'Turismo Convencional'}</span></td>
+            <td><span class="tipo-chip ${/comunit/i.test(tour.tipo || '') ? 'comunitario' : /religi|espirit/i.test(tour.tipo || '') ? 'religioso' : ''}">${(tour.tipo || 'Turismo Convencional').replace(/^Turismo\s+/i, '')}</span></td>
             <td><span class="badge ${catClass[tour.categoria] || 'badge-blue'}">${tour.categoria || 'N/A'}</span></td>
             <td><strong>$${(tour.precio?.amount || 0).toLocaleString()}</strong> <span style="color:var(--gray-400);font-size:0.8rem;">${tour.precio?.moneda || 'MXN'}</span></td>
             <td>${tour.duracion?.horas || 0} hrs</td>

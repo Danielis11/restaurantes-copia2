@@ -40,7 +40,7 @@ function showRecommendationSkeletons(lang) {
     container.style.display = 'block';
     
     const skeletonHTML = Array(5).fill(`
-        <div style="min-width: 200px; max-width: 220px; flex-shrink: 0; height: 220px; border-radius: var(--radius-lg); background: #e2e8f0; animation: pulseLoader 1.5s infinite;"></div>
+        <div class="reco"><div class="reco-img" style="animation: pulseLoader 1.5s infinite;"></div></div>
     `).join('');
     
     recGrid.innerHTML = skeletonHTML;
@@ -118,7 +118,17 @@ function renderExperience(tour) {
     const heroTipo = document.getElementById('hero-tipo');
     if (heroTipo) heroTipo.textContent = translateCategoria(tour.categoria) || 'Tour';
     const heroPrice = document.getElementById('hero-price') || document.getElementById('hero-precio');
-    if (heroPrice) heroPrice.textContent = `$${tour.precio?.amount || 0} ${tour.precio?.moneda || 'MXN'}`;
+    const porPersTxt = lang === 'en' ? 'per person' : lang === 'fr' ? 'par personne' : 'por persona';
+    const montoTxt = `$${Number(tour.precio?.amount || 0).toLocaleString('es-MX')}`;
+    const monedaTxt = tour.precio?.moneda || 'MXN';
+    if (heroPrice) heroPrice.innerHTML = `${montoTxt} <small>${monedaTxt}</small>`;
+    // Tarjeta de reserva
+    const ctaPrecio = document.getElementById('cta-precio');
+    if (ctaPrecio) ctaPrecio.textContent = `${montoTxt} ${monedaTxt}`;
+    const ctaDesde = document.getElementById('cta-desde');
+    if (ctaDesde) ctaDesde.textContent = lang === 'en' ? 'From' : lang === 'fr' ? 'À partir de' : 'Desde';
+    const ctaPp = document.getElementById('cta-pp');
+    if (ctaPp) ctaPp.textContent = porPersTxt;
     document.getElementById('desc-text').textContent = getL(tour.descripcion) || getL(tour.descripcionCorta) || noDescTxt;
 
     // Badges
@@ -132,9 +142,17 @@ function renderExperience(tour) {
                         tour.dificultad;
 
     const badgesHtml = `
-        <span class="detail-badge badge-cat" style="background: rgba(37, 99, 235, 0.08); color: var(--primary); padding: 0.25rem 0.6rem; border-radius: 999px; font-weight: 600; font-size: 0.8rem;"><i class="fas fa-tag"></i> ${translateCategoria(tour.categoria)}</span>
-        <span class="detail-badge badge-diff ${diffClass}" style="color: white; padding: 0.25rem 0.6rem; border-radius: 999px; font-weight: 600; font-size: 0.8rem;">${diffDisplay}</span>
+        <span class="chip"><i class="fas fa-tag"></i> ${translateCategoria(tour.categoria)}</span>
+        <span class="chip chip-dif ${diffClass}">${diffDisplay}</span>
+        ${tour.duracion?.horas ? `<span class="chip"><i class="far fa-clock"></i> ${tour.duracion.horas} ${hrsTxt}</span>` : ''}
+        ${tour.capacidad?.maxima ? `<span class="chip"><i class="fas fa-user-group"></i> ${tour.capacidad?.minima || 1}–${tour.capacidad.maxima} ${persTxt}</span>` : ''}
     `;
+    const ctaDatos = document.getElementById('cta-datos');
+    if (ctaDatos) ctaDatos.innerHTML = [
+        tour.duracion?.horas ? `<li><i class="far fa-clock"></i> ${tour.duracion.horas} ${hrsTxt}</li>` : '',
+        `<li><i class="fas fa-signal"></i> ${diffTxt}: ${diffDisplay || '—'}</li>`,
+        tour.capacidad?.maxima ? `<li><i class="fas fa-user-group"></i> ${tour.capacidad?.minima || 1}–${tour.capacidad.maxima} ${persTxt}</li>` : '',
+    ].join('');
     const heroBadges = document.getElementById('hero-badges');
     if (heroBadges) heroBadges.innerHTML = badgesHtml;
 
@@ -148,7 +166,7 @@ function renderExperience(tour) {
         
     let detailsHtml = `
         <div class="detail-meta-item">
-            <i class="fas fa-clock"></i>
+            <i class="far fa-clock"></i>
             <div><div class="meta-label">${durTxt}</div><div class="meta-value">${tour.duracion?.horas || 0} ${hrsTxt}</div></div>
         </div>
         <div class="detail-meta-item">
@@ -156,15 +174,15 @@ function renderExperience(tour) {
             <div><div class="meta-label">${diffTxt}</div><div class="meta-value">${diffDisplay}</div></div>
         </div>
         <div class="detail-meta-item">
-            <i class="fas fa-users"></i>
+            <i class="fas fa-user-group"></i>
             <div><div class="meta-label">${capTxt}</div><div class="meta-value">${tour.capacidad?.minima || 1} - ${tour.capacidad?.maxima || '?'} ${persTxt}</div></div>
         </div>
         <div class="detail-meta-item">
-            <i class="fas fa-calendar-alt"></i>
+            <i class="far fa-calendar"></i>
             <div><div class="meta-label">${dispTxt}</div><div class="meta-value">${tour.disponibilidad?.todoElAnio ? todoTxt : tempTxt}</div></div>
         </div>
         <div class="detail-meta-item">
-            <i class="fas fa-calendar-week"></i>
+            <i class="far fa-calendar-check"></i>
             <div><div class="meta-label">${diasLabelTxt}</div><div class="meta-value">${diasHTML}</div></div>
         </div>
     `;
@@ -224,17 +242,19 @@ function renderExperience(tour) {
     // Carousel
     currentTourImages = tour.imagenes && tour.imagenes.length > 0 
         ? tour.imagenes 
-        : [{ url: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1200&h=600&fit=crop' }];
+        : [{ url: '/images/jalpan/vista-aerea-1920.webp', referencia: true }];
     currentTourImageIndex = 0;
 
     const heroItems = currentTourImages.map((img, index) => {
         const credito = creditoFoto(img.url);
         return `
         <div class="tour-carousel-item ${index === 0 ? 'active' : ''}" id="tour-slide-${index}">
+            <div class="slide-fondo" style="background-image:url('${img.url.startsWith('/api/img-proxy') ? img.url + '&w=160' : img.url}')"></div>
             <img ${index === 0 ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async" src="${img.url}" alt="${getL(tour.nombre) || xpTxt}" onclick="openTourLightbox('${img.url}')">
             ${credito ? `<a class="tour-foto-credito" href="${credito.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()"
                 style="position:absolute; left:.6rem; bottom:.6rem; z-index:3; background:rgba(15,23,42,.6); color:#fff; font-size:.7rem; padding:.2rem .55rem; border-radius:999px; text-decoration:none;">
                 <i class="fas fa-camera"></i> ${credito.autor} · ${credito.lic}</a>` : ''}
+            ${img.referencia ? `<span style="position:absolute; left:.6rem; bottom:.6rem; z-index:3; background:rgba(15,23,42,.6); color:#fff; font-size:.72rem; padding:.25rem .6rem; border-radius:999px;"><i class="fas fa-image"></i> ${lang === 'en' ? 'Reference photo of Jalpan' : lang === 'fr' ? 'Photo de référence de Jalpan' : 'Foto de referencia de Jalpan'}</span>` : ''}
         </div>`;
     }).join('');
     document.getElementById('hero-carousel-items').innerHTML = heroItems;
@@ -382,28 +402,22 @@ function renderGuides(tour) {
         const bio = getL(g.biografia) || noBioTxt;
         const idiomas = (g.idiomas && g.idiomas.length > 0) ? g.idiomas.join(', ') : 'Español';
         
-        const tel = g.telefono ? `<a href="tel:${g.telefono}" style="color:var(--primary); text-decoration:none;"><i class="fas fa-phone"></i> ${g.telefono}</a>` : '';
-        const mail = g.email ? `<a href="mailto:${g.email}" style="color:var(--primary); text-decoration:none;"><i class="fas fa-envelope"></i> ${g.email}</a>` : '';
-        const contacts = [tel, mail].filter(Boolean).join(' | ');
-        const contactsHtml = contacts ? `<div style="font-size:0.85rem; margin-top:0.5rem; margin-bottom:0.5rem;">${contacts}</div>` : '';
-        
-        const profileBtnTxt = lang === 'en' ? 'View Profile' : lang === 'fr' ? 'Voir Profil' : 'Ver Perfil';
-        const verPerfilBtn = (g._id || g.id) ? `<a href="/guia.html?id=${g._id || g.id}" style="margin-top:auto; display:inline-block; padding:0.5rem 1.2rem; background:var(--primary); color:white; border-radius:2rem; font-size:0.85rem; font-weight:600; text-decoration:none; transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';"><i class="fas fa-eye"></i> ${profileBtnTxt}</a>` : '';
-
+        const inicial = (g.nombreCompleto || 'G').trim().charAt(0).toUpperCase();
+        const fotoSrc = profileImg && profileImg.startsWith('/api/img-proxy') ? profileImg + '&w=160' : profileImg;
+        const foto = fotoSrc
+            ? `<img loading="lazy" decoding="async" src="${fotoSrc}" alt="${g.nombreCompleto || ''}" onerror="this.replaceWith(document.createTextNode('${inicial}'))">`
+            : inicial;
+        const gid = g._id || g.id;
+        const tag = gid ? 'a' : 'div';
         return `
-            <div style="background:var(--white); border:1px solid var(--gray-200); border-radius:12px; padding:1.25rem; display:flex; flex-direction:column; align-items:center; text-align:center; box-shadow:var(--shadow-sm); transition:transform 0.2s; height: 100%;">
-                <div style="width:100px; height:100px; overflow:hidden; border-radius:12px; margin-bottom:1rem; border:2px solid var(--primary-light); background:var(--gray-50); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                    ${profileImg 
-                        ? `<img loading="lazy" decoding="async" src="${profileImg}" alt="${g.nombreCompleto}" style="width:100%; height:100%; object-fit:cover;">`
-                        : `<i class="fas fa-user" style="font-size:2rem; color:var(--gray-400);"></i>`
-                    }
+            <${tag} class="guia-fila" ${gid ? `href="/guia.html?id=${gid}"` : ''} title="${bio.replace(/"/g, '&quot;')}">
+                <div class="guia-foto">${foto}</div>
+                <div class="guia-info">
+                    <strong>${g.nombreCompleto || 'Guía'}</strong>
+                    <span><i class="fas fa-language"></i> ${idiomas}</span>
                 </div>
-                <h4 style="font-size:1.1rem; font-weight:700; color:var(--gray-900); margin-bottom:0.2rem;">${g.nombreCompleto || 'Guía'}</h4>
-                <div style="font-size:0.8rem; color:var(--primary); font-weight:600; margin-bottom:0.75rem;"><i class="fas fa-language"></i> ${idiomas}</div>
-                <p style="font-size:0.85rem; color:var(--gray-600); line-height:1.4; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; margin-bottom:0.75rem;">${bio}</p>
-                ${contactsHtml}
-                ${verPerfilBtn}
-            </div>
+                ${gid ? '<i class="fas fa-chevron-right guia-ir"></i>' : ''}
+            </${tag}>
         `;
     }).join('');
 }
@@ -530,15 +544,7 @@ function renderAvailability(tour) {
     // Visual week calendar
     weekGrid.innerHTML = diasSemanaEs.map((dia, i) => {
         const isActive = tourDias.length === 0 || tourDias.includes(dia);
-        const bg = isActive ? 'var(--primary)' : 'var(--gray-200)';
-        const color = isActive ? 'white' : 'var(--gray-400)';
-        return `
-            <div style="text-align:center; padding:0.5rem 0.15rem; border-radius:0.4rem; background:${bg}; transition: transform 0.2s;" 
-                ${isActive ? 'onmouseover="this.style.transform=\'scale(1.08)\'" onmouseout="this.style.transform=\'scale(1)\'"' : ''}>
-                <div style="font-size:0.65rem; font-weight:700; color:${color}; text-transform:uppercase;">${diasCortos[i]}</div>
-                <div style="margin-top:0.2rem;">${isActive ? '<i class="fas fa-check" style="font-size:0.7rem; color:' + color + ';"></i>' : '<i class="fas fa-times" style="font-size:0.7rem; color:' + color + ';"></i>'}</div>
-            </div>
-        `;
+        return `<div class="dia ${isActive ? 'on' : ''}" title="${diasSemana[i]}"><span>${diasCortos[i]}</span><i class="fas ${isActive ? 'fa-check' : 'fa-minus'}"></i></div>`;
     }).join('');
 }
 
@@ -955,39 +961,30 @@ async function loadRecomendaciones(currentTour) {
             const url = isTour ? `/experiencia.html?id=${id}` : `/restaurante.html?id=${id}`;
             const cleanTitle = getL(item.nombre) || (isTour ? 'Experiencia' : 'Restaurante');
             
-            let img = '/images/PueblosMágicos.svg.png';
+            let img = '';
             if (item.imagenPrincipal && item.imagenPrincipal.url) {
                 img = item.imagenPrincipal.url;
             } else if (item.imagenes && item.imagenes.length > 0 && item.imagenes[0].url) {
                 img = item.imagenes[0].url;
             }
-            
-            const badgeText = isTour ? translateCategoria(item.categoria) : '<i class="fas fa-star" style="color:white; margin-right:4px;"></i>' + (item.calificacionPromedio || 'N/A');
-            const badgeColor = isTour ? 'var(--primary)' : '#eab308';
-            
-            const bottomLeft = isTour 
-                ? `${item.precio?.amount || 0} ${item.precio?.moneda || 'MXN'}`
-                : (item._distance && item._distance < 9999 ? `<i class="fas fa-map-marker-alt"></i> ${item._distance.toFixed(1)} km` : 'Restaurante');
-                
-            const bottomColor = isTour ? '#10b981' : 'var(--gray-500)';
-            const bottomWeight = isTour ? '700' : '500';
+            if (img.startsWith('/api/img-proxy')) img += '&w=480';
+            const icono = isTour ? 'fa-compass' : 'fa-utensils';
+            const tipoTxt = isTour ? translateCategoria(item.categoria) : (lang === 'en' ? 'Restaurant' : 'Restaurante');
+            const nuevoTxt = lang === 'en' ? 'New' : lang === 'fr' ? 'Nouveau' : 'Nuevo';
+            const calif = Number(item.calificacionPromedio || item.googleRating || 0);
+            const pie = isTour
+                ? `<strong>$${Number(item.precio?.amount || 0).toLocaleString('es-MX')}</strong> ${item.precio?.moneda || 'MXN'}`
+                : `${calif > 0 ? `<i class="fas fa-star"></i> <strong>${calif.toFixed(1)}</strong>` : nuevoTxt}${item._distance && item._distance < 9999 ? ` · ${item._distance.toFixed(1)} km` : ''}`;
+            const sinFoto = `<div class="reco-sin"><i class="fas ${icono}"></i></div>`;
 
             return `
-                <a href="${url}" class="recomendacion-card" style="min-width: 200px; max-width: 220px; flex-shrink: 0; scroll-snap-align: start; text-decoration: none; display: flex; flex-direction: column; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--gray-200); background: var(--white); transition: transform 0.2s, box-shadow 0.2s;">
-                    <div style="height: 140px; position: relative; overflow: hidden; background: #f1f5f9;">
-                        <img src="${img}" alt="${cleanTitle}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;">
-                        <span style="position: absolute; top: 0.5rem; left: 0.5rem; background: ${badgeColor}; color: white; padding: 0.2rem 0.5rem; border-radius: 999px; font-size: 0.7rem; font-weight: 600; z-index: 2;">
-                            ${badgeText}
-                        </span>
+                <a href="${url}" class="reco">
+                    <div class="reco-img">
+                        ${img ? `<img src="${img}" alt="" loading="lazy" decoding="async" onerror="this.outerHTML='${sinFoto.replace(/"/g, '&quot;')}'">` : sinFoto}
+                        <span class="reco-tipo"><i class="fas ${icono}"></i>${tipoTxt}</span>
                     </div>
-                    <div style="padding: 0.75rem; display: flex; flex-direction: column; flex-grow: 1;">
-                        <h4 style="margin: 0 0 0.25rem 0; font-size: 0.95rem; font-weight: 600; color: #1e293b; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                            ${cleanTitle}
-                        </h4>
-                        <div style="margin-top: auto; padding-top: 0.5rem; font-size: 0.85rem; color: ${bottomColor}; font-weight: ${bottomWeight}; display: flex; align-items: center; gap: 0.3rem;">
-                            ${bottomLeft}
-                        </div>
-                    </div>
+                    <h4>${cleanTitle}</h4>
+                    <div class="reco-pie">${pie}</div>
                 </a>
             `;
         }).join('');
