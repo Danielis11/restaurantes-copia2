@@ -66,6 +66,7 @@ exports.getMyReviews = async (req, res) => {
                     imagenUrl: null,
                     fotos: [],
                     estado: review.estado || 'aprobada',
+                    respuesta: review.respuesta || null,
                     fechaCreacion: review.fecha || review.createdAt,
                     tipoLugar: config.tipoLugar,
                     lugarNombre: review.nombreHospedaje || config.tipoLugar,

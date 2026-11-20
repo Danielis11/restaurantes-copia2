@@ -1,1484 +1,973 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi panel - Jalpan de Serra</title>
-
-    <!-- Font Awesome -->
+    <meta name="robots" content="noindex">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-
-
-        body {
-            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--gray-50);
-            color: var(--gray-900);
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* Logout button keep */
-        .logout-btn {
-            background: none;
-            border: none;
-            color: var(--gray-500);
-            cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            transition: all 0.2s;
-        }
-
-        .logout-btn:hover {
-            color: var(--error);
-            background-color: var(--gray-100);
-        }
-
-        /* Main Content */
-        .main {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 3rem 2rem;
-        }
-
-        .page-header {
-            margin-bottom: 3rem;
-        }
-
-        .page-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--gray-900);
-            margin-bottom: 0.75rem;
-            letter-spacing: -0.025em;
-        }
-
-        .page-subtitle {
-            color: var(--gray-500);
-            font-size: 1.125rem;
-            max-width: 600px;
-        }
-
-        /* Dashboard Grid */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: var(--white);
-            padding: 2rem;
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--gray-100);
-            box-shadow: var(--shadow-sm);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .stat-card:hover {
-            box-shadow: var(--shadow-lg);
-            transform: translateY(-4px);
-            border-color: var(--gray-200);
-        }
-
-        .stat-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .stat-title {
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--gray-600);
-        }
-
-        .stat-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--white);
-            font-size: 1.25rem;
-        }
-
-        .stat-icon.primary {
-            background-color: var(--primary);
-        }
-
-        .stat-icon.success {
-            background-color: var(--success);
-        }
-
-        .stat-icon.warning {
-            background-color: var(--warning);
-        }
-
-        .stat-icon.error {
-            background-color: var(--error);
-        }
-
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--gray-900);
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-change {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.8rem;
-            color: var(--gray-600);
-        }
-
-        /* Action Buttons */
-        .actions-section {
-            background: var(--white);
-            border-radius: 0.75rem;
-            border: 1px solid var(--gray-200);
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .actions-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .actions-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--gray-900);
-        }
-
-        .actions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-
-        .action-card {
-            background: var(--gray-50);
-            border: 1px solid var(--gray-200);
-            border-radius: 0.5rem;
-            padding: 1rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-
-        .action-card:hover {
-            background: var(--white);
-            border-color: var(--primary);
-            box-shadow: var(--shadow-lg);
-            transform: translateY(-4px);
-        }
-
-        .action-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: 14px;
-            background: var(--primary);
-            color: var(--white);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.25rem;
-            font-size: 1.5rem;
-            transition: transform 0.3s ease;
-        }
-
-        .action-card:hover .action-icon {
-            transform: scale(1.1);
-        }
-
-        .action-icon.explore {
-            background: #10b981;
-        }
-
-        .action-icon.profile {
-            background: #6366f1;
-        }
-
-        .action-icon.reviews {
-            background: #f59e0b;
-        }
-
-        .action-icon.favorites {
-            background: #ef4444;
-        }
-
-        .action-title {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .action-description {
-            font-size: 0.8rem;
-            color: var(--gray-600);
-        }
-
-        .notification {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 10000;
-            max-width: 380px;
-            background: white;
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-lg);
-            border-left: 6px solid var(--primary);
-            transform: translateY(120%);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex;
-            align-items: center;
-            padding: 1.25rem;
-            gap: 1rem;
-        }
-
-        .notification.show {
-            transform: translateY(0);
-        }
-
-        .notification.success {
-            border-left-color: var(--success);
-        }
-
-        .notification.error {
-            border-left-color: var(--error);
-        }
-
-        .notification.warning {
-            border-left-color: var(--warning);
-        }
-
-        .notification i {
-            font-size: 20px;
-            color: var(--primary);
-        }
-
-        .notification.success i {
-            color: var(--success);
-        }
-
-        .notification.error i {
-            color: var(--error);
-        }
-
-        .notification.warning i {
-            color: var(--warning);
-        }
-
-        .notification-message {
-            flex: 1;
-            font-size: 14px;
-            line-height: 1.4;
-        }
-
-        .notification-close {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 4px;
-            border-radius: 4px;
-            color: var(--gray-400);
-        }
-
-        .notification-close:hover {
-            background: var(--gray-100);
-            color: var(--gray-600);
-        }
-
-        .user-avatar {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            background: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--white);
-            font-weight: 600;
-            font-size: 1rem;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-        }
-
-        .logout-btn {
-            background: var(--gray-100);
-            border: none;
-            color: var(--gray-600);
-            cursor: pointer;
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-
-        .logout-btn:hover {
-            color: var(--white);
-            background-color: var(--error);
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
-        }
-
-        .btn-primary {
-            background: var(--black);
-            color: var(--white);
-            padding: 0.875rem 2rem;
-            border: none;
-            border-radius: var(--radius-md);
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.1);
-        }
-
-        .btn-primary:hover {
-            background: #333;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        input {
-            transition: all 0.3s ease;
-        }
-
-        @media (max-width: 768px) {
-            .nav {
-                padding: 0 1rem;
-                height: 70px;
-            }
-
-            .main {
-                padding: 1.5rem 1rem;
-            }
-
-            .user-section {
-                gap: 0.5rem;
-            }
-
-            .user-info {
-                display: none;
-            }
-
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-
-            .actions-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .page-title {
-                font-size: 1.75rem;
-            }
-        }
-    </style>
-    <link rel="stylesheet" href="/css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-    <!-- PWA: app instalable -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#2563eb">
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="Jalpan">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
     <script src="/js/pwa.js" defer></script>
     <script src="/js/acceso-resena.js" defer></script>
+    <style>
+        :root {
+            --azul: #2563eb; --azul-osc: #1e40af; --azul-claro: #eff6ff;
+            --tinta: #111827; --texto: #4b5563; --gris: #6b7280; --gris-claro: #9ca3af;
+            --borde: #e5e7eb; --borde-suave: #f3f4f6; --fondo: #f8fafc; --blanco: #fff;
+            --verde: #059669; --verde-claro: #ecfdf5; --ambar: #d97706; --ambar-claro: #fffbeb;
+            --rojo: #dc2626; --rojo-claro: #fef2f2; --morado: #7c3aed; --morado-claro: #f5f3ff;
+            --radio: 16px; --sombra: 0 1px 3px rgba(15,23,42,.06), 0 1px 2px rgba(15,23,42,.04);
+        }
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { margin: 0; font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--fondo); color: var(--tinta); -webkit-font-smoothing: antialiased; }
+        button, input, textarea { font: inherit; color: inherit; }
+        a { color: inherit; }
+        img { max-width: 100%; }
+
+        /* ---------- Encabezado ---------- */
+        .cabecera { background: var(--blanco); border-bottom: 1px solid var(--borde); position: sticky; top: 0; z-index: 60; }
+        .cabecera-in { max-width: 1040px; margin: 0 auto; padding: 0 24px; height: 64px; display: flex; align-items: center; gap: 12px; }
+        .marca { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 700; font-size: 1.1rem; }
+        .marca img { width: 30px; height: 30px; object-fit: contain; }
+        .cabecera-der { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+        .enlace-explorar { text-decoration: none; color: var(--texto); font-weight: 500; padding: 8px 12px; border-radius: 10px; }
+        .enlace-explorar:hover { background: var(--borde-suave); color: var(--tinta); }
+        .icono-btn { position: relative; background: none; border: none; width: 40px; height: 40px; border-radius: 10px; color: var(--gris); cursor: pointer; font-size: 1.1rem; }
+        .icono-btn:hover { background: var(--borde-suave); color: var(--tinta); }
+        .punto { position: absolute; top: 6px; right: 6px; min-width: 18px; height: 18px; border-radius: 9999px; background: var(--rojo); color: #fff; font-size: .65rem; font-weight: 700; display: none; align-items: center; justify-content: center; padding: 0 4px; border: 2px solid #fff; }
+        .avatar-btn { background: none; border: none; padding: 4px; border-radius: 9999px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .avatar-btn:hover { background: var(--borde-suave); }
+        .avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--azul); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: .85rem; }
+        .menu-flotante { position: absolute; right: 0; top: calc(100% + 8px); background: var(--blanco); border: 1px solid var(--borde); border-radius: 14px; box-shadow: 0 12px 32px rgba(15,23,42,.12); min-width: 240px; display: none; overflow: hidden; z-index: 70; }
+        .menu-flotante.abierto { display: block; }
+        .menu-cab { padding: 14px 16px; border-bottom: 1px solid var(--borde-suave); }
+        .menu-cab strong { display: block; }
+        .menu-cab span { color: var(--gris); font-size: .85rem; }
+        .menu-item { display: flex; align-items: center; gap: 10px; width: 100%; padding: 11px 16px; background: none; border: none; text-align: left; cursor: pointer; text-decoration: none; color: var(--texto); font-size: .95rem; }
+        .menu-item:hover { background: var(--fondo); color: var(--tinta); }
+        .menu-item.peligro { color: var(--rojo); }
+        .menu-item i { width: 18px; text-align: center; }
+        .envoltura { position: relative; }
+        .notif { padding: 12px 16px; border-bottom: 1px solid var(--borde-suave); font-size: .9rem; cursor: pointer; }
+        .notif.nueva { background: var(--azul-claro); }
+        .notif small { color: var(--gris); display: block; margin-top: 2px; }
+        .notif-vacia { padding: 28px 16px; text-align: center; color: var(--gris); font-size: .9rem; }
+
+        /* ---------- Pestañas ---------- */
+        .pestanas { background: var(--blanco); border-bottom: 1px solid var(--borde); position: sticky; top: 64px; z-index: 50; }
+        .pestanas-in { max-width: 1040px; margin: 0 auto; padding: 0 24px; display: flex; gap: 4px; }
+        .pestana { background: none; border: none; border-bottom: 2px solid transparent; padding: 14px 14px; color: var(--gris); font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+        .pestana:hover { color: var(--tinta); }
+        .pestana.activa { color: var(--azul); border-bottom-color: var(--azul); }
+        .pestana .num { background: var(--borde-suave); color: var(--texto); font-size: .75rem; border-radius: 9999px; padding: 1px 8px; font-weight: 600; }
+        .pestana.activa .num { background: var(--azul-claro); color: var(--azul-osc); }
+
+        /* ---------- Contenido ---------- */
+        main { max-width: 1040px; margin: 0 auto; padding: 32px 24px 64px; }
+        .vista { display: none; }
+        .vista.activa { display: block; animation: aparecer .2s ease; }
+        @keyframes aparecer { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+        h1 { font-size: 1.75rem; margin: 0 0 6px; letter-spacing: -.01em; }
+        h2 { font-size: 1.15rem; margin: 0; }
+        .sub { color: var(--gris); margin: 0 0 24px; line-height: 1.5; }
+        .titulo-fila { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+        .titulo-fila a, .enlace { color: var(--azul); text-decoration: none; font-weight: 500; font-size: .9rem; background: none; border: none; cursor: pointer; padding: 0; }
+        .bloque { margin-bottom: 36px; }
+
+        .aviso-correo { display: none; align-items: center; gap: 14px; flex-wrap: wrap; background: var(--ambar-claro); border: 1px solid #fde68a; color: #92400e; border-radius: var(--radio); padding: 14px 18px; margin-bottom: 24px; }
+        .aviso-correo i { font-size: 1.25rem; }
+        .aviso-correo div { flex: 1; min-width: 200px; line-height: 1.4; }
+
+        /* Números */
+        .numeros { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+        .numero { background: var(--blanco); border: 1px solid var(--borde-suave); border-radius: var(--radio); padding: 18px; box-shadow: var(--sombra); text-align: left; cursor: pointer; display: flex; gap: 14px; align-items: center; transition: border-color .15s, transform .15s; }
+        .numero:hover { border-color: var(--azul); transform: translateY(-1px); }
+        .numero-ico { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; flex-shrink: 0; }
+        .numero strong { display: block; font-size: 1.6rem; line-height: 1.1; }
+        .numero span { color: var(--gris); font-size: .9rem; }
+        .ico-rojo { background: var(--rojo-claro); color: var(--rojo); }
+        .ico-morado { background: var(--morado-claro); color: var(--morado); }
+        .ico-ambar { background: var(--ambar-claro); color: var(--ambar); }
+        .ico-azul { background: var(--azul-claro); color: var(--azul); }
+        .ico-verde { background: var(--verde-claro); color: var(--verde); }
+
+        /* Primeros pasos */
+        .pasos { background: var(--blanco); border: 1px solid var(--borde-suave); border-radius: var(--radio); box-shadow: var(--sombra); padding: 20px; }
+        .progreso { height: 8px; background: var(--borde-suave); border-radius: 9999px; overflow: hidden; margin: 12px 0 8px; }
+        .progreso div { height: 100%; background: var(--verde); border-radius: 9999px; transition: width .4s; }
+        .paso { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-top: 1px solid var(--borde-suave); }
+        .paso:first-of-type { border-top: none; }
+        .paso-marca { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--borde); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: transparent; font-size: .8rem; }
+        .paso.hecho .paso-marca { background: var(--verde); border-color: var(--verde); color: #fff; }
+        .paso-txt { flex: 1; min-width: 0; }
+        .paso-txt strong { display: block; font-weight: 600; }
+        .paso.hecho .paso-txt strong { color: var(--gris); text-decoration: line-through; }
+        .paso-txt span { color: var(--gris); font-size: .88rem; }
+        .paso .btn { flex-shrink: 0; }
+        .paso.hecho .btn { display: none; }
+
+        /* Explorar */
+        .explorar { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+        .destino { background: var(--blanco); border: 1px solid var(--borde-suave); border-radius: var(--radio); box-shadow: var(--sombra); padding: 18px 14px; text-decoration: none; text-align: center; transition: border-color .15s, transform .15s; }
+        .destino:hover { border-color: var(--azul); transform: translateY(-2px); }
+        .destino .numero-ico { margin: 0 auto 10px; }
+        .destino strong { display: block; font-size: .95rem; }
+        .destino span { color: var(--gris); font-size: .8rem; }
+
+        /* Botones y chips */
+        .btn { border: 1px solid var(--borde); background: var(--blanco); color: var(--tinta); border-radius: 10px; padding: 9px 16px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; font-size: .92rem; }
+        .btn:hover { border-color: var(--gris-claro); }
+        .btn:disabled { opacity: .55; cursor: wait; }
+        .btn.primario { background: var(--azul); border-color: var(--azul); color: #fff; }
+        .btn.primario:hover { background: var(--azul-osc); }
+        .btn.peligro { color: var(--rojo); }
+        .btn.peligro:hover { border-color: var(--rojo); background: var(--rojo-claro); }
+        .btn.chico { padding: 6px 12px; font-size: .85rem; }
+        .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+        .chip { background: var(--blanco); border: 1px solid var(--borde); border-radius: 9999px; padding: 7px 14px; font-size: .88rem; color: var(--texto); cursor: pointer; }
+        .chip:hover { border-color: var(--gris-claro); }
+        .chip.activa { background: var(--tinta); border-color: var(--tinta); color: #fff; }
+
+        /* Tarjetas de lugares */
+        .rejilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
+        .tarjeta { background: var(--blanco); border: 1px solid var(--borde-suave); border-radius: var(--radio); box-shadow: var(--sombra); overflow: hidden; display: flex; flex-direction: column; transition: transform .15s, box-shadow .15s; }
+        .tarjeta:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(15,23,42,.08); }
+        .tarjeta-foto { height: 140px; background: var(--borde-suave) center/cover no-repeat; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; position: relative; text-decoration: none; }
+        .tarjeta-quitar { position: absolute; top: 10px; right: 10px; width: 36px; height: 36px; border-radius: 50%; border: none; background: rgba(255,255,255,.95); color: var(--rojo); cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,.15); font-size: 1rem; }
+        .tarjeta-quitar:hover { background: var(--rojo); color: #fff; }
+        .tarjeta-cuerpo { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+        .tarjeta-nombre { font-weight: 600; font-size: 1.02rem; text-decoration: none; }
+        .tarjeta-nombre:hover { color: var(--azul); }
+        .tarjeta-meta { color: var(--gris); font-size: .85rem; }
+        .etiqueta { display: inline-flex; align-items: center; gap: 5px; font-size: .75rem; font-weight: 600; padding: 3px 10px; border-radius: 9999px; width: fit-content; }
+        .et-comida { background: #fff7ed; color: #c2410c; }
+        .et-hospedaje { background: var(--azul-claro); color: var(--azul-osc); }
+        .et-experiencia { background: var(--verde-claro); color: #047857; }
+        .et-agencia { background: #ecfeff; color: #0e7490; }
+
+        /* Viajes */
+        .viaje { background: var(--blanco); border: 1px solid var(--borde-suave); border-radius: var(--radio); box-shadow: var(--sombra); padding: 18px; cursor: pointer; transition: transform .15s, border-color .15s; display: flex; flex-direction: column; gap: 10px; text-align: left; width: 100%; }
+        .viaje:hover { transform: translateY(-2px); border-color: var(--morado); }
+        .viaje-arriba { display: flex; gap: 12px; align-items: flex-start; }
+        .viaje-arriba .numero-ico { width: 40px; height: 40px; font-size: 1rem; }
+        .viaje-nombre { font-weight: 600; font-size: 1.02rem; flex: 1; min-width: 0; }
+        .viaje-desc { color: var(--texto); font-size: .9rem; line-height: 1.45; margin: 0; }
+        .viaje-pie { display: flex; justify-content: space-between; align-items: center; color: var(--gris); font-size: .85rem; margin-top: auto; }
+        .icono-quitar { background: none; border: none; color: var(--gris-claro); cursor: pointer; width: 32px; height: 32px; border-radius: 8px; }
+        .icono-quitar:hover { background: var(--rojo-claro); color: var(--rojo); }
+        .nota { display: flex; gap: 12px; background: var(--morado-claro); color: #5b21b6; border-radius: var(--radio); padding: 14px 16px; margin-bottom: 18px; font-size: .9rem; line-height: 1.45; }
+        .nota i { margin-top: 2px; }
+
+        /* Opiniones */
+        .opiniones { display: grid; gap: 12px; }
+        .opinion { background: var(--blanco); border: 1px solid var(--borde-suave); border-radius: var(--radio); box-shadow: var(--sombra); padding: 18px 20px; }
+        .opinion-arriba { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; flex-wrap: wrap; }
+        .opinion-lugar { font-weight: 600; font-size: 1.02rem; text-decoration: none; }
+        .opinion-lugar:hover { color: var(--azul); }
+        .opinion-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 6px; color: var(--gris); font-size: .85rem; }
+        .estrellas { color: #f59e0b; white-space: nowrap; letter-spacing: 1px; }
+        .estrellas .apagada { color: var(--borde); }
+        .opinion-texto { margin: 12px 0 0; color: var(--texto); line-height: 1.55; white-space: pre-line; overflow-wrap: anywhere; }
+        .opinion-fotos { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+        .opinion-fotos img { width: 64px; height: 64px; object-fit: cover; border-radius: 10px; }
+        .estado { display: inline-flex; align-items: center; gap: 5px; font-size: .75rem; font-weight: 600; padding: 3px 10px; border-radius: 9999px; }
+        .estado.publicada { background: var(--verde-claro); color: #047857; }
+        .estado.revision { background: var(--ambar-claro); color: #b45309; }
+        .estado.rechazada { background: var(--borde-suave); color: var(--gris); }
+        .respuesta { margin-top: 14px; background: var(--fondo); border-left: 3px solid var(--azul); border-radius: 0 10px 10px 0; padding: 10px 14px; font-size: .9rem; color: var(--texto); line-height: 1.5; }
+        .respuesta strong { display: block; color: var(--tinta); font-size: .85rem; margin-bottom: 2px; }
+        .opinion-pie { display: flex; justify-content: flex-end; margin-top: 12px; }
+        .explica-estado { color: var(--gris); font-size: .85rem; margin: -12px 0 18px; }
+
+        /* Cuenta */
+        .cuenta { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; align-items: start; }
+        .caja { background: var(--blanco); border: 1px solid var(--borde-suave); border-radius: var(--radio); box-shadow: var(--sombra); padding: 22px; }
+        .caja h2 { margin-bottom: 4px; }
+        .caja .sub { margin-bottom: 18px; font-size: .92rem; }
+        .campo { margin-bottom: 16px; }
+        .campo label { display: block; font-weight: 500; margin-bottom: 6px; font-size: .92rem; }
+        .campo input, .campo textarea { width: 100%; padding: 11px 13px; border: 1px solid var(--borde); border-radius: 10px; background: var(--blanco); }
+        .campo input:focus, .campo textarea:focus { outline: none; border-color: var(--azul); box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
+        .campo small { display: block; color: var(--gris); font-size: .82rem; margin-top: 5px; }
+        .dato { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid var(--borde-suave); font-size: .92rem; }
+        .dato:first-of-type { border-top: none; }
+        .dato span { color: var(--gris); }
+
+        /* Vacíos y carga */
+        .vacio { grid-column: 1 / -1; background: var(--blanco); border: 1px dashed var(--borde); border-radius: var(--radio); text-align: center; padding: 40px 20px; color: var(--gris); }
+        .vacio i { font-size: 2.2rem; color: var(--gris-claro); display: block; margin-bottom: 12px; }
+        .vacio strong { display: block; color: var(--tinta); font-size: 1.05rem; margin-bottom: 4px; }
+        .vacio p { margin: 0 auto 16px; max-width: 380px; line-height: 1.5; }
+        .esqueleto { grid-column: 1 / -1; height: 120px; border-radius: var(--radio); background: linear-gradient(90deg, var(--borde-suave), #fafafa, var(--borde-suave)); background-size: 200% 100%; animation: brillo 1.2s infinite; }
+        @keyframes brillo { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+        /* Ventanas */
+        .fondo-modal { position: fixed; inset: 0; background: rgba(15,23,42,.5); z-index: 100; display: none; align-items: center; justify-content: center; padding: 16px; }
+        .fondo-modal.abierto { display: flex; }
+        .modal { background: var(--blanco); border-radius: 18px; width: 100%; max-width: 440px; max-height: 88vh; display: flex; flex-direction: column; box-shadow: 0 24px 48px rgba(15,23,42,.2); }
+        .modal.ancho { max-width: 620px; }
+        .modal-cab { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 18px 20px; border-bottom: 1px solid var(--borde-suave); }
+        .modal-cuerpo { padding: 20px; overflow-y: auto; }
+        .dia { margin-bottom: 22px; }
+        .dia h3 { font-size: 1rem; margin: 0 0 10px; color: var(--morado); }
+        .actividad { display: flex; gap: 12px; align-items: center; background: var(--fondo); border: 1px solid var(--borde-suave); border-radius: 12px; padding: 12px; margin-bottom: 8px; }
+        .actividad .asa { color: var(--gris-claro); cursor: grab; }
+        .actividad-hora { font-weight: 600; color: var(--morado); min-width: 52px; }
+        .actividad-txt { flex: 1; min-width: 0; }
+        .actividad-txt strong { text-transform: capitalize; display: block; }
+        .actividad-txt span { color: var(--gris); font-size: .88rem; }
+
+        /* Aviso flotante */
+        .aviso { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--tinta); color: #fff; padding: 12px 20px; border-radius: 12px; font-size: .92rem; opacity: 0; transition: all .2s; z-index: 200; pointer-events: none; max-width: calc(100% - 32px); }
+        .aviso.visible { opacity: 1; transform: translateX(-50%); }
+        .aviso.error { background: var(--rojo); }
+        .aviso.exito { background: var(--verde); }
+
+        @media (max-width: 900px) {
+            .explorar { grid-template-columns: repeat(3, 1fr); }
+            .cuenta { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 640px) {
+            .cabecera-in, main { padding-left: 16px; padding-right: 16px; }
+            .enlace-explorar, .marca span { display: none; }
+            main { padding-top: 22px; padding-bottom: 96px; }
+            h1 { font-size: 1.45rem; }
+            .numeros { grid-template-columns: 1fr; gap: 10px; }
+            .numero { padding: 14px; }
+            .explorar { grid-template-columns: repeat(2, 1fr); }
+            .rejilla { grid-template-columns: 1fr 1fr; gap: 10px; }
+            .tarjeta-foto { height: 110px; }
+            .tarjeta-cuerpo { padding: 10px 12px 12px; }
+            .paso { flex-wrap: wrap; }
+            .paso .btn { margin-left: 42px; }
+            /* Pestañas abajo, como en una app */
+            .pestanas { position: fixed; top: auto; bottom: 0; left: 0; right: 0; border-top: 1px solid var(--borde); border-bottom: none; padding-bottom: env(safe-area-inset-bottom); }
+            .pestanas-in { padding: 0; gap: 0; }
+            .pestana { flex: 1; flex-direction: column; gap: 3px; padding: 9px 2px 8px; font-size: .7rem; border-bottom: none; border-top: 2px solid transparent; }
+            .pestana i { font-size: 1.15rem; }
+            .pestana.activa { border-top-color: var(--azul); }
+            .pestana .num { display: none; }
+            .aviso { bottom: 84px; }
+        }
+        @media (max-width: 380px) {
+            .rejilla { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
-
 <body>
-    <!-- Header Global -->
-    <header class="global-nav">
-        <nav class="nav-container">
-            <a href="/index.html" class="logo" title="Volver al inicio" style="display:flex; align-items:center; gap:0.5rem; text-decoration:none; font-weight:700; color:var(--primary); font-size:1.25rem;">
-                <img src="/images/PueblosMágicos.svg.png" alt="Logo Turismo"
-                    style="width: 32px; height: 32px; object-fit: contain;">
-                <span>Mi Panel Turístico</span>
+    <header class="cabecera">
+        <div class="cabecera-in">
+            <a href="/index.html" class="marca" title="Ir al inicio del sitio">
+                <img src="/images/PueblosMágicos.svg.png" alt="">
+                <span>Jalpan de Serra</span>
             </a>
-
-            <div class="nav-actions-wrapper" style="display: flex; align-items: center;">
-                <div id="navbar-actions" style="display: flex; align-items: center; gap: 1rem;">
-                    <!-- Skeleton Loader -->
-                    <div style="display:flex; align-items:center; gap:1rem;">
-                        <div class="skeleton" style="width:30px; height:30px; border-radius:50%; margin:0;"></div>
-                        <div class="skeleton" style="width:120px; height:38px; border-radius:0.5rem; margin:0;"></div>
+            <div class="cabecera-der">
+                <a href="/index.html" class="enlace-explorar"><i class="fas fa-compass"></i> Explorar</a>
+                <div class="envoltura">
+                    <button class="icono-btn" id="btnNotif" aria-label="Notificaciones" aria-haspopup="true">
+                        <i class="fas fa-bell"></i><span class="punto" id="puntoNotif"></span>
+                    </button>
+                    <div class="menu-flotante" id="menuNotif" style="min-width: 300px;">
+                        <div class="menu-cab" style="display:flex; justify-content:space-between; align-items:center;">
+                            <strong>Notificaciones</strong>
+                        </div>
+                        <div id="listaNotif" style="max-height: 320px; overflow-y: auto;">
+                            <div class="notif-vacia">No tienes notificaciones</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="envoltura">
+                    <button class="avatar-btn" id="btnUsuario" aria-label="Menú de tu cuenta" aria-haspopup="true">
+                        <span class="avatar" id="avatar">·</span>
+                    </button>
+                    <div class="menu-flotante" id="menuUsuario">
+                        <div class="menu-cab"><strong id="menuNombre">Viajero</strong><span id="menuCorreo"></span></div>
+                        <a class="menu-item" href="#cuenta"><i class="fas fa-user"></i> Mi cuenta</a>
+                        <a class="menu-item" href="/index.html"><i class="fas fa-compass"></i> Explorar Jalpan</a>
+                        <button class="menu-item peligro" type="button" data-salir><i class="fas fa-sign-out-alt"></i> Cerrar sesión</button>
                     </div>
                 </div>
             </div>
-        </nav>
+        </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="main">
-        <!-- Aviso para confirmar el correo (solo cuentas nuevas sin confirmar) -->
-        <div id="aviso-correo" style="display:none; align-items:center; gap:1rem; flex-wrap:wrap; background:#fffbeb; border:1px solid #fde68a; color:#92400e; border-radius:12px; padding:1rem 1.25rem; margin-bottom:1.5rem;">
-            <i class="fas fa-envelope" style="font-size:1.25rem;"></i>
-            <div style="flex:1; min-width:200px;"><strong>Confirma tu correo</strong><br><span style="font-size:.9rem;">Así podrás dejar opiniones. Te enviamos un código al registrarte.</span></div>
-            <button type="button" id="btn-confirmar-correo" style="background:#2563eb; color:#fff; border:none; border-radius:8px; padding:.6rem 1.1rem; font:inherit; font-weight:600; cursor:pointer;">Confirmar ahora</button>
+    <nav class="pestanas" aria-label="Secciones de tu panel">
+        <div class="pestanas-in">
+            <button class="pestana activa" data-vista="inicio"><i class="fas fa-home"></i> Inicio</button>
+            <button class="pestana" data-vista="favoritos"><i class="fas fa-heart"></i> Favoritos <span class="num" id="numFav">0</span></button>
+            <button class="pestana" data-vista="viajes"><i class="fas fa-route"></i> Mis viajes <span class="num" id="numViajes">0</span></button>
+            <button class="pestana" data-vista="opiniones"><i class="fas fa-star"></i> Opiniones <span class="num" id="numOpin">0</span></button>
+            <button class="pestana" data-vista="cuenta"><i class="fas fa-user"></i> Cuenta</button>
         </div>
-        <!-- Page Header -->
-        <div class="page-header">
-            <h1 class="page-title">Bienvenido a tu Panel Principal</h1>
-            <p class="page-subtitle">Explora tus lugares favoritos, revisa tus comentarios y descubre más destinos
-                increíbles.</p>
+    </nav>
+
+    <main>
+        <div class="aviso-correo" id="aviso-correo">
+            <i class="fas fa-envelope"></i>
+            <div><strong>Confirma tu correo</strong><br><span style="font-size:.9rem;">Así podrás dejar opiniones. Te enviamos un código de 6 dígitos al registrarte.</span></div>
+            <button type="button" class="btn primario" id="btn-confirmar-correo">Confirmar ahora</button>
         </div>
 
-        <!-- Dashboard Stats -->
-        <div class="dashboard-grid">
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-title">Mis Favoritos</div>
-                    <div class="stat-icon error">
-                        <i class="fas fa-heart"></i>
-                    </div>
-                </div>
-                <div class="stat-value" id="total-favorites">0</div>
-                <div class="stat-change">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span>Lugares que te encantaron</span>
-                </div>
-            </div>
+        <!-- ================= Inicio ================= -->
+        <section class="vista activa" id="vista-inicio">
+            <h1 id="saludo">Hola</h1>
+            <p class="sub">Aquí tienes todo lo de tu visita a Jalpan de Serra: lo que guardaste, tus viajes y tus opiniones.</p>
 
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-title">Opiniones</div>
-                    <div class="stat-icon warning">
-                        <i class="fas fa-star"></i>
-                    </div>
-                </div>
-                <div class="stat-value" id="total-reviews">0</div>
-                <div class="stat-change">
-                    <i class="fas fa-comment-dots"></i>
-                    <span>Tus experiencias publicadas</span>
+            <div class="bloque">
+                <div class="numeros">
+                    <button class="numero" data-ir="favoritos"><div class="numero-ico ico-rojo"><i class="fas fa-heart"></i></div><div><strong id="resFav">–</strong><span>Lugares guardados</span></div></button>
+                    <button class="numero" data-ir="viajes"><div class="numero-ico ico-morado"><i class="fas fa-route"></i></div><div><strong id="resViajes">–</strong><span>Viajes planeados</span></div></button>
+                    <button class="numero" data-ir="opiniones"><div class="numero-ico ico-ambar"><i class="fas fa-star"></i></div><div><strong id="resOpin">–</strong><span>Opiniones compartidas</span></div></button>
                 </div>
             </div>
 
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-title">Último Acceso</div>
-                    <div class="stat-icon primary">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                </div>
-                <div class="stat-value" style="font-size: 1.2rem;" id="last-access">Ahora</div>
-                <div class="stat-change">
-                    <i class="fas fa-history"></i>
-                    <span>Sesión activa</span>
+            <div class="bloque" id="bloquePasos">
+                <div class="pasos">
+                    <div class="titulo-fila" style="margin-bottom:0;"><h2>Primeros pasos</h2><span class="tarjeta-meta" id="textoPasos">0 de 5</span></div>
+                    <div class="progreso"><div id="barraPasos" style="width:0%"></div></div>
+                    <div class="paso hecho" data-paso="cuenta"><div class="paso-marca"><i class="fas fa-check"></i></div><div class="paso-txt"><strong>Crea tu cuenta</strong><span>¡Listo! Ya eres parte de Jalpan.</span></div></div>
+                    <div class="paso" data-paso="correo"><div class="paso-marca"><i class="fas fa-check"></i></div><div class="paso-txt"><strong>Confirma tu correo</strong><span>Lo necesitas para opinar sobre los lugares.</span></div><button class="btn chico" type="button" data-accion="confirmar">Confirmar</button></div>
+                    <div class="paso" data-paso="favorito"><div class="paso-marca"><i class="fas fa-check"></i></div><div class="paso-txt"><strong>Guarda tu primer lugar</strong><span>Toca el <i class="fas fa-heart" style="color:var(--rojo)"></i> en cualquier restaurante, hospedaje o experiencia.</span></div><a class="btn chico" href="/index.html">Explorar</a></div>
+                    <div class="paso" data-paso="viaje"><div class="paso-marca"><i class="fas fa-check"></i></div><div class="paso-txt"><strong>Planea tu viaje</strong><span>Crea un itinerario y ve agregando lugares por día.</span></div><button class="btn chico" type="button" data-accion="nuevo-viaje">Crear viaje</button></div>
+                    <div class="paso" data-paso="opinion"><div class="paso-marca"><i class="fas fa-check"></i></div><div class="paso-txt"><strong>Comparte tu experiencia</strong><span>Tu opinión ayuda a otros viajeros a decidir.</span></div><a class="btn chico" href="/index.html#restaurantes">Opinar</a></div>
                 </div>
             </div>
-        </div>
 
-        <!-- Actions Section -->
-        <div class="actions-section">
-            <div class="actions-header">
-                <h2 class="actions-title">¿Qué deseas hacer hoy?</h2>
+            <div class="bloque">
+                <div class="titulo-fila"><h2>¿Qué quieres hacer hoy?</h2></div>
+                <div class="explorar">
+                    <a class="destino" href="/index.html#restaurantes"><div class="numero-ico" style="background:#fff7ed;color:#c2410c;"><i class="fas fa-utensils"></i></div><strong>Comer</strong><span>Restaurantes, bares y cafés</span></a>
+                    <a class="destino" href="/hospedaje/hospedaje.html"><div class="numero-ico ico-azul"><i class="fas fa-bed"></i></div><strong>Dormir</strong><span>Hoteles y cabañas</span></a>
+                    <a class="destino" href="/experiencias.html"><div class="numero-ico ico-verde"><i class="fas fa-hiking"></i></div><strong>Vivir</strong><span>Experiencias y tours</span></a>
+                    <a class="destino" href="/mapa.html"><div class="numero-ico ico-morado"><i class="fas fa-map-marked-alt"></i></div><strong>Ubicar</strong><span>Mapa del pueblo</span></a>
+                    <a class="destino" href="/jalpan-de-serra.html"><div class="numero-ico ico-ambar"><i class="fas fa-landmark"></i></div><strong>Conocer</strong><span>Historia y tradiciones</span></a>
+                </div>
             </div>
 
-            <div class="actions-grid">
-                <!-- Explorar -->
-                <a href="/index.html" class="action-card">
-                    <div class="action-icon explore">
-                        <i class="fas fa-compass"></i>
-                    </div>
-                    <div class="action-title">Explorar Destinos</div>
-                    <div class="action-description">Volver al mapa y encontrar más lugares para visitar</div>
-                </a>
-
-                <!-- Ver Favoritos -->
-                <a href="#favoritos-section" class="action-card">
-                    <div class="action-icon favorites">
-                        <i class="fas fa-heart"></i>
-                    </div>
-                    <div class="action-title">Ver Favoritos</div>
-                    <div class="action-description">Revive tus lugares y platillos que más te gustaron</div>
-                </a>
-
-                <!-- Mis Reseñas -->
-                <a href="#opiniones-section" class="action-card">
-                    <div class="action-icon reviews">
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <div class="action-title">Mis Opiniones</div>
-                    <div class="action-description">Revisa los comentarios que has dejado públicos</div>
-                </a>
-
-                <!-- Mis Itinerarios -->
-                <a href="#itinerarios-section" class="action-card">
-                    <div class="action-icon" style="background: #8b5cf6; color: white;">
-                        <i class="fas fa-route"></i>
-                    </div>
-                    <div class="action-title">Mis Itinerarios</div>
-                    <div class="action-description">Organiza tus viajes y rutas personalizadas</div>
-                </a>
-
-                <!-- Mi Perfil -->
-                <a href="#perfil-section" class="action-card">
-                    <div class="action-icon profile">
-                        <i class="fas fa-user-cog"></i>
-                    </div>
-                    <div class="action-title">Mi Cuenta</div>
-                    <div class="action-description">Ajusta tu nombre, correo u opciones de la plataforma</div>
-                </a>
+            <div class="bloque">
+                <div class="titulo-fila"><h2>Guardados recientemente</h2><button class="enlace" data-ir="favoritos">Ver todos</button></div>
+                <div class="rejilla" id="favRecientes"><div class="esqueleto"></div></div>
             </div>
-        </div>
+        </section>
 
-        <!-- Favorites Section -->
-        <div class="actions-section" id="favoritos-section">
-            <div class="actions-header" style="margin-top: 2rem;">
-                <h2 class="actions-title"><i class="fas fa-heart text-danger"></i> Tus Lugares Favoritos</h2>
+        <!-- ================= Favoritos ================= -->
+        <section class="vista" id="vista-favoritos">
+            <h1>Favoritos</h1>
+            <p class="sub">Los lugares que guardaste con el <i class="fas fa-heart" style="color:var(--rojo)"></i>. Tócalos para volver a verlos.</p>
+            <div class="chips" id="chipsFav">
+                <button class="chip activa" data-valor="">Todos</button>
+                <button class="chip" data-valor="comida"><i class="fas fa-utensils"></i> Comida</button>
+                <button class="chip" data-valor="hospedaje"><i class="fas fa-bed"></i> Hospedaje</button>
+                <button class="chip" data-valor="experiencia"><i class="fas fa-hiking"></i> Experiencias</button>
             </div>
+            <div class="rejilla" id="listaFav"><div class="esqueleto"></div></div>
+        </section>
 
-            <div class="dashboard-grid" id="favorites-grid" style="margin-top: 1rem;">
-                <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text" style="margin-top:0.5rem"></div><div class="skeleton-text short"></div></div>
-                <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text" style="margin-top:0.5rem"></div><div class="skeleton-text short"></div></div>
-                <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text" style="margin-top:0.5rem"></div><div class="skeleton-text short"></div></div>
+        <!-- ================= Mis viajes ================= -->
+        <section class="vista" id="vista-viajes">
+            <div class="titulo-fila" style="margin-bottom:6px;">
+                <h1 style="margin:0;">Mis viajes</h1>
+                <button class="btn primario" type="button" data-accion="nuevo-viaje"><i class="fas fa-plus"></i> Nuevo viaje</button>
             </div>
-        </div>
+            <p class="sub">Organiza tu visita por días.</p>
+            <div class="nota"><i class="fas fa-lightbulb"></i><div>Crea un viaje y después, en la página de cada lugar, usa el botón <strong>«Agregar a Itinerario»</strong> para sumarlo al día que quieras.</div></div>
+            <div class="rejilla" id="listaViajes"><div class="esqueleto"></div></div>
+        </section>
 
-        <!-- Itinerarios Section -->
-        <div class="actions-section" id="itinerarios-section">
-            <div class="actions-header" style="margin-top: 2rem; display: flex; justify-content: space-between; align-items: center;">
-                <h2 class="actions-title" style="color: #8b5cf6;"><i class="fas fa-route"></i> Mis Itinerarios</h2>
-                <button onclick="mostrarModalNuevoItinerario()" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem; border-radius: 20px; background: #8b5cf6;">
-                    <i class="fas fa-plus"></i> Crear Itinerario
-                </button>
-            </div>
+        <!-- ================= Opiniones ================= -->
+        <section class="vista" id="vista-opiniones">
+            <h1>Mis opiniones</h1>
+            <p class="sub">Lo que has compartido sobre los lugares que visitaste.</p>
+            <p class="explica-estado"><span class="estado revision"><i class="fas fa-clock"></i> En revisión</span> significa que el equipo de turismo la está revisando; se publica en cuanto la aprueban.</p>
+            <div class="opiniones" id="listaOpin"><div class="esqueleto"></div></div>
+        </section>
 
-            <div class="dashboard-grid" id="itinerarios-grid" style="margin-top: 1rem;">
-                <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text" style="margin-top:0.5rem"></div><div class="skeleton-text short"></div></div>
-                <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text" style="margin-top:0.5rem"></div><div class="skeleton-text short"></div></div>
-                <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text" style="margin-top:0.5rem"></div><div class="skeleton-text short"></div></div>
+        <!-- ================= Cuenta ================= -->
+        <section class="vista" id="vista-cuenta">
+            <h1>Mi cuenta</h1>
+            <p class="sub">Tus datos y tu sesión.</p>
+            <div class="cuenta">
+                <div class="caja">
+                    <h2>Tus datos</h2>
+                    <p class="sub">Así te verán los demás viajeros en tus opiniones.</p>
+                    <form id="profile-form">
+                        <div class="campo"><label for="profile-name">Nombre</label><input type="text" id="profile-name" required maxlength="60" autocomplete="name"></div>
+                        <div class="campo"><label for="profile-email">Correo electrónico</label><input type="email" id="profile-email" required autocomplete="email"><small>Si lo cambias, tendrás que confirmarlo de nuevo.</small></div>
+                        <div class="campo"><label for="profile-password">Nueva contraseña <span style="color:var(--gris); font-weight:400;">(opcional)</span></label><input type="password" id="profile-password" minlength="6" autocomplete="new-password" placeholder="Déjala vacía para no cambiarla"></div>
+                        <button type="submit" class="btn primario"><i class="fas fa-check"></i> Guardar cambios</button>
+                    </form>
+                </div>
+                <div class="caja">
+                    <h2>Resumen</h2>
+                    <p class="sub">Información de tu cuenta.</p>
+                    <div class="dato"><span>Correo</span><strong id="datoCorreo">–</strong></div>
+                    <div class="dato"><span>Estado del correo</span><strong id="datoVerif">–</strong></div>
+                    <div class="dato"><span>Miembro desde</span><strong id="datoDesde">–</strong></div>
+                    <button class="btn peligro" type="button" data-salir style="width:100%; margin-top:16px;"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</button>
+                </div>
             </div>
-        </div>
-
-        <!-- Mis Opiniones Section -->
-        <div class="actions-section" id="opiniones-section">
-            <div class="actions-header" style="margin-top: 2rem;">
-                <h2 class="actions-title"><i class="fas fa-star text-warning"></i> Mis Opiniones</h2>
-            </div>
-
-            <div id="reviews-list" class="dashboard-grid" style="margin-top: 1rem;">
-                <div class="skeleton-card"><div class="skeleton-text"></div><div class="skeleton-text short" style="margin-top:0.5rem"></div><div class="skeleton-text"></div></div>
-                <div class="skeleton-card"><div class="skeleton-text"></div><div class="skeleton-text short" style="margin-top:0.5rem"></div><div class="skeleton-text"></div></div>
-                <div class="skeleton-card"><div class="skeleton-text"></div><div class="skeleton-text short" style="margin-top:0.5rem"></div><div class="skeleton-text"></div></div>
-            </div>
-        </div>
-
-        <!-- Mi Cuenta Section -->
-        <div class="actions-section" id="perfil-section">
-            <div class="actions-header" style="margin-top: 2rem;">
-                <h2 class="actions-title"><i class="fas fa-user-cog text-primary"></i> Mi Cuenta</h2>
-            </div>
-
-            <div
-                style="margin-top: 1rem; background: var(--white); padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);">
-                <form id="profile-form" onsubmit="updateProfile(event)">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                        <div style="margin-bottom: 1rem; grid-column: 1/-1;">
-                            <label for="profile-name"
-                                style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--gray-700);">Nombre
-                                Completo</label>
-                            <input type="text" id="profile-name" required
-                                style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: var(--radius-md); font-family: inherit;">
-                        </div>
-                        <div style="margin-bottom: 1rem; grid-column: 1/-1;">
-                            <label for="profile-email"
-                                style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--gray-700);">Correo
-                                Electrónico</label>
-                            <input type="email" id="profile-email" required
-                                style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: var(--radius-md); font-family: inherit;">
-                        </div>
-                        <div style="margin-bottom: 1rem; grid-column: 1/-1;">
-                            <label for="profile-password"
-                                style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--gray-700);">Nueva
-                                Contraseña (Opcional)</label>
-                            <input type="password" id="profile-password"
-                                placeholder="Déjalo en blanco para no cambiarla"
-                                style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: var(--radius-md); font-family: inherit;">
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary"
-                        style="margin-top: 1rem; padding: 0.75rem 2rem; border: none; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
-                        <i class="fas fa-save"></i> Guardar Cambios
-                    </button>
-                </form>
-            </div>
-        </div>
+        </section>
     </main>
 
-    <!-- Modal Nuevo Itinerario -->
-    <div id="modal-itinerario" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
-        <div style="background: white; padding: 2rem; border-radius: var(--radius-lg); width: 90%; max-width: 400px; box-shadow: var(--shadow-xl);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                <h3><i class="fas fa-route" style="color: #8b5cf6;"></i> Nuevo Itinerario</h3>
-                <button onclick="ocultarModalNuevoItinerario()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--gray-500);"><i class="fas fa-times"></i></button>
-            </div>
-            <form id="form-itinerario" onsubmit="crearItinerario(event)">
-                <div style="margin-bottom: 1rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Nombre de tu viaje</label>
-                    <input type="text" id="itinerario-nombre" required placeholder="Ej. Fin de semana en Jalpan" style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: var(--radius-md);">
-                </div>
-                <div style="margin-bottom: 1rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Descripción (Opcional)</label>
-                    <textarea id="itinerario-descripcion" rows="3" placeholder="Ej. Viaje familiar con mascotas..." style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: var(--radius-md); font-family: inherit; resize: none;"></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%; background: #8b5cf6; border-radius: var(--radius-md); padding: 0.75rem;">Guardar Itinerario</button>
+    <!-- Nuevo viaje -->
+    <div class="fondo-modal" id="modalViaje" role="dialog" aria-modal="true" aria-labelledby="tituloModalViaje">
+        <div class="modal">
+            <div class="modal-cab"><h2 id="tituloModalViaje"><i class="fas fa-route" style="color:var(--morado)"></i> Nuevo viaje</h2><button class="icono-btn" type="button" data-cerrar aria-label="Cerrar"><i class="fas fa-times"></i></button></div>
+            <form class="modal-cuerpo" id="form-itinerario">
+                <div class="campo"><label for="itinerario-nombre">¿Cómo se llama tu viaje?</label><input type="text" id="itinerario-nombre" required maxlength="80" placeholder="Ej. Fin de semana en Jalpan"></div>
+                <div class="campo"><label for="itinerario-descripcion">Notas <span style="color:var(--gris); font-weight:400;">(opcional)</span></label><textarea id="itinerario-descripcion" rows="3" maxlength="300" placeholder="Ej. Viaje familiar, vamos con mascotas" style="resize:none;"></textarea></div>
+                <button type="submit" class="btn primario" style="width:100%;">Crear viaje</button>
             </form>
         </div>
     </div>
 
-    <!-- Modal Detalle Itinerario -->
-    <div id="modal-detalle-itinerario" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
-        <div style="background: white; border-radius: var(--radius-lg); width: 90%; max-width: 600px; height: 80vh; max-height: 800px; box-shadow: var(--shadow-xl); display: flex; flex-direction: column;">
-            <div style="padding: 1.5rem; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center;  background: #f8fafc; border-top-left-radius: inherit; border-top-right-radius: inherit;">
-                <h3 id="detalle-itinerario-titulo" style="font-size: 1.2rem; color: #8b5cf6; margin: 0;"></h3>
-                <button onclick="ocultarModalDetalleItinerario()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--gray-500); padding: 0.5rem;"><i class="fas fa-times"></i></button>
-            </div>
-            <div id="detalle-itinerario-content" style="padding: 1.5rem; overflow-y: auto; flex: 1;">
-                <!-- Dinámico -->
-            </div>
+    <!-- Detalle de viaje -->
+    <div class="fondo-modal" id="modalDetalle" role="dialog" aria-modal="true" aria-labelledby="detalle-itinerario-titulo">
+        <div class="modal ancho">
+            <div class="modal-cab"><h2 id="detalle-itinerario-titulo" style="color:var(--morado)"></h2><button class="icono-btn" type="button" data-cerrar aria-label="Cerrar"><i class="fas fa-times"></i></button></div>
+            <div class="modal-cuerpo" id="detalle-itinerario-content"></div>
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="/js/i18n.js"></script>
+    <div class="aviso" id="aviso" role="status" aria-live="polite"></div>
+
     <script>
-        const API_BASE = window.location.origin + '/api';
-        let currentUser = null;
+    (function () {
+        'use strict';
+        const API = window.location.origin + '/api';
+        const token = localStorage.getItem('authToken');
+        const $ = (id) => document.getElementById(id);
+        const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const cabeceras = (json) => Object.assign({ 'Authorization': 'Bearer ' + token }, json ? { 'Content-Type': 'application/json' } : {});
+        const datos = { usuario: null, favoritos: [], viajes: [], opiniones: [], filtroFav: '' };
 
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
-
-            const icon = type === 'success' ? 'fa-check-circle' :
-                type === 'error' ? 'fa-exclamation-circle' :
-                    type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle';
-
-            notification.innerHTML = `
-                <i class="fas ${icon}"></i>
-                <span class="notification-message">${message}</span>
-                <button class="notification-close">
-                    <i class="fas fa-times"></i>
-                </button>
-            `;
-
-            document.body.appendChild(notification);
-            setTimeout(() => notification.classList.add('show'), 100);
-
-            setTimeout(() => {
-                notification.classList.remove('show');
-                setTimeout(() => {
-                    if (document.body.contains(notification)) document.body.removeChild(notification);
-                }, 300);
-            }, 5000);
-
-            notification.querySelector('.notification-close').onclick = () => {
-                notification.classList.remove('show');
-                setTimeout(() => {
-                    if (document.body.contains(notification)) document.body.removeChild(notification);
-                }, 300);
-            };
-        }
-
-        function mostrarAvisoCorreo(usuario) {
-            const aviso = document.getElementById('aviso-correo');
-            if (!aviso || !usuario) return;
-            // Mantener al día lo que guardó el login
-            try {
-                const guardado = JSON.parse(localStorage.getItem('currentUser') || '{}');
-                guardado.emailVerificado = usuario.emailVerificado !== false;
-                if (!guardado.email) guardado.email = usuario.email;
-                localStorage.setItem('currentUser', JSON.stringify(guardado));
-            } catch (e) { /* ignorar */ }
-            aviso.style.display = usuario.emailVerificado === false ? 'flex' : 'none';
-            document.getElementById('btn-confirmar-correo').onclick = () => {
-                if (window.AccesoResena) AccesoResena.verificar(() => {
-                    aviso.style.display = 'none';
-                    showNotification('¡Correo confirmado! Ya puedes opinar.', 'success');
-                });
-            };
-        }
-
-        async function checkAuth() {
-            const token = localStorage.getItem('authToken');
-
-            if (!token) {
-                showNotification('No has iniciado sesión', 'error');
-                setTimeout(() => { window.location.href = '/login.html'; }, 2000);
-                return;
-            }
-
-            try {
-                // Utiliza la nueva API dual de login/perfil o los tokens guardados
-                const response = await fetch(`${API_BASE}/auth/user/profile`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                const json = await response.json().catch(() => ({}));
-
-                if (response.ok) {
-                    currentUser = json.data;
-                    updateUserInterface();
-                    mostrarAvisoCorreo(currentUser);
-                    showNotification(`¡Bienvenido a tu panel turístico, ${currentUser.nombre}!`, 'success');
-
-                    // Cargar los favoritos
-                    loadFavorites();
-
-                    // Cargar notificaciones
-                    loadNotifications();
-
-                    // Cargar reseñas hechas por el usuario
-                    loadReviews();
-
-                    // Cargar itinerarios
-                    loadItinerarios();
-                } else {
-                    localStorage.removeItem('authToken');
-                    localStorage.removeItem('currentUser');
-                    showNotification('Sesión expirada o credenciales inválidas', 'warning');
-                    setTimeout(() => { window.location.href = '/login.html'; }, 2000);
-                }
-            } catch (error) {
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('currentUser');
-                showNotification('Error verificando sesión, redirigiendo...', 'warning');
-                setTimeout(() => { window.location.href = '/login.html'; }, 2000);
-            }
-        }
-
-        function updateUserInterface() {
-            if (!currentUser) return;
-            
-            // 1. Actualizar NavDinámico (Reemplazando el navbar de main.js)
-            const nav = document.getElementById('navbar-actions');
-            if(nav) {
-                const nombreMostrar = currentUser.nombre ? currentUser.nombre.split(' ')[0] : 'Usuario';
-                const iniciales = (currentUser.nombre?.charAt(0) || 'T').toUpperCase() + (currentUser.apellido?.charAt(0) || '').toUpperCase();
-                const badgeColor = 'var(--primary)';
-                
-                const notificationsHtml = `
-                    <div class="notifications-wrapper profile-menu-container" style="margin-right:0.5rem; display:flex; align-items:center;">
-                        <button class="notification-btn" id="nav-notification-btn" title="Notificaciones" style="background:none;border:none;color:var(--gray-600);font-size:1.2rem;cursor:pointer;position:relative;padding:0.4rem;transition:all 0.2s;" onclick="document.getElementById('nav-notifications-dropdown').classList.toggle('show'); event.stopPropagation();">
-                            <i class="fas fa-bell"></i>
-                            <span id="nav-notification-badge" style="display:none;position:absolute;top:-2px;right:-2px;background:var(--error);color:white;font-size:0.6rem;padding:0.15rem 0.35rem;border-radius:50%;font-weight:bold; border:2px solid white;">0</span>
-                        </button>
-                        <div class="profile-dropdown" id="nav-notifications-dropdown" style="right:-10px; width:280px; transform-origin: top right;">
-                            <div class="profile-dropdown-header" style="justify-content:space-between; padding:1rem;">
-                                <span style="font-weight:600; font-size:0.95rem; color:var(--gray-800);">Notificaciones</span>
-                                <span style="font-size:0.75rem; color:var(--primary); cursor:pointer; font-weight:500;" onclick="marcarTodasLeidas()">Marcar leídas</span>
-                            </div>
-                            <div class="profile-dropdown-body" id="nav-notifications-list" style="max-height:300px; overflow-y:auto; padding:0;">
-                                <div style="padding:2rem 1rem; text-align:center; color:var(--gray-500); font-size:0.85rem;">
-                                    <i class="far fa-bell-slash" style="font-size:2rem; margin-bottom:0.5rem; opacity:0.5; display:block;"></i>
-                                    No tienes notificaciones nuevas
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                const buttonHtml = `
-                    <div class="profile-menu-container">
-                        <button class="profile-menu-btn" style="background-color: ${badgeColor};" onclick="document.getElementById('profile-dropdown-main').classList.toggle('show'); event.stopPropagation();">
-                            <i class="fas fa-user-circle"></i> <span class="mobile-hide">${nombreMostrar}</span> <i class="fas fa-chevron-down" style="font-size: 0.8em; margin-left: 4px;"></i>
-                        </button>
-                        <div class="profile-dropdown" id="profile-dropdown-main">
-                            <div class="profile-dropdown-header">
-                                <div class="profile-avatar" style="background-color: ${badgeColor};">${iniciales}</div>
-                                <div class="profile-info">
-                                    <div class="profile-name">${currentUser.nombre} ${currentUser.apellido || ''}</div>
-                                    <div class="profile-role">Turista</div>
-                                </div>
-                            </div>
-                            <div class="profile-dropdown-body">
-                                <a href="#favoritos-section" class="profile-dropdown-link"><i class="fas fa-heart"></i> Mis Favoritos</a>
-                                <a href="#opiniones-section" class="profile-dropdown-link"><i class="fas fa-star"></i> Mis Opiniones</a>
-                                <div class="dropdown-divider"></div>
-                                <a href="#" onclick="localStorage.removeItem('authToken'); localStorage.removeItem('currentUser'); window.location.href='/login.html'; return false;" class="profile-dropdown-link text-danger"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                nav.innerHTML = `
-                    <div style="display:flex; align-items:center;">
-                        ${notificationsHtml}
-                        ${buttonHtml}
-                    </div>
-                `;
-            }
-
-            const now = new Date();
-            if(document.getElementById('last-access')) document.getElementById('last-access').textContent = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-
-            // Rellenar formulario de perfil
-            const profileName = document.getElementById('profile-name');
-            const profileEmail = document.getElementById('profile-email');
-            if (profileName) profileName.value = currentUser.nombre || '';
-            if (profileEmail) profileEmail.value = currentUser.email || '';
-        }
-
-        async function loadNotifications() {
-            try {
-                const token = localStorage.getItem('authToken');
-                const res = await fetch(`${API_BASE}/user/notifications`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const json = await res.json();
-
-                if (json.success && json.data) {
-                    const notifs = json.data;
-                    const unread = notifs.filter(n => !n.leida);
-
-                    const badge = document.getElementById('nav-notification-badge');
-                    if(badge) {
-                        if (unread.length > 0) {
-                            badge.textContent = unread.length;
-                            badge.style.display = 'inline-block';
-                        } else {
-                            badge.style.display = 'none';
-                        }
-                    }
-
-                    const list = document.getElementById('nav-notifications-list');
-                    if(list) {
-                        if (notifs.length === 0) {
-                            list.innerHTML = `
-                            <div style="padding:2rem 1rem; text-align:center; color:var(--gray-500); font-size:0.85rem;">
-                                <i class="far fa-bell-slash" style="font-size:2rem; margin-bottom:0.5rem; opacity:0.5; display:block;"></i>
-                                No tienes notificaciones nuevas
-                            </div>`;
-                            return;
-                        }
-
-                        list.innerHTML = notifs.map(n => `
-                            <div style="padding:1rem; background:${n.leida ? 'transparent' : 'var(--primary-light)'}; border-left:3px solid ${n.leida ? 'transparent' : 'var(--primary)'}; border-bottom:1px solid var(--gray-100); font-size:0.85rem; cursor:pointer;" onclick="markNotificationRead('${n._id}')">
-                                <p style="margin:0; color:var(--gray-800); font-weight:${n.leida ? '400' : '500'};">${n.mensaje}</p>
-                                <small style="color:var(--gray-500); font-size:0.75rem;">${new Date(n.fecha).toLocaleDateString()}</small>
-                            </div>
-                        `).join('');
-                    }
-                }
-            } catch (error) {
-                console.error('Error loading notifications:', error);
-            }
-        }
-
-        async function marcarTodasLeidas() {
-            // (Placeholder) si el endpoint existiera:
-            // await fetch(API_BASE + '/user/notifications/read-all', ...)
-            // Pero mientras tanto ocultamos el badge visualmente
-            const badge = document.getElementById('nav-notification-badge');
-            if(badge) badge.style.display = 'none';
-            loadNotifications();
-        }
-
-        async function markNotificationRead(id) {
-            try {
-                const token = localStorage.getItem('authToken');
-                await fetch(`${API_BASE}/user/notifications/${id}/read`, {
-                    method: 'PATCH',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                loadNotifications(); // Reload to update badge and styles
-            } catch (e) { console.error(e); }
-        }
-
-        // Close dropdowns when clicking outside
-        document.addEventListener('click', function(event) {
-            const dropdownProfile = document.getElementById('profile-dropdown-main');
-            const dropdownNotif = document.getElementById('nav-notifications-dropdown');
-            
-            const containerProfile = event.target.closest('.profile-menu-container');
-            
-            if (dropdownProfile && dropdownProfile.classList.contains('show') && (!containerProfile || containerProfile.querySelector('.profile-menu-btn') !== event.target.closest('.profile-menu-btn'))) {
-                dropdownProfile.classList.remove('show');
-            }
-            
-            if (dropdownNotif && dropdownNotif.classList.contains('show') && (!containerProfile || containerProfile.querySelector('.notification-btn') !== event.target.closest('.notification-btn'))) {
-                dropdownNotif.classList.remove('show');
-            }
-        });
-
-        async function loadFavorites() {
-            try {
-                const token = localStorage.getItem('authToken');
-                const res = await fetch(`${API_BASE}/user/favorites`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const json = await res.json();
-
-                const grid = document.getElementById('favorites-grid');
-                if (!json.success || !json.data) {
-                    grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--error);">Error al cargar los favoritos.</div>';
-                    return;
-                }
-
-                const favRestaurantes = json.data.restaurantes || [];
-                const favExperiencias = json.data.experiencias || [];
-                // Hoteles, cabañas y airbnb guardados desde la sección de hospedaje
-                let favHospedajes = [];
-                try {
-                    const rh = await fetch(`${API_BASE}/hospedaje/user/favorites`, { headers: { 'Authorization': `Bearer ${token}` } });
-                    const jh = await rh.json();
-                    if (jh.success && jh.data) favHospedajes = jh.data.hospedajes || [];
-                } catch (e) { console.warn('Favoritos de hospedaje no disponibles:', e.message); }
-                const totalFavs = favRestaurantes.length + favExperiencias.length + favHospedajes.length;
-
-                document.getElementById('total-favorites').textContent = totalFavs;
-
-                if (totalFavs === 0) {
-                    grid.innerHTML = `
-                        <div style="grid-column: 1/-1; text-align: center; color: var(--gray-500); padding: 2rem; background:var(--white); border-radius: var(--radius-lg);">
-                            <i class="far fa-heart" style="font-size: 3rem; color: var(--gray-300); margin-bottom: 1rem;"></i>
-                            <p>Aún no has guardado ningún lugar en tus favoritos.</p>
-                            <a href="/index.html" class="btn btn-primary" style="display:inline-block; margin-top:1rem; padding: 0.5rem 1rem; text-decoration:none;">Explorar lugares</a>
-                        </div>
-                    `;
-                    return;
-                }
-
-                let html = '';
-
-                // Restaurantes
-                if (favRestaurantes.length > 0) {
-                    html += favRestaurantes.map(r => {
-                        const imagen = (r.imagenes && r.imagenes[0]?.url) ? r.imagenes[0].url : '/images/PueblosMágicos.svg.png';
-                        const id = r._id || r.id;
-                        return `
-                            <div class="stat-card" style="padding: 1rem; cursor: pointer; position: relative;" onclick="window.location.href='/restaurante.html?id=${id}'">
-                                <img src="${imagen}" alt="${r.nombre}" style="width: 100%; height: 120px; object-fit: cover; border-radius: var(--radius-md); margin-bottom: 1rem;">
-                                <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--gray-800);">${r.nombre}</h3>
-                                <p style="font-size: 0.9rem; color: var(--gray-500); margin-bottom: 0.5rem;"><i class="fas fa-map-marker-alt"></i> ${r.direccion?.ciudad || 'Jalpan'}</p>
-                                <span style="display:inline-block; font-size: 0.8rem; background: var(--warning); color: var(--white); padding: 0.2rem 0.6rem; border-radius:1rem; text-transform:capitalize;"><i class="fas fa-utensils"></i> ${r.tipo || 'Lugar'}</span>
-                                <div class="card-action-overlay">
-                                    <button class="card-action-btn" title="Ver Lugar" onclick="event.stopPropagation(); window.location.href='/restaurante.html?id=${id}'"><i class="fas fa-eye"></i></button>
-                                </div>
-                            </div>
-                        `;
-                    }).join('');
-                }
-
-                // Experiencias
-                if (favExperiencias.length > 0) {
-                    html += favExperiencias.map(e => {
-                        const tour = e.tourId;
-                        if (!tour) return '';
-                        const imagen = (tour.imagenes && tour.imagenes[0]?.url) ? tour.imagenes[0].url : '/images/PueblosMágicos.svg.png';
-                        const id = tour._id || tour.id;
-                        return `
-                            <div class="stat-card" style="padding: 1rem; cursor: pointer; position: relative;" onclick="window.location.href='/experiencia.html?id=${id}'">
-                                <img src="${imagen}" alt="${tour.nombre?.es || 'Tour'}" style="width: 100%; height: 120px; object-fit: cover; border-radius: var(--radius-md); margin-bottom: 1rem;">
-                                <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--gray-800);">${tour.nombre?.es || 'Experiencia'}</h3>
-                                <p style="font-size: 0.9rem; color: var(--gray-500); margin-bottom: 0.5rem;"><i class="fas fa-bookmark" style="color:var(--primary);"></i> ${e.tipoMeGusta}</p>
-                                <span style="display:inline-block; font-size: 0.8rem; background: var(--primary); color: white; padding: 0.2rem 0.6rem; border-radius:1rem; text-transform:capitalize;"><i class="fas fa-map-marked-alt"></i> ${translateCategoria(tour.categoria) || 'Tour'}</span>
-                                <div class="card-action-overlay">
-                                    <button class="card-action-btn" title="Ver Tour" onclick="event.stopPropagation(); window.location.href='/experiencia.html?id=${id}'"><i class="fas fa-eye"></i></button>
-                                </div>
-                            </div>
-                        `;
-                    }).join('');
-                }
-
-                // Hospedajes
-                if (favHospedajes.length > 0) {
-                    html += favHospedajes.map(fav => {
-                        const cfg = TIPOS_HOSPEDAJE[fav.tipoHospedaje] || TIPOS_HOSPEDAJE.hotel;
-                        const id = escaparTexto(fav.hospedajeId?._id || fav.hospedajeId);
-                        const url = `/hospedaje/hospedaje-detalle.html?tipo=${encodeURIComponent(fav.tipoHospedaje || 'hotel')}&id=${id}`;
-                        const nombre = escaparTexto(fav.nombreHospedaje || cfg.label);
-                        return `
-                            <div class="stat-card" style="padding: 1rem; cursor: pointer; position: relative;" onclick="window.location.href='${url}'">
-                                <div style="width: 100%; height: 120px; border-radius: var(--radius-md); margin-bottom: 1rem; background: ${cfg.color}15; display:flex; align-items:center; justify-content:center;">
-                                    <i class="fas ${cfg.icon}" style="font-size: 2.5rem; color: ${cfg.color};"></i>
-                                </div>
-                                <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--gray-800);">${nombre}</h3>
-                                <p style="font-size: 0.9rem; color: var(--gray-500); margin-bottom: 0.5rem;"><i class="fas fa-map-marker-alt"></i> Jalpan</p>
-                                <span style="display:inline-block; font-size: 0.8rem; background: ${cfg.color}; color: white; padding: 0.2rem 0.6rem; border-radius:1rem;"><i class="fas ${cfg.icon}"></i> ${cfg.label}</span>
-                                <div class="card-action-overlay">
-                                    <button class="card-action-btn" title="Ver hospedaje" onclick="event.stopPropagation(); window.location.href='${url}'"><i class="fas fa-eye"></i></button>
-                                    <button class="card-action-btn" title="Quitar de favoritos" onclick="event.stopPropagation(); quitarFavoritoHospedaje('${id}')"><i class="fas fa-heart-broken"></i></button>
-                                </div>
-                            </div>
-                        `;
-                    }).join('');
-                }
-
-                grid.innerHTML = html;
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        }
-
-        const TIPOS_HOSPEDAJE = {
-            hotel: { icon: 'fa-hotel', color: '#2563eb', label: 'Hotel' },
-            cabana: { icon: 'fa-home', color: '#8b6914', label: 'Cabaña' },
-            airbnb: { icon: 'fa-building', color: '#ff5a5f', label: 'Airbnb' }
+        const CATEGORIAS = { aventura: 'Aventura', cultural: 'Cultural', naturaleza: 'Naturaleza', gastronomico: 'Gastronómico', gastronomica: 'Gastronómica', ecoturismo: 'Ecoturismo', historico: 'Histórico', religioso: 'Religioso' };
+        const HOSPEDAJE = { hotel: { icono: 'fa-hotel', texto: 'Hotel' }, cabana: { icono: 'fa-home', texto: 'Cabaña' }, airbnb: { icono: 'fa-building', texto: 'Airbnb' } };
+        const AREA = {
+            comida: { clase: 'et-comida', icono: 'fa-utensils', color: '#fff7ed', tinta: '#c2410c' },
+            hospedaje: { clase: 'et-hospedaje', icono: 'fa-bed', color: '#eff6ff', tinta: '#2563eb' },
+            experiencia: { clase: 'et-experiencia', icono: 'fa-hiking', color: '#ecfdf5', tinta: '#059669' },
+            agencia: { clase: 'et-agencia', icono: 'fa-briefcase', color: '#ecfeff', tinta: '#0e7490' }
         };
 
-        function escaparTexto(t) {
-            return String(t == null ? '' : t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        // ---------- avisos ----------
+        let tAviso;
+        function avisar(texto, tipo) {
+            const a = $('aviso');
+            a.textContent = texto;
+            a.className = 'aviso visible' + (tipo ? ' ' + tipo : '');
+            clearTimeout(tAviso);
+            tAviso = setTimeout(() => { a.className = 'aviso'; }, 2800);
         }
+        // Compatibilidad con scripts que llaman a showNotification
+        window.showNotification = (m, t) => avisar(m, t === 'success' ? 'exito' : t === 'error' ? 'error' : '');
 
-        async function quitarFavoritoHospedaje(id) {
-            if (!confirm('¿Quitar este hospedaje de tus favoritos?')) return;
+        function salir() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('currentUser');
+            location.href = '/login.html';
+        }
+        document.querySelectorAll('[data-salir]').forEach((b) => b.addEventListener('click', salir));
+
+        // ---------- navegación ----------
+        const VISTAS = ['inicio', 'favoritos', 'viajes', 'opiniones', 'cuenta'];
+        const ANTIGUAS = { 'favoritos-section': 'favoritos', 'opiniones-section': 'opiniones', 'itinerarios-section': 'viajes', 'perfil-section': 'cuenta', itinerarios: 'viajes', perfil: 'cuenta' };
+        function vistaDeHash() {
+            const h = location.hash.replace('#', '');
+            return VISTAS.includes(h) ? h : (ANTIGUAS[h] || 'inicio');
+        }
+        function mostrar(vista) {
+            document.querySelectorAll('.vista').forEach((v) => v.classList.toggle('activa', v.id === 'vista-' + vista));
+            document.querySelectorAll('.pestana').forEach((p) => {
+                const activa = p.dataset.vista === vista;
+                p.classList.toggle('activa', activa);
+                if (activa) p.setAttribute('aria-current', 'page'); else p.removeAttribute('aria-current');
+            });
+            cerrarMenus();
+            window.scrollTo({ top: 0 });
+        }
+        function irA(vista) {
+            if (location.hash !== '#' + vista) history.pushState(null, '', '#' + vista);
+            mostrar(vista);
+        }
+        window.addEventListener('hashchange', () => mostrar(vistaDeHash()));
+        window.addEventListener('popstate', () => mostrar(vistaDeHash()));
+        document.addEventListener('click', (e) => {
+            const p = e.target.closest('[data-vista], [data-ir]');
+            if (p) { e.preventDefault(); irA(p.dataset.vista || p.dataset.ir); }
+        });
+
+        // ---------- menús del encabezado ----------
+        function cerrarMenus(excepto) {
+            ['menuNotif', 'menuUsuario'].forEach((id) => { if (id !== excepto) $(id).classList.remove('abierto'); });
+        }
+        $('btnNotif').addEventListener('click', (e) => { e.stopPropagation(); cerrarMenus('menuNotif'); $('menuNotif').classList.toggle('abierto'); });
+        $('btnUsuario').addEventListener('click', (e) => { e.stopPropagation(); cerrarMenus('menuUsuario'); $('menuUsuario').classList.toggle('abierto'); });
+        document.addEventListener('click', (e) => { if (!e.target.closest('.menu-flotante')) cerrarMenus(); });
+        $('menuUsuario').addEventListener('click', (e) => { if (e.target.closest('a')) cerrarMenus(); });
+
+        // ---------- ventanas ----------
+        function abrirModal(id) { $(id).classList.add('abierto'); const i = $(id).querySelector('input'); if (i) setTimeout(() => i.focus(), 50); }
+        function cerrarModal(id) { $(id).classList.remove('abierto'); }
+        document.querySelectorAll('.fondo-modal').forEach((m) => {
+            m.addEventListener('click', (e) => { if (e.target === m || e.target.closest('[data-cerrar]')) cerrarModal(m.id); });
+        });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { document.querySelectorAll('.fondo-modal.abierto').forEach((m) => cerrarModal(m.id)); cerrarMenus(); } });
+        document.addEventListener('click', (e) => {
+            const b = e.target.closest('[data-accion]');
+            if (!b) return;
+            if (b.dataset.accion === 'nuevo-viaje') abrirModal('modalViaje');
+            if (b.dataset.accion === 'confirmar') confirmarCorreo();
+        });
+
+        // ---------- sesión ----------
+        async function iniciar() {
+            if (!token) { location.href = '/login.html'; return; }
             try {
-                const res = await fetch(`${API_BASE}/hospedaje/user/favorites/${id}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
-                });
+                const res = await fetch(API + '/auth/user/profile', { headers: cabeceras() });
                 const json = await res.json().catch(() => ({}));
-                if (res.ok && json.success !== false) {
-                    showNotification('Eliminado de favoritos', 'success');
-                    loadFavorites();
-                } else {
-                    showNotification(json.message || 'No se pudo quitar de favoritos', 'error');
-                }
+                if (!res.ok || !json.data) throw new Error('sesión');
+                datos.usuario = json.data;
             } catch (e) {
-                showNotification('No se pudo quitar de favoritos', 'error');
-            }
-        }
-
-        async function loadReviews() {
-            try {
-                const token = localStorage.getItem('authToken');
-                const res = await fetch(`${API_BASE}/user/reviews`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const json = await res.json();
-
-                const list = document.getElementById('reviews-list');
-                if (!json.success || !json.data) {
-                    list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--error);">Error al cargar las reseñas.</div>';
-                    return;
-                }
-
-                let reviews = json.data;
-                // Reseñas de hoteles, cabañas y airbnb
-                try {
-                    const rh = await fetch(`${API_BASE}/hospedaje/user/reviews`, { headers: { 'Authorization': `Bearer ${token}` } });
-                    const jh = await rh.json();
-                    if (jh.success && Array.isArray(jh.data)) {
-                        reviews = reviews.concat(jh.data.filter(r => r.origen === 'local'));
-                        reviews.sort((a, b) => new Date(b.fechaCreacion) - new Date(a.fechaCreacion));
-                    }
-                } catch (e) { console.warn('Reseñas de hospedaje no disponibles:', e.message); }
-                document.getElementById('total-reviews').textContent = reviews.length;
-
-                if (reviews.length === 0) {
-                    list.innerHTML = `
-                        <div style="grid-column: 1/-1; text-align: center; color: var(--gray-500); padding: 2rem; background:var(--white); border-radius: var(--radius-lg);">
-                            <i class="far fa-star" style="font-size: 3rem; color: var(--gray-300); margin-bottom: 1rem;"></i>
-                            <p>Aún no has escrito ninguna opinión.</p>
-                            <a href="/index.html" class="btn btn-primary" style="display:inline-block; margin-top:1rem; padding: 0.5rem 1rem; text-decoration:none;">Explorar y Opinar</a>
-                        </div>
-                    `;
-                    return;
-                }
-
-                list.innerHTML = reviews.map(r => {
-                    const stars = Array(5).fill(0).map((_, i) =>
-                        `<i class="fas fa-star" style="color: ${i < r.rating ? 'var(--warning)' : 'var(--gray-300)'}; font-size: 0.9rem;"></i>`
-                    ).join('');
-
-                    let badgeColor, badgeIcon;
-                    if (r.tipoLugar === 'Restaurante') {
-                        badgeColor = '#f59e0b';
-                        badgeIcon = 'fa-utensils';
-                    } else if (r.tipoLugar === 'Agencia') {
-                        badgeColor = '#0ea5e9';
-                        badgeIcon = 'fa-briefcase';
-                    } else if (r.origen === 'local') { // Hotel, Cabaña o Airbnb
-                        const cfg = Object.values(TIPOS_HOSPEDAJE).find(c => c.label === r.tipoLugar) || TIPOS_HOSPEDAJE.hotel;
-                        badgeColor = cfg.color;
-                        badgeIcon = cfg.icon;
-                    } else { // Experiencia o Tour
-                        badgeColor = '#10b981';
-                        badgeIcon = 'fa-map-marked-alt';
-                    }
-
-                    const badge = `<span style="display:inline-flex; align-items:center; gap:0.3rem; font-size: 0.75rem; background: ${badgeColor}; color: white; padding: 0.2rem 0.6rem; border-radius:1rem; font-weight:500;"><i class="fas ${badgeIcon}"></i> ${r.tipoLugar}</span>`;
-
-                    const estadoBadge = r.estado === 'pendiente'
-                        ? '<span style="display:inline-block; margin-left:0.5rem; font-size: 0.75rem; background: var(--warning); color: white; padding: 0.2rem 0.6rem; border-radius:1rem;">Pendiente</span>'
-                        : '';
-
-                    let fotosHtml = '';
-                    if (r.fotos && r.fotos.length > 0) {
-                        fotosHtml = `<div style="display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.75rem;">
-                            ${r.fotos.map(f => `<img src="${f.url}" alt="Foto" style="width:60px; height:60px; object-fit:cover; border-radius:0.4rem; border:1px solid var(--gray-200);">`).join('')}
-                        </div>`;
-                    }
-
-                    let deleteData = '';
-                    if (r.origen === 'local') {
-                        deleteData = `data-tipo="hospedaje" data-id="${r._id}"`;
-                    } else if (r.tipoLugar === 'Restaurante') {
-                        deleteData = `data-tipo="restaurante" data-id="${r._id}"`;
-                    } else if (r.tipoLugar === 'Agencia') {
-                        deleteData = `data-tipo="agencia" data-agencia-id="${r.agenciaId}" data-id="${r._id}"`;
-                    } else {
-                        deleteData = `data-tipo="tour" data-tour-id="${r.tourId}" data-id="${r._id}"`;
-                    }
-
-                    return `
-                        <div style="background: var(--white); padding: 1.5rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); border-left: 4px solid ${badgeColor};">
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
-                                <div>
-                                    <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
-                                        <h3 style="margin: 0; font-size: 1.1rem; color: var(--gray-800); cursor: pointer;" onclick="window.location.href='${r.lugarUrl}'">${r.lugarNombre}</h3>
-                                        ${badge}${estadoBadge}
-                                    </div>
-                                    <div style="font-size: 0.85rem; color: var(--gray-500); margin-top: 0.3rem;">${new Date(r.fechaCreacion).toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
-                                </div>
-                                <div style="display:flex; align-items:center; gap:0.75rem;">
-                                    <div>${stars}</div>
-                                    <button onclick="deleteReview(this)" ${deleteData}
-                                        style="background:none; border:1px solid var(--gray-200); color:var(--gray-400); cursor:pointer; padding:0.4rem 0.5rem; border-radius:0.4rem; transition:all 0.2s; font-size:0.8rem;"
-                                        onmouseover="this.style.color='var(--error)'; this.style.borderColor='var(--error)'"
-                                        onmouseout="this.style.color='var(--gray-400)'; this.style.borderColor='var(--gray-200)'"
-                                        title="Eliminar reseña">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <p style="margin: 0.5rem 0 0 0; color: var(--gray-700); line-height: 1.5;">${r.comentario}</p>
-                            ${fotosHtml}
-                        </div>
-                    `;
-                }).join('');
-            } catch (error) {
-                console.error('Error al cargar reseñas:', error);
-            }
-        }
-
-        async function deleteReview(btn) {
-            const tipo = btn.dataset.tipo;
-            const id = btn.dataset.id;
-            const tourId = btn.dataset.tourId;
-            const agenciaId = btn.dataset.agenciaId;
-
-            if (!confirm('¿Estás seguro de que quieres eliminar esta reseña? Esta acción no se puede deshacer.')) return;
-
-            const token = localStorage.getItem('authToken');
-            let url = '';
-            if (tipo === 'hospedaje') {
-                url = `${API_BASE}/hospedaje/user/reviews/hospedaje/${id}`;
-            } else if (tipo === 'restaurante') {
-                url = `${API_BASE}/user/reviews/restaurante/${id}`;
-            } else if (tipo === 'agencia') {
-                url = `${API_BASE}/user/reviews/agencia/${agenciaId}/review/${id}`;
-            } else {
-                url = `${API_BASE}/user/reviews/tour/${tourId}/review/${id}`;
-            }
-
-            try {
-                const res = await fetch(url, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const json = await res.json();
-
-                if (json.success) {
-                    showNotification('Reseña eliminada correctamente', 'success');
-                    loadReviews();
-                } else {
-                    showNotification(json.message || 'Error al eliminar', 'error');
-                }
-            } catch (error) {
-                showNotification('Error de conexión al eliminar la reseña', 'error');
-            }
-        }
-
-        async function updateProfile(event) {
-            event.preventDefault();
-            const btn = event.target.querySelector('button[type="submit"]');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
-
-            const nombre = document.getElementById('profile-name').value;
-            const email = document.getElementById('profile-email').value;
-            const password = document.getElementById('profile-password').value;
-
-            const payload = { nombre, email };
-            if (password) payload.password = password;
-
-            try {
-                const token = localStorage.getItem('authToken');
-                const res = await fetch(`${API_BASE}/auth/user/profile`, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                });
-                const json = await res.json();
-
-                if (json.success) {
-                    showNotification('Perfil actualizado correctamente', 'success');
-                    currentUser = json.data;
-                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                    updateUserInterface();
-                    document.getElementById('profile-password').value = '';
-                } else {
-                    showNotification(json.message || 'Error al actualizar', 'error');
-                }
-            } catch (error) {
-                showNotification('Error de conexión', 'error');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-save"></i> Guardar Cambios';
-            }
-        }
-
-        function logout() {
-            if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
                 localStorage.removeItem('authToken');
                 localStorage.removeItem('currentUser');
-                showNotification('Sesión cerrada correctamente', 'info');
-                setTimeout(() => { window.location.href = '/login.html'; }, 1000);
+                avisar('Tu sesión terminó. Vuelve a iniciar sesión.', 'error');
+                setTimeout(() => { location.href = '/login.html'; }, 1500);
+                return;
             }
+            pintarUsuario();
+            mostrar(vistaDeHash());
+            await Promise.allSettled([cargarFavoritos(), cargarViajes(), cargarOpiniones()]);
+            cargarNotificaciones();
+            actualizarPasos();
         }
 
-        // --- Lógica de Itinerarios ---
-        async function loadItinerarios() {
+        function pintarUsuario() {
+            const u = datos.usuario;
+            const nombre = [u.nombre, u.apellido].filter(Boolean).join(' ') || 'Viajero';
+            $('saludo').textContent = 'Hola, ' + (u.nombre ? u.nombre.split(' ')[0] : 'viajero');
+            $('avatar').textContent = nombre.split(/\s+/).slice(0, 2).map((p) => p.charAt(0)).join('').toUpperCase();
+            $('menuNombre').textContent = nombre;
+            $('menuCorreo').textContent = u.email || '';
+            $('profile-name').value = u.nombre || '';
+            $('profile-email').value = u.email || '';
+            $('datoCorreo').textContent = u.email || '–';
+            const verificado = u.emailVerificado !== false;
+            $('datoVerif').innerHTML = verificado ? '<span style="color:var(--verde)"><i class="fas fa-check-circle"></i> Confirmado</span>' : '<button class="enlace" type="button" data-accion="confirmar">Confirmar ahora</button>';
+            const desde = u.fechaRegistro || u.createdAt;
+            $('datoDesde').textContent = desde ? new Date(desde).toLocaleDateString('es-MX', { month: 'long', year: 'numeric' }) : '–';
+            $('aviso-correo').style.display = verificado ? 'none' : 'flex';
             try {
-                const token = localStorage.getItem('authToken');
-                const res = await fetch(`${API_BASE}/itinerarios/me`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const json = await res.json();
-
-                const grid = document.getElementById('itinerarios-grid');
-                if (!json.success) {
-                    grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--error);">Error al cargar itinerarios.</div>';
-                    return;
-                }
-
-                const itinerarios = json.data;
-
-                if (itinerarios.length === 0) {
-                    grid.innerHTML = `
-                        <div style="grid-column: 1/-1; text-align: center; color: var(--gray-500); padding: 2rem; background:var(--white); border-radius: var(--radius-lg);">
-                            <i class="fas fa-route" style="font-size: 3rem; color: var(--gray-300); margin-bottom: 1rem;"></i>
-                            <p>Aún no tienes ningún itinerario creado.</p>
-                            <button onclick="mostrarModalNuevoItinerario()" class="btn btn-primary" style="display:inline-block; margin-top:1rem; padding: 0.5rem 1rem; text-decoration:none; background: #8b5cf6;">Crear mi primer viaje</button>
-                        </div>
-                    `;
-                    return;
-                }
-
-                grid.innerHTML = itinerarios.map(it => `
-                    <div style="background: var(--white); padding: 1.5rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); border-top: 4px solid #8b5cf6; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='none'" onclick="verDetalleItinerario('${it._id}')">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
-                            <h3 style="margin: 0; font-size: 1.1rem; color: var(--gray-800);">${it.nombre}</h3>
-                            <button onclick="event.stopPropagation(); eliminarItinerario('${it._id}')" style="background:none; border:none; color:var(--gray-400); cursor:pointer;" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
-                        </div>
-                        <p style="margin: 0.5rem 0 1rem 0; color: var(--gray-600); font-size: 0.9rem; line-height: 1.4;">${it.descripcion || 'Sin descripción'}</p>
-                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--gray-500);">
-                            <span><i class="far fa-calendar-alt"></i> ${it.dias ? it.dias.length : 0} Días</span>
-                            <span style="background: var(--gray-100); padding: 0.2rem 0.5rem; border-radius: 12px;">${it.estado}</span>
-                        </div>
-                    </div>
-                `).join('');
-
-            } catch (error) {
-                console.error(error);
-            }
+                const guardado = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                guardado.emailVerificado = verificado;
+                if (!guardado.email) guardado.email = u.email;
+                localStorage.setItem('currentUser', JSON.stringify(guardado));
+            } catch (e) { /* sin almacenamiento */ }
         }
 
-        function mostrarModalNuevoItinerario() {
-            document.getElementById('modal-itinerario').style.display = 'flex';
+        function confirmarCorreo() {
+            if (!window.AccesoResena) return;
+            AccesoResena.verificar(() => {
+                datos.usuario.emailVerificado = true;
+                pintarUsuario();
+                actualizarPasos();
+                avisar('¡Correo confirmado! Ya puedes opinar.', 'exito');
+            });
+        }
+        $('btn-confirmar-correo').addEventListener('click', confirmarCorreo);
+
+        function actualizarPasos() {
+            const hechos = {
+                cuenta: true,
+                correo: datos.usuario && datos.usuario.emailVerificado !== false,
+                favorito: datos.favoritos.length > 0,
+                viaje: datos.viajes.length > 0,
+                opinion: datos.opiniones.length > 0
+            };
+            let n = 0;
+            document.querySelectorAll('.paso').forEach((p) => {
+                const ok = !!hechos[p.dataset.paso];
+                p.classList.toggle('hecho', ok);
+                if (ok) n++;
+            });
+            $('textoPasos').textContent = n + ' de 5';
+            $('barraPasos').style.width = (n * 20) + '%';
+            $('bloquePasos').style.display = n === 5 ? 'none' : '';
         }
 
-        function ocultarModalNuevoItinerario() {
-            document.getElementById('modal-itinerario').style.display = 'none';
+        function contar() {
+            $('numFav').textContent = $('resFav').textContent = datos.favoritos.length;
+            $('numViajes').textContent = $('resViajes').textContent = datos.viajes.length;
+            $('numOpin').textContent = $('resOpin').textContent = datos.opiniones.length;
         }
 
-        async function crearItinerario(event) {
-            event.preventDefault();
-            const btn = event.target.querySelector('button[type="submit"]');
-            btn.disabled = true;
-            btn.innerHTML = 'Guardando...';
-
-            const nombre = document.getElementById('itinerario-nombre').value;
-            const descripcion = document.getElementById('itinerario-descripcion').value;
-            const token = localStorage.getItem('authToken');
-
+        // ---------- favoritos ----------
+        async function cargarFavoritos() {
+            const lista = [];
             try {
-                const res = await fetch(`${API_BASE}/itinerarios`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ nombre, descripcion })
-                });
+                const res = await fetch(API + '/user/favorites', { headers: cabeceras() });
                 const json = await res.json();
-
-                if (json.success) {
-                    showNotification('Itinerario creado exitosamente', 'success');
-                    ocultarModalNuevoItinerario();
-                    document.getElementById('form-itinerario').reset();
-                    loadItinerarios();
-                } else {
-                    showNotification(json.message || 'Error al crear', 'error');
-                }
-            } catch (err) {
-                showNotification('Error de conexión', 'error');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = 'Guardar Itinerario';
-            }
-        }
-
-        async function eliminarItinerario(id) {
-            if (!confirm('¿Seguro que quieres eliminar todo este itinerario?')) return;
-            const token = localStorage.getItem('authToken');
-            try {
-                const res = await fetch(`${API_BASE}/itinerarios/${id}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const json = await res.json();
-                if (json.success) {
-                    showNotification('Itinerario eliminado', 'success');
-                    loadItinerarios();
-                } else {
-                    showNotification('Error al eliminar', 'error');
-                }
-            } catch(e) { console.error(e); }
-        }
-
-        async function verDetalleItinerario(id) {
-            const token = localStorage.getItem('authToken');
-            try {
-                const res = await fetch(`${API_BASE}/itinerarios/${id}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const json = await res.json();
-                if (json.success) {
-                    const it = json.data;
-                    document.getElementById('detalle-itinerario-titulo').textContent = it.nombre;
-                    
-                    let html = `<p style="color: var(--gray-600); margin-bottom: 1.5rem;">${it.descripcion || ''}</p>`;
-                    
-                    if (!it.dias || it.dias.length === 0) {
-                        html += `<p style="text-align:center; color: var(--gray-500); margin-top:2rem;">Aún no has agregado lugares a este itinerario.</p>`;
-                    } else {
-                        it.dias.forEach(dia => {
-                            html += `<div style="margin-bottom: 2rem;">
-                                <h4 style="font-size: 1.1rem; color: var(--gray-800); margin-bottom: 1rem; border-bottom: 2px solid #8b5cf6; display: inline-block; padding-bottom: 0.2rem;">${dia.nombreDia}</h4>`;
-                            
-                            if (dia.actividades.length === 0) {
-                                html += `<p style="color: var(--gray-500); font-size: 0.9rem;">No hay actividades planeadas para este día.</p>`;
-                            } else {
-                                html += `<div style="display:flex; flex-direction:column; gap:0.75rem;" class="sortable-list" data-dia="${dia.nombreDia}">`;
-                                dia.actividades.forEach(act => {
-                                    // Determinar icono
-                                    let icon = 'fa-map-marker-alt';
-                                    if(act.tipoLugar === 'restaurante') icon = 'fa-utensils';
-                                    if(act.tipoLugar === 'hotel') icon = 'fa-bed';
-                                    if(act.tipoLugar === 'tour') icon = 'fa-map-marked-alt';
-                                    
-                                    html += `
-                                    <div class="itinerary-item" data-id="${act._id}" style="background: var(--gray-50); border: 1px solid var(--gray-200); padding: 1rem; border-radius: var(--radius-md); display:flex; gap: 1rem; cursor: grab;">
-                                        <div style="display: flex; align-items: center; color: var(--gray-400); cursor: grab;" class="drag-handle">
-                                            <i class="fas fa-grip-vertical"></i>
-                                        </div>
-                                        <div style="font-weight: 600; color: #8b5cf6; min-width: 60px;">${act.hora || '--:--'}</div>
-                                        <div style="flex:1;">
-                                            <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom: 0.25rem;">
-                                                <i class="fas ${icon}" style="color: var(--gray-500);"></i>
-                                                <span style="font-weight: 500; color: var(--gray-800); text-transform: capitalize;">${act.tipoLugar}</span>
-                                            </div>
-                                            <p style="margin:0; font-size:0.9rem; color: var(--gray-600);">${act.notas || ''}</p>
-                                        </div>
-                                        <button onclick="eliminarActividad('${it._id}', '${act._id}')" style="background:none; border:none; color:var(--gray-400); cursor:pointer;"><i class="fas fa-times"></i></button>
-                                    </div>`;
-                                });
-                                html += `</div>`;
-                            }
-                            html += `</div>`;
+                if (json.success && json.data) {
+                    (json.data.restaurantes || []).forEach((r) => {
+                        const id = r._id || r.id;
+                        lista.push({
+                            area: 'comida', id, nombre: r.nombre, etiqueta: r.tipo ? r.tipo.charAt(0).toUpperCase() + r.tipo.slice(1) : 'Restaurante',
+                            imagen: r.imagenes && r.imagenes[0] && r.imagenes[0].url, url: '/restaurante.html?id=' + encodeURIComponent(id),
+                            meta: (r.direccion && r.direccion.ciudad) || 'Jalpan de Serra'
                         });
-                    }
-
-                    document.getElementById('detalle-itinerario-content').innerHTML = html;
-                    document.getElementById('modal-detalle-itinerario').style.display = 'flex';
-
-                    // Inicializar SortableJS para Drag & Drop
-                    const sortables = document.querySelectorAll('.sortable-list');
-                    sortables.forEach(list => {
-                        Sortable.create(list, {
-                            handle: '.drag-handle',
-                            animation: 150,
-                            ghostClass: 'sortable-ghost',
-                            onEnd: async function(evt) {
-                                // Aquí se dispararía una petición al backend para guardar el nuevo orden
-                                // console.log('Actividad movida a índice: ', evt.newIndex);
-                                // showNotification('Orden del itinerario actualizado', 'info');
-                            }
+                    });
+                    (json.data.experiencias || []).forEach((e) => {
+                        const t = e.tourId;
+                        if (!t) return;
+                        const id = t._id || t.id;
+                        lista.push({
+                            area: 'experiencia', id, nombre: (t.nombre && (t.nombre.es || t.nombre)) || 'Experiencia',
+                            etiqueta: CATEGORIAS[t.categoria] || 'Experiencia', imagen: t.imagenes && t.imagenes[0] && t.imagenes[0].url,
+                            url: '/experiencia.html?id=' + encodeURIComponent(id), meta: e.tipoMeGusta && e.tipoMeGusta !== 'Favorito general' ? e.tipoMeGusta : 'Experiencia', tipoMeGusta: e.tipoMeGusta
                         });
                     });
                 }
-            } catch(e) { console.error(e); }
-        }
-
-        function ocultarModalDetalleItinerario() {
-            document.getElementById('modal-detalle-itinerario').style.display = 'none';
-        }
-
-        async function eliminarActividad(itinerarioId, actividadId) {
-            if(!confirm('¿Eliminar actividad?')) return;
-            const token = localStorage.getItem('authToken');
+            } catch (e) { console.warn('Favoritos no disponibles:', e.message); }
             try {
-                const res = await fetch(`${API_BASE}/itinerarios/${itinerarioId}/actividad/${actividadId}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
+                const res = await fetch(API + '/hospedaje/user/favorites', { headers: cabeceras() });
                 const json = await res.json();
-                if(json.success) {
-                    showNotification('Actividad eliminada', 'success');
-                    verDetalleItinerario(itinerarioId); // Recargar detalle
+                if (json.success && json.data) {
+                    (json.data.hospedajes || []).forEach((f) => {
+                        const tipo = HOSPEDAJE[f.tipoHospedaje] ? f.tipoHospedaje : 'hotel';
+                        const id = (f.hospedajeId && f.hospedajeId._id) || f.hospedajeId;
+                        lista.push({
+                            area: 'hospedaje', id, tipo, nombre: f.nombreHospedaje || HOSPEDAJE[tipo].texto, etiqueta: HOSPEDAJE[tipo].texto,
+                            icono: HOSPEDAJE[tipo].icono, url: '/hospedaje/hospedaje-detalle.html?tipo=' + tipo + '&id=' + encodeURIComponent(id), meta: 'Jalpan de Serra'
+                        });
+                    });
                 }
-            } catch(e) { console.error(e); }
+            } catch (e) { console.warn('Favoritos de hospedaje no disponibles:', e.message); }
+            datos.favoritos = lista;
+            contar();
+            pintarFavoritos();
         }
-        // --- Fin Lógica de Itinerarios ---
 
-        document.addEventListener('DOMContentLoaded', function () {
-            checkAuth();
-            const logoutBtn = document.getElementById('logout-btn');
-            if (logoutBtn) logoutBtn.addEventListener('click', logout);
+        function tarjetaFavorito(f, i) {
+            const a = AREA[f.area];
+            const foto = f.imagen
+                ? '<a class="tarjeta-foto" href="' + esc(f.url) + '" style="background-image:url(\'' + esc(f.imagen).replace(/'/g, '%27') + '\')" aria-label="Ver ' + esc(f.nombre) + '"></a>'
+                : '<a class="tarjeta-foto" href="' + esc(f.url) + '" style="background:' + a.color + '; color:' + a.tinta + ';" aria-label="Ver ' + esc(f.nombre) + '"><i class="fas ' + (f.icono || a.icono) + '"></i></a>';
+            return '<div class="tarjeta" style="position:relative;">' + foto +
+                '<button class="tarjeta-quitar" type="button" data-quitar="' + i + '" title="Quitar de favoritos" aria-label="Quitar ' + esc(f.nombre) + ' de favoritos"><i class="fas fa-heart"></i></button>' +
+                '<div class="tarjeta-cuerpo"><span class="etiqueta ' + a.clase + '"><i class="fas ' + (f.icono || a.icono) + '"></i> ' + esc(f.etiqueta) + '</span>' +
+                '<a class="tarjeta-nombre" href="' + esc(f.url) + '">' + esc(f.nombre) + '</a>' +
+                '<span class="tarjeta-meta"><i class="fas fa-map-marker-alt"></i> ' + esc(f.meta) + '</span></div></div>';
+        }
+
+        function vacio(icono, titulo, texto, boton) {
+            return '<div class="vacio"><i class="' + icono + '"></i><strong>' + titulo + '</strong><p>' + texto + '</p>' + (boton || '') + '</div>';
+        }
+
+        function pintarFavoritos() {
+            const f = datos.filtroFav;
+            const visibles = datos.favoritos.map((x, i) => [x, i]).filter(([x]) => !f || x.area === f);
+            $('listaFav').innerHTML = visibles.length
+                ? visibles.map(([x, i]) => tarjetaFavorito(x, i)).join('')
+                : datos.favoritos.length
+                    ? vacio('far fa-folder-open', 'Nada en esta categoría', 'Prueba con otra o explora más lugares.', '<a class="btn primario" href="/index.html">Explorar</a>')
+                    : vacio('far fa-heart', 'Aún no guardas lugares', 'Cuando veas un restaurante, hospedaje o experiencia que te guste, toca el corazón y aparecerá aquí.', '<a class="btn primario" href="/index.html"><i class="fas fa-compass"></i> Explorar Jalpan</a>');
+            const recientes = datos.favoritos.map((x, i) => [x, i]).slice(-3).reverse();
+            $('favRecientes').innerHTML = recientes.length
+                ? recientes.map(([x, i]) => tarjetaFavorito(x, i)).join('')
+                : vacio('far fa-heart', 'Todavía no guardas nada', 'Toca el corazón en los lugares que te gusten para tenerlos a la mano.', '<a class="btn" href="/index.html">Explorar</a>');
+        }
+
+        $('chipsFav').addEventListener('click', (e) => {
+            const c = e.target.closest('.chip');
+            if (!c) return;
+            $('chipsFav').querySelectorAll('.chip').forEach((x) => x.classList.toggle('activa', x === c));
+            datos.filtroFav = c.dataset.valor;
+            pintarFavoritos();
         });
+
+        document.addEventListener('click', async (e) => {
+            const b = e.target.closest('[data-quitar]');
+            if (!b) return;
+            const f = datos.favoritos[Number(b.dataset.quitar)];
+            if (!f || !confirm('¿Quitar «' + f.nombre + '» de tus favoritos?')) return;
+            b.disabled = true;
+            try {
+                let res;
+                if (f.area === 'hospedaje') res = await fetch(API + '/hospedaje/user/favorites/' + encodeURIComponent(f.id), { method: 'DELETE', headers: cabeceras() });
+                else if (f.area === 'experiencia') res = await fetch(API + '/user/tour-favorites/' + encodeURIComponent(f.id), { method: 'POST', headers: cabeceras(true), body: JSON.stringify({ tipoMeGusta: f.tipoMeGusta || 'Favorito general' }) });
+                else res = await fetch(API + '/user/favorites/' + encodeURIComponent(f.id), { method: 'POST', headers: cabeceras() });
+                const json = await res.json().catch(() => ({}));
+                if (!res.ok || json.success === false) throw new Error(json.message);
+                avisar('Quitado de tus favoritos', 'exito');
+                await cargarFavoritos();
+                actualizarPasos();
+            } catch (err) {
+                b.disabled = false;
+                avisar(err.message || 'No se pudo quitar de favoritos', 'error');
+            }
+        });
+
+        // ---------- viajes ----------
+        async function cargarViajes() {
+            try {
+                const res = await fetch(API + '/itinerarios/me', { headers: cabeceras() });
+                const json = await res.json();
+                datos.viajes = json.success && Array.isArray(json.data) ? json.data : [];
+                if (!json.success) throw new Error();
+            } catch (e) {
+                $('listaViajes').innerHTML = vacio('fas fa-exclamation-circle', 'No pudimos cargar tus viajes', 'Intenta de nuevo en un momento.');
+                contar();
+                return;
+            }
+            contar();
+            pintarViajes();
+        }
+
+        function pintarViajes() {
+            if (!datos.viajes.length) {
+                $('listaViajes').innerHTML = vacio('fas fa-route', 'Aún no planeas ningún viaje', 'Crea tu primer viaje y ve agregando los lugares que quieres visitar cada día.', '<button class="btn primario" type="button" data-accion="nuevo-viaje"><i class="fas fa-plus"></i> Crear mi primer viaje</button>');
+                return;
+            }
+            $('listaViajes').innerHTML = datos.viajes.map((v) => {
+                const dias = Array.isArray(v.dias) ? v.dias.length : 0;
+                const lugares = Array.isArray(v.dias) ? v.dias.reduce((s, d) => s + ((d.actividades && d.actividades.length) || 0), 0) : 0;
+                return '<div class="viaje" role="button" tabindex="0" data-viaje="' + esc(v._id) + '">' +
+                    '<div class="viaje-arriba"><div class="numero-ico ico-morado"><i class="fas fa-suitcase-rolling"></i></div>' +
+                    '<div class="viaje-nombre">' + esc(v.nombre) + '</div>' +
+                    '<button class="icono-quitar" type="button" data-borrar-viaje="' + esc(v._id) + '" title="Eliminar viaje" aria-label="Eliminar viaje ' + esc(v.nombre) + '"><i class="fas fa-trash-alt"></i></button></div>' +
+                    (v.descripcion ? '<p class="viaje-desc">' + esc(v.descripcion) + '</p>' : '') +
+                    '<div class="viaje-pie"><span><i class="far fa-calendar-alt"></i> ' + dias + (dias === 1 ? ' día' : ' días') + ' · ' + lugares + (lugares === 1 ? ' lugar' : ' lugares') + '</span><span style="color:var(--morado); font-weight:500;">Ver <i class="fas fa-chevron-right" style="font-size:.75rem;"></i></span></div></div>';
+            }).join('');
+        }
+
+        $('form-itinerario').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            try {
+                const res = await fetch(API + '/itinerarios', {
+                    method: 'POST', headers: cabeceras(true),
+                    body: JSON.stringify({ nombre: $('itinerario-nombre').value.trim(), descripcion: $('itinerario-descripcion').value.trim() })
+                });
+                const json = await res.json().catch(() => ({}));
+                if (!json.success) throw new Error(json.message);
+                avisar('¡Viaje creado!', 'exito');
+                cerrarModal('modalViaje');
+                e.target.reset();
+                await cargarViajes();
+                actualizarPasos();
+                irA('viajes');
+            } catch (err) {
+                avisar(err.message || 'No se pudo crear el viaje', 'error');
+            } finally { btn.disabled = false; }
+        });
+
+        document.addEventListener('click', async (e) => {
+            const borrar = e.target.closest('[data-borrar-viaje]');
+            if (borrar) {
+                e.stopPropagation();
+                if (!confirm('¿Eliminar este viaje y todo lo que tiene?')) return;
+                try {
+                    const res = await fetch(API + '/itinerarios/' + encodeURIComponent(borrar.dataset.borrarViaje), { method: 'DELETE', headers: cabeceras() });
+                    const json = await res.json().catch(() => ({}));
+                    if (!json.success) throw new Error();
+                    avisar('Viaje eliminado', 'exito');
+                    await cargarViajes();
+                    actualizarPasos();
+                } catch (err) { avisar('No se pudo eliminar el viaje', 'error'); }
+                return;
+            }
+            const tarjeta = e.target.closest('[data-viaje]');
+            if (tarjeta) verViaje(tarjeta.dataset.viaje);
+        });
+        document.addEventListener('keydown', (e) => {
+            const t = e.target.closest && e.target.closest('[data-viaje]');
+            if (t && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); verViaje(t.dataset.viaje); }
+        });
+
+        async function verViaje(id) {
+            try {
+                const res = await fetch(API + '/itinerarios/' + encodeURIComponent(id), { headers: cabeceras() });
+                const json = await res.json();
+                if (!json.success) throw new Error();
+                const v = json.data;
+                $('detalle-itinerario-titulo').textContent = v.nombre;
+                let html = v.descripcion ? '<p class="sub" style="margin-bottom:18px;">' + esc(v.descripcion) + '</p>' : '';
+                const dias = Array.isArray(v.dias) ? v.dias : [];
+                if (!dias.length || dias.every((d) => !d.actividades || !d.actividades.length)) {
+                    html += vacio('fas fa-map-signs', 'Tu viaje está vacío', 'Abre la página de un restaurante, hospedaje o experiencia y toca «Agregar a Itinerario».', '<a class="btn primario" href="/index.html">Buscar lugares</a>');
+                } else {
+                    dias.forEach((d) => {
+                        html += '<div class="dia"><h3>' + esc(d.nombreDia) + '</h3>';
+                        if (!d.actividades || !d.actividades.length) {
+                            html += '<p class="tarjeta-meta">Nada planeado para este día.</p>';
+                        } else {
+                            html += '<div class="lista-orden">';
+                            d.actividades.forEach((act) => {
+                                const icono = act.tipoLugar === 'restaurante' ? 'fa-utensils' : act.tipoLugar === 'hotel' ? 'fa-bed' : act.tipoLugar === 'tour' ? 'fa-hiking' : 'fa-map-marker-alt';
+                                html += '<div class="actividad"><span class="asa" title="Arrastra para ordenar"><i class="fas fa-grip-vertical"></i></span>' +
+                                    '<span class="actividad-hora">' + esc(act.hora || '--:--') + '</span>' +
+                                    '<div class="actividad-txt"><strong><i class="fas ' + icono + '" style="color:var(--gris)"></i> ' + esc(act.tipoLugar) + '</strong>' + (act.notas ? '<span>' + esc(act.notas) + '</span>' : '') + '</div>' +
+                                    '<button class="icono-quitar" type="button" data-quitar-act="' + esc(act._id) + '" data-de="' + esc(v._id) + '" aria-label="Quitar del viaje"><i class="fas fa-times"></i></button></div>';
+                            });
+                            html += '</div>';
+                        }
+                        html += '</div>';
+                    });
+                }
+                $('detalle-itinerario-content').innerHTML = html;
+                abrirModal('modalDetalle');
+                if (window.Sortable) document.querySelectorAll('.lista-orden').forEach((l) => Sortable.create(l, { handle: '.asa', animation: 150 }));
+            } catch (e) { avisar('No se pudo abrir el viaje', 'error'); }
+        }
+
+        document.addEventListener('click', async (e) => {
+            const b = e.target.closest('[data-quitar-act]');
+            if (!b || !confirm('¿Quitar este lugar del viaje?')) return;
+            try {
+                const res = await fetch(API + '/itinerarios/' + encodeURIComponent(b.dataset.de) + '/actividad/' + encodeURIComponent(b.dataset.quitarAct), { method: 'DELETE', headers: cabeceras() });
+                const json = await res.json().catch(() => ({}));
+                if (!json.success) throw new Error();
+                avisar('Lugar quitado del viaje', 'exito');
+                verViaje(b.dataset.de);
+                cargarViajes();
+            } catch (err) { avisar('No se pudo quitar', 'error'); }
+        });
+
+        // ---------- opiniones ----------
+        function areaDeOpinion(r) {
+            if (r.origen === 'local' || /^Hospedaje|Hotel|Cabaña|Airbnb/.test(r.tipoLugar || '')) return 'hospedaje';
+            if (r.tipoLugar === 'Restaurante') return 'comida';
+            if (r.tipoLugar === 'Agencia') return 'agencia';
+            return 'experiencia';
+        }
+
+        async function cargarOpiniones() {
+            const porId = new Map();
+            try {
+                const res = await fetch(API + '/user/reviews', { headers: cabeceras() });
+                const json = await res.json();
+                if (json.success && Array.isArray(json.data)) json.data.forEach((r) => porId.set(String(r._id), r));
+            } catch (e) { console.warn('Opiniones no disponibles:', e.message); }
+            try {
+                const res = await fetch(API + '/hospedaje/user/reviews', { headers: cabeceras() });
+                const json = await res.json();
+                // La versión de hospedaje trae el estado y el enlace correctos: reemplaza a la repetida
+                if (json.success && Array.isArray(json.data)) json.data.filter((r) => r.origen === 'local').forEach((r) => porId.set(String(r._id), r));
+            } catch (e) { console.warn('Opiniones de hospedaje no disponibles:', e.message); }
+            datos.opiniones = Array.from(porId.values()).sort((a, b) => new Date(b.fechaCreacion) - new Date(a.fechaCreacion));
+            contar();
+            pintarOpiniones();
+        }
+
+        function pintarOpiniones() {
+            if (!datos.opiniones.length) {
+                $('listaOpin').innerHTML = vacio('far fa-comment-dots', 'Aún no compartes opiniones', 'Después de visitar un lugar, entra a su página y toca «Escribir opinión». Tu experiencia ayuda a otros viajeros.', '<a class="btn primario" href="/index.html#restaurantes">Buscar un lugar</a>');
+                return;
+            }
+            $('listaOpin').innerHTML = datos.opiniones.map((r, i) => {
+                const a = AREA[areaDeOpinion(r)];
+                const n = Math.max(0, Math.min(5, Math.round(Number(r.rating) || 0)));
+                const estrellas = '<span class="estrellas" aria-label="' + n + ' de 5 estrellas">' + '★'.repeat(n) + '<span class="apagada">' + '★'.repeat(5 - n) + '</span></span>';
+                const estado = r.estado === 'pendiente' ? '<span class="estado revision"><i class="fas fa-clock"></i> En revisión</span>'
+                    : r.estado === 'rechazada' ? '<span class="estado rechazada"><i class="fas fa-eye-slash"></i> No publicada</span>'
+                    : '<span class="estado publicada"><i class="fas fa-check"></i> Publicada</span>';
+                const enlace = r.lugarUrl && r.lugarUrl !== '#' ? esc(r.lugarUrl) : null;
+                const fecha = r.fechaCreacion ? new Date(r.fechaCreacion).toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' }) : '';
+                const fotos = Array.isArray(r.fotos) && r.fotos.length ? '<div class="opinion-fotos">' + r.fotos.map((f) => '<img src="' + esc(f.url) + '" alt="Foto de tu opinión" loading="lazy">').join('') + '</div>' : '';
+                const respuesta = r.respuesta ? '<div class="respuesta"><strong><i class="fas fa-reply"></i> Respuesta del lugar</strong>' + esc(r.respuesta) + '</div>' : '';
+                return '<article class="opinion">' +
+                    '<div class="opinion-arriba"><div>' +
+                    (enlace ? '<a class="opinion-lugar" href="' + enlace + '">' + esc(r.lugarNombre) + '</a>' : '<span class="opinion-lugar">' + esc(r.lugarNombre) + '</span>') +
+                    '<div class="opinion-meta"><span class="etiqueta ' + a.clase + '"><i class="fas ' + a.icono + '"></i> ' + esc(r.tipoLugar) + '</span>' + estado + '<span>' + fecha + '</span></div></div>' +
+                    estrellas + '</div>' +
+                    '<p class="opinion-texto">' + esc(r.comentario) + '</p>' + fotos + respuesta +
+                    '<div class="opinion-pie"><button class="btn chico peligro" type="button" data-borrar-opinion="' + i + '"><i class="fas fa-trash-alt"></i> Eliminar</button></div></article>';
+            }).join('');
+        }
+
+        document.addEventListener('click', async (e) => {
+            const b = e.target.closest('[data-borrar-opinion]');
+            if (!b) return;
+            const r = datos.opiniones[Number(b.dataset.borrarOpinion)];
+            if (!r || !confirm('¿Eliminar tu opinión sobre «' + r.lugarNombre + '»? No se puede deshacer.')) return;
+            const area = areaDeOpinion(r);
+            const url = r.origen === 'local' || area === 'hospedaje' ? API + '/hospedaje/user/reviews/hospedaje/' + encodeURIComponent(r._id)
+                : area === 'comida' ? API + '/user/reviews/restaurante/' + encodeURIComponent(r._id)
+                : area === 'agencia' ? API + '/user/reviews/agencia/' + encodeURIComponent(r.agenciaId) + '/review/' + encodeURIComponent(r._id)
+                : API + '/user/reviews/tour/' + encodeURIComponent(r.tourId) + '/review/' + encodeURIComponent(r._id);
+            b.disabled = true;
+            try {
+                const res = await fetch(url, { method: 'DELETE', headers: cabeceras() });
+                const json = await res.json().catch(() => ({}));
+                if (!json.success) throw new Error(json.message);
+                avisar('Opinión eliminada', 'exito');
+                await cargarOpiniones();
+                actualizarPasos();
+            } catch (err) {
+                b.disabled = false;
+                avisar(err.message || 'No se pudo eliminar', 'error');
+            }
+        });
+
+        // ---------- cuenta ----------
+        $('profile-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const payload = { nombre: $('profile-name').value.trim(), email: $('profile-email').value.trim() };
+            const clave = $('profile-password').value;
+            if (clave) payload.password = clave;
+            btn.disabled = true;
+            try {
+                const res = await fetch(API + '/auth/user/profile', { method: 'PUT', headers: cabeceras(true), body: JSON.stringify(payload) });
+                const json = await res.json().catch(() => ({}));
+                if (!json.success) throw new Error(json.message);
+                datos.usuario = Object.assign({}, datos.usuario, json.data);
+                try {
+                    const guardado = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                    localStorage.setItem('currentUser', JSON.stringify(Object.assign(guardado, json.data)));
+                } catch (err) { /* sin almacenamiento */ }
+                $('profile-password').value = '';
+                pintarUsuario();
+                actualizarPasos();
+                avisar('Tus datos se guardaron', 'exito');
+            } catch (err) {
+                avisar(err.message || 'No se pudieron guardar los cambios', 'error');
+            } finally { btn.disabled = false; }
+        });
+
+        // ---------- notificaciones ----------
+        async function cargarNotificaciones() {
+            try {
+                const res = await fetch(API + '/user/notifications', { headers: cabeceras() });
+                const json = await res.json();
+                if (!json.success || !Array.isArray(json.data)) return;
+                const sinLeer = json.data.filter((n) => !n.leida).length;
+                const punto = $('puntoNotif');
+                punto.textContent = sinLeer > 9 ? '9+' : sinLeer;
+                punto.style.display = sinLeer ? 'flex' : 'none';
+                $('listaNotif').innerHTML = json.data.length
+                    ? json.data.map((n) => '<div class="notif' + (n.leida ? '' : ' nueva') + '" data-notif="' + esc(n._id) + '">' + esc(n.mensaje) + '<small>' + (n.fecha ? new Date(n.fecha).toLocaleDateString('es-MX') : '') + '</small></div>').join('')
+                    : '<div class="notif-vacia"><i class="far fa-bell-slash" style="font-size:1.6rem; display:block; margin-bottom:8px;"></i>No tienes notificaciones</div>';
+            } catch (e) { console.warn('Notificaciones no disponibles:', e.message); }
+        }
+        $('listaNotif').addEventListener('click', async (e) => {
+            const n = e.target.closest('[data-notif]');
+            if (!n || !n.classList.contains('nueva')) return;
+            try {
+                await fetch(API + '/user/notifications/' + encodeURIComponent(n.dataset.notif) + '/read', { method: 'PATCH', headers: cabeceras() });
+                cargarNotificaciones();
+            } catch (err) { /* ignorar */ }
+        });
+
+        document.addEventListener('DOMContentLoaded', iniciar);
+    })();
     </script>
 </body>
-
 </html>

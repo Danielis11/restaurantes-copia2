@@ -398,6 +398,7 @@ router.get('/api/user/reviews', verificarTokenUsuario, async (req, res) => {
       comentario: r.comentario,
       fotos: r.fotos || [],
       estado: r.estado,
+      respuesta: r.respuestaAdmin || null,
       fechaCreacion: r.fechaCreacion
     }));
 
