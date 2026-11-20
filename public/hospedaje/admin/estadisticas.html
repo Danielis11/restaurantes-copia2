@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estadísticas - Panel de hospedaje</title>
+    <meta name="robots" content="noindex">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/hospedaje/css/tema-panel.css">
+    <script src="/hospedaje/js/encabezado-panel.js" defer></script>
+    <style>
+        .es-resumen { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+        .es-dato { background: #fff; border: 1px solid #f3f4f6; border-radius: 12px; padding: 1rem 1.25rem; box-shadow: 0 1px 2px rgba(0,0,0,.05); }
+        .es-dato i { color: #6b7280; }
+        .es-dato strong { display: block; font-size: 1.75rem; color: #111827; margin-top: .35rem; }
+        .es-dato span { color: #6b7280; font-size: .88rem; }
+        .es-consejo { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e3a8a; border-radius: 12px; padding: .9rem 1.1rem; margin-bottom: 1.5rem; font-size: .9rem; line-height: 1.5; }
+        .es-tarjeta { background: #fff; border: 1px solid #f3f4f6; border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; box-shadow: 0 1px 2px rgba(0,0,0,.05); }
+        .es-cab { display: flex; gap: .9rem; align-items: center; margin-bottom: 1rem; }
+        .es-foto { width: 48px; height: 48px; border-radius: 10px; background: #f3f4f6 center/cover no-repeat; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #9ca3af; }
+        .es-nombre { font-weight: 600; color: #111827; }
+        .es-tipo { color: #6b7280; font-size: .85rem; }
+        .es-oculto { color: #b45309; font-size: .8rem; margin-left: .35rem; }
+        .es-cuerpo { display: grid; grid-template-columns: 1fr 1.3fr; gap: 1.5rem; align-items: end; }
+        .es-cifras { display: grid; grid-template-columns: repeat(2, 1fr); gap: .6rem 1rem; }
+        .es-cifra { display: flex; justify-content: space-between; gap: .5rem; border-bottom: 1px solid #f3f4f6; padding: .35rem 0; font-size: .92rem; color: #4b5563; }
+        .es-cifra b { color: #111827; }
+        .es-grafica-titulo { color: #6b7280; font-size: .82rem; margin-bottom: .5rem; }
+        .es-barras { display: flex; gap: .5rem; align-items: flex-end; height: 120px; }
+        .es-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: .3rem; height: 100%; justify-content: flex-end; }
+        .es-barra { width: 100%; max-width: 38px; background: #2563eb; border-radius: 6px 6px 0 0; min-height: 3px; }
+        .es-col.actual .es-barra { background: #1e40af; }
+        .es-num { font-size: .75rem; color: #374151; font-weight: 600; }
+        .es-mes { font-size: .72rem; color: #9ca3af; text-transform: capitalize; }
+        .es-vacio { text-align: center; color: #6b7280; background: #fff; border: 1px dashed #e5e7eb; border-radius: 12px; padding: 2.5rem 1rem; }
+        .es-vacio i { font-size: 2rem; color: #d1d5db; display: block; margin-bottom: .5rem; }
+        @media (max-width: 900px) { .es-resumen { grid-template-columns: repeat(3, 1fr); } .es-cuerpo { grid-template-columns: 1fr; } }
+        @media (max-width: 560px) { .es-resumen { grid-template-columns: repeat(2, 1fr); } .es-cifras { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <ul class="sidebar-menu">
+            <li class="menu-item"><a href="dashboard.html" class="menu-link"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a></li>
+            <li class="menu-item"><a href="hoteles-admin.html" class="menu-link"><i class="fas fa-hotel"></i><span>Mis Hoteles</span></a></li>
+            <li class="menu-item"><a href="cabanas-admin.html" class="menu-link"><i class="fas fa-tree"></i><span>Mis Cabañas</span></a></li>
+            <li class="menu-item"><a href="airbnb-admin.html" class="menu-link"><i class="fas fa-home"></i><span>Mis Airbnb</span></a></li>
+            <li class="menu-item"><a href="opiniones.html" class="menu-link"><i class="fas fa-star"></i><span>Opiniones</span></a></li>
+            <li class="menu-item"><a href="estadisticas.html" class="menu-link active"><i class="fas fa-chart-bar"></i><span>Estadísticas</span></a></li>
+            <li class="menu-item"><a href="perfil.html" class="menu-link"><i class="fas fa-user-cog"></i><span>Mi Perfil</span></a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="top-bar"><h1 class="page-title">Estadísticas</h1></div>
+
+        <div class="es-consejo"><i class="fas fa-info-circle"></i> Cuántos viajeros vieron la página de tu hospedaje y cuántos te contactaron desde ahí. Si alguien entra varias veces seguidas, cuenta como una sola visita.</div>
+
+        <div class="es-resumen">
+            <div class="es-dato"><i class="fas fa-eye"></i><strong id="tVistas">–</strong><span>Visitas a tu página</span></div>
+            <div class="es-dato"><i class="fab fa-whatsapp"></i><strong id="tWhatsapp">–</strong><span>Clics a WhatsApp</span></div>
+            <div class="es-dato"><i class="fas fa-phone"></i><strong id="tTelefono">–</strong><span>Clics al teléfono</span></div>
+            <div class="es-dato"><i class="fas fa-map-marker-alt"></i><strong id="tMapa">–</strong><span>Clics al mapa</span></div>
+            <div class="es-dato"><i class="fas fa-globe"></i><strong id="tWeb">–</strong><span>Clics a tu sitio o redes</span></div>
+        </div>
+
+        <div id="esLista"><div class="es-vacio">Cargando…</div></div>
+    </main>
+
+    <script>
+    (function () {
+        'use strict';
+        const token = localStorage.getItem('hospAuthToken');
+        if (!token) { location.href = '/hospedaje/login.html'; return; }
+        const $ = (id) => document.getElementById(id);
+        const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const TIPO = { hotel: 'Hotel', cabana: 'Cabaña', airbnb: 'Airbnb' };
+        const ICONO = { hotel: 'fa-hotel', cabana: 'fa-tree', airbnb: 'fa-home' };
+        const EVENTOS = [['vistas', 'Visitas'], ['whatsapp', 'WhatsApp'], ['telefono', 'Teléfono'], ['mapa', 'Mapa'], ['web', 'Sitio o redes']];
+        const nombreMes = (m) => new Date(m + '-15').toLocaleDateString('es-MX', { month: 'short' }).replace('.', '');
+        const fmt = (n) => Number(n || 0).toLocaleString('es-MX');
+
+        async function cargar() {
+            try {
+                const res = await fetch('/api/hospedaje/estadisticas/mias', { headers: { 'Authorization': 'Bearer ' + token } });
+                if (res.status === 401) { location.href = '/hospedaje/login.html'; return; }
+                const json = await res.json();
+                if (!json.success) throw new Error(json.message);
+                pintar(json.data || []);
+            } catch (e) {
+                $('esLista').innerHTML = '<div class="es-vacio"><i class="fas fa-exclamation-circle"></i>No se pudieron cargar las estadísticas.</div>';
+            }
+        }
+
+        function pintar(lista) {
+            const suma = { vistas: 0, whatsapp: 0, telefono: 0, mapa: 0, web: 0 };
+            lista.forEach((h) => Object.keys(suma).forEach((k) => { suma[k] += h.totales[k] || 0; }));
+            $('tVistas').textContent = fmt(suma.vistas);
+            $('tWhatsapp').textContent = fmt(suma.whatsapp);
+            $('tTelefono').textContent = fmt(suma.telefono);
+            $('tMapa').textContent = fmt(suma.mapa);
+            $('tWeb').textContent = fmt(suma.web);
+
+            if (!lista.length) {
+                $('esLista').innerHTML = '<div class="es-vacio"><i class="fas fa-chart-bar"></i>Aún no tienes hospedajes registrados.</div>';
+                return;
+            }
+            $('esLista').innerHTML = lista.map((h) => {
+                const max = Math.max(1, ...h.meses.map((m) => m.vistas));
+                const barras = h.meses.map((m, i) =>
+                    '<div class="es-col' + (i === h.meses.length - 1 ? ' actual' : '') + '" title="' + fmt(m.vistas) + ' visitas en ' + nombreMes(m.mes) + '">' +
+                    '<span class="es-num">' + fmt(m.vistas) + '</span>' +
+                    '<div class="es-barra" style="height:' + Math.round((m.vistas / max) * 80) + '%"></div>' +
+                    '<span class="es-mes">' + nombreMes(m.mes) + '</span></div>'
+                ).join('');
+                const foto = h.imagen ? ' style="background-image:url(\'' + esc(h.imagen).replace(/'/g, '%27') + '\')"' : '';
+                return '<div class="es-tarjeta">' +
+                    '<div class="es-cab"><div class="es-foto"' + foto + '>' + (h.imagen ? '' : '<i class="fas ' + ICONO[h.tipo] + '"></i>') + '</div>' +
+                    '<div><div class="es-nombre">' + esc(h.nombre) + (h.activo ? '' : '<span class="es-oculto"><i class="fas fa-eye-slash"></i> oculto</span>') + '</div>' +
+                    '<div class="es-tipo">' + TIPO[h.tipo] + '</div></div></div>' +
+                    '<div class="es-cuerpo"><div class="es-cifras">' +
+                    EVENTOS.map(([k, t]) => '<div class="es-cifra"><span>' + t + '</span><b>' + fmt(h.totales[k]) + '</b></div>').join('') +
+                    '</div><div><div class="es-grafica-titulo">Visitas de los últimos 6 meses</div><div class="es-barras">' + barras + '</div></div></div></div>';
+            }).join('');
+        }
+
+        cargar();
+    })();
+    </script>
+</body>
+</html>

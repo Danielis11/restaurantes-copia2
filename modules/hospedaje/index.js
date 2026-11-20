@@ -16,6 +16,7 @@ api.use('/translate', require('./routes/translateRoutes'));
 api.use('/ignored-words', require('./routes/ignoredWordRoutes'));
 api.use('/user', require('./routes/touristRoutes'));
 api.use('/opiniones', require('./routes/opinionesRoutes')); // socios: ver y contestar sus reseñas
+api.use('/estadisticas', require('./routes/estadisticasRoutes')); // visitas y clics de las fichas
 
 // Experiencias (tours del sitio principal) para sus páginas
 api.get('/experiencias-partner', async (req, res) => {

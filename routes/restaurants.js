@@ -3,6 +3,7 @@ const router = express.Router();
 const restaurantController = require('../controllers/restaurantController');
 const { languageMiddleware } = require('../utils/languageUtils');
 const { getUploadMiddleware } = require('../middleware/upload');
+const unaVezPorVisita = require('../middleware/unaVezPorVisita'); // no contar recargas repetidas
 
 // Try to load auth middleware
 let verificarToken;
@@ -38,17 +39,17 @@ router.get('/search/:termino', languageMiddleware, restaurantController.buscarRe
 // @route   POST /api/restaurants/:id/view
 // @desc    Incrementar vistas de perfil
 // @access  Público
-router.post('/:id/view', restaurantController.incrementarVistas);
+router.post('/:id/view', unaVezPorVisita, restaurantController.incrementarVistas);
 
 // @route   POST /api/restaurants/:id/click-map
 // @desc    Incrementar clics al mapa
 // @access  Público
-router.post('/:id/click-map', restaurantController.incrementarClicsMapa);
+router.post('/:id/click-map', unaVezPorVisita, restaurantController.incrementarClicsMapa);
 
 // @route   POST /api/restaurants/:id/click-whatsapp
 // @desc    Incrementar clics a WhatsApp
 // @access  Público
-router.post('/:id/click-whatsapp', restaurantController.incrementarClicsWhatsapp);
+router.post('/:id/click-whatsapp', unaVezPorVisita, restaurantController.incrementarClicsWhatsapp);
 
 // ===== AUTHENTICATED ROUTES (Admin Image Management + My Restaurant) =====
 // These are used by manage-images.html and manage-restaurant.html

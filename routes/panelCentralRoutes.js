@@ -70,6 +70,40 @@ router.get('/resumen', async (req, res) => {
   } catch (e) { fallo(res, e, 'Error al armar el resumen'); }
 });
 
+// ---------- Lo más visto del mes ----------
+router.get('/estadisticas', async (req, res) => {
+  try {
+    const { mesActual } = require('../modules/hospedaje/utils/estadisticas');
+    const mes = mesActual();
+    const restaurantes = await Restaurant.aggregate([
+      { $match: { activo: { $ne: false }, 'estadisticasMensuales.fecha': mes } },
+      { $unwind: '$estadisticasMensuales' },
+      { $match: { 'estadisticasMensuales.fecha': mes } },
+      { $project: { nombre: 1, tipo: 1, vistas: '$estadisticasMensuales.vistas', contactos: { $add: [{ $ifNull: ['$estadisticasMensuales.clicsWhatsapp', 0] }, { $ifNull: ['$estadisticasMensuales.clicsMapa', 0] }] } } },
+      { $sort: { vistas: -1 } },
+      { $limit: 5 }
+    ]);
+    let hospedajes = [];
+    for (const tipo of ['hotel', 'cabana', 'airbnb']) {
+      const lista = await hosp[tipo]().aggregate([
+        { $match: { activo: { $ne: false }, 'estadisticasMensuales.mes': mes } },
+        { $unwind: '$estadisticasMensuales' },
+        { $match: { 'estadisticasMensuales.mes': mes } },
+        { $project: {
+          nombre: 1,
+          vistas: '$estadisticasMensuales.vistas',
+          contactos: { $add: ['whatsapp', 'telefono', 'mapa', 'web'].map((c) => ({ $ifNull: ['$estadisticasMensuales.' + c, 0] })) }
+        } },
+        { $sort: { vistas: -1 } },
+        { $limit: 5 }
+      ]);
+      hospedajes = hospedajes.concat(lista.map((h) => ({ ...h, tipo, tipoTexto: ETIQUETA_HOSP[tipo] })));
+    }
+    hospedajes = hospedajes.sort((a, b) => b.vistas - a.vistas).slice(0, 5);
+    res.json({ success: true, data: { mes, restaurantes, hospedajes } });
+  } catch (e) { fallo(res, e, 'Error al obtener las estadísticas'); }
+});
+
 // ---------- Alimentos ----------
 router.get('/alimentos', async (req, res) => {
   try {

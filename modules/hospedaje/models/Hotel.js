@@ -199,4 +199,7 @@ HotelSchema.set('toJSON', {
   }
 });
 
+// Visitas y clics (ocultos en las respuestas públicas)
+HotelSchema.add(require('../utils/estadisticas').camposEstadisticas);
+
 module.exports = conexion.model('Hotel', HotelSchema);

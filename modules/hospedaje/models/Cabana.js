@@ -342,4 +342,7 @@ CabanaSchema.set('toJSON', {
   }
 });
 
+// Visitas y clics (ocultos en las respuestas públicas)
+CabanaSchema.add(require('../utils/estadisticas').camposEstadisticas);
+
 module.exports = conexion.model('Cabana', CabanaSchema);

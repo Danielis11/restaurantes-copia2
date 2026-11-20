@@ -62,6 +62,16 @@
         .numero.alerta .numero-ico { background: #fffbeb; color: var(--ambar); }
 
         .cajas { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .titulo-visto { font-size: 1.05rem; margin: 28px 0 12px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+        .titulo-visto small { font-weight: 400; color: var(--gris); font-size: .82rem; }
+        .visto { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-top: 1px solid var(--borde-suave); font-size: .92rem; }
+        .visto:first-child { border-top: none; }
+        .visto-pos { width: 22px; color: var(--gris-claro); font-weight: 600; }
+        .visto-nombre { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .visto-nombre small { color: var(--gris); margin-left: 6px; }
+        .visto-num { text-align: right; color: var(--tinta); font-weight: 600; white-space: nowrap; }
+        .visto-num small { display: block; font-weight: 400; color: var(--gris); font-size: .75rem; }
+        .visto-vacio { color: var(--gris); font-size: .9rem; padding: 12px 0; }
         .caja { background: var(--blanco); border: 1px solid var(--borde-suave); border-radius: var(--radio); padding: 20px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
         .caja h3 { margin: 0 0 16px; font-size: 1rem; display: flex; justify-content: space-between; align-items: center; }
         .caja h3 a { font-size: .85rem; color: var(--azul); text-decoration: none; font-weight: 500; }
@@ -220,6 +230,11 @@
             <div class="cajas">
                 <div class="caja"><h3>Alimentos <a href="#" data-ir="alimentos">Ver todo</a></h3><div id="barrasAlimentos" class="cargando">Cargando…</div></div>
                 <div class="caja"><h3>Hospedaje <a href="#" data-ir="hospedaje">Ver todo</a></h3><div id="barrasHospedaje" class="cargando">Cargando…</div></div>
+            </div>
+            <h2 class="titulo-visto">Lo más visto este mes <small>Visitas a la página de cada lugar · una por persona cada 30 min</small></h2>
+            <div class="cajas">
+                <div class="caja"><h3>Comida</h3><div id="vistoComida" class="cargando">Cargando…</div></div>
+                <div class="caja"><h3>Hospedaje</h3><div id="vistoHospedaje" class="cargando">Cargando…</div></div>
             </div>
         </section>
 
@@ -489,6 +504,22 @@
                 ]);
             } catch (e) {
                 if (e.message !== 'sin permiso') avisar('No se pudo cargar el resumen', true);
+            }
+            cargarMasVisto();
+        }
+        async function cargarMasVisto() {
+            const fila = (x, i, extra) => '<div class="visto"><span class="visto-pos">' + (i + 1) + '</span>' +
+                '<span class="visto-nombre">' + esc(x.nombre) + (extra ? '<small>' + esc(extra) + '</small>' : '') + '</span>' +
+                '<span class="visto-num">' + Number(x.vistas || 0).toLocaleString('es-MX') + ' visitas<small>' + Number(x.contactos || 0).toLocaleString('es-MX') + ' contactos</small></span></div>';
+            const vacio = '<div class="visto-vacio">Aún no hay visitas registradas este mes.</div>';
+            try {
+                const d = await api('/estadisticas');
+                $('vistoComida').className = '';
+                $('vistoComida').innerHTML = d.restaurantes.length ? d.restaurantes.map((x, i) => fila(x, i, TIPO_COMIDA[x.tipo] || '')).join('') : vacio;
+                $('vistoHospedaje').className = '';
+                $('vistoHospedaje').innerHTML = d.hospedajes.length ? d.hospedajes.map((x, i) => fila(x, i, x.tipoTexto)).join('') : vacio;
+            } catch (e) {
+                ['vistoComida', 'vistoHospedaje'].forEach((id) => { $(id).className = 'visto-vacio'; $(id).textContent = 'No se pudo cargar.'; });
             }
         }
         function ponerGlobo(n) {

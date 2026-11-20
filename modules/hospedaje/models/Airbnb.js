@@ -272,4 +272,7 @@ AirbnbSchema.set('toJSON', {
   }
 });
 
+// Visitas y clics (ocultos en las respuestas públicas)
+AirbnbSchema.add(require('../utils/estadisticas').camposEstadisticas);
+
 module.exports = conexion.model('Airbnb', AirbnbSchema);
