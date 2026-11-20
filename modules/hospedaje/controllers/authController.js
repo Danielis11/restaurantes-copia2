@@ -9,7 +9,8 @@ const client = new OAuth2Client('321224739454-fv0reej797gt3jur9ubq4mja590voovc.a
 // Función para crear JWT
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN
+    // Sin JWT_EXPIRES_IN en el .env, jwt.sign fallaba y ningún socio podía entrar
+    expiresIn: process.env.JWT_EXPIRES_IN || '7d'
   });
 };
 
@@ -73,8 +74,10 @@ exports.signup = async (req, res) => {
 // Login de usuario
 exports.login = async (req, res) => {
   try {
-    const { email, password } = req.body;
-    
+    const { password } = req.body;
+    // Un espacio al copiar y pegar el correo hacía que no se encontrara la cuenta
+    const email = typeof req.body.email === 'string' ? req.body.email.trim().toLowerCase() : req.body.email;
+
     // 1) Verificar que email y password existan
     if (!email || !password) {
       return res.status(400).json({
