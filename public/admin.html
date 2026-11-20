@@ -4,553 +4,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Administración - RestauranteWeb</title>
+    <title>Mi panel - Turismo Jalpan</title>
 
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Archivo de estilos global -->
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/panel-socio.css">
 
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-
-
-        body {
-            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--gray-50);
-            color: var(--gray-900);
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* Header */
-        .header {
-            background-color: var(--white);
-            border-bottom: 1px solid var(--gray-200);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .nav {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 80px;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--primary);
-            text-decoration: none;
-            font-size: 1.25rem;
-            font-weight: 700;
-        }
-
-        .user-section {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .user-info {
-            text-align: right;
-        }
-
-        .user-name {
-            font-weight: 600;
-            color: var(--gray-900);
-            font-size: 0.9rem;
-        }
-
-        .user-role {
-            font-size: 0.8rem;
-            color: var(--gray-500);
-            text-transform: capitalize;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--white);
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .logout-btn {
-            background: none;
-            border: none;
-            color: var(--gray-500);
-            cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            transition: all 0.2s;
-        }
-
-        .logout-btn:hover {
-            color: var(--error);
-            background-color: var(--gray-100);
-        }
-
-        /* Main Content */
-        .main {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 3rem 2rem;
-        }
-
-        /* Dashboard Grid */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: var(--white);
-            padding: 2rem;
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--gray-100);
-            box-shadow: var(--shadow-sm);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .stat-card:hover {
-            box-shadow: var(--shadow-lg);
-            transform: translateY(-4px);
-            border-color: var(--gray-200);
-        }
-
-        .stat-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .stat-title {
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--gray-600);
-        }
-
-        .stat-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--white);
-            font-size: 1.25rem;
-        }
-
-        .stat-icon.primary {
-            background-color: var(--primary);
-        }
-
-        .stat-icon.success {
-            background-color: var(--success);
-        }
-
-        .stat-icon.warning {
-            background-color: var(--warning);
-        }
-
-        .stat-icon.error {
-            background-color: var(--error);
-        }
-
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--gray-900);
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-change {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.8rem;
-            color: var(--gray-600);
-        }
-
-        .stat-change.positive {
-            color: var(--success);
-        }
-
-        .stat-change.negative {
-            color: var(--error);
-        }
-
-        /* Action Buttons */
-        .actions-section {
-            background: var(--white);
-            border-radius: 0.75rem;
-            border: 1px solid var(--gray-200);
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .actions-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .actions-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--gray-900);
-        }
-
-        .actions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-        }
-
-        .action-card {
-            background: var(--gray-50);
-            border: 1px solid var(--gray-200);
-            border-radius: 0.5rem;
-            padding: 1rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-
-        .action-card:hover {
-            background: var(--white);
-            border-color: var(--primary);
-            box-shadow: var(--shadow-lg);
-            transform: translateY(-4px);
-        }
-
-        .action-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: 14px;
-            background: var(--primary);
-            color: var(--white);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 0.75rem;
-            font-size: 1.5rem;
-            transition: transform 0.3s ease;
-        }
-
-        .action-card:hover .action-icon {
-            transform: scale(1.1);
-        }
-
-        .action-icon.images {
-            background: #8b5cf6;
-            /* Purple */
-        }
-
-        .action-icon.restaurant {
-            background: #f59e0b;
-            /* Orange */
-        }
-
-        .action-icon.stats {
-            background: #10b981;
-            /* Green */
-        }
-
-        .action-icon.profile {
-            background: #6366f1;
-            /* Indigo */
-        }
-
-        .action-title {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .action-description {
-            font-size: 0.8rem;
-            color: var(--gray-600);
-        }
-
-        /* System Status */
-        .status-section {
-            background: var(--white);
-            border-radius: 0.75rem;
-            border: 1px solid var(--gray-200);
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .status-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid var(--gray-100);
-        }
-
-        .status-item:last-child {
-            border-bottom: none;
-        }
-
-        .status-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            flex-shrink: 0;
-        }
-
-        .status-indicator.success {
-            background-color: var(--success);
-        }
-
-        .status-indicator.warning {
-            background-color: var(--warning);
-        }
-
-        .status-indicator.error {
-            background-color: var(--error);
-        }
-
-        .status-text {
-            flex: 1;
-        }
-
-        .status-value {
-            font-weight: 500;
-            color: var(--gray-600);
-            font-size: 0.9rem;
-        }
-
-        /* Buttons */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            text-decoration: none;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.9rem;
-        }
-
-        .btn-primary {
-            background-color: var(--black);
-            color: var(--white);
-            padding: 0.875rem 1.75rem;
-            border: none;
-            border-radius: var(--radius-md);
-            font-weight: 600;
-            font-size: 0.95rem;
-            box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.1);
-        }
-
-        .btn-primary:hover {
-            background-color: #333;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .btn-outline {
-            background-color: transparent;
-            color: var(--gray-600);
-            border: 1px solid var(--gray-300);
-        }
-
-        .btn-outline:hover {
-            background-color: var(--gray-50);
-            border-color: var(--gray-400);
-        }
-
-        .btn-success {
-            background-color: var(--success);
-            color: var(--white);
-        }
-
-        .btn-success:hover {
-            background-color: #059669;
-        }
-
-        /* Loading */
-        .loading {
-            text-align: center;
-            padding: 2rem;
-            color: var(--gray-500);
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--gray-200);
-            border-top: 3px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .nav {
-                padding: 0 1rem;
-            }
-
-            .main {
-                padding: 1rem;
-            }
-
-            .user-section {
-                flex-direction: row;
-                gap: 0.5rem;
-            }
-
-            .dashboard-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1rem;
-            }
-
-            .stat-card {
-                padding: 1rem;
-            }
-
-            .stat-value {
-                font-size: 1.8rem;
-            }
-
-            .actions-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1rem;
-            }
-
-            .action-card {
-                padding: 1rem 0.5rem;
-            }
-
-            .action-icon {
-                width: 48px;
-                height: 48px;
-                font-size: 1.25rem;
-            }
-
-            .page-title {
-                font-size: 1.8rem;
-                text-align: center;
-            }
-
-            .actions-title {
-                font-size: 1.1rem;
-            }
-        }
-
-        /* Notificaciones */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 10000;
-            max-width: 400px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-            border-left: 4px solid var(--primary);
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-            display: flex;
-            align-items: center;
-            padding: 16px;
-            gap: 12px;
-        }
-
-        .notification.show {
-            transform: translateX(0);
-        }
-
-        .notification.success {
-            border-left-color: var(--success);
-        }
-
-        .notification.error {
-            border-left-color: var(--error);
-        }
-
-        .notification.warning {
-            border-left-color: var(--warning);
-        }
-
-        .notification i {
-            font-size: 18px;
-            color: var(--primary);
-        }
-
-        .notification.success i {
-            color: var(--success);
-        }
-
-        .notification.error i {
-            color: var(--error);
-        }
-
-        .notification.warning i {
-            color: var(--warning);
-        }
-
-        .notification-message {
-            flex: 1;
-            font-size: 14px;
-            line-height: 1.4;
-        }
-
-        .notification-close {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 4px;
-            border-radius: 4px;
-            color: var(--gray-400);
-        }
-
-        .notification-close:hover {
-            background: var(--gray-100);
-            color: var(--gray-600);
+        /* ---------- Encabezado ---------- */
+        .hero { padding: 22px 24px; display: grid; grid-template-columns: 1fr auto; gap: 16px 24px; align-items: center; }
+        .hero h1 { font-size: 1.65rem; letter-spacing: -.01em; margin-bottom: 6px; }
+        .hero-linea { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; color: var(--texto); font-size: .95rem; }
+        .estado-hoy { display: inline-flex; align-items: center; gap: 7px; font-size: .84rem; font-weight: 600; padding: 4px 10px; border-radius: 99px; background: var(--borde-suave); color: var(--gris); }
+        .estado-hoy .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+        .estado-hoy.abierto { background: var(--verde-claro); color: var(--verde); }
+        .estado-hoy.cerrado { background: var(--rojo-claro); color: var(--rojo); }
+        .hero-acciones { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+        .progreso { grid-column: 1 / -1; border-top: 1px solid var(--borde-suave); padding-top: 16px; display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; align-items: center; }
+        .progreso-num { font-size: 1.5rem; font-weight: 700; color: var(--azul); line-height: 1; }
+        .barra { height: 8px; background: var(--borde-suave); border-radius: 99px; overflow: hidden; }
+        .barra > span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--azul), #60a5fa); border-radius: 99px; transition: width .8s var(--ease); }
+        .progreso-txt { grid-column: 2; font-size: .86rem; color: var(--texto); display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+        .falta { border: 1px dashed #cbd5e1; border-radius: 99px; padding: 2px 10px; font-size: .8rem; color: var(--texto); text-decoration: none; }
+        .falta:hover { border-color: var(--azul); color: var(--azul); }
+
+        /* ---------- Pendientes ---------- */
+        .pendientes { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; margin-top: 14px; }
+        .pendiente { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; background: var(--ambar-claro); border: 1px solid #fde68a; color: var(--tinta); text-decoration: none; font-size: .9rem; cursor: pointer; text-align: left; animation: subir .4s var(--ease) both; transition: transform .2s var(--ease), box-shadow .2s; }
+        .pendiente:hover { transform: translateY(-2px); box-shadow: var(--sombra); }
+        .pendiente > i:first-child { color: var(--ambar); font-size: 1.1rem; width: 20px; text-align: center; }
+        .pendiente span { flex: 1; }
+        .pendiente b { font-weight: 700; }
+        .pendiente .fa-chevron-right { color: var(--gris-claro); font-size: .8rem; }
+
+        /* ---------- Números del mes ---------- */
+        .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .kpi { padding: 16px 18px; }
+        .kpi-top { display: flex; align-items: center; gap: 10px; color: var(--gris); font-size: .86rem; font-weight: 500; }
+        .kpi-ico { width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: .95rem; }
+        .kpi-num { font-size: 1.8rem; font-weight: 700; margin: 10px 0 2px; letter-spacing: -.02em; }
+        .kpi small { color: var(--gris); font-size: .8rem; }
+
+        /* ---------- Acciones agrupadas ---------- */
+        .grupos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+        .grupo { padding: 8px; }
+        .grupo-cab { padding: 10px 10px 8px; }
+        .grupo-cab h3 { font-size: 1rem; }
+        .grupo-cab p { color: var(--gris); font-size: .84rem; margin-top: 2px; }
+        .accion { display: flex; align-items: center; gap: 12px; width: 100%; padding: 11px 10px; border: none; background: none; border-radius: 10px; text-align: left; text-decoration: none; color: var(--tinta); cursor: pointer; transition: background .2s; }
+        .accion:hover { background: var(--fondo); }
+        .accion:hover .fa-chevron-right { transform: translateX(3px); color: var(--azul); }
+        .accion .ico { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1rem; }
+        .accion .txt { flex: 1; min-width: 0; }
+        .accion .txt b { display: block; font-weight: 600; font-size: .94rem; }
+        .accion .txt small { display: block; color: var(--gris); font-size: .8rem; line-height: 1.3; }
+        .accion .fa-chevron-right { color: #cbd5e1; font-size: .78rem; transition: transform .2s var(--ease), color .2s; }
+        .badge { background: var(--rojo); color: #fff; font-size: .72rem; font-weight: 700; border-radius: 99px; padding: 1px 7px; min-width: 20px; text-align: center; }
+        .c-azul { background: var(--azul-claro); color: var(--azul); }
+        .c-verde { background: var(--verde-claro); color: var(--verde); }
+        .c-ambar { background: var(--ambar-claro); color: var(--ambar); }
+        .c-rojo { background: var(--rojo-claro); color: var(--rojo); }
+        .c-morado { background: #f5f3ff; color: #7c3aed; }
+        .c-cian { background: #ecfeff; color: #0891b2; }
+        .c-gris { background: var(--borde-suave); color: var(--texto); }
+
+        .cuenta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+
+        /* ---------- Ventanas específicas ---------- */
+        .qr-zona { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+        #qr-preview { padding: 18px; background: #fff; border: 1px solid var(--borde); border-radius: 14px; min-width: 260px; min-height: 260px; display: flex; align-items: center; justify-content: center; }
+        .colores { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .color-btn { width: 30px; height: 30px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 0 0 1px var(--borde); cursor: pointer; transition: transform .15s var(--ease), box-shadow .2s; }
+        .color-btn:hover { transform: scale(1.08); }
+        .color-btn.active { box-shadow: 0 0 0 2px var(--tinta); }
+        .tabla-wrap { border: 1px solid var(--borde); border-radius: 12px; overflow: auto; max-height: 55vh; }
+        table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+        th { background: var(--fondo); text-align: left; padding: 10px 12px; position: sticky; top: 0; font-weight: 600; color: var(--texto); white-space: nowrap; }
+        td { padding: 10px 12px; border-top: 1px solid var(--borde-suave); word-break: break-word; }
+        .mensaje { border: 1px solid var(--borde); border-radius: 12px; padding: 14px; margin-bottom: 10px; animation: aparecer .2s var(--ease); }
+        .mensaje.nuevo { border-color: #bfdbfe; background: var(--azul-claro); }
+        .mensaje-top { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+        .mensaje small { color: var(--gris); }
+        .mensaje p { background: #fff; border: 1px solid var(--borde); border-radius: 10px; padding: 10px 12px; margin: 8px 0; word-break: break-word; white-space: pre-wrap; }
+
+        @media (max-width: 1000px) {
+            .grupos { grid-template-columns: 1fr 1fr; }
+            .kpis { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 720px) {
+            .hero { grid-template-columns: 1fr; padding: 18px; }
+            .hero h1 { font-size: 1.35rem; }
+            .hero-acciones { justify-content: stretch; }
+            .hero-acciones .btn { flex: 1; }
+            .grupos { grid-template-columns: 1fr; }
+            .kpi { padding: 14px; }
+            .kpi-num { font-size: 1.5rem; }
+            .kpi-top span { font-size: .8rem; }
         }
     </style>
     <!-- PWA: app instalable -->
@@ -565,1641 +116,878 @@
 </head>
 
 <body>
-    <!-- Header -->
     <header class="header">
         <nav class="nav">
-            <a href="/index.html" class="logo" title="Volver al inicio"
-                style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none;">
-                <img src="/images/PueblosMágicos.svg.png" alt="Logo Turismo"
-                    style="width: 32px; height: 32px; object-fit: contain;">
+            <a href="/index.html" class="logo" title="Ir al sitio de turismo">
+                <img src="/images/PueblosMágicos.svg.png" alt="Logo Turismo">
                 <span>Turismo Admin</span>
             </a>
-
+            <div class="nav-links">
+                <a href="/admin.html" class="nav-link activo"><i class="fas fa-home"></i> Panel</a>
+                <a href="/manage-restaurant.html" class="nav-link"><i class="fas fa-store"></i> Mi ficha</a>
+                <a href="/manage-images.html" class="nav-link"><i class="fas fa-images"></i> Fotos</a>
+            </div>
             <div class="user-section">
                 <div class="user-info">
                     <div class="user-name" id="user-name">Cargando...</div>
                     <div class="user-role" id="user-role">admin</div>
                 </div>
-                <div class="user-avatar" id="user-avatar">
-                    <i class="fas fa-user"></i>
-                </div>
-                <button class="logout-btn" id="logout-btn" title="Cerrar sesión">
-                    <i class="fas fa-sign-out-alt"></i>
-                </button>
+                <a class="user-avatar" id="user-avatar" href="/mi-perfil.html" title="Mi perfil" style="text-decoration:none"><i class="fas fa-user"></i></a>
+                <button class="icono-btn peligro" id="logout-btn" title="Cerrar sesión" aria-label="Cerrar sesión"><i class="fas fa-sign-out-alt"></i></button>
             </div>
         </nav>
     </header>
 
-    <!-- Main Content -->
-    <main class="main">
-        <!-- Page Header -->
-        <div class="page-header"
-            style="margin-bottom: 2rem; border-bottom: 1px solid var(--gray-200); padding-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
-            <h1 class="page-title" id="welcome-message">Bienvenido</h1>
-            <button class="btn btn-outline" onclick="copiarEnlacePublico()" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
-                <i class="fas fa-link"></i> Copiar enlace a mi perfil
-            </button>
+    <main>
+        <!-- Encabezado -->
+        <section class="tarjeta hero">
+            <div>
+                <p class="eyebrow">Panel de tu negocio</p>
+                <h1 id="welcome-message">Hola</h1>
+                <div class="hero-linea">
+                    <span id="hero-restaurante"><span class="esqueleto" style="display:inline-block;width:160px;height:16px;border-radius:6px"></span></span>
+                    <span class="estado-hoy" id="estado-hoy" hidden><span class="dot"></span><span></span></span>
+                </div>
+            </div>
+            <div class="hero-acciones">
+                <button class="btn" type="button" onclick="copiarEnlacePublico()"><i class="fas fa-link"></i> Copiar enlace</button>
+                <button class="btn btn-primario" type="button" onclick="verMiRestaurantePublico()"><i class="fas fa-arrow-up-right-from-square"></i> Ver mi página</button>
+            </div>
+            <div class="progreso" id="progreso" hidden>
+                <div class="progreso-num" id="prog-num">0%</div>
+                <div class="barra" role="progressbar" aria-label="Ficha completa" aria-valuemin="0" aria-valuemax="100" id="prog-barra"><span></span></div>
+                <div class="progreso-txt" id="prog-txt"></div>
+            </div>
+        </section>
+
+        <!-- Lo que necesita tu atención -->
+        <div class="pendientes" id="pendientes"></div>
+
+        <!-- Este mes -->
+        <div class="titulo-sec">
+            <div><h2>Este mes</h2><p>Cómo te encuentran los turistas.</p></div>
+            <a href="/estadisticas.html">Ver estadísticas completas <i class="fas fa-arrow-right"></i></a>
         </div>
-
-        <!-- Dashboard Stats -->
-        <div class="dashboard-grid">
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-title">Mis Restaurantes</div>
-                    <div class="stat-icon primary">
-                        <i class="fas fa-store"></i>
-                    </div>
-                </div>
-                <div class="stat-value" id="total-restaurants">0</div>
-                <div class="stat-change">
-                    <i class="fas fa-info-circle"></i>
-                    <span>Total de establecimientos</span>
-                </div>
+        <div class="kpis">
+            <div class="tarjeta kpi">
+                <div class="kpi-top"><span class="kpi-ico c-morado"><i class="fas fa-eye"></i></span><span>Visitas a tu página</span></div>
+                <div class="kpi-num" id="total-views">–</div>
+                <small id="views-total">&nbsp;</small>
             </div>
-
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-title">Imágenes Subidas</div>
-                    <div class="stat-icon warning">
-                        <i class="fas fa-images"></i>
-                    </div>
-                </div>
-                <div class="stat-value" id="total-images">0</div>
-                <div class="stat-change">
-                    <i class="fas fa-camera"></i>
-                    <span>Fotos de mis restaurantes</span>
-                </div>
+            <div class="tarjeta kpi">
+                <div class="kpi-top"><span class="kpi-ico c-verde"><i class="fab fa-whatsapp"></i></span><span>Clics en WhatsApp</span></div>
+                <div class="kpi-num" id="total-whatsapp">–</div>
+                <small id="whatsapp-total">&nbsp;</small>
             </div>
-
-            <!-- NUEVO: Reseñas Promedio -->
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-title">Calificación Media</div>
-                    <div class="stat-icon" style="background-color: #f59e0b;">
-                        <i class="fas fa-star"></i>
-                    </div>
-                </div>
-                <div class="stat-value" id="avg-rating">0.0</div>
-                <div class="stat-change" id="total-reviews-msg">
-                    <i class="fas fa-comment-dots"></i>
-                    <span>Cargando reseñas...</span>
-                </div>
+            <div class="tarjeta kpi">
+                <div class="kpi-top"><span class="kpi-ico c-cian"><i class="fas fa-location-dot"></i></span><span>Clics en "Cómo llegar"</span></div>
+                <div class="kpi-num" id="total-map">–</div>
+                <small id="map-total">&nbsp;</small>
             </div>
-
-            <!-- NUEVO: Estado de Hoy -->
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-title">Estado Hoy</div>
-                    <div class="stat-icon success" id="status-icon">
-                        <i class="fas fa-door-open"></i>
-                    </div>
-                </div>
-                <div class="stat-value" style="font-size: 1.5rem;" id="today-status">Verificando...</div>
-                <div class="stat-change" id="today-hours">
-                    <i class="fas fa-clock"></i>
-                    <span>Horario de hoy</span>
-                </div>
-            </div>
-
-            <!-- Vistas del Perfil -->
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-title">Vistas del Perfil</div>
-                    <div class="stat-icon" style="background-color: #6366f1;">
-                        <i class="fas fa-eye"></i>
-                    </div>
-                </div>
-                <div class="stat-value" id="total-views">0</div>
-                <div class="stat-change" id="views-month-msg">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Cargando...</span>
-                </div>
-            </div>
-
-            <!-- Clics en WhatsApp -->
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-title">Clics en WhatsApp</div>
-                    <div class="stat-icon" style="background-color: #25d366;">
-                        <i class="fab fa-whatsapp"></i>
-                    </div>
-                </div>
-                <div class="stat-value" id="total-whatsapp">0</div>
-                <div class="stat-change" id="whatsapp-month-msg">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Cargando...</span>
-                </div>
-            </div>
-
-            <!-- Clics en Mapa -->
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-title">Clics en Mapa</div>
-                    <div class="stat-icon" style="background-color: #0ea5e9;">
-                        <i class="fas fa-map-marker-alt"></i>
-                    </div>
-                </div>
-                <div class="stat-value" id="total-map">0</div>
-                <div class="stat-change" id="map-month-msg">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Cargando...</span>
-                </div>
+            <div class="tarjeta kpi">
+                <div class="kpi-top"><span class="kpi-ico c-ambar"><i class="fas fa-star"></i></span><span>Calificación</span></div>
+                <div class="kpi-num" id="avg-rating">–</div>
+                <small id="total-reviews-msg">&nbsp;</small>
             </div>
         </div>
 
-        <!-- Actions Section -->
-        <div class="actions-section">
-            <div class="actions-header">
-                <h2 class="actions-title">Acciones Rápidas</h2>
-                <button class="btn btn-primary" onclick="refreshData()">
-                    <i class="fas fa-sync-alt"></i>
-                    Actualizar
+        <!-- Acciones -->
+        <div class="titulo-sec"><div><h2>¿Qué quieres hacer hoy?</h2></div></div>
+        <div class="grupos">
+            <section class="tarjeta grupo">
+                <div class="grupo-cab"><h3>Tu ficha pública</h3><p>Lo que ven los turistas de tu negocio.</p></div>
+                <a class="accion" href="/manage-restaurant.html">
+                    <span class="ico c-azul"><i class="fas fa-pen"></i></span>
+                    <span class="txt"><b>Editar mi ficha</b><small>Nombre, horarios, menú, contacto y ubicación</small></span>
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+                <a class="accion" href="/manage-images.html">
+                    <span class="ico c-morado"><i class="fas fa-images"></i></span>
+                    <span class="txt"><b>Fotos</b><small id="fotos-sub">Sube y elige tu foto de portada</small></span>
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+                <button class="accion" type="button" onclick="abrirModalQR()">
+                    <span class="ico c-cian"><i class="fas fa-qrcode"></i></span>
+                    <span class="txt"><b>Código QR para mesas</b><small>Tus clientes lo escanean y ven tu menú</small></span>
+                    <i class="fas fa-chevron-right"></i>
                 </button>
-            </div>
+            </section>
 
-            <div class="actions-grid">
-                <!-- Gestión de Imágenes - NUEVA -->
-                <a href="/manage-images.html" class="action-card">
-                    <div class="action-icon images">
-                        <i class="fas fa-images"></i>
-                    </div>
-                    <div class="action-title">Gestionar Imágenes</div>
-                    <div class="action-description">Subir, editar y organizar las fotos de tu restaurante</div>
-                </a>
+            <section class="tarjeta grupo">
+                <div class="grupo-cab"><h3>Atrae clientes</h3><p>Publica algo y aparece en el sitio.</p></div>
+                <button class="accion" type="button" onclick="abrirModalOfertas()">
+                    <span class="ico c-rojo"><i class="fas fa-bolt"></i></span>
+                    <span class="txt"><b>Oferta relámpago</b><small>Un descuento por tiempo limitado en la página principal</small></span>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <button class="accion" type="button" onclick="abrirModalEventos()">
+                    <span class="ico c-ambar"><i class="fas fa-calendar-alt"></i></span>
+                    <span class="txt"><b>Eventos</b><small>Música en vivo, noches temáticas, degustaciones…</small></span>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <button class="accion" type="button" onclick="abrirModalVacantes()">
+                    <span class="ico c-verde"><i class="fas fa-briefcase"></i></span>
+                    <span class="txt"><b>Busco personal</b><small>Publica una vacante en la bolsa de trabajo</small></span>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </section>
 
-                <!-- Gestionar Restaurante -->
-                <a href="/manage-restaurant.html" class="action-card">
-                    <div class="action-icon restaurant">
-                        <i class="fas fa-edit"></i>
-                    </div>
-                    <div class="action-title">Gestionar Mi Restaurante</div>
-                    <div class="action-description">Editar información, menú y horarios</div>
+            <section class="tarjeta grupo">
+                <div class="grupo-cab"><h3>Tus clientes</h3><p>Lo que opinan y quiénes son.</p></div>
+                <a class="accion" href="/manage-restaurant.html#sec-resenas">
+                    <span class="ico c-ambar"><i class="fas fa-comments"></i></span>
+                    <span class="txt"><b>Reseñas</b><small>Lee y responde lo que publican de ti</small></span>
+                    <span class="badge" id="badge-resenas" hidden></span>
+                    <i class="fas fa-chevron-right"></i>
                 </a>
-
-                <!-- Estadísticas -->
-                <a href="/estadisticas.html" class="action-card">
-                    <div class="action-icon stats">
-                        <i class="fas fa-chart-bar"></i>
-                    </div>
-                    <div class="action-title">Estadísticas</div>
-                    <div class="action-description">Ver métricas y reportes de tu restaurante</div>
-                </a>
-
-                <!-- Mi Perfil -->
-                <a href="/mi-perfil.html" class="action-card">
-                    <div class="action-icon profile">
-                        <i class="fas fa-user-cog"></i>
-                    </div>
-                    <div class="action-title">Mi Perfil</div>
-                    <div class="action-description">Configurar mi cuenta y datos personales</div>
-                </a>
-
-                <!-- Generador de QR -->
-                <a href="javascript:void(0)" class="action-card" onclick="abrirModalQR()">
-                    <div class="action-icon" style="background: #0ea5e9;">
-                        <i class="fas fa-qrcode"></i>
-                    </div>
-                    <div class="action-title">Generar QR de Menú</div>
-                    <div class="action-description">Código QR elegante para las mesas de tu restaurante</div>
-                </a>
-
-                <!-- Ofertas Flash / Inventario Muerto -->
-                <a href="javascript:void(0)" class="action-card" onclick="abrirModalOfertas()">
-                    <div class="action-icon" style="background: #ef4444;">
-                        <i class="fas fa-bolt"></i>
-                    </div>
-                    <div class="action-title">Inventario Muerto / Flash</div>
-                    <div class="action-description">Liquida producto rápidamente en la vista principal</div>
-                </a>
-
-                <!-- Bolsa de Trabajo -->
-                <a href="javascript:void(0)" class="action-card" onclick="abrirModalVacantes()">
-                    <div class="action-icon" style="background: #14b8a6;">
-                        <i class="fas fa-briefcase"></i>
-                    </div>
-                    <div class="action-title">Bolsa de Trabajo</div>
-                    <div class="action-description">Publica letrero digital para contratar nuevo personal</div>
-                </a>
-
-                <!-- Ver Mi Restaurante -->
-                <a href="javascript:void(0)" class="action-card" onclick="verMiRestaurantePublico()">
-                    <div class="action-icon">
-                        <i class="fas fa-external-link-alt"></i>
-                    </div>
-                    <div class="action-title">Ver Mi Perfil</div>
-                    <div class="action-description">Mira cómo ven los clientes tu restaurante en la web</div>
-                </a>
-                
-                <!-- Contactos CRM -->
-                <a href="javascript:void(0)" class="action-card" onclick="openCRMModal()">
-                    <div class="action-icon" style="background: #eab308;">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div class="action-title">Mis Clientes (CRM)</div>
-                    <div class="action-description">Base de datos de tus clientes que piden promociones</div>
-                </a>
-
-                <!-- Buzón Privado -->
-                <a href="javascript:void(0)" class="action-card" onclick="openInboxModal()">
-                    <div class="action-icon" style="background: #ef4444;">
-                        <i class="fas fa-envelope-open-text"></i>
-                    </div>
-                    <div class="action-title">Buzón Gerencia</div>
-                    <div class="action-description">Lee quejas o mensajes antes de que vayan a internet</div>
-                </a>
-
-                <!-- Calendario de Eventos -->
-                <a href="javascript:void(0)" class="action-card" onclick="abrirModalEventos()">
-                    <div class="action-icon" style="background: #f97316;">
-                        <i class="fas fa-calendar-alt"></i>
-                    </div>
-                    <div class="action-title">Eventos</div>
-                    <div class="action-description">Crea y gestiona eventos de tu establecimiento</div>
-                </a>
-            </div>
+                <button class="accion" type="button" onclick="openInboxModal()">
+                    <span class="ico c-rojo"><i class="fas fa-envelope-open-text"></i></span>
+                    <span class="txt"><b>Buzón privado</b><small>Quejas y mensajes que solo tú ves</small></span>
+                    <span class="badge" id="badge-buzon" hidden></span>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <button class="accion" type="button" onclick="openCRMModal()">
+                    <span class="ico c-gris"><i class="fas fa-address-book"></i></span>
+                    <span class="txt"><b>Lista de clientes</b><small>Quienes pidieron recibir tus promociones</small></span>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </section>
         </div>
 
-        <!-- System Status -->
-        <div class="status-section">
-            <h3 style="margin-bottom: 1rem; color: var(--gray-900);">Estado del Sistema</h3>
-
-            <div class="status-item">
-                <div class="status-indicator success"></div>
-                <div class="status-text">Servidor Web</div>
-                <div class="status-value">Funcionando</div>
-            </div>
-
-            <div class="status-item">
-                <div class="status-indicator" id="db-indicator"></div>
-                <div class="status-text">Base de Datos</div>
-                <div class="status-value" id="db-status">Verificando...</div>
-            </div>
-
-            <div class="status-item">
-                <div class="status-indicator success"></div>
-                <div class="status-text">Autenticación</div>
-                <div class="status-value">Activa</div>
-            </div>
-
-            <div class="status-item">
-                <div class="status-indicator success"></div>
-                <div class="status-text">Frontend</div>
-                <div class="status-value">Cargado</div>
-            </div>
+        <div class="cuenta">
+            <a class="btn btn-sm" href="/estadisticas.html"><i class="fas fa-chart-column"></i> Estadísticas</a>
+            <a class="btn btn-sm" href="/mi-perfil.html"><i class="fas fa-user-gear"></i> Mi cuenta</a>
         </div>
     </main>
 
-    <!-- ===== MODAL: Generador de QR ===== -->
-    <div id="modal-qr" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); align-items:center; justify-content:center;">
-        <div style="background:white; border-radius:1rem; max-width:480px; width:92%; padding:2rem; position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.3); animation: modalIn 0.3s ease;">
-            <button onclick="cerrarModalQR()" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.2rem; color:var(--gray-400); cursor:pointer;">
-                <i class="fas fa-times"></i>
-            </button>
-            <h3 style="font-size:1.3rem; font-weight:700; color:var(--gray-900); margin-bottom:0.5rem; display:flex; align-items:center; gap:0.5rem;">
-                <i class="fas fa-qrcode" style="color:#0ea5e9;"></i> Generar QR de Menú
-            </h3>
-            <p style="font-size:0.85rem; color:var(--gray-500); margin-bottom:1.5rem;">Genera un código QR elegante para las mesas de tu restaurante. Los clientes podrán escanearlo y ver tu perfil completo.</p>
-
-            <!-- Color picker -->
-            <div style="display:flex; gap:0.75rem; margin-bottom:1.5rem; align-items:center;">
-                <label style="font-size:0.85rem; font-weight:600; color:var(--gray-700);">Color:</label>
-                <button class="qr-color-btn active" data-color="#1a1a2e" onclick="seleccionarColorQR(this)" style="width:32px; height:32px; border-radius:50%; border:3px solid transparent; background:#1a1a2e; cursor:pointer;"></button>
-                <button class="qr-color-btn" data-color="#0ea5e9" onclick="seleccionarColorQR(this)" style="width:32px; height:32px; border-radius:50%; border:3px solid transparent; background:#0ea5e9; cursor:pointer;"></button>
-                <button class="qr-color-btn" data-color="#8b5cf6" onclick="seleccionarColorQR(this)" style="width:32px; height:32px; border-radius:50%; border:3px solid transparent; background:#8b5cf6; cursor:pointer;"></button>
-                <button class="qr-color-btn" data-color="#059669" onclick="seleccionarColorQR(this)" style="width:32px; height:32px; border-radius:50%; border:3px solid transparent; background:#059669; cursor:pointer;"></button>
-                <button class="qr-color-btn" data-color="#dc2626" onclick="seleccionarColorQR(this)" style="width:32px; height:32px; border-radius:50%; border:3px solid transparent; background:#dc2626; cursor:pointer;"></button>
+    <!-- ===== Ventana: QR ===== -->
+    <div class="modal" id="modal-qr" role="dialog" aria-modal="true" aria-labelledby="qr-titulo">
+        <div class="modal-caja chica">
+            <div class="modal-cab">
+                <div class="ico c-cian"><i class="fas fa-qrcode"></i></div>
+                <div><h3 id="qr-titulo">Código QR para tus mesas</h3><p>Al escanearlo, tus clientes ven tu menú digital. Se actualiza solo cuando agregas o cambias platillos.</p></div>
+                <button class="icono-btn" type="button" data-cerrar aria-label="Cerrar"><i class="fas fa-times"></i></button>
             </div>
-
-            <!-- QR Preview -->
-            <div style="display:flex; justify-content:center; margin-bottom:1.5rem;">
-                <div id="qr-preview" style="padding:1.5rem; background:white; border:2px solid var(--gray-200); border-radius:1rem; display:inline-block; text-align:center;">
-                    <p style="color:var(--gray-400); font-size:0.85rem;"><i class="fas fa-spinner fa-spin"></i> Generando QR...</p>
+            <div class="modal-cuerpo">
+                <div class="qr-zona">
+                    <div class="colores" role="group" aria-label="Color del código">
+                        <span class="etiqueta" style="margin:0">Color:</span>
+                        <button type="button" class="color-btn qr-color-btn active" data-color="#1a1a2e" style="background:#1a1a2e" aria-label="Negro" onclick="seleccionarColorQR(this)"></button>
+                        <button type="button" class="color-btn qr-color-btn" data-color="#0ea5e9" style="background:#0ea5e9" aria-label="Azul" onclick="seleccionarColorQR(this)"></button>
+                        <button type="button" class="color-btn qr-color-btn" data-color="#8b5cf6" style="background:#8b5cf6" aria-label="Morado" onclick="seleccionarColorQR(this)"></button>
+                        <button type="button" class="color-btn qr-color-btn" data-color="#059669" style="background:#059669" aria-label="Verde" onclick="seleccionarColorQR(this)"></button>
+                        <button type="button" class="color-btn qr-color-btn" data-color="#dc2626" style="background:#dc2626" aria-label="Rojo" onclick="seleccionarColorQR(this)"></button>
+                    </div>
+                    <div id="qr-preview"><span class="spin" style="border-color:#e5e7eb;border-top-color:#111827"></span></div>
+                    <b id="qr-restaurant-name"></b>
+                    <a class="btn btn-sm" id="btn-ver-menu" href="#" target="_blank" rel="noopener"><i class="fas fa-eye"></i> Ver el menú digital</a>
                 </div>
             </div>
-
-            <!-- Restaurant name under QR -->
-            <p id="qr-restaurant-name" style="text-align:center; font-weight:700; font-size:1rem; color:var(--gray-800); margin-bottom:1.5rem;"></p>
-
-            <!-- Download button -->
-            <button id="btn-descargar-qr" onclick="descargarQR()" style="width:100%; padding:0.875rem; background:#0ea5e9; color:white; border:none; border-radius:0.5rem; font-size:0.95rem; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:0.5rem; transition:background 0.2s;" onmouseover="this.style.background='#0284c7'" onmouseout="this.style.background='#0ea5e9'">
-                <i class="fas fa-download"></i> Descargar QR (PNG)
-            </button>
-        </div>
-    </div>
-
-    <!-- ===== MODAL: CRM ===== -->
-    <div id="modal-crm" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); align-items:center; justify-content:center;">
-        <div style="background:white; border-radius:1rem; max-width:800px; width:92%; padding:2rem; position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.3); max-height:90vh; animation: modalIn 0.3s ease;">
-            <button onclick="cerrarCRMModal()" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.2rem; color:var(--gray-400); cursor:pointer;">
-                <i class="fas fa-times"></i>
-            </button>
-            <h3 style="font-size:1.3rem; font-weight:700; color:var(--gray-900); margin-bottom:0.5rem; display:flex; align-items:center; gap:0.5rem;">
-                <i class="fas fa-users" style="color:#eab308;"></i> Clientes CRM
-            </h3>
-            <p style="font-size:0.85rem; color:var(--gray-500); margin-bottom:1.5rem;">Estos clientes han dejado sus datos desde tu perfil público para recibir promociones.</p>
-            
-            <div style="background:var(--gray-50); border:1px solid var(--gray-200); border-radius:0.5rem; overflow-y:auto; max-height:50vh;">
-                <table style="width:100%; border-collapse:collapse; font-size:0.85rem; text-align:left;">
-                    <thead style="background:var(--gray-200); position:sticky; top:0;">
-                        <tr>
-                            <th style="padding:0.75rem 1rem;">Nombre</th>
-                            <th style="padding:0.75rem 1rem;">Email</th>
-                            <th style="padding:0.75rem 1rem;">WhatsApp</th>
-                            <th style="padding:0.75rem 1rem;">Cumpleaños</th>
-                            <th style="padding:0.75rem 1rem;">Fecha Reg.</th>
-                        </tr>
-                    </thead>
-                    <tbody id="crm-tbody" style="background:#fff;">
-                        <tr><td colspan="5" style="text-align:center; padding:1rem; color:var(--gray-400);"><i class="fas fa-spinner fa-spin"></i> Cargando...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-            <div style="margin-top:1rem; text-align:right;">
-                <button onclick="exportarCRMCSV()" style="background:var(--gray-800); color:white; border:none; padding:0.5rem 1rem; border-radius:0.5rem; font-size:0.85rem; cursor:pointer;"><i class="fas fa-file-csv"></i> Descargar lista de clientes</button>
+            <div class="modal-pie">
+                <button type="button" class="btn btn-primario" id="btn-descargar-qr" onclick="descargarQR()" style="flex:1"><i class="fas fa-download"></i> Descargar imagen (PNG)</button>
             </div>
         </div>
     </div>
 
-    <!-- ===== MODAL: BOLSA DE TRABAJO ===== -->
-    <div id="modal-vacantes" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); align-items:center; justify-content:center;">
-        <div style="background:white; border-radius:1rem; max-width:800px; width:92%; padding:2rem; position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.3); max-height:90vh; overflow-y:auto; animation: modalIn 0.3s ease;">
-            <button onclick="cerrarModalVacantes()" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.2rem; color:var(--gray-400); cursor:pointer;">
-                <i class="fas fa-times"></i>
-            </button>
-            <h3 style="font-size:1.3rem; font-weight:700; color:var(--gray-900); margin-bottom:0.5rem; display:flex; align-items:center; gap:0.5rem;">
-                <i class="fas fa-briefcase" style="color:#14b8a6;"></i> Bolsa de Trabajo
-            </h3>
-            <p style="font-size:0.85rem; color:var(--gray-500); margin-bottom:1.5rem;">Publica letreros digitales para que la comunidad sepa que estás contratando.</p>
-            
-            <form id="form-nueva-vacante" onsubmit="crearVacante(event)" style="background:var(--gray-50); border:1px solid var(--gray-200); padding:1.5rem; border-radius:0.5rem; margin-bottom:1.5rem;">
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
-                    <div>
-                        <label style="display:block; font-size:0.85rem; font-weight:600; color:var(--gray-700); margin-bottom:0.4rem;">Puesto a contratar *</label>
-                        <input type="text" id="vacante-titulo" placeholder="Ej. Mesero de fin de semana" required style="width:100%; padding:0.6rem; border:1px solid var(--gray-300); border-radius:0.4rem; font-size:0.9rem;">
-                    </div>
-                    <div>
-                        <label style="display:block; font-size:0.85rem; font-weight:600; color:var(--gray-700); margin-bottom:0.4rem;">Sueldo o Propina (Opcional)</label>
-                        <input type="text" id="vacante-sueldo" placeholder="Ej. $1,200 semanal + propinas libres" style="width:100%; padding:0.6rem; border:1px solid var(--gray-300); border-radius:0.4rem; font-size:0.9rem;">
-                    </div>
-                </div>
-                <div style="margin-bottom:1rem;">
-                    <label style="display:block; font-size:0.85rem; font-weight:600; color:var(--gray-700); margin-bottom:0.4rem;">Descripción y Requisitos *</label>
-                    <textarea id="vacante-desc" rows="3" placeholder="Ej. Buscamos persona proactiva, 18+ años, experiencia no necesaria..." required style="width:100%; padding:0.6rem; border:1px solid var(--gray-300); border-radius:0.4rem; font-size:0.9rem; resize:vertical;"></textarea>
-                </div>
-                <div style="margin-bottom:1.5rem;">
-                    <label style="display:block; font-size:0.85rem; font-weight:600; color:var(--gray-700); margin-bottom:0.4rem;">Contacto o Instrucción *</label>
-                    <input type="text" id="vacante-contacto" placeholder="Ej. Traer solicitud elaborada de 10am a 12pm, o enviar WhatsApp al 442..." required style="width:100%; padding:0.6rem; border:1px solid var(--gray-300); border-radius:0.4rem; font-size:0.9rem;">
-                </div>
-                <button type="submit" id="btn-crear-vacante" style="width:100%; padding:0.75rem; background:#14b8a6; color:white; border:none; border-radius:0.4rem; font-size:0.9rem; font-weight:600; cursor:pointer; transition:background 0.2s;">
-                    <i class="fas fa-bullhorn"></i> Publicar Vacante
-                </button>
-            </form>
-
-            <h4 style="font-size:0.95rem; font-weight:600; color:var(--gray-800); margin-bottom:0.75rem;">Administrar Letreros</h4>
-            <div id="lista-mis-vacantes" style="min-height:40px;">
-                <p style="color:var(--gray-400); font-size:0.85rem; text-align:center;"><i class="fas fa-spinner fa-spin"></i> Cargando...</p>
+    <!-- ===== Ventana: Ofertas ===== -->
+    <div class="modal" id="modal-ofertas" role="dialog" aria-modal="true" aria-labelledby="of-titulo">
+        <div class="modal-caja">
+            <div class="modal-cab">
+                <div class="ico c-rojo"><i class="fas fa-bolt"></i></div>
+                <div><h3 id="of-titulo">Oferta relámpago</h3><p>Aparece como aviso destacado en la página principal mientras esté vigente.</p></div>
+                <button class="icono-btn" type="button" data-cerrar aria-label="Cerrar"><i class="fas fa-times"></i></button>
             </div>
-        </div>
-    </div>
-
-    <!-- ===== MODAL: Buzón Gerencia ===== -->
-    <div id="modal-inbox" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); align-items:center; justify-content:center;">
-        <div style="background:white; border-radius:1rem; max-width:600px; width:92%; padding:2rem; position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.3); max-height:90vh; display:flex; flex-direction:column; animation: modalIn 0.3s ease;">
-            <button onclick="cerrarInboxModal()" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.2rem; color:var(--gray-400); cursor:pointer;">
-                <i class="fas fa-times"></i>
-            </button>
-            <h3 style="font-size:1.3rem; font-weight:700; color:var(--gray-900); margin-bottom:0.5rem; display:flex; align-items:center; gap:0.5rem;">
-                <i class="fas fa-envelope-open-text" style="color:#ef4444;"></i> Buzón de Quejas y Sugerencias
-            </h3>
-            <p style="font-size:0.85rem; color:var(--gray-500); margin-bottom:1.5rem;">Atiende estas quejas privadas antes de que el cliente las publique en reseñas de Google.</p>
-            
-            <div id="inbox-messages-container" style="overflow-y:auto; flex:1; padding-right:0.5rem; display:flex; flex-direction:column; gap:1rem;">
-                <p style="text-align:center; color:var(--gray-400);"><i class="fas fa-spinner fa-spin"></i> Cargando mensajes...</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- ===== MODAL: Ofertas Flash ===== -->
-    <div id="modal-ofertas" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); align-items:center; justify-content:center;">
-        <div style="background:white; border-radius:1rem; max-width:560px; width:92%; padding:2rem; position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.3); max-height:90vh; overflow-y:auto; animation: modalIn 0.3s ease;">
-            <button onclick="cerrarModalOfertas()" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.2rem; color:var(--gray-400); cursor:pointer;">
-                <i class="fas fa-times"></i>
-            </button>
-            <h3 style="font-size:1.3rem; font-weight:700; color:var(--gray-900); margin-bottom:0.5rem; display:flex; align-items:center; gap:0.5rem;">
-                <i class="fas fa-bolt" style="color:#ef4444;"></i> Ofertas Flash
-            </h3>
-            <p style="font-size:0.85rem; color:var(--gray-500); margin-bottom:1.5rem;">Crea ofertas temporales que se muestran como banners destacados en la página principal.</p>
-
-            <!-- Formulario nueva oferta -->
-            <form id="form-nueva-oferta" onsubmit="crearOfertaFlash(event)" style="background:var(--gray-50); padding:1.25rem; border-radius:0.75rem; margin-bottom:1.5rem; border:1px solid var(--gray-200);">
-                <h4 style="font-size:0.95rem; font-weight:600; color:var(--gray-800); margin-bottom:1rem;"><i class="fas fa-plus-circle" style="color:#ef4444;"></i> Nueva Oferta</h4>
-                <div style="margin-bottom:0.75rem;">
-                    <label style="font-size:0.8rem; font-weight:600; color:var(--gray-600); display:block; margin-bottom:0.3rem;">Título *</label>
-                    <input type="text" id="oferta-titulo" required placeholder="Ej: 2x1 en Margaritas" style="width:100%; padding:0.6rem 0.75rem; border:1px solid var(--gray-300); border-radius:0.4rem; font-size:0.9rem; font-family:inherit;">
-                </div>
-                <div style="margin-bottom:0.75rem;">
-                    <label style="font-size:0.8rem; font-weight:600; color:var(--gray-600); display:block; margin-bottom:0.3rem;">Descripción</label>
-                    <input type="text" id="oferta-desc" placeholder="Ej: Solo hoy de 6 PM a 8 PM" style="width:100%; padding:0.6rem 0.75rem; border:1px solid var(--gray-300); border-radius:0.4rem; font-size:0.9rem; font-family:inherit;">
-                </div>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-bottom:0.75rem;">
-                    <div>
-                        <label style="font-size:0.8rem; font-weight:600; color:var(--gray-600); display:block; margin-bottom:0.3rem;">Fecha Inicio *</label>
-                        <input type="date" id="oferta-fecha-inicio" required style="width:100%; padding:0.6rem 0.75rem; border:1px solid var(--gray-300); border-radius:0.4rem; font-size:0.9rem; font-family:inherit;">
+            <div class="modal-cuerpo">
+                <form id="form-nueva-oferta" class="caja-form" novalidate onsubmit="crearOfertaFlash(event)">
+                    <div class="campo">
+                        <label for="oferta-titulo">¿Qué ofreces?</label>
+                        <input class="input" type="text" id="oferta-titulo" maxlength="80" placeholder="Ej. 2x1 en margaritas">
+                        <div class="error-msg"><i class="fas fa-circle-exclamation"></i>Escribe el título de la oferta.</div>
                     </div>
-                    <div>
-                        <label style="font-size:0.8rem; font-weight:600; color:var(--gray-600); display:block; margin-bottom:0.3rem;">Fecha Fin *</label>
-                        <input type="date" id="oferta-fecha-fin" required style="width:100%; padding:0.6rem 0.75rem; border:1px solid var(--gray-300); border-radius:0.4rem; font-size:0.9rem; font-family:inherit;">
+                    <div class="campo">
+                        <label for="oferta-desc">Detalles <span class="opc">(opcional)</span></label>
+                        <input class="input" type="text" id="oferta-desc" maxlength="140" placeholder="Ej. Solo hoy de 6 a 8 de la noche">
                     </div>
-                </div>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-bottom:1rem;">
-                    <div>
-                        <label style="font-size:0.8rem; font-weight:600; color:var(--gray-600); display:block; margin-bottom:0.3rem;">Hora Inicio</label>
-                        <input type="time" id="oferta-hora-inicio" style="width:100%; padding:0.6rem 0.75rem; border:1px solid var(--gray-300); border-radius:0.4rem; font-size:0.9rem; font-family:inherit;">
-                    </div>
-                    <div>
-                        <label style="font-size:0.8rem; font-weight:600; color:var(--gray-600); display:block; margin-bottom:0.3rem;">Hora Fin</label>
-                        <input type="time" id="oferta-hora-fin" style="width:100%; padding:0.6rem 0.75rem; border:1px solid var(--gray-300); border-radius:0.4rem; font-size:0.9rem; font-family:inherit;">
-                    </div>
-                </div>
-                <div style="margin-bottom:1rem;">
-                    <label style="font-size:0.8rem; font-weight:600; color:var(--gray-600); display:block; margin-bottom:0.3rem;">Color del Banner</label>
-                    <div style="display:flex; gap:0.5rem;">
-                        <button type="button" class="oferta-color-btn active" data-color="#ef4444" onclick="seleccionarColorOferta(this)" style="width:28px; height:28px; border-radius:50%; border:3px solid transparent; background:#ef4444; cursor:pointer;"></button>
-                        <button type="button" class="oferta-color-btn" data-color="#f59e0b" onclick="seleccionarColorOferta(this)" style="width:28px; height:28px; border-radius:50%; border:3px solid transparent; background:#f59e0b; cursor:pointer;"></button>
-                        <button type="button" class="oferta-color-btn" data-color="#8b5cf6" onclick="seleccionarColorOferta(this)" style="width:28px; height:28px; border-radius:50%; border:3px solid transparent; background:#8b5cf6; cursor:pointer;"></button>
-                        <button type="button" class="oferta-color-btn" data-color="#0ea5e9" onclick="seleccionarColorOferta(this)" style="width:28px; height:28px; border-radius:50%; border:3px solid transparent; background:#0ea5e9; cursor:pointer;"></button>
-                        <button type="button" class="oferta-color-btn" data-color="#059669" onclick="seleccionarColorOferta(this)" style="width:28px; height:28px; border-radius:50%; border:3px solid transparent; background:#059669; cursor:pointer;"></button>
-                    </div>
-                </div>
-                <button type="submit" id="btn-crear-oferta" style="width:100%; padding:0.75rem; background:#ef4444; color:white; border:none; border-radius:0.4rem; font-size:0.9rem; font-weight:600; cursor:pointer; transition:background 0.2s;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'">
-                    <i class="fas fa-bolt"></i> Publicar Oferta
-                </button>
-            </form>
-
-            <!-- Lista de mis ofertas -->
-            <h4 style="font-size:0.95rem; font-weight:600; color:var(--gray-800); margin-bottom:0.75rem;">Mis Ofertas Activas</h4>
-            <div id="lista-mis-ofertas" style="min-height:40px;">
-                <p style="color:var(--gray-400); font-size:0.85rem; text-align:center;"><i class="fas fa-spinner fa-spin"></i> Cargando...</p>
-            </div>
-        </div>
-    </div>
-
-    <style>
-        @keyframes modalIn { from { opacity:0; transform:scale(0.95) translateY(10px); } to { opacity:1; transform:scale(1) translateY(0); } }
-        .qr-color-btn.active, .oferta-color-btn.active { border-color: var(--gray-900) !important; box-shadow: 0 0 0 2px white, 0 0 0 4px var(--gray-400); }
-    </style>
-
-    <!-- QR Code Library -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-
-    <!-- Scripts -->
-    <script>
-        // Variables globales
-        const API_BASE = window.location.origin + '/api';
-        let currentUser = null;
-        let myRestaurantData = null; // Guardamos datos del restaurante para QR y Ofertas
-        let qrColorActual = '#1a1a2e';
-        let ofertaColorActual = '#ef4444';
-
-        // Funciones de notificación
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
-
-            const icon = type === 'success' ? 'fa-check-circle' :
-                type === 'error' ? 'fa-exclamation-circle' :
-                    type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle';
-
-            notification.innerHTML = `
-                <i class="fas ${icon}"></i>
-                <span class="notification-message">${message}</span>
-                <button class="notification-close">
-                    <i class="fas fa-times"></i>
-                </button>
-            `;
-
-            document.body.appendChild(notification);
-
-            setTimeout(() => notification.classList.add('show'), 100);
-
-            setTimeout(() => {
-                notification.classList.remove('show');
-                setTimeout(() => {
-                    if (document.body.contains(notification)) {
-                        document.body.removeChild(notification);
-                    }
-                }, 300);
-            }, 5000);
-
-            notification.querySelector('.notification-close').onclick = () => {
-                notification.classList.remove('show');
-                setTimeout(() => {
-                    if (document.body.contains(notification)) {
-                        document.body.removeChild(notification);
-                    }
-                }, 300);
-            };
-        }
-
-        // Verificar autenticación
-        async function checkAuth() {
-            const token = localStorage.getItem('authToken');
-
-            if (!token) {
-                showNotification('No has iniciado sesión', 'error');
-                setTimeout(() => {
-                    window.location.href = '/login.html';
-                }, 2000);
-                return;
-            }
-
-            try {
-                const response = await fetch(`${API_BASE}/auth/profile`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                const data = await response.json().catch(() => ({}));
-
-                if (response.ok) {
-                    currentUser = data.data.admin;
-                    updateUserInterface();
-                    showNotification(`¡Bienvenido ${currentUser.nombre}!`, 'success');
-                } else {
-                    const isAccountInactive = data.code === 'ACCOUNT_INACTIVE' || (data.message && data.message.includes('inactiva'));
-                    localStorage.removeItem('authToken');
-                    localStorage.removeItem('currentUser');
-                    showNotification(
-                        isAccountInactive
-                            ? 'Tu cuenta está desactivada. Contacta al super administrador para reactivarla.'
-                            : 'Sesión expirada, redirigiendo...',
-                        'warning'
-                    );
-                    setTimeout(() => {
-                        window.location.href = '/login.html';
-                    }, 3000);
-                }
-            } catch (error) {
-                console.error('Error verificando auth:', error);
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('currentUser');
-                showNotification('Sesión expirada, redirigiendo...', 'warning');
-                setTimeout(() => {
-                    window.location.href = '/login.html';
-                }, 2000);
-            }
-        }
-
-        // Verificar restaurante y cargar estadísticas
-        async function checkRestaurant() {
-            const token = localStorage.getItem('authToken');
-            if (!token) return;
-
-            try {
-                const response = await fetch(`${API_BASE}/restaurants/my-restaurant`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                if (response.ok) {
-                    const result = await response.json();
-                    myRestaurantData = result.data; // Guardar globalmente
-                    const totalRestaurants = document.getElementById('total-restaurants');
-                    if (totalRestaurants) {
-                        totalRestaurants.textContent = '1';
-                    }
-
-                    // Cargar estadísticas de imágenes
-                    loadImageStats();
-                    
-                    // Cargar reseñas administrativas
-                    loadReviewsStats();
-                    
-                    // Cargar estadísticas de visitas/clics
-                    loadVisitStats(myRestaurantData);
-                    
-                    // Actualizar horarios del día de hoy
-                    updateTodaySchedule(myRestaurantData);
-                } else {
-                    const totalRestaurants = document.getElementById('total-restaurants');
-                    if (totalRestaurants) {
-                        totalRestaurants.textContent = '0';
-                    }
-                }
-            } catch (error) {
-                console.error('Error verificando restaurante:', error);
-            }
-        }
-
-        // Cargar estadísticas de Reseñas
-        async function loadReviewsStats() {
-            const token = localStorage.getItem('authToken');
-            if (!token) return;
-
-            try {
-                // Rutas del admin según router.js
-                const response = await fetch(`${API_BASE}/admin/my-restaurant/reviews`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                if (response.ok) {
-                    const result = await response.json();
-                    if (result.success && result.data) {
-                        const reviews = Array.isArray(result.data) ? result.data : (result.data.resenas || []);
-                        const avgRatingEl = document.getElementById('avg-rating');
-                        const totalReviewsMsg = document.getElementById('total-reviews-msg');
-                        
-                        if (reviews.length > 0) {
-                            // Suma y promedio
-                            const sum = reviews.reduce((acc, rev) => acc + (rev.rating || 0), 0);
-                            const avg = (sum / reviews.length).toFixed(1);
-                            avgRatingEl.textContent = avg;
-                            
-                            const pendientes = reviews.filter(r => !r.respuestaAdmin && r.estado === 'aprobada').length;
-                            
-                            totalReviewsMsg.innerHTML = `
-                                <i class="fas fa-comment-dots"></i>
-                                <span>${reviews.length} total, ${pendientes} sin responder</span>
-                            `;
-                        } else {
-                            avgRatingEl.textContent = '-';
-                            totalReviewsMsg.innerHTML = `<i class="fas fa-comment-slash"></i> <span>Aún sin reseñas</span>`;
-                        }
-                    }
-                }
-            } catch (error) {
-                console.error('Error cargando reseñas:', error);
-            }
-        }
-
-        // Cargar estadísticas de visitas, WhatsApp y Mapa
-        function loadVisitStats(restaurantData) {
-            if (!restaurantData) return;
-
-            const stats = restaurantData.estadisticas || {};
-            const mensual = restaurantData.estadisticasMensuales || [];
-
-            // Totales globales
-            const totalViewsEl = document.getElementById('total-views');
-            const totalWhatsappEl = document.getElementById('total-whatsapp');
-            const totalMapEl = document.getElementById('total-map');
-
-            if (totalViewsEl) totalViewsEl.textContent = (stats.vistasPerfil || 0).toLocaleString('es-MX');
-            if (totalWhatsappEl) totalWhatsappEl.textContent = (stats.clicsWhatsapp || 0).toLocaleString('es-MX');
-            if (totalMapEl) totalMapEl.textContent = (stats.clicsMapa || 0).toLocaleString('es-MX');
-
-            // Calcular datos del mes actual
-            const ahora = new Date();
-            const mesActual = `${ahora.getFullYear()}-${(ahora.getMonth() + 1).toString().padStart(2, '0')}`;
-            const datosMes = mensual.find(m => m.fecha === mesActual);
-
-            const viewsMonthMsg = document.getElementById('views-month-msg');
-            const whatsappMonthMsg = document.getElementById('whatsapp-month-msg');
-            const mapMonthMsg = document.getElementById('map-month-msg');
-
-            if (datosMes) {
-                if (viewsMonthMsg) viewsMonthMsg.innerHTML = `<i class="fas fa-chart-line"></i> <span>${datosMes.vistas || 0} este mes</span>`;
-                if (whatsappMonthMsg) whatsappMonthMsg.innerHTML = `<i class="fas fa-chart-line"></i> <span>${datosMes.clicsWhatsapp || 0} este mes</span>`;
-                if (mapMonthMsg) mapMonthMsg.innerHTML = `<i class="fas fa-chart-line"></i> <span>${datosMes.clicsMapa || 0} este mes</span>`;
-            } else {
-                if (viewsMonthMsg) viewsMonthMsg.innerHTML = `<i class="fas fa-chart-line"></i> <span>0 este mes</span>`;
-                if (whatsappMonthMsg) whatsappMonthMsg.innerHTML = `<i class="fas fa-chart-line"></i> <span>0 este mes</span>`;
-                if (mapMonthMsg) mapMonthMsg.innerHTML = `<i class="fas fa-chart-line"></i> <span>0 este mes</span>`;
-            }
-        }
-
-        // Horario y estado del día de hoy
-        function updateTodaySchedule(restaurantData) {
-            if (!restaurantData || !restaurantData.horarios) return;
-
-            const daysMap = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
-            const todayIndex = new Date().getDay();
-            const todayName = daysMap[todayIndex];
-            
-            // Los horarios vienen como objeto: horarios.lunes, horarios.martes, etc.
-            const scheduleToday = restaurantData.horarios[todayName];
-            
-            const todayStatusEl = document.getElementById('today-status');
-            const todayHoursEl = document.getElementById('today-hours');
-            const statusIcon = document.getElementById('status-icon');
-
-            if (scheduleToday && scheduleToday.abierto) {
-                todayStatusEl.textContent = 'Abierto';
-                todayStatusEl.style.color = 'inherit';
-                statusIcon.className = 'stat-icon success';
-                statusIcon.innerHTML = '<i class="fas fa-door-open"></i>';
-                
-                todayHoursEl.innerHTML = `
-                    <i class="fas fa-clock"></i>
-                    <span>${scheduleToday.apertura} - ${scheduleToday.cierre}</span>
-                `;
-            } else {
-                todayStatusEl.textContent = 'Cerrado';
-                todayStatusEl.style.color = '#ef4444';
-                statusIcon.className = 'stat-icon error';
-                statusIcon.innerHTML = '<i class="fas fa-door-closed"></i>';
-                
-                todayHoursEl.innerHTML = `
-                    <i class="fas fa-info-circle"></i>
-                    <span>No abre el día de hoy</span>
-                `;
-            }
-        }
-
-        // Funcionalidad para copiar enlace directo
-        function copiarEnlacePublico() {
-            if (!myRestaurantData || !myRestaurantData._id) {
-                showNotification('Aún no tienes un perfil creado', 'warning');
-                return;
-            }
-            
-            // Generar URL pública
-            const publicUrl = `${window.location.origin}/restaurante.html?id=${myRestaurantData._id}`;
-            
-            navigator.clipboard.writeText(publicUrl).then(() => {
-                showNotification('Enlace copiado al portapapeles. ¡Compártelo!', 'success');
-            }).catch(err => {
-                console.error('Error al copiar:', err);
-                showNotification('No se pudo copiar el enlace', 'error');
-            });
-        }
-
-        // Abrir perfil público en nueva pestaña
-        function verMiRestaurantePublico() {
-            if (!myRestaurantData || !myRestaurantData._id) {
-                showNotification('Debes configurar tu información básica primero.', 'warning');
-                return;
-            }
-            const publicUrl = `${window.location.origin}/restaurante.html?id=${myRestaurantData._id}`;
-            window.open(publicUrl, '_blank');
-        }
-
-        // Cargar estadísticas de imágenes
-        async function loadImageStats() {
-            const token = localStorage.getItem('authToken');
-            if (!token) return;
-
-            try {
-                const response = await fetch(`${API_BASE}/restaurants/images`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    const totalImages = document.getElementById('total-images');
-                    if (totalImages && data.data) {
-                        totalImages.textContent = data.data.length || 0;
-                    }
-                } else {
-                    const totalImages = document.getElementById('total-images');
-                    if (totalImages) {
-                        totalImages.textContent = '0';
-                    }
-                }
-            } catch (error) {
-                console.error('Error cargando estadísticas de imágenes:', error);
-            }
-        }
-
-        // Actualizar interfaz de usuario
-        function updateUserInterface() {
-            if (!currentUser) return;
-
-            const userName = document.getElementById('user-name');
-            const userRole = document.getElementById('user-role');
-            const userAvatar = document.getElementById('user-avatar');
-            const lastAccess = document.getElementById('last-access');
-
-            if (userName) {
-                userName.textContent = `${currentUser.nombre} ${currentUser.apellido}`;
-            }
-
-            if (userRole) {
-                userRole.textContent = currentUser.rol;
-            }
-
-            if (userAvatar) {
-                const initials = (currentUser.nombre?.charAt(0) || '') + (currentUser.apellido?.charAt(0) || '');
-                userAvatar.textContent = initials.toUpperCase();
-            }
-
-            if (lastAccess) {
-                const now = new Date();
-                lastAccess.textContent = now.toLocaleTimeString('es-ES', {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-            }
-
-            const welcomeMessage = document.getElementById('welcome-message');
-            if (welcomeMessage) {
-                welcomeMessage.textContent = `Bienvenido ${currentUser.nombre}`;
-            }
-        }
-
-        // Probar API
-        async function testAPI() {
-            const dbIndicator = document.getElementById('db-indicator');
-            const dbStatus = document.getElementById('db-status');
-
-            try {
-                const response = await fetch('/test');
-                const data = await response.json();
-
-                if (data.success) {
-                    // Actualizar estado de base de datos
-                    if (data.database.connected) {
-                        dbIndicator.className = 'status-indicator success';
-                        dbStatus.textContent = 'Conectada';
-                    } else {
-                        dbIndicator.className = 'status-indicator warning';
-                        dbStatus.textContent = 'Desconectada';
-                    }
-                } else {
-                    throw new Error('API no disponible');
-                }
-            } catch (error) {
-                dbIndicator.className = 'status-indicator error';
-                dbStatus.textContent = 'Error de conexión';
-                showNotification('Error de conexión con el servidor', 'error');
-            }
-        }
-
-        // Refrescar datos
-        async function refreshData() {
-            showNotification('Actualizando datos...', 'info');
-            await testAPI();
-            await checkRestaurant();
-            showNotification('Datos actualizados correctamente', 'success');
-        }
-
-        // Logout
-        function logout() {
-            const confirmed = confirm('¿Estás seguro de que quieres cerrar sesión?');
-
-            if (confirmed) {
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('currentUser');
-                showNotification('Sesión cerrada correctamente', 'info');
-
-                setTimeout(() => {
-                    window.location.href = '/login.html';
-                }, 1000);
-            }
-        }
-
-        // Event listeners
-        document.addEventListener('DOMContentLoaded', function () {
-            // Verificar autenticación al cargar
-            checkAuth();
-
-            // Verificar restaurante
-            setTimeout(() => {
-                checkRestaurant();
-            }, 500);
-
-            // Probar API automáticamente
-            setTimeout(() => {
-                testAPI();
-            }, 1000);
-
-            // Logout button
-            const logoutBtn = document.getElementById('logout-btn');
-            if (logoutBtn) {
-                logoutBtn.addEventListener('click', logout);
-            }
-
-            console.log('Panel de administración cargado correctamente');
-        });
-
-        // Verificar autenticación periódicamente
-        setInterval(() => {
-            if (!localStorage.getItem('authToken')) {
-                window.location.href = '/login.html';
-            }
-        }, 30000); // Cada 30 segundos
-
-        // ===== QR MENU GENERATOR =====
-        function abrirModalQR() {
-            if (!myRestaurantData) {
-                showNotification('Primero necesitas tener un restaurante registrado', 'warning');
-                return;
-            }
-            const modal = document.getElementById('modal-qr');
-            modal.style.display = 'flex';
-            document.getElementById('qr-restaurant-name').textContent = myRestaurantData.nombre || 'Mi Restaurante';
-            generarQR();
-        }
-
-        function cerrarModalQR() {
-            document.getElementById('modal-qr').style.display = 'none';
-        }
-
-        function seleccionarColorQR(btn) {
-            document.querySelectorAll('.qr-color-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            qrColorActual = btn.dataset.color;
-            generarQR();
-        }
-
-        function generarQR() {
-            const container = document.getElementById('qr-preview');
-            container.innerHTML = '';
-            const restId = myRestaurantData._id || myRestaurantData.id;
-            const url = `${window.location.origin}/restaurante.html?id=${restId}`;
-
-            new QRCode(container, {
-                text: url,
-                width: 220,
-                height: 220,
-                colorDark: qrColorActual,
-                colorLight: '#ffffff',
-                correctLevel: QRCode.CorrectLevel.H
-            });
-
-            // Overlay logo in center after QR renders
-            setTimeout(() => {
-                const canvas = container.querySelector('canvas');
-                if (!canvas) return;
-                const ctx = canvas.getContext('2d');
-                const logoImg = new Image();
-                logoImg.crossOrigin = 'anonymous';
-                const logoUrl = (myRestaurantData.imagenes && myRestaurantData.imagenes.length > 0)
-                    ? myRestaurantData.imagenes[0].url
-                    : '/images/PueblosMágicos.svg.png';
-                logoImg.src = logoUrl;
-                logoImg.onload = () => {
-                    const logoSize = 48;
-                    const x = (canvas.width - logoSize) / 2;
-                    const y = (canvas.height - logoSize) / 2;
-                    // White circle background
-                    ctx.beginPath();
-                    ctx.arc(x + logoSize/2, y + logoSize/2, logoSize/2 + 4, 0, Math.PI * 2);
-                    ctx.fillStyle = 'white';
-                    ctx.fill();
-                    // Clip and draw logo
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.arc(x + logoSize/2, y + logoSize/2, logoSize/2, 0, Math.PI * 2);
-                    ctx.clip();
-                    ctx.drawImage(logoImg, x, y, logoSize, logoSize);
-                    ctx.restore();
-                };
-            }, 300);
-        }
-
-        function descargarQR() {
-            const container = document.getElementById('qr-preview');
-            const canvas = container.querySelector('canvas');
-            if (!canvas) {
-                showNotification('Error: QR no generado aún', 'error');
-                return;
-            }
-
-            // Create a larger canvas with branding
-            const finalCanvas = document.createElement('canvas');
-            const padding = 40;
-            const textHeight = 60;
-            finalCanvas.width = canvas.width + padding * 2;
-            finalCanvas.height = canvas.height + padding * 2 + textHeight;
-            const ctx = finalCanvas.getContext('2d');
-
-            // White background with rounded corners
-            ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
-
-            // Draw QR
-            ctx.drawImage(canvas, padding, padding);
-
-            // Draw restaurant name below
-            ctx.fillStyle = '#1a1a2e';
-            ctx.font = 'bold 16px Outfit, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText(myRestaurantData.nombre || 'Mi Restaurante', finalCanvas.width / 2, canvas.height + padding + 28);
-
-            // Small subtitle
-            ctx.fillStyle = '#9ca3af';
-            ctx.font = '11px Outfit, sans-serif';
-            ctx.fillText('Escanea para ver nuestro menú', finalCanvas.width / 2, canvas.height + padding + 48);
-
-            // Download
-            const link = document.createElement('a');
-            const safeName = (myRestaurantData.nombre || 'restaurante').replace(/\s+/g, '_').toLowerCase();
-            link.download = `QR_Menu_${safeName}.png`;
-            link.href = finalCanvas.toDataURL('image/png');
-            link.click();
-
-            showNotification('QR descargado exitosamente', 'success');
-        }
-
-        // Click outside modal to close
-        document.getElementById('modal-qr').addEventListener('click', function(e) {
-            if (e.target === this) cerrarModalQR();
-        });
-
-        // ===== OFERTAS FLASH =====
-        function abrirModalOfertas() {
-            if (!myRestaurantData) {
-                showNotification('Primero necesitas tener un restaurante registrado', 'warning');
-                return;
-            }
-            document.getElementById('modal-ofertas').style.display = 'flex';
-            // Set default dates
-            const hoy = new Date().toISOString().split('T')[0];
-            document.getElementById('oferta-fecha-inicio').value = hoy;
-            document.getElementById('oferta-fecha-fin').value = hoy;
-            cargarMisOfertas();
-        }
-
-        function cerrarModalOfertas() {
-            document.getElementById('modal-ofertas').style.display = 'none';
-        }
-
-        function seleccionarColorOferta(btn) {
-            document.querySelectorAll('.oferta-color-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            ofertaColorActual = btn.dataset.color;
-        }
-
-        async function crearOfertaFlash(e) {
-            e.preventDefault();
-            const token = localStorage.getItem('authToken');
-            if (!token) return;
-
-            const btn = document.getElementById('btn-crear-oferta');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Publicando...';
-
-            try {
-                const body = {
-                    titulo: document.getElementById('oferta-titulo').value,
-                    descripcion: document.getElementById('oferta-desc').value,
-                    fechaInicio: document.getElementById('oferta-fecha-inicio').value,
-                    fechaFin: document.getElementById('oferta-fecha-fin').value,
-                    horaInicio: document.getElementById('oferta-hora-inicio').value || undefined,
-                    horaFin: document.getElementById('oferta-hora-fin').value || undefined,
-                    color: ofertaColorActual
-                };
-
-                const res = await fetch(`${API_BASE}/ofertas-flash`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify(body)
-                });
-                const data = await res.json();
-
-                if (data.success) {
-                    showNotification('¡Oferta flash publicada!', 'success');
-                    document.getElementById('form-nueva-oferta').reset();
-                    // Reset defaults
-                    const hoy = new Date().toISOString().split('T')[0];
-                    document.getElementById('oferta-fecha-inicio').value = hoy;
-                    document.getElementById('oferta-fecha-fin').value = hoy;
-                    cargarMisOfertas();
-                } else {
-                    showNotification(data.message || 'Error al crear oferta', 'error');
-                }
-            } catch (err) {
-                console.error(err);
-                showNotification('Error de conexión', 'error');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-bolt"></i> Publicar Oferta';
-            }
-        }
-
-        async function cargarMisOfertas() {
-            const token = localStorage.getItem('authToken');
-            const container = document.getElementById('lista-mis-ofertas');
-            container.innerHTML = '<p style="color:var(--gray-400); font-size:0.85rem; text-align:center;"><i class="fas fa-spinner fa-spin"></i> Cargando...</p>';
-
-            try {
-                const res = await fetch(`${API_BASE}/ofertas-flash/mis-ofertas`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await res.json();
-
-                if (data.success && data.data && data.data.length > 0) {
-                    container.innerHTML = data.data.map(o => {
-                        const inicio = new Date(o.fechaInicio).toLocaleDateString('es-MX', { day:'numeric', month:'short' });
-                        const fin = new Date(o.fechaFin).toLocaleDateString('es-MX', { day:'numeric', month:'short' });
-                        const horas = (o.horaInicio && o.horaFin) ? ` • ${o.horaInicio} - ${o.horaFin}` : '';
-                        return `
-                            <div style="display:flex; align-items:center; gap:0.75rem; padding:0.75rem; border:1px solid var(--gray-200); border-radius:0.5rem; margin-bottom:0.5rem; border-left:4px solid ${o.color || '#ef4444'};">
-                                <div style="flex:1;">
-                                    <div style="font-weight:600; color:var(--gray-800); font-size:0.9rem;">${o.titulo}</div>
-                                    <div style="font-size:0.75rem; color:var(--gray-500);">${inicio} → ${fin}${horas}</div>
-                                </div>
-                                <button onclick="eliminarOferta('${o._id}')" style="background:none; border:none; color:var(--gray-400); cursor:pointer; padding:0.25rem;" title="Eliminar">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        `;
-                    }).join('');
-                } else {
-                    container.innerHTML = '<p style="color:var(--gray-400); font-size:0.85rem; text-align:center; padding:1rem 0;">No tienes ofertas activas</p>';
-                }
-            } catch (err) {
-                console.error(err);
-                container.innerHTML = '<p style="color:var(--gray-400); font-size:0.85rem; text-align:center;">Error al cargar ofertas</p>';
-            }
-        }
-
-        async function eliminarOferta(id) {
-            if (!confirm('¿Eliminar esta oferta?')) return;
-            const token = localStorage.getItem('authToken');
-            try {
-                const res = await fetch(`${API_BASE}/ofertas-flash/${id}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await res.json();
-                if (data.success) {
-                    showNotification('Oferta eliminada', 'success');
-                    cargarMisOfertas();
-                } else {
-                    showNotification(data.message || 'Error', 'error');
-                }
-            } catch (err) {
-                showNotification('Error de conexión', 'error');
-            }
-        }
-
-        document.getElementById('modal-ofertas').addEventListener('click', function(e) {
-            if (e.target === this) cerrarModalOfertas();
-        });
-
-        // ==========================================
-        // BOLSA DE TRABAJO (LETREROS DIGITALES)
-        // ==========================================
-        function abrirModalVacantes() {
-            if (!myRestaurantData) {
-                showNotification('Primero necesitas tener un restaurante registrado', 'warning');
-                return;
-            }
-            document.getElementById('modal-vacantes').style.display = 'flex';
-            cargarMisVacantes();
-        }
-
-        function cerrarModalVacantes() {
-            document.getElementById('modal-vacantes').style.display = 'none';
-        }
-
-        document.getElementById('modal-vacantes').addEventListener('click', function(e) {
-            if (e.target === this) cerrarModalVacantes();
-        });
-
-        async function crearVacante(e) {
-            e.preventDefault();
-            const token = localStorage.getItem('authToken');
-            if (!token) return;
-
-            const btn = document.getElementById('btn-crear-vacante');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Publicando...';
-
-            try {
-                const body = {
-                    titulo: document.getElementById('vacante-titulo').value,
-                    sueldo: document.getElementById('vacante-sueldo').value,
-                    descripcion: document.getElementById('vacante-desc').value,
-                    contacto: document.getElementById('vacante-contacto').value
-                };
-
-                const res = await fetch(`${API_BASE}/bolsa-trabajo`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify(body)
-                });
-                const data = await res.json();
-
-                if (data.success) {
-                    showNotification('¡Letrero de vacante publicado!', 'success');
-                    document.getElementById('form-nueva-vacante').reset();
-                    cargarMisVacantes();
-                } else {
-                    showNotification(data.message || 'Error al crear la vacante', 'error');
-                }
-            } catch (err) {
-                console.error(err);
-                showNotification('Error de conexión', 'error');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-bullhorn"></i> Publicar Vacante';
-            }
-        }
-
-        async function cargarMisVacantes() {
-            const token = localStorage.getItem('authToken');
-            const container = document.getElementById('lista-mis-vacantes');
-            container.innerHTML = '<p style="color:var(--gray-400); font-size:0.85rem; text-align:center;"><i class="fas fa-spinner fa-spin"></i> Cargando vacantes...</p>';
-
-            try {
-                const res = await fetch(`${API_BASE}/bolsa-trabajo/mis-vacantes`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await res.json();
-
-                if (data.success && data.data && data.data.length > 0) {
-                    container.innerHTML = data.data.map(v => `
-                        <div style="display:flex; align-items:center; gap:0.75rem; padding:1rem; border:1px solid var(--gray-200); border-radius:0.5rem; margin-bottom:0.5rem; background: ${v.activa ? '#fff' : '#f8fafc'}; opacity: ${v.activa ? '1' : '0.6'};">
-                            <div style="flex:1;">
-                                <div style="font-weight:700; color:var(--gray-800); font-size:0.95rem; margin-bottom:0.25rem;">
-                                    ${v.titulo} ${!v.activa ? '<span style="font-size:0.7rem; background:#cbd5e1; color:white; padding:0.1rem 0.4rem; border-radius:1rem;">Pausada</span>' : ''}
-                                </div>
-                                <div style="font-size:0.8rem; color:var(--gray-500);"><i class="fas fa-dollar-sign"></i> ${v.sueldo || 'No especificado'}</div>
-                                <div style="font-size:0.8rem; color:var(--gray-500);"><i class="fas fa-phone"></i> ${v.contacto}</div>
-                            </div>
-                            <div style="display:flex; gap:0.5rem;">
-                                <button onclick="cambiarEstadoVacante('${v._id}')" class="btn" style="background:${v.activa ? 'var(--gray-200)' : '#10b981'}; color:${v.activa ? 'var(--gray-600)' : 'white'}; padding:0.4rem 0.8rem; border-radius:0.4rem; font-size:0.8rem; border:none; cursor:pointer;" title="${v.activa ? 'Pausar búsqueda' : 'Reactivar búsqueda'}">
-                                    <i class="fas ${v.activa ? 'fa-pause' : 'fa-play'}"></i> ${v.activa ? 'Pausar' : 'Activar'}
-                                </button>
-                                <button onclick="eliminarVacante('${v._id}')" class="btn" style="background:#ef4444; color:white; padding:0.4rem 0.8rem; border-radius:0.4rem; font-size:0.8rem; border:none; cursor:pointer;" title="Eliminar letrero definitivamente">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
+                    <div class="fila">
+                        <div class="campo"><label for="oferta-fecha-inicio">Desde el día</label><input class="input" type="date" id="oferta-fecha-inicio"></div>
+                        <div class="campo">
+                            <label for="oferta-fecha-fin">Hasta el día</label><input class="input" type="date" id="oferta-fecha-fin">
+                            <div class="error-msg"><i class="fas fa-circle-exclamation"></i><span>Revisa las fechas.</span></div>
                         </div>
-                    `).join('');
-                } else {
-                    container.innerHTML = '<p style="color:var(--gray-400); font-size:0.85rem; text-align:center; padding:1rem 0;">No tienes vacantes activas</p>';
-                }
-            } catch (err) {
-                console.error(err);
-                container.innerHTML = '<p style="color:var(--gray-400); font-size:0.85rem; text-align:center;">Error al cargar vacantes</p>';
-            }
-        }
-
-        async function cambiarEstadoVacante(id) {
-            const token = localStorage.getItem('authToken');
-            try {
-                const res = await fetch(`${API_BASE}/bolsa-trabajo/${id}/estado`, {
-                    method: 'PATCH',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await res.json();
-                if (data.success) {
-                    showNotification(data.message, 'success');
-                    cargarMisVacantes();
-                }
-            } catch (err) {
-                showNotification('Error de conexión', 'error');
-            }
-        }
-
-        async function eliminarVacante(id) {
-            if (!confirm('¿Eliminar esta vacante definitivamente?')) return;
-            const token = localStorage.getItem('authToken');
-            try {
-                const res = await fetch(`${API_BASE}/bolsa-trabajo/${id}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await res.json();
-                if (data.success) {
-                    showNotification('Vacante eliminada', 'success');
-                    cargarMisVacantes();
-                } else {
-                    showNotification(data.message || 'Error', 'error');
-                }
-            } catch (err) {
-                showNotification('Error de conexión', 'error');
-            }
-        }
-        // ==========================================
-        // CRM Y BUZÓN (NUEVAS FUNCIONES)
-        // ==========================================
-        function openCRMModal() {
-            document.getElementById('modal-crm').style.display = 'flex';
-            loadCRMData();
-        }
-        function cerrarCRMModal() {
-            document.getElementById('modal-crm').style.display = 'none';
-        }
-
-        async function loadCRMData() {
-            const tbody = document.getElementById('crm-tbody');
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:1rem;"><i class="fas fa-spinner fa-spin"></i> Cargando clientes...</td></tr>';
-            try {
-                const token = localStorage.getItem('authToken');
-                const res = await fetch(`${API_BASE}/crm-quejas/mis-contactos`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (!res.ok) throw new Error('Error al cargar CRM');
-                
-                const contactos = await res.json();
-                
-                if (contactos.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:1rem; color:var(--gray-500);">Aún no tienes clientes registrados.</td></tr>';
-                    return;
-                }
-
-                tbody.innerHTML = contactos.map(c => `
-                    <tr style="border-bottom:1px solid var(--gray-200);">
-                        <td style="padding:0.75rem 1rem; font-weight:600;">${c.nombre}</td>
-                        <td style="padding:0.75rem 1rem;">${c.email || '-'}</td>
-                        <td style="padding:0.75rem 1rem;">${c.telefono || '-'}</td>
-                        <td style="padding:0.75rem 1rem;">${c.cumpleanos || '-'}</td>
-                        <td style="padding:0.75rem 1rem;">${new Date(c.fechaRegistro).toLocaleDateString()}</td>
-                    </tr>
-                `).join('');
-
-                // Guardar en window para exportar 
-                window.currentCRMData = contactos;
-            } catch (err) {
-                console.error(err);
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:1rem; color:red;">Error cargando datos.</td></tr>';
-            }
-        }
-
-        function exportarCRMCSV() {
-            if (!window.currentCRMData || window.currentCRMData.length === 0) {
-                return showNotification('No hay datos para exportar', 'warning');
-            }
-            
-            const headers = ['Nombre', 'Email', 'WhatsApp', 'Cumpleaños', 'Fecha de Registro'];
-            const rows = window.currentCRMData.map(c => [
-                `"${c.nombre || ''}"`,
-                `"${c.email || ''}"`,
-                `"${c.telefono || ''}"`,
-                `"${c.cumpleanos || ''}"`,
-                `"${new Date(c.fechaRegistro).toLocaleDateString()}"`
-            ]);
-            
-            const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'clientes_crm.csv';
-            link.click();
-        }
-
-        function openInboxModal() {
-            document.getElementById('modal-inbox').style.display = 'flex';
-            loadInboxData();
-        }
-        function cerrarInboxModal() {
-            document.getElementById('modal-inbox').style.display = 'none';
-        }
-
-        async function loadInboxData() {
-            const container = document.getElementById('inbox-messages-container');
-            container.innerHTML = '<p style="text-align:center;"><i class="fas fa-spinner fa-spin"></i> Cargando...</p>';
-            
-            try {
-                const token = localStorage.getItem('authToken');
-                const res = await fetch(`${API_BASE}/crm-quejas/mis-mensajes`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (!res.ok) throw new Error('Error al cargar Inbox');
-                
-                const mensajes = await res.json();
-                
-                if (mensajes.length === 0) {
-                    container.innerHTML = '<p style="text-align:center; color:var(--gray-500); padding:2rem;">No tienes mensajes privados ni quejas (¡Eso es bueno!).</p>';
-                    return;
-                }
-
-                container.innerHTML = mensajes.map(m => `
-                    <div style="background: ${m.leido ? 'var(--gray-50)' : 'var(--blue-50)'}; border: 1px solid ${m.leido ? 'var(--gray-200)' : 'var(--blue-200)'}; border-radius: 0.5rem; padding: 1rem; position: relative;">
-                        ${!m.leido ? '<span style="position:absolute; top:1rem; right:1rem; background:var(--blue-600); color:white; font-size:0.7rem; padding:0.2rem 0.5rem; border-radius:1rem;">NUEVO</span>' : ''}
-                        <div style="font-size:0.8rem; color:var(--gray-500); margin-bottom:0.5rem;">${new Date(m.fecha).toLocaleString()}</div>
-                        <h4 style="font-size:1rem; margin-bottom:0.25rem;">${m.nombre}</h4>
-                        ${m.contacto ? `<div style="font-size:0.85rem; color:var(--gray-600); margin-bottom:0.75rem;"><i class="fas fa-phone"></i> ${m.contacto}</div>` : ''}
-                        
-                        <p style="font-size:0.95rem; color:var(--gray-800); background:white; padding:1rem; border-radius:0.5rem; border:1px solid var(--gray-200); margin-top:0.5rem;">${m.mensaje}</p>
-                        
-                        ${!m.leido ? `
-                            <button onclick="marcarComoLeido('${m._id}')" style="margin-top:1rem; background:none; border:none; color:var(--primary); font-size:0.85rem; cursor:pointer; font-weight:600;"><i class="fas fa-check"></i> Marcar como leído e investigado</button>
-                        ` : '<div style="margin-top:1rem; font-size:0.8rem; color:var(--gray-400);"><i class="fas fa-check-double"></i> Atendido</div>'}
                     </div>
-                `).join('');
-
-            } catch (err) {
-                console.error(err);
-                container.innerHTML = '<p style="text-align:center; color:red;">Error cargando buzón.</p>';
-            }
-        }
-
-        async function marcarComoLeido(id) {
-            try {
-                const token = localStorage.getItem('authToken');
-                await fetch(`${API_BASE}/crm-quejas/mis-mensajes/${id}/leido`, {
-                    method: 'PATCH',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                loadInboxData(); // Recargar
-            } catch (err) {
-                console.error(err);
-            }
-        }
-
-        // ===== EVENTOS =====
-        let eventosData = [];
-
-        function abrirModalEventos() {
-            document.getElementById('modal-eventos').style.display = 'flex';
-            cargarEventos();
-        }
-        function cerrarModalEventos() {
-            document.getElementById('modal-eventos').style.display = 'none';
-        }
-
-        async function cargarEventos() {
-            const token = localStorage.getItem('authToken');
-            const container = document.getElementById('eventos-list');
-            container.innerHTML = '<p style="text-align:center; color:var(--gray-400);"><i class="fas fa-spinner fa-spin"></i> Cargando...</p>';
-            try {
-                const res = await fetch(`${API_BASE}/restaurants/my-restaurant/eventos`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await res.json();
-                if (data.success) {
-                    eventosData = data.data || [];
-                    renderEventos();
-                }
-            } catch (err) {
-                container.innerHTML = '<p style="text-align:center; color:red;">Error cargando eventos.</p>';
-            }
-        }
-
-        function renderEventos() {
-            const container = document.getElementById('eventos-list');
-            if (eventosData.length === 0) {
-                container.innerHTML = '<div style="text-align:center; padding:2rem; color:var(--gray-400);"><i class="fas fa-calendar-times fa-2x" style="margin-bottom:0.5rem;"></i><p>No tienes eventos registrados</p></div>';
-                return;
-            }
-            const tipoIcons = {
-                'musica-en-vivo': 'fas fa-music', 'noche-tematica': 'fas fa-moon', 'degustacion': 'fas fa-wine-glass-alt',
-                'happy-hour': 'fas fa-glass-cheers', 'karaoke': 'fas fa-microphone', 'taller': 'fas fa-chalkboard-teacher',
-                'especial': 'fas fa-star', 'otro': 'fas fa-calendar'
-            };
-            const tipoLabels = {
-                'musica-en-vivo': 'Música en Vivo', 'noche-tematica': 'Noche Temática', 'degustacion': 'Degustación',
-                'happy-hour': 'Happy Hour', 'karaoke': 'Karaoke', 'taller': 'Taller',
-                'especial': 'Especial', 'otro': 'Otro'
-            };
-            container.innerHTML = eventosData.map(e => {
-                const fechaStr = new Date(e.fecha).toLocaleDateString('es-MX', { weekday:'short', day:'numeric', month:'short', year:'numeric' });
-                const icon = tipoIcons[e.tipo] || 'fas fa-calendar';
-                const label = tipoLabels[e.tipo] || e.tipo;
-                const pasado = new Date(e.fecha) < new Date() && !e.recurrente;
-                return `
-                    <div style="background:${pasado ? 'var(--gray-50)' : 'white'}; border:1px solid var(--gray-200); border-radius:0.75rem; padding:1rem; display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; ${pasado ? 'opacity:0.6;' : ''}">
-                        <div style="flex:1;">
-                            <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
-                                <i class="${icon}" style="color:#f97316;"></i>
-                                <span style="font-size:0.75rem; background:rgba(249,115,22,0.1); color:#f97316; padding:0.1rem 0.5rem; border-radius:999px; font-weight:600;">${label}</span>
-                                ${e.recurrente ? '<span style="font-size:0.7rem; background:rgba(59,130,246,0.1); color:#3b82f6; padding:0.1rem 0.4rem; border-radius:999px;">Recurrente</span>' : ''}
-                            </div>
-                            <h4 style="font-size:1rem; font-weight:700; color:var(--gray-900); margin:0.25rem 0;">${e.titulo}</h4>
-                            <p style="font-size:0.85rem; color:var(--gray-600); margin:0.25rem 0;">${e.descripcion}</p>
-                            <div style="font-size:0.8rem; color:var(--gray-500); margin-top:0.5rem;">
-                                <i class="fas fa-calendar-day"></i> ${fechaStr} &nbsp; <i class="fas fa-clock"></i> ${e.horaInicio}${e.horaFin ? ' - ' + e.horaFin : ''}
-                            </div>
+                    <div class="fila">
+                        <div class="campo"><label for="oferta-hora-inicio">Desde la hora <span class="opc">(opcional)</span></label><input class="input" type="time" id="oferta-hora-inicio"></div>
+                        <div class="campo"><label for="oferta-hora-fin">Hasta la hora <span class="opc">(opcional)</span></label><input class="input" type="time" id="oferta-hora-fin"></div>
+                    </div>
+                    <div class="campo">
+                        <span class="etiqueta">Color del aviso</span>
+                        <div class="colores">
+                            <button type="button" class="color-btn oferta-color-btn active" data-color="#ef4444" style="background:#ef4444" aria-label="Rojo" onclick="seleccionarColorOferta(this)"></button>
+                            <button type="button" class="color-btn oferta-color-btn" data-color="#f59e0b" style="background:#f59e0b" aria-label="Naranja" onclick="seleccionarColorOferta(this)"></button>
+                            <button type="button" class="color-btn oferta-color-btn" data-color="#8b5cf6" style="background:#8b5cf6" aria-label="Morado" onclick="seleccionarColorOferta(this)"></button>
+                            <button type="button" class="color-btn oferta-color-btn" data-color="#0ea5e9" style="background:#0ea5e9" aria-label="Azul" onclick="seleccionarColorOferta(this)"></button>
+                            <button type="button" class="color-btn oferta-color-btn" data-color="#059669" style="background:#059669" aria-label="Verde" onclick="seleccionarColorOferta(this)"></button>
                         </div>
-                        <button onclick="eliminarEvento('${e._id}')" style="background:none; border:none; color:var(--gray-400); cursor:pointer; font-size:1rem; padding:0.25rem;" title="Eliminar">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </div>`;
-            }).join('');
-        }
-
-        function mostrarFormEvento() {
-            document.getElementById('form-nuevo-evento').style.display = 'block';
-        }
-        function ocultarFormEvento() {
-            document.getElementById('form-nuevo-evento').style.display = 'none';
-        }
-
-        async function crearEvento() {
-            const token = localStorage.getItem('authToken');
-            const titulo = document.getElementById('ev-titulo').value.trim();
-            const descripcion = document.getElementById('ev-descripcion').value.trim();
-            const tipo = document.getElementById('ev-tipo').value;
-            const fecha = document.getElementById('ev-fecha').value;
-            const horaInicio = document.getElementById('ev-hora-inicio').value;
-            const horaFin = document.getElementById('ev-hora-fin').value;
-            const recurrente = document.getElementById('ev-recurrente').checked;
-
-            if (!titulo || !descripcion || !fecha || !horaInicio) {
-                alert('Completa los campos obligatorios: título, descripción, fecha y hora de inicio.');
-                return;
-            }
-            try {
-                const res = await fetch(`${API_BASE}/restaurants/my-restaurant/eventos`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ titulo, descripcion, tipo, fecha, horaInicio, horaFin, recurrente })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    ocultarFormEvento();
-                    document.getElementById('ev-titulo').value = '';
-                    document.getElementById('ev-descripcion').value = '';
-                    document.getElementById('ev-fecha').value = '';
-                    document.getElementById('ev-hora-inicio').value = '';
-                    document.getElementById('ev-hora-fin').value = '';
-                    document.getElementById('ev-recurrente').checked = false;
-                    cargarEventos();
-                } else {
-                    alert(data.message || 'Error creando evento');
-                }
-            } catch (err) {
-                alert('Error de conexión');
-            }
-        }
-
-        async function eliminarEvento(id) {
-            if (!confirm('¿Eliminar este evento?')) return;
-            const token = localStorage.getItem('authToken');
-            try {
-                await fetch(`${API_BASE}/restaurants/my-restaurant/eventos/${id}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                cargarEventos();
-            } catch (err) {
-                alert('Error eliminando evento');
-            }
-        }
-
-    </script>
-
-    <!-- ===== MODAL: Eventos ===== -->
-    <div id="modal-eventos" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); align-items:center; justify-content:center;">
-        <div style="background:white; border-radius:1rem; max-width:700px; width:95%; padding:2rem; position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.3); max-height:90vh; overflow-y:auto; animation: modalIn 0.3s ease;">
-            <button onclick="cerrarModalEventos()" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.2rem; color:var(--gray-400); cursor:pointer;">
-                <i class="fas fa-times"></i>
-            </button>
-            <h3 style="font-size:1.3rem; font-weight:700; color:var(--gray-900); margin-bottom:0.25rem; display:flex; align-items:center; gap:0.5rem;">
-                <i class="fas fa-calendar-alt" style="color:#f97316;"></i> Calendario de Eventos
-            </h3>
-            <p style="font-size:0.85rem; color:var(--gray-500); margin-bottom:1.5rem;">Crea y gestiona los eventos de tu establecimiento.</p>
-
-            <button onclick="mostrarFormEvento()" style="margin-bottom:1rem; padding:0.6rem 1.2rem; background:#f97316; color:white; border:none; border-radius:0.5rem; font-weight:600; cursor:pointer; font-size:0.9rem; display:flex; align-items:center; gap:0.4rem;">
-                <i class="fas fa-plus"></i> Nuevo Evento
-            </button>
-
-            <!-- Form nuevo evento -->
-            <div id="form-nuevo-evento" style="display:none; background:var(--gray-50); border:1px solid var(--gray-200); border-radius:0.75rem; padding:1.25rem; margin-bottom:1.5rem;">
-                <div style="display:grid; gap:0.75rem;">
-                    <div>
-                        <label style="font-size:0.8rem; font-weight:600; color:var(--gray-700); display:block; margin-bottom:0.25rem;">Título *</label>
-                        <input id="ev-titulo" type="text" placeholder="Ej: Noche de Jazz" style="width:100%; padding:0.5rem 0.75rem; border:1px solid var(--gray-300); border-radius:0.375rem; font-size:0.9rem; box-sizing:border-box;">
                     </div>
-                    <div>
-                        <label style="font-size:0.8rem; font-weight:600; color:var(--gray-700); display:block; margin-bottom:0.25rem;">Descripción *</label>
-                        <textarea id="ev-descripcion" rows="2" placeholder="Describe brevemente el evento..." style="width:100%; padding:0.5rem 0.75rem; border:1px solid var(--gray-300); border-radius:0.375rem; font-size:0.9rem; resize:vertical; box-sizing:border-box;"></textarea>
+                    <button type="submit" class="btn btn-primario" id="btn-crear-oferta" style="width:100%"><i class="fas fa-bolt"></i> Publicar oferta</button>
+                </form>
+                <h4 class="h-sub">Tus ofertas</h4>
+                <div id="lista-mis-ofertas"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Ventana: Eventos ===== -->
+    <div class="modal" id="modal-eventos" role="dialog" aria-modal="true" aria-labelledby="ev-titulo-modal">
+        <div class="modal-caja">
+            <div class="modal-cab">
+                <div class="ico c-ambar"><i class="fas fa-calendar-alt"></i></div>
+                <div><h3 id="ev-titulo-modal">Eventos</h3><p>Se muestran en tu ficha y en el calendario del sitio.</p></div>
+                <button class="icono-btn" type="button" data-cerrar aria-label="Cerrar"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-cuerpo">
+                <button type="button" class="btn" id="btn-nuevo-evento" onclick="mostrarFormEvento()" style="margin-bottom:14px"><i class="fas fa-plus"></i> Nuevo evento</button>
+                <form id="form-nuevo-evento" class="caja-form" novalidate hidden onsubmit="event.preventDefault(); crearEvento()">
+                    <div class="campo">
+                        <label for="ev-titulo">Nombre del evento</label>
+                        <input class="input" id="ev-titulo" type="text" maxlength="80" placeholder="Ej. Noche de jazz">
+                        <div class="error-msg"><i class="fas fa-circle-exclamation"></i>Escribe el nombre del evento.</div>
                     </div>
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
-                        <div>
-                            <label style="font-size:0.8rem; font-weight:600; color:var(--gray-700); display:block; margin-bottom:0.25rem;">Tipo</label>
-                            <select id="ev-tipo" style="width:100%; padding:0.5rem 0.75rem; border:1px solid var(--gray-300); border-radius:0.375rem; font-size:0.9rem; box-sizing:border-box;">
-                                <option value="musica-en-vivo">Música en Vivo</option>
-                                <option value="noche-tematica">Noche Temática</option>
+                    <div class="campo">
+                        <label for="ev-descripcion">Descripción</label>
+                        <textarea class="textarea" id="ev-descripcion" rows="2" maxlength="400" placeholder="Qué habrá, quién toca, si hay cover…"></textarea>
+                        <div class="error-msg"><i class="fas fa-circle-exclamation"></i>Escribe una descripción breve.</div>
+                    </div>
+                    <div class="fila">
+                        <div class="campo">
+                            <label for="ev-tipo">Tipo</label>
+                            <select class="select" id="ev-tipo">
+                                <option value="musica-en-vivo">Música en vivo</option>
+                                <option value="noche-tematica">Noche temática</option>
                                 <option value="degustacion">Degustación</option>
-                                <option value="happy-hour">Happy Hour</option>
+                                <option value="happy-hour">Happy hour</option>
                                 <option value="karaoke">Karaoke</option>
                                 <option value="taller">Taller</option>
                                 <option value="especial" selected>Especial</option>
                                 <option value="otro">Otro</option>
                             </select>
                         </div>
-                        <div>
-                            <label style="font-size:0.8rem; font-weight:600; color:var(--gray-700); display:block; margin-bottom:0.25rem;">Fecha *</label>
-                            <input id="ev-fecha" type="date" style="width:100%; padding:0.5rem 0.75rem; border:1px solid var(--gray-300); border-radius:0.375rem; font-size:0.9rem; box-sizing:border-box;">
+                        <div class="campo">
+                            <label for="ev-fecha">Fecha</label>
+                            <input class="input" id="ev-fecha" type="date">
+                            <div class="error-msg"><i class="fas fa-circle-exclamation"></i>Elige la fecha.</div>
                         </div>
                     </div>
-                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.75rem; align-items:end;">
-                        <div>
-                            <label style="font-size:0.8rem; font-weight:600; color:var(--gray-700); display:block; margin-bottom:0.25rem;">Hora Inicio *</label>
-                            <input id="ev-hora-inicio" type="time" style="width:100%; padding:0.5rem 0.75rem; border:1px solid var(--gray-300); border-radius:0.375rem; font-size:0.9rem; box-sizing:border-box;">
+                    <div class="fila">
+                        <div class="campo">
+                            <label for="ev-hora-inicio">Empieza</label>
+                            <input class="input" id="ev-hora-inicio" type="time">
+                            <div class="error-msg"><i class="fas fa-circle-exclamation"></i>Pon la hora de inicio.</div>
                         </div>
-                        <div>
-                            <label style="font-size:0.8rem; font-weight:600; color:var(--gray-700); display:block; margin-bottom:0.25rem;">Hora Fin</label>
-                            <input id="ev-hora-fin" type="time" style="width:100%; padding:0.5rem 0.75rem; border:1px solid var(--gray-300); border-radius:0.375rem; font-size:0.9rem; box-sizing:border-box;">
-                        </div>
-                        <label style="display:flex; align-items:center; gap:0.4rem; font-size:0.85rem; cursor:pointer; padding-bottom:0.5rem;">
-                            <input type="checkbox" id="ev-recurrente"> Recurrente
-                        </label>
+                        <div class="campo"><label for="ev-hora-fin">Termina <span class="opc">(opcional)</span></label><input class="input" id="ev-hora-fin" type="time"></div>
                     </div>
-                    <div style="display:flex; gap:0.5rem; justify-content:flex-end; margin-top:0.5rem;">
-                        <button onclick="ocultarFormEvento()" style="padding:0.5rem 1rem; background:var(--gray-100); border:1px solid var(--gray-300); border-radius:0.375rem; cursor:pointer; font-size:0.85rem;">Cancelar</button>
-                        <button onclick="crearEvento()" style="padding:0.5rem 1rem; background:#f97316; color:white; border:none; border-radius:0.375rem; cursor:pointer; font-weight:600; font-size:0.85rem;"><i class="fas fa-check"></i> Crear Evento</button>
+                    <label class="check" style="margin-bottom:14px"><input type="checkbox" id="ev-recurrente"> Se repite cada semana</label>
+                    <div style="display:flex; gap:8px; justify-content:flex-end">
+                        <button type="button" class="btn btn-texto" onclick="ocultarFormEvento()">Cancelar</button>
+                        <button type="submit" class="btn btn-primario" id="btn-crear-evento"><i class="fas fa-check"></i> Crear evento</button>
                     </div>
-                </div>
+                </form>
+                <div id="eventos-list"></div>
             </div>
-
-            <!-- Lista de eventos -->
-            <div id="eventos-list" style="display:flex; flex-direction:column; gap:0.75rem;"></div>
         </div>
     </div>
 
+    <!-- ===== Ventana: Bolsa de trabajo ===== -->
+    <div class="modal" id="modal-vacantes" role="dialog" aria-modal="true" aria-labelledby="va-titulo">
+        <div class="modal-caja">
+            <div class="modal-cab">
+                <div class="ico c-verde"><i class="fas fa-briefcase"></i></div>
+                <div><h3 id="va-titulo">Busco personal</h3><p>Tu vacante aparece en la bolsa de trabajo del sitio.</p></div>
+                <button class="icono-btn" type="button" data-cerrar aria-label="Cerrar"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-cuerpo">
+                <form id="form-nueva-vacante" class="caja-form" novalidate onsubmit="crearVacante(event)">
+                    <div class="fila">
+                        <div class="campo">
+                            <label for="vacante-titulo">Puesto</label>
+                            <input class="input" type="text" id="vacante-titulo" maxlength="80" placeholder="Ej. Mesero de fin de semana">
+                            <div class="error-msg"><i class="fas fa-circle-exclamation"></i>Escribe el puesto.</div>
+                        </div>
+                        <div class="campo">
+                            <label for="vacante-sueldo">Sueldo <span class="opc">(opcional)</span></label>
+                            <input class="input" type="text" id="vacante-sueldo" maxlength="80" placeholder="Ej. $1,200 por semana + propinas">
+                        </div>
+                    </div>
+                    <div class="campo">
+                        <label for="vacante-desc">Qué buscas</label>
+                        <textarea class="textarea" id="vacante-desc" rows="3" maxlength="500" placeholder="Ej. Persona proactiva, mayor de 18, no se necesita experiencia…"></textarea>
+                        <div class="error-msg"><i class="fas fa-circle-exclamation"></i>Describe el puesto y los requisitos.</div>
+                    </div>
+                    <div class="campo">
+                        <label for="vacante-contacto">Cómo postularse</label>
+                        <input class="input" type="text" id="vacante-contacto" maxlength="160" placeholder="Ej. Trae tu solicitud de 10 a 12, o escribe al 441…">
+                        <div class="error-msg"><i class="fas fa-circle-exclamation"></i>Di cómo te pueden contactar.</div>
+                    </div>
+                    <button type="submit" class="btn btn-primario" id="btn-crear-vacante" style="width:100%"><i class="fas fa-bullhorn"></i> Publicar vacante</button>
+                </form>
+                <h4 class="h-sub">Tus vacantes</h4>
+                <div id="lista-mis-vacantes"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Ventana: Buzón ===== -->
+    <div class="modal" id="modal-inbox" role="dialog" aria-modal="true" aria-labelledby="in-titulo">
+        <div class="modal-caja">
+            <div class="modal-cab">
+                <div class="ico c-rojo"><i class="fas fa-envelope-open-text"></i></div>
+                <div><h3 id="in-titulo">Buzón privado</h3><p>Quejas y sugerencias que te mandan en privado. Atiéndelas antes de que se vuelvan reseñas.</p></div>
+                <button class="icono-btn" type="button" data-cerrar aria-label="Cerrar"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-cuerpo" id="inbox-messages-container"></div>
+        </div>
+    </div>
+
+    <!-- ===== Ventana: Clientes ===== -->
+    <div class="modal" id="modal-crm" role="dialog" aria-modal="true" aria-labelledby="crm-titulo">
+        <div class="modal-caja ancha">
+            <div class="modal-cab">
+                <div class="ico c-gris"><i class="fas fa-address-book"></i></div>
+                <div><h3 id="crm-titulo">Lista de clientes</h3><p>Personas que dejaron sus datos en tu ficha para recibir promociones.</p></div>
+                <button class="icono-btn" type="button" data-cerrar aria-label="Cerrar"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-cuerpo">
+                <div class="tabla-wrap">
+                    <table>
+                        <thead><tr><th>Nombre</th><th>Correo</th><th>WhatsApp</th><th>Cumpleaños</th><th>Registro</th></tr></thead>
+                        <tbody id="crm-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-pie">
+                <button type="button" class="btn" id="btn-csv" onclick="exportarCRMCSV()"><i class="fas fa-file-csv"></i> Descargar lista (CSV)</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toasts" id="toasts" aria-live="polite"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="/js/panel-socio.js"></script>
+    <script>
+        const { API_BASE, esc, authHeaders, toast, btnEstado, abrirModal, cerrarModal, confirmar } = window.Panel;
+        let currentUser = null;
+        let myRestaurantData = null;
+        let qrColorActual = '#1a1a2e';
+        let ofertaColorActual = '#ef4444';
+        let resenasPendientes = 0, mensajesNuevos = 0;
+
+        const urlPublica = () => `${window.location.origin}/restaurante.html?id=${myRestaurantData._id}`;
+        const urlMenu = () => `${window.location.origin}/menu.html?id=${myRestaurantData._id}`;
+        const hoyISO = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().split('T')[0]; };
+        const cargando = txt => `<div class="vacio" style="border:0"><span class="spin" style="border-color:#e5e7eb;border-top-color:#111827"></span><div style="margin-top:8px">${txt}</div></div>`;
+        function marcarCampo(id, malo) { const c = document.getElementById(id).closest('.campo'); c.classList.toggle('invalido', malo); return malo; }
+
+        /* =================== Carga =================== */
+        async function checkRestaurant() {
+            try {
+                const response = await fetch(`${API_BASE}/restaurants/my-restaurant`, { headers: authHeaders() });
+                if (!response.ok) {
+                    document.getElementById('hero-restaurante').textContent = 'Aún no tienes un establecimiento asignado. Contacta al administrador del sitio.';
+                    return;
+                }
+                const result = await response.json();
+                myRestaurantData = result.data;
+                document.getElementById('hero-restaurante').innerHTML = `<i class="fas fa-store" style="color:var(--gris-claro)"></i> ${esc(myRestaurantData.nombre || 'Mi establecimiento')}`;
+                updateTodaySchedule(myRestaurantData);
+                loadVisitStats(myRestaurantData);
+                renderCompleteness(myRestaurantData);
+                const nFotos = (myRestaurantData.imagenes || []).length;
+                document.getElementById('fotos-sub').textContent = nFotos ? `${nFotos} foto${nFotos === 1 ? '' : 's'} · elige tu portada` : 'Aún no tienes fotos: sube la primera';
+                await Promise.all([loadReviewsStats(), loadInboxCount()]);
+                renderPendientes();
+            } catch (error) {
+                console.error('Error verificando restaurante:', error);
+                toast('No pudimos cargar los datos de tu negocio. Revisa tu conexión.', 'err');
+            }
+        }
+
+        function updateTodaySchedule(r) {
+            const el = document.getElementById('estado-hoy');
+            if (!r || !r.horarios) return;
+            const dias = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
+            const h = r.horarios[dias[new Date().getDay()]];
+            el.hidden = false;
+            if (h && h.abierto) {
+                el.className = 'estado-hoy abierto';
+                el.lastElementChild.textContent = h.apertura && h.cierre ? `Hoy abres de ${h.apertura} a ${h.cierre}` : 'Hoy abres';
+            } else {
+                el.className = 'estado-hoy cerrado';
+                el.lastElementChild.textContent = 'Hoy no abres';
+            }
+        }
+
+        function loadVisitStats(r) {
+            const stats = r.estadisticas || {};
+            const ahora = new Date();
+            const mes = `${ahora.getFullYear()}-${String(ahora.getMonth() + 1).padStart(2, '0')}`;
+            const m = (r.estadisticasMensuales || []).find(x => x.fecha === mes) || {};
+            const fmt = n => (n || 0).toLocaleString('es-MX');
+            document.getElementById('total-views').textContent = fmt(m.vistas);
+            document.getElementById('total-whatsapp').textContent = fmt(m.clicsWhatsapp);
+            document.getElementById('total-map').textContent = fmt(m.clicsMapa);
+            document.getElementById('views-total').textContent = `${fmt(stats.vistasPerfil)} en total`;
+            document.getElementById('whatsapp-total').textContent = `${fmt(stats.clicsWhatsapp)} en total`;
+            document.getElementById('map-total').textContent = `${fmt(stats.clicsMapa)} en total`;
+        }
+
+        async function loadReviewsStats() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/my-restaurant/reviews`, { headers: authHeaders() });
+                if (!response.ok) return;
+                const result = await response.json();
+                const reviews = Array.isArray(result.data) ? result.data : (result.data && result.data.resenas) || [];
+                const avg = document.getElementById('avg-rating'), msg = document.getElementById('total-reviews-msg');
+                if (!reviews.length) { avg.textContent = '–'; msg.textContent = 'Aún sin reseñas'; return; }
+                const prom = reviews.reduce((a, r) => a + (r.rating || 0), 0) / reviews.length;
+                avg.innerHTML = `${prom.toFixed(1)} <span style="font-size:1rem;color:#f59e0b">★</span>`;
+                resenasPendientes = reviews.filter(r => !r.respuestaAdmin && (!r.estado || r.estado === 'aprobada')).length;
+                msg.textContent = `${reviews.length} reseña${reviews.length === 1 ? '' : 's'}${resenasPendientes ? ` · ${resenasPendientes} sin responder` : ''}`;
+                const b = document.getElementById('badge-resenas');
+                b.hidden = !resenasPendientes; b.textContent = resenasPendientes;
+            } catch (e) { console.error('Error cargando reseñas:', e); }
+        }
+
+        async function loadInboxCount() {
+            try {
+                const res = await fetch(`${API_BASE}/crm-quejas/mis-mensajes`, { headers: authHeaders() });
+                if (!res.ok) return;
+                const mensajes = await res.json();
+                mensajesNuevos = Array.isArray(mensajes) ? mensajes.filter(m => !m.leido).length : 0;
+                const b = document.getElementById('badge-buzon');
+                b.hidden = !mensajesNuevos; b.textContent = mensajesNuevos;
+            } catch (e) { /* el buzón es opcional */ }
+        }
+
+        function renderCompleteness(d) {
+            const c = d.direccion && d.direccion.coordenadas;
+            const h = d.horarios || {};
+            const desc = typeof d.descripcion === 'object' && d.descripcion ? (d.descripcion.es || '') : (d.descripcion || '');
+            const checks = [
+                ['Descripción', 'manage-restaurant.html#sec-basicos', desc.length >= 40],
+                ['Especialidad', 'manage-restaurant.html#sec-basicos', !!d.tipoComida],
+                ['WhatsApp', 'manage-restaurant.html#sec-contacto', !!d.whatsappPedidos],
+                ['Redes sociales', 'manage-restaurant.html#sec-contacto', !!(d.redes && (d.redes.facebook || d.redes.instagram || d.redes.website))],
+                ['Horarios', 'manage-restaurant.html#sec-horarios', Object.values(h).some(x => x && x.abierto)],
+                ['Punto en el mapa', 'manage-restaurant.html#sec-ubicacion', !!(c && c.lat && c.lng)],
+                ['3 fotos o más', 'manage-images.html', (d.imagenes || []).length >= 3],
+                ['Menú', 'manage-restaurant.html#sec-menu', (d.menu || []).some(cat => (cat.items || []).length)]
+            ];
+            const pct = Math.round(checks.filter(x => x[2]).length / checks.length * 100);
+            document.getElementById('progreso').hidden = false;
+            document.getElementById('prog-num').textContent = pct + '%';
+            requestAnimationFrame(() => { document.getElementById('prog-barra').firstElementChild.style.width = pct + '%'; });
+            document.getElementById('prog-barra').setAttribute('aria-valuenow', pct);
+            const faltan = checks.filter(x => !x[2]);
+            document.getElementById('prog-txt').innerHTML = faltan.length
+                ? '<span>de tu ficha lista. Te falta:</span>' + faltan.map(([t, href]) => `<a class="falta" href="/${href}">${t}</a>`).join('')
+                : '<span><i class="fas fa-circle-check" style="color:var(--verde)"></i> ¡Tu ficha está completa!</span>';
+        }
+
+        function renderPendientes() {
+            const items = [];
+            if (mensajesNuevos) items.push(`<button type="button" class="pendiente" onclick="openInboxModal()"><i class="fas fa-envelope"></i><span>Tienes <b>${mensajesNuevos} mensaje${mensajesNuevos === 1 ? '' : 's'} nuevo${mensajesNuevos === 1 ? '' : 's'}</b> en tu buzón</span><i class="fas fa-chevron-right"></i></button>`);
+            if (resenasPendientes) items.push(`<a class="pendiente" href="/manage-restaurant.html#sec-resenas"><i class="fas fa-comment-dots"></i><span><b>${resenasPendientes} reseña${resenasPendientes === 1 ? '' : 's'}</b> esperan tu respuesta</span><i class="fas fa-chevron-right"></i></a>`);
+            const nFotos = (myRestaurantData.imagenes || []).length;
+            if (nFotos < 3) items.push(`<a class="pendiente" href="/manage-images.html"><i class="fas fa-camera"></i><span>${nFotos ? `Tienes ${nFotos} foto${nFotos === 1 ? '' : 's'}.` : 'No tienes fotos.'} <b>Sube al menos 3</b></span><i class="fas fa-chevron-right"></i></a>`);
+            document.getElementById('pendientes').innerHTML = items.join('');
+        }
+
+        function copiarEnlacePublico() {
+            if (!myRestaurantData || !myRestaurantData._id) return toast('Aún no tienes una ficha creada.', 'aviso');
+            navigator.clipboard.writeText(urlPublica())
+                .then(() => toast('Enlace copiado. ¡Compártelo con tus clientes!', 'ok'))
+                .catch(() => toast(`Copia este enlace: ${urlPublica()}`, 'info', { duration: 10000 }));
+        }
+        function verMiRestaurantePublico() {
+            if (!myRestaurantData || !myRestaurantData._id) return toast('Primero configura los datos de tu ficha.', 'aviso');
+            window.open(urlPublica(), '_blank', 'noopener');
+        }
+        function requiereFicha() {
+            if (!myRestaurantData) { toast('Primero necesitas tener un establecimiento registrado.', 'aviso'); return false; }
+            return true;
+        }
+
+        /* =================== QR =================== */
+        function abrirModalQR() {
+            if (!requiereFicha()) return;
+            document.getElementById('qr-restaurant-name').textContent = myRestaurantData.nombre || 'Mi restaurante';
+            document.getElementById('btn-ver-menu').href = urlMenu();
+            abrirModal('modal-qr');
+            generarQR();
+        }
+        function cerrarModalQR() { cerrarModal('modal-qr'); }
+        function seleccionarColorQR(btn) {
+            document.querySelectorAll('.qr-color-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            qrColorActual = btn.dataset.color;
+            generarQR();
+        }
+        function generarQR() {
+            const container = document.getElementById('qr-preview');
+            container.innerHTML = '';
+            new QRCode(container, { text: urlMenu(), width: 220, height: 220, colorDark: qrColorActual, colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
+            // Logo al centro del QR
+            setTimeout(() => {
+                const canvas = container.querySelector('canvas');
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                const logo = new Image();
+                logo.crossOrigin = 'anonymous';
+                logo.src = (myRestaurantData.imagenes && myRestaurantData.imagenes.length) ? myRestaurantData.imagenes[0].url : '/images/PueblosMágicos.svg.png';
+                logo.onload = () => {
+                    const s = 48, x = (canvas.width - s) / 2, y = (canvas.height - s) / 2;
+                    ctx.beginPath(); ctx.arc(x + s / 2, y + s / 2, s / 2 + 4, 0, Math.PI * 2); ctx.fillStyle = 'white'; ctx.fill();
+                    ctx.save(); ctx.beginPath(); ctx.arc(x + s / 2, y + s / 2, s / 2, 0, Math.PI * 2); ctx.clip();
+                    ctx.drawImage(logo, x, y, s, s); ctx.restore();
+                };
+            }, 300);
+        }
+        function descargarQR() {
+            const canvas = document.querySelector('#qr-preview canvas');
+            if (!canvas) return toast('El código aún se está generando, intenta de nuevo.', 'aviso');
+            const pad = 40, txt = 60;
+            const out = document.createElement('canvas');
+            out.width = canvas.width + pad * 2; out.height = canvas.height + pad * 2 + txt;
+            const ctx = out.getContext('2d');
+            ctx.fillStyle = 'white'; ctx.fillRect(0, 0, out.width, out.height);
+            ctx.drawImage(canvas, pad, pad);
+            ctx.fillStyle = '#1a1a2e'; ctx.font = 'bold 16px Outfit, sans-serif'; ctx.textAlign = 'center';
+            ctx.fillText(myRestaurantData.nombre || 'Mi Restaurante', out.width / 2, canvas.height + pad + 28);
+            ctx.fillStyle = '#9ca3af'; ctx.font = '11px Outfit, sans-serif';
+            ctx.fillText('Escanea para ver nuestro menú', out.width / 2, canvas.height + pad + 48);
+            try {
+                const a = document.createElement('a');
+                a.download = `QR_Menu_${(myRestaurantData.nombre || 'restaurante').replace(/\s+/g, '_').toLowerCase()}.png`;
+                a.href = out.toDataURL('image/png');
+                a.click();
+                btnEstado(document.getElementById('btn-descargar-qr'), 'guardado', { guardado: 'Descargado' });
+                toast('Código QR descargado. Imprímelo y ponlo en tus mesas.', 'ok');
+            } catch (e) {
+                toast('No se pudo descargar. Prueba con otro color.', 'err');
+            }
+        }
+
+        /* =================== Ofertas relámpago =================== */
+        function abrirModalOfertas() {
+            if (!requiereFicha()) return;
+            document.getElementById('oferta-fecha-inicio').value = hoyISO();
+            document.getElementById('oferta-fecha-fin').value = hoyISO();
+            abrirModal('modal-ofertas');
+            cargarMisOfertas();
+        }
+        function cerrarModalOfertas() { cerrarModal('modal-ofertas'); }
+        function seleccionarColorOferta(btn) {
+            document.querySelectorAll('.oferta-color-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            ofertaColorActual = btn.dataset.color;
+        }
+        async function crearOfertaFlash(e) {
+            e.preventDefault();
+            const titulo = document.getElementById('oferta-titulo').value.trim();
+            const fi = document.getElementById('oferta-fecha-inicio').value, ff = document.getElementById('oferta-fecha-fin').value;
+            const malTitulo = marcarCampo('oferta-titulo', !titulo);
+            const malFecha = !fi || !ff || ff < fi;
+            marcarCampo('oferta-fecha-fin', malFecha);
+            document.querySelector('#oferta-fecha-fin').closest('.campo').querySelector('.error-msg span').textContent = (!fi || !ff) ? 'Elige las dos fechas.' : 'La fecha final no puede ser antes que la inicial.';
+            const btn = document.getElementById('btn-crear-oferta');
+            if (malTitulo || malFecha) { btnEstado(btn, 'error'); return; }
+            btnEstado(btn, 'guardando', { guardando: 'Publicando…' });
+            try {
+                const body = {
+                    titulo, descripcion: document.getElementById('oferta-desc').value.trim(), fechaInicio: fi, fechaFin: ff,
+                    horaInicio: document.getElementById('oferta-hora-inicio').value || undefined,
+                    horaFin: document.getElementById('oferta-hora-fin').value || undefined,
+                    color: ofertaColorActual
+                };
+                const res = await fetch(`${API_BASE}/ofertas-flash`, { method: 'POST', headers: authHeaders({ 'Content-Type': 'application/json' }), body: JSON.stringify(body) });
+                const data = await res.json().catch(() => ({}));
+                if (!data.success) throw new Error(data.message || 'No se pudo publicar la oferta.');
+                btnEstado(btn, 'guardado', { guardado: 'Publicada' });
+                toast('¡Oferta publicada! Ya aparece en la página principal.', 'ok');
+                document.getElementById('form-nueva-oferta').reset();
+                document.getElementById('oferta-fecha-inicio').value = hoyISO();
+                document.getElementById('oferta-fecha-fin').value = hoyISO();
+                cargarMisOfertas();
+            } catch (err) {
+                btnEstado(btn, 'error');
+                toast(err.message || 'Error de conexión.', 'err');
+            }
+        }
+        async function cargarMisOfertas() {
+            const c = document.getElementById('lista-mis-ofertas');
+            c.innerHTML = cargando('Cargando tus ofertas…');
+            try {
+                const res = await fetch(`${API_BASE}/ofertas-flash/mis-ofertas`, { headers: authHeaders() });
+                const data = await res.json();
+                const lista = (data.success && data.data) || [];
+                if (!lista.length) { c.innerHTML = '<div class="vacio"><i class="fas fa-bolt"></i>No tienes ofertas activas.</div>'; return; }
+                c.innerHTML = lista.map(o => {
+                    const f = d => new Date(d).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
+                    const horas = (o.horaInicio && o.horaFin) ? ` · ${esc(o.horaInicio)}–${esc(o.horaFin)}` : '';
+                    return `<div class="lista-item" style="border-left:4px solid ${/^#[0-9a-f]{3,8}$/i.test(o.color || '') ? o.color : '#ef4444'}">
+                        <div class="info"><b>${esc(o.titulo)}</b><small>${f(o.fechaInicio)} → ${f(o.fechaFin)}${horas}${o.descripcion ? ' · ' + esc(o.descripcion) : ''}</small></div>
+                        <button class="icono-btn peligro" type="button" onclick="eliminarOferta('${esc(o._id)}')" title="Eliminar oferta" aria-label="Eliminar oferta"><i class="fas fa-trash-can"></i></button>
+                    </div>`;
+                }).join('');
+            } catch (err) {
+                c.innerHTML = '<div class="vacio"><i class="fas fa-triangle-exclamation"></i>No pudimos cargar tus ofertas.</div>';
+            }
+        }
+        async function eliminarOferta(id) {
+            if (!await confirmar({ titulo: '¿Eliminar esta oferta?', mensaje: 'Dejará de mostrarse en la página principal.', aceptar: 'Eliminar' })) return;
+            try {
+                const res = await fetch(`${API_BASE}/ofertas-flash/${id}`, { method: 'DELETE', headers: authHeaders() });
+                const data = await res.json().catch(() => ({}));
+                if (!data.success) throw new Error(data.message);
+                toast('Oferta eliminada.', 'ok');
+                cargarMisOfertas();
+            } catch (err) { toast(err.message || 'No se pudo eliminar la oferta.', 'err'); }
+        }
+
+        /* =================== Bolsa de trabajo =================== */
+        function abrirModalVacantes() {
+            if (!requiereFicha()) return;
+            abrirModal('modal-vacantes');
+            cargarMisVacantes();
+        }
+        function cerrarModalVacantes() { cerrarModal('modal-vacantes'); }
+        async function crearVacante(e) {
+            e.preventDefault();
+            const v = id => document.getElementById(id).value.trim();
+            const malos = [marcarCampo('vacante-titulo', !v('vacante-titulo')), marcarCampo('vacante-desc', !v('vacante-desc')), marcarCampo('vacante-contacto', !v('vacante-contacto'))];
+            const btn = document.getElementById('btn-crear-vacante');
+            if (malos.some(Boolean)) { btnEstado(btn, 'error'); document.querySelector('#form-nueva-vacante .invalido .input, #form-nueva-vacante .invalido .textarea').focus(); return; }
+            btnEstado(btn, 'guardando', { guardando: 'Publicando…' });
+            try {
+                const body = { titulo: v('vacante-titulo'), sueldo: v('vacante-sueldo'), descripcion: v('vacante-desc'), contacto: v('vacante-contacto') };
+                const res = await fetch(`${API_BASE}/bolsa-trabajo`, { method: 'POST', headers: authHeaders({ 'Content-Type': 'application/json' }), body: JSON.stringify(body) });
+                const data = await res.json().catch(() => ({}));
+                if (!data.success) throw new Error(data.message || 'No se pudo publicar la vacante.');
+                btnEstado(btn, 'guardado', { guardado: 'Publicada' });
+                toast('¡Vacante publicada en la bolsa de trabajo!', 'ok');
+                document.getElementById('form-nueva-vacante').reset();
+                cargarMisVacantes();
+            } catch (err) {
+                btnEstado(btn, 'error');
+                toast(err.message || 'Error de conexión.', 'err');
+            }
+        }
+        async function cargarMisVacantes() {
+            const c = document.getElementById('lista-mis-vacantes');
+            c.innerHTML = cargando('Cargando tus vacantes…');
+            try {
+                const res = await fetch(`${API_BASE}/bolsa-trabajo/mis-vacantes`, { headers: authHeaders() });
+                const data = await res.json();
+                const lista = (data.success && data.data) || [];
+                if (!lista.length) { c.innerHTML = '<div class="vacio"><i class="fas fa-briefcase"></i>No tienes vacantes publicadas.</div>'; return; }
+                c.innerHTML = lista.map(x => `
+                    <div class="lista-item" style="${x.activa ? '' : 'background:var(--fondo)'}">
+                        <div class="info">
+                            <b>${esc(x.titulo)} ${x.activa ? '' : '<span class="etiqueta-mini">En pausa</span>'}</b>
+                            <small><i class="fas fa-money-bill-wave"></i> ${esc(x.sueldo || 'Sueldo no especificado')} · <i class="fas fa-phone"></i> ${esc(x.contacto)}</small>
+                        </div>
+                        <button type="button" class="btn btn-sm" onclick="cambiarEstadoVacante('${esc(x._id)}', this)"><i class="fas ${x.activa ? 'fa-pause' : 'fa-play'}"></i> ${x.activa ? 'Pausar' : 'Activar'}</button>
+                        <button type="button" class="icono-btn peligro" onclick="eliminarVacante('${esc(x._id)}')" title="Eliminar vacante" aria-label="Eliminar vacante"><i class="fas fa-trash-can"></i></button>
+                    </div>`).join('');
+            } catch (err) {
+                c.innerHTML = '<div class="vacio"><i class="fas fa-triangle-exclamation"></i>No pudimos cargar tus vacantes.</div>';
+            }
+        }
+        async function cambiarEstadoVacante(id, btn) {
+            btnEstado(btn, 'guardando', { guardando: '' });
+            try {
+                const res = await fetch(`${API_BASE}/bolsa-trabajo/${id}/estado`, { method: 'PATCH', headers: authHeaders() });
+                const data = await res.json().catch(() => ({}));
+                if (!data.success) throw new Error(data.message);
+                toast(data.message || 'Vacante actualizada.', 'ok');
+                cargarMisVacantes();
+            } catch (err) { btnEstado(btn, 'error'); toast(err.message || 'Error de conexión.', 'err'); }
+        }
+        async function eliminarVacante(id) {
+            if (!await confirmar({ titulo: '¿Eliminar esta vacante?', mensaje: 'Se quitará de la bolsa de trabajo. Si solo ya no buscas a nadie por ahora, mejor usa "Pausar".', aceptar: 'Eliminar' })) return;
+            try {
+                const res = await fetch(`${API_BASE}/bolsa-trabajo/${id}`, { method: 'DELETE', headers: authHeaders() });
+                const data = await res.json().catch(() => ({}));
+                if (!data.success) throw new Error(data.message);
+                toast('Vacante eliminada.', 'ok');
+                cargarMisVacantes();
+            } catch (err) { toast(err.message || 'No se pudo eliminar la vacante.', 'err'); }
+        }
+
+        /* =================== Clientes (CRM) =================== */
+        function openCRMModal() { abrirModal('modal-crm'); loadCRMData(); }
+        function cerrarCRMModal() { cerrarModal('modal-crm'); }
+        async function loadCRMData() {
+            const tbody = document.getElementById('crm-tbody');
+            tbody.innerHTML = `<tr><td colspan="5">${cargando('Cargando clientes…')}</td></tr>`;
+            try {
+                const res = await fetch(`${API_BASE}/crm-quejas/mis-contactos`, { headers: authHeaders() });
+                if (!res.ok) throw new Error();
+                const contactos = await res.json();
+                window.currentCRMData = contactos;
+                document.getElementById('btn-csv').disabled = !contactos.length;
+                if (!contactos.length) { tbody.innerHTML = '<tr><td colspan="5"><div class="vacio" style="border:0"><i class="fas fa-address-book"></i>Aún no tienes clientes registrados. Aparecerán cuando alguien pida tus promociones desde tu ficha.</div></td></tr>'; return; }
+                tbody.innerHTML = contactos.map(c => `<tr><td><b>${esc(c.nombre)}</b></td><td>${esc(c.email || '–')}</td><td>${esc(c.telefono || '–')}</td><td>${esc(c.cumpleanos || '–')}</td><td>${c.fechaRegistro ? new Date(c.fechaRegistro).toLocaleDateString('es-MX') : '–'}</td></tr>`).join('');
+            } catch (err) {
+                tbody.innerHTML = '<tr><td colspan="5"><div class="vacio" style="border:0"><i class="fas fa-triangle-exclamation"></i>No pudimos cargar tus clientes.</div></td></tr>';
+            }
+        }
+        function exportarCRMCSV() {
+            const datos = window.currentCRMData || [];
+            if (!datos.length) return toast('No hay clientes para descargar.', 'aviso');
+            const q = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+            const filas = datos.map(c => [c.nombre, c.email, c.telefono, c.cumpleanos, c.fechaRegistro ? new Date(c.fechaRegistro).toLocaleDateString('es-MX') : ''].map(q).join(','));
+            const csv = '﻿' + ['Nombre,Email,WhatsApp,Cumpleaños,Fecha de registro', ...filas].join('\n');
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+            a.download = 'clientes.csv';
+            a.click();
+            toast(`Lista descargada (${datos.length} cliente${datos.length === 1 ? '' : 's'}).`, 'ok');
+        }
+
+        /* =================== Buzón =================== */
+        function openInboxModal() { abrirModal('modal-inbox'); loadInboxData(); }
+        function cerrarInboxModal() { cerrarModal('modal-inbox'); }
+        async function loadInboxData() {
+            const c = document.getElementById('inbox-messages-container');
+            c.innerHTML = cargando('Cargando mensajes…');
+            try {
+                const res = await fetch(`${API_BASE}/crm-quejas/mis-mensajes`, { headers: authHeaders() });
+                if (!res.ok) throw new Error();
+                const mensajes = await res.json();
+                mensajesNuevos = mensajes.filter(m => !m.leido).length;
+                const b = document.getElementById('badge-buzon'); b.hidden = !mensajesNuevos; b.textContent = mensajesNuevos;
+                if (myRestaurantData) renderPendientes();
+                if (!mensajes.length) { c.innerHTML = '<div class="vacio"><i class="fas fa-face-smile"></i>No tienes mensajes ni quejas. ¡Buena señal!</div>'; return; }
+                c.innerHTML = mensajes.map(m => `
+                    <div class="mensaje ${m.leido ? '' : 'nuevo'}">
+                        <div class="mensaje-top">
+                            <div><b>${esc(m.nombre)}</b>${m.contacto ? `<small style="display:block"><i class="fas fa-phone"></i> ${esc(m.contacto)}</small>` : ''}</div>
+                            <div style="text-align:right">${m.leido ? '' : '<span class="etiqueta-mini nuevo">Nuevo</span>'}<small style="display:block">${m.fecha ? new Date(m.fecha).toLocaleString('es-MX', { dateStyle: 'medium', timeStyle: 'short' }) : ''}</small></div>
+                        </div>
+                        <p>${esc(m.mensaje)}</p>
+                        ${m.leido ? '<small><i class="fas fa-check-double"></i> Atendido</small>' : `<button type="button" class="btn btn-sm" onclick="marcarComoLeido('${esc(m._id)}', this)"><i class="fas fa-check"></i> Marcar como atendido</button>`}
+                    </div>`).join('');
+            } catch (err) {
+                c.innerHTML = '<div class="vacio"><i class="fas fa-triangle-exclamation"></i>No pudimos cargar tu buzón.</div>';
+            }
+        }
+        async function marcarComoLeido(id, btn) {
+            btnEstado(btn, 'guardando');
+            try {
+                const res = await fetch(`${API_BASE}/crm-quejas/mis-mensajes/${id}/leido`, { method: 'PATCH', headers: authHeaders() });
+                if (!res.ok) throw new Error();
+                toast('Mensaje marcado como atendido.', 'ok');
+                loadInboxData();
+            } catch (err) { btnEstado(btn, 'error'); toast('No se pudo actualizar el mensaje.', 'err'); }
+        }
+
+        /* =================== Eventos =================== */
+        let eventosData = [];
+        const TIPOS_EVENTO = {
+            'musica-en-vivo': ['fa-music', 'Música en vivo'], 'noche-tematica': ['fa-moon', 'Noche temática'], 'degustacion': ['fa-wine-glass-alt', 'Degustación'],
+            'happy-hour': ['fa-glass-cheers', 'Happy hour'], 'karaoke': ['fa-microphone', 'Karaoke'], 'taller': ['fa-chalkboard-teacher', 'Taller'],
+            'especial': ['fa-star', 'Especial'], 'otro': ['fa-calendar', 'Otro']
+        };
+        function abrirModalEventos() { if (!requiereFicha()) return; abrirModal('modal-eventos'); cargarEventos(); }
+        function cerrarModalEventos() { cerrarModal('modal-eventos'); }
+        async function cargarEventos() {
+            const c = document.getElementById('eventos-list');
+            c.innerHTML = cargando('Cargando eventos…');
+            try {
+                const res = await fetch(`${API_BASE}/restaurants/my-restaurant/eventos`, { headers: authHeaders() });
+                const data = await res.json();
+                if (!data.success) throw new Error();
+                eventosData = data.data || [];
+                renderEventos();
+            } catch (err) {
+                c.innerHTML = '<div class="vacio"><i class="fas fa-triangle-exclamation"></i>No pudimos cargar tus eventos.</div>';
+            }
+        }
+        function renderEventos() {
+            const c = document.getElementById('eventos-list');
+            if (!eventosData.length) { c.innerHTML = '<div class="vacio"><i class="fas fa-calendar-xmark"></i>No tienes eventos. Crea el primero con "Nuevo evento".</div>'; return; }
+            c.innerHTML = eventosData.map(e => {
+                const [ic, label] = TIPOS_EVENTO[e.tipo] || ['fa-calendar', e.tipo || 'Evento'];
+                const pasado = new Date(e.fecha) < new Date(new Date().toDateString()) && !e.recurrente;
+                const fecha = new Date(e.fecha).toLocaleDateString('es-MX', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' });
+                return `<div class="lista-item" style="${pasado ? 'opacity:.6' : ''}">
+                    <span class="kpi-ico c-ambar"><i class="fas ${ic}"></i></span>
+                    <div class="info">
+                        <b>${esc(e.titulo)} ${e.recurrente ? '<span class="etiqueta-mini">Cada semana</span>' : ''} ${pasado ? '<span class="etiqueta-mini">Ya pasó</span>' : ''}</b>
+                        <small>${esc(label)} · ${fecha} · ${esc(e.horaInicio)}${e.horaFin ? '–' + esc(e.horaFin) : ''}</small>
+                        <small>${esc(e.descripcion)}</small>
+                    </div>
+                    <button type="button" class="icono-btn peligro" onclick="eliminarEvento('${esc(e._id)}')" title="Eliminar evento" aria-label="Eliminar evento"><i class="fas fa-trash-can"></i></button>
+                </div>`;
+            }).join('');
+        }
+        function mostrarFormEvento() {
+            document.getElementById('form-nuevo-evento').hidden = false;
+            document.getElementById('btn-nuevo-evento').hidden = true;
+            document.getElementById('ev-fecha').min = hoyISO();
+            document.getElementById('ev-titulo').focus();
+        }
+        function ocultarFormEvento() {
+            const f = document.getElementById('form-nuevo-evento');
+            f.hidden = true; f.reset();
+            f.querySelectorAll('.invalido').forEach(x => x.classList.remove('invalido'));
+            document.getElementById('btn-nuevo-evento').hidden = false;
+        }
+        async function crearEvento() {
+            const v = id => document.getElementById(id).value.trim();
+            const malos = [marcarCampo('ev-titulo', !v('ev-titulo')), marcarCampo('ev-descripcion', !v('ev-descripcion')), marcarCampo('ev-fecha', !v('ev-fecha')), marcarCampo('ev-hora-inicio', !v('ev-hora-inicio'))];
+            const btn = document.getElementById('btn-crear-evento');
+            if (malos.some(Boolean)) { btnEstado(btn, 'error'); return; }
+            btnEstado(btn, 'guardando', { guardando: 'Creando…' });
+            try {
+                const body = { titulo: v('ev-titulo'), descripcion: v('ev-descripcion'), tipo: v('ev-tipo'), fecha: v('ev-fecha'), horaInicio: v('ev-hora-inicio'), horaFin: v('ev-hora-fin'), recurrente: document.getElementById('ev-recurrente').checked };
+                const res = await fetch(`${API_BASE}/restaurants/my-restaurant/eventos`, { method: 'POST', headers: authHeaders({ 'Content-Type': 'application/json' }), body: JSON.stringify(body) });
+                const data = await res.json().catch(() => ({}));
+                if (!data.success) throw new Error(data.message || 'No se pudo crear el evento.');
+                btnEstado(btn, 'guardado', { guardado: 'Creado' });
+                toast('¡Evento creado!', 'ok');
+                setTimeout(ocultarFormEvento, 700);
+                cargarEventos();
+            } catch (err) {
+                btnEstado(btn, 'error');
+                toast(err.message || 'Error de conexión.', 'err');
+            }
+        }
+        async function eliminarEvento(id) {
+            if (!await confirmar({ titulo: '¿Eliminar este evento?', mensaje: 'Dejará de aparecer en tu ficha y en el calendario.', aceptar: 'Eliminar' })) return;
+            try {
+                const res = await fetch(`${API_BASE}/restaurants/my-restaurant/eventos/${id}`, { method: 'DELETE', headers: authHeaders() });
+                if (!res.ok) throw new Error();
+                toast('Evento eliminado.', 'ok');
+                cargarEventos();
+            } catch (err) { toast('No se pudo eliminar el evento.', 'err'); }
+        }
+
+        /* =================== Inicio =================== */
+        document.addEventListener('DOMContentLoaded', async () => {
+            document.getElementById('logout-btn').addEventListener('click', window.Panel.cerrarSesion);
+            // Quita el error en cuanto el usuario corrige el campo
+            document.addEventListener('input', e => { const c = e.target.closest && e.target.closest('.campo.invalido'); if (c && e.target.value.trim()) c.classList.remove('invalido'); });
+            currentUser = await window.Panel.verificarSesion();
+            if (!currentUser) return;
+            const h = new Date().getHours();
+            const saludo = h < 12 ? 'Buenos días' : h < 19 ? 'Buenas tardes' : 'Buenas noches';
+            document.getElementById('welcome-message').textContent = `${saludo}, ${currentUser.nombre || ''}`.trim();
+            await checkRestaurant();
+        });
+    </script>
 </body>
 
 </html>
-

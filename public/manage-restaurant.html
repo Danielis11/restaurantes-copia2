@@ -1082,6 +1082,9 @@
                 populateEditForms(restaurantData);
                 $('#loading').hidden = true;
                 $('#app').hidden = false;
+                // Enlaces desde el panel (p. ej. #sec-resenas): ir directo a esa sección
+                const destino = location.hash.length > 1 && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+                if (destino) requestAnimationFrame(() => destino.scrollIntoView({ block: 'start' }));
                 await mapboxReady;
                 initMap(restaurantData.direccion?.coordenadas);
                 setupScrollSpy();

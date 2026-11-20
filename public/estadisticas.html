@@ -4,544 +4,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estadísticas - RestauranteWeb</title>
+    <title>Mis estadísticas - Turismo Jalpan</title>
 
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-    <!-- Chart.js -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/panel-socio.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--gray-50);
-            color: var(--gray-900);
-            line-height: 1.6;
-        }
-
-        /* Header */
-        .header {
-            background-color: var(--white);
-            border-bottom: 1px solid var(--gray-200);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .nav {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 70px;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--primary);
-            text-decoration: none;
-            font-size: 1.25rem;
-            font-weight: 700;
-        }
-
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            text-decoration: none;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.9rem;
-        }
-
-        .btn-primary {
-            background-color: var(--primary);
-            color: var(--white);
-        }
-
-        .btn-primary:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-1px);
-        }
-
-        .btn-outline {
-            background-color: transparent;
-            color: var(--gray-600);
-            border: 1px solid var(--gray-300);
-        }
-
-        .btn-outline:hover {
-            background-color: var(--gray-50);
-            border-color: var(--gray-400);
-        }
-
-        /* Main Content */
-        .main {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem 1.5rem;
-        }
-
-        .page-header {
-            margin-bottom: 2rem;
-        }
-
-        .page-title {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--gray-900);
-            margin-bottom: 0.5rem;
-        }
-
-        .page-subtitle {
-            color: var(--gray-600);
-            font-size: 1.1rem;
-        }
-
-        /* Stats Overview */
-        .stats-overview {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: var(--white);
-            padding: 1.5rem;
-            border-radius: 0.75rem;
-            border: 1px solid var(--gray-200);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            transition: all 0.2s;
-        }
-
-        .stat-card:hover {
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transform: translateY(-1px);
-        }
-
-        .stat-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .stat-title {
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--gray-600);
-        }
-
-        .stat-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--white);
-            font-size: 1.25rem;
-        }
-
-        .stat-icon.primary {
-            background-color: var(--primary);
-        }
-
-        .stat-icon.success {
-            background-color: var(--success);
-        }
-
-        .stat-icon.warning {
-            background-color: var(--warning);
-        }
-
-        .stat-icon.error {
-            background-color: var(--error);
-        }
-
-        .stat-icon.info {
-            background-color: var(--info);
-        }
-
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--gray-900);
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-change {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.8rem;
-            color: var(--gray-600);
-        }
-
-        .stat-change.positive {
-            color: var(--success);
-        }
-
-        .stat-change.negative {
-            color: var(--error);
-        }
-
-        /* Charts Section */
-        .charts-section {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .chart-card {
-            background: var(--white);
-            border-radius: 0.75rem;
-            border: 1px solid var(--gray-200);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            padding: 1.5rem;
-        }
-
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .chart-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--gray-900);
-        }
-
-        .chart-container {
-            position: relative;
-            height: 400px;
-        }
-
-        .chart-container.small {
-            height: 300px;
-        }
-
-        /* Restaurant Info Card */
-        .restaurant-info {
-            background: var(--white);
-            border-radius: 0.75rem;
-            border: 1px solid var(--gray-200);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .restaurant-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .restaurant-avatar {
-            width: 60px;
-            height: 60px;
-            border-radius: 0.75rem;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--white);
-            font-weight: 700;
-            font-size: 1.5rem;
-        }
-
-        .restaurant-details h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--gray-900);
-            margin-bottom: 0.25rem;
-        }
-
-        .restaurant-type {
-            color: var(--gray-500);
-            text-transform: capitalize;
-            font-size: 0.9rem;
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-        }
-
-        .info-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem;
-            background: var(--gray-50);
-            border-radius: 0.5rem;
-        }
-
-        .info-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 0.5rem;
-            background: var(--primary);
-            color: var(--white);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
-        }
-
-        .info-content {
-            flex: 1;
-        }
-
-        .info-label {
-            font-size: 0.8rem;
-            color: var(--gray-500);
-        }
-
-        .info-value {
-            font-weight: 500;
-            color: var(--gray-900);
-            font-size: 0.9rem;
-        }
-
-        /* Data Table */
-        .data-section {
-            background: var(--white);
-            border-radius: 0.75rem;
-            border: 1px solid var(--gray-200);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
-        }
-
-        .data-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--gray-200);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .data-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--gray-900);
-        }
-
-        .data-content {
-            padding: 1.5rem;
-        }
-
-        .menu-categories {
-            display: grid;
-            gap: 1rem;
-        }
-
-        .category-item {
-            padding: 1rem;
-            background: var(--gray-50);
-            border-radius: 0.5rem;
-            border-left: 4px solid var(--primary);
-        }
-
-        .category-header {
-            display: flex;
-            justify-content: between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .category-name {
-            font-weight: 600;
-            color: var(--gray-900);
-        }
-
-        .category-stats {
-            display: flex;
-            gap: 1rem;
-            font-size: 0.8rem;
-            color: var(--gray-600);
-        }
-
-        /* Loading */
-        .loading {
-            text-align: center;
-            padding: 2rem;
-            color: var(--gray-500);
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--gray-200);
-            border-top: 3px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* Notifications */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 10000;
-            max-width: 400px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-            border-left: 4px solid var(--primary);
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-            display: flex;
-            align-items: center;
-            padding: 16px;
-            gap: 12px;
-        }
-
-        .notification.show {
-            transform: translateX(0);
-        }
-
-        .notification.success {
-            border-left-color: var(--success);
-        }
-
-        .notification.error {
-            border-left-color: var(--error);
-        }
-
-        .notification.warning {
-            border-left-color: var(--warning);
-        }
-
-        .notification i {
-            font-size: 18px;
-            color: var(--primary);
-        }
-
-        .notification.success i {
-            color: var(--success);
-        }
-
-        .notification.error i {
-            color: var(--error);
-        }
-
-        .notification.warning i {
-            color: var(--warning);
-        }
-
-        .notification-message {
-            flex: 1;
-            font-size: 14px;
-            line-height: 1.4;
-        }
-
-        .notification-close {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 4px;
-            border-radius: 4px;
-            color: var(--gray-400);
-        }
-
-        .notification-close:hover {
-            background: var(--gray-100);
-            color: var(--gray-600);
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .charts-section {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .nav {
-                padding: 0.5rem 1rem;
-                height: auto;
-                min-height: 70px;
-                flex-wrap: wrap;
-                gap: 0.5rem;
-            }
-
-            .logo {
-                font-size: 1rem;
-            }
-
-            .nav-actions {
-                gap: 0.5rem;
-            }
-
-            .btn {
-                padding: 0.5rem 0.75rem;
-                font-size: 0.8rem;
-            }
-
-            .main {
-                padding: 1rem;
-            }
-
-            .stats-overview {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .page-title {
-                font-size: 1.5rem;
-            }
+        .migas { display: inline-flex; align-items: center; gap: 6px; color: var(--gris); font-size: .88rem; text-decoration: none; margin-bottom: 10px; }
+        .migas:hover { color: var(--azul); }
+        .cabecera { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+        .cabecera h1 { font-size: 1.6rem; letter-spacing: -.01em; }
+        .cabecera p { color: var(--texto); margin-top: 4px; }
+
+        /* Indicadores */
+        .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .kpi { padding: 16px 18px; animation: subir .4s var(--ease) both; }
+        .kpi-top { display: flex; align-items: center; gap: 10px; color: var(--gris); font-size: .86rem; font-weight: 500; }
+        .kpi-ico { width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .kpi-num { font-size: 1.9rem; font-weight: 700; margin: 10px 0 4px; letter-spacing: -.02em; }
+        .cambio { display: inline-flex; align-items: center; gap: 4px; font-size: .78rem; font-weight: 600; padding: 2px 8px; border-radius: 99px; background: var(--borde-suave); color: var(--gris); }
+        .cambio.sube { background: var(--verde-claro); color: var(--verde); }
+        .cambio.baja { background: var(--rojo-claro); color: var(--rojo); }
+        .kpi small { display: block; color: var(--gris); font-size: .78rem; margin-top: 6px; }
+        .c-azul { background: var(--azul-claro); color: var(--azul); }
+        .c-verde { background: var(--verde-claro); color: var(--verde); }
+        .c-ambar { background: var(--ambar-claro); color: var(--ambar); }
+        .c-morado { background: #f5f3ff; color: #7c3aed; }
+        .c-cian { background: #ecfeff; color: #0891b2; }
+
+        /* Lectura en lenguaje simple */
+        .lectura { margin-top: 14px; padding: 16px 18px; display: flex; gap: 14px; align-items: flex-start; }
+        .lectura .kpi-ico { width: 38px; height: 38px; }
+        .lectura ul { list-style: none; display: grid; gap: 8px; }
+        .lectura li { font-size: .92rem; color: var(--texto); }
+        .lectura li b { color: var(--tinta); }
+        .lectura li a { font-weight: 600; text-decoration: none; }
+
+        /* Gráficas */
+        .doble { display: grid; grid-template-columns: 1.7fr 1fr; gap: 14px; }
+        .graf { padding: 18px; min-width: 0; }
+        .graf-cab { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+        .graf-cab h3 { font-size: 1rem; }
+        .graf-cab p { color: var(--gris); font-size: .84rem; margin-top: 2px; }
+        .lienzo { position: relative; height: 270px; }
+        .chips { display: inline-flex; background: var(--borde-suave); border-radius: 10px; padding: 3px; gap: 2px; flex-wrap: wrap; }
+        .chip { border: none; background: none; font: inherit; font-size: .82rem; font-weight: 500; color: var(--texto); padding: 6px 11px; border-radius: 8px; cursor: pointer; transition: background .2s, color .2s; }
+        .chip:hover { color: var(--tinta); }
+        .chip.activo { background: var(--blanco); color: var(--tinta); box-shadow: var(--sombra); font-weight: 600; }
+        .graf-vacia { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: var(--gris); font-size: .9rem; padding: 20px; }
+        .graf-vacia i { font-size: 1.6rem; color: #cbd5e1; margin-bottom: 8px; }
+        .estrellas-grande { font-size: 2.4rem; font-weight: 700; letter-spacing: -.02em; }
+        .estrellas-grande span { color: #f59e0b; font-size: 1.5rem; }
+
+        /* Menú */
+        .menu-res { padding: 6px 18px 12px; }
+        .menu-fila { display: grid; grid-template-columns: minmax(120px, 1.2fr) 2fr auto; gap: 14px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--borde-suave); }
+        .menu-fila:last-child { border-bottom: 0; }
+        .menu-fila b { display: block; font-weight: 600; word-break: break-word; }
+        .menu-fila small { color: var(--gris); font-size: .8rem; }
+        .rango { position: relative; height: 8px; background: var(--borde-suave); border-radius: 99px; }
+        .rango span { position: absolute; top: 0; bottom: 0; background: linear-gradient(90deg, #93c5fd, var(--azul)); border-radius: 99px; min-width: 8px; }
+        .rango i { position: absolute; top: -4px; width: 4px; height: 16px; border-radius: 2px; background: var(--tinta); transform: translateX(-50%); }
+        .precio-prom { font-weight: 700; text-align: right; white-space: nowrap; }
+        .precio-prom small { display: block; font-weight: 400; }
+        .resumen-menu { display: flex; gap: 8px 22px; flex-wrap: wrap; color: var(--texto); font-size: .9rem; padding: 14px 0 6px; border-bottom: 1px solid var(--borde-suave); }
+        .resumen-menu b { color: var(--tinta); }
+
+        @media (max-width: 1000px) { .kpis { grid-template-columns: 1fr 1fr; } .doble { grid-template-columns: 1fr; } }
+        @media (max-width: 720px) {
+            .cabecera h1 { font-size: 1.3rem; }
+            .kpi { padding: 14px; }
+            .kpi-num { font-size: 1.5rem; }
+            .kpi-top span:last-child { font-size: .8rem; }
+            .lienzo { height: 230px; }
+            .graf { padding: 14px; }
+            .menu-fila { grid-template-columns: 1fr auto; gap: 6px 12px; }
+            .menu-fila .rango { grid-column: 1 / -1; grid-row: 2; }
+            .lectura { flex-direction: column; }
         }
     </style>
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
     <!-- PWA: app instalable -->
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#2563eb">
@@ -554,817 +99,322 @@
 </head>
 
 <body>
-    <!-- Header -->
     <header class="header">
         <nav class="nav">
-            <a href="/admin.html" class="logo">
-                <i class="fas fa-utensils"></i>
-                RestauranteWeb
+            <a href="/index.html" class="logo" title="Ir al sitio de turismo">
+                <img src="/images/PueblosMágicos.svg.png" alt="Logo Turismo">
+                <span>Turismo Admin</span>
             </a>
-
-            <div class="nav-actions">
-                <button class="btn btn-primary" onclick="refreshStats()">
-                    <i class="fas fa-sync-alt"></i>
-                    Actualizar
-                </button>
-                <a href="/admin.html" class="btn btn-outline">
-                    <i class="fas fa-arrow-left"></i>
-                    Volver al Panel
-                </a>
+            <div class="nav-links">
+                <a href="/admin.html" class="nav-link"><i class="fas fa-home"></i> Panel</a>
+                <a href="/manage-restaurant.html" class="nav-link"><i class="fas fa-store"></i> Mi ficha</a>
+                <a href="/manage-images.html" class="nav-link"><i class="fas fa-images"></i> Fotos</a>
+                <a href="/estadisticas.html" class="nav-link activo"><i class="fas fa-chart-column"></i> Estadísticas</a>
+            </div>
+            <div class="user-section">
+                <div class="user-info">
+                    <div class="user-name" id="user-name">Cargando...</div>
+                    <div class="user-role" id="user-role">admin</div>
+                </div>
+                <a class="user-avatar" id="user-avatar" href="/mi-perfil.html" title="Mi perfil" style="text-decoration:none"><i class="fas fa-user"></i></a>
+                <button class="icono-btn peligro" id="logout-btn" title="Cerrar sesión" aria-label="Cerrar sesión"><i class="fas fa-sign-out-alt"></i></button>
             </div>
         </nav>
     </header>
 
-    <!-- Main Content -->
-    <main class="main">
-        <!-- Page Header -->
-        <div class="page-header">
-            <h1 class="page-title">Estadísticas</h1>
-            <p class="page-subtitle">Análisis y métricas de tu establecimiento</p>
+    <main>
+        <a class="migas" href="/admin.html"><i class="fas fa-arrow-left"></i> Volver al panel</a>
+        <div class="cabecera">
+            <div>
+                <p class="eyebrow" id="eyebrow-mes">Este mes</p>
+                <h1>Estadísticas de <span id="restaurant-name">tu negocio</span></h1>
+                <p>Cuántos turistas ven tu página y cuántos te contactan.</p>
+            </div>
+            <button class="btn btn-sm" type="button" id="btn-actualizar" onclick="refreshStats()"><i class="fas fa-rotate-right"></i> Actualizar</button>
         </div>
 
-        <!-- Loading State -->
-        <div id="loading-state" class="loading">
-            <div class="spinner"></div>
-            <p>Cargando estadísticas...</p>
-        </div>
-
-        <!-- Content (Hidden initially) -->
-        <div id="content" style="display: none;">
-            <!-- Stats Overview -->
-            <div class="stats-overview">
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-title">Categorías del Menú</div>
-                        <div class="stat-icon primary">
-                            <i class="fas fa-list"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value" id="total-categories">0</div>
-                    <div class="stat-change">
-                        <i class="fas fa-info-circle"></i>
-                        <span>Categorías disponibles</span>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-title">Productos en Menú</div>
-                        <div class="stat-icon success">
-                            <i class="fas fa-utensils"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value" id="total-items">0</div>
-                    <div class="stat-change">
-                        <i class="fas fa-arrow-up"></i>
-                        <span>Items totales</span>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-title">Precio Promedio</div>
-                        <div class="stat-icon warning">
-                            <i class="fas fa-dollar-sign"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value" id="average-price">$0</div>
-                    <div class="stat-change">
-                        <i class="fas fa-calculator"></i>
-                        <span>Por producto</span>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-title">Completitud del Perfil</div>
-                        <div class="stat-icon info">
-                            <i class="fas fa-percentage"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value" id="profile-completion">0%</div>
-                    <div class="stat-change" id="completion-status">
-                        <i class="fas fa-check"></i>
-                        <span>Completado</span>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-title">Vistas del Perfil</div>
-                        <div class="stat-icon" style="color: var(--primary); background: rgba(37,99,235,0.1);">
-                            <i class="fas fa-eye"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value" id="profile-views">0</div>
-                    <div class="stat-change">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Visitas totales</span>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-title">Clics al Mapa</div>
-                        <div class="stat-icon" style="color: var(--success); background: rgba(16,185,129,0.1);">
-                            <i class="fas fa-map-marker-alt"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value" id="map-clicks">0</div>
-                    <div class="stat-change">
-                        <i class="fas fa-location-arrow"></i>
-                        <span>Intenciones de viaje</span>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-title">Clics de WhatsApp</div>
-                        <div class="stat-icon" style="color: #25D366; background: rgba(37,211,102,0.1);">
-                            <i class="fab fa-whatsapp"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value" id="whatsapp-clicks">0</div>
-                    <div class="stat-change">
-                        <i class="fas fa-comment"></i>
-                        <span>Contactos directos</span>
-                    </div>
-                </div>
+        <div class="kpis">
+            <div class="tarjeta kpi">
+                <div class="kpi-top"><span class="kpi-ico c-morado"><i class="fas fa-eye"></i></span><span>Visitas a tu página</span></div>
+                <div class="kpi-num" id="profile-views"><span class="esqueleto" style="display:inline-block;width:70px;height:28px;border-radius:8px"></span></div>
+                <span class="cambio" id="cambio-vistas">&nbsp;</span>
+                <small id="total-vistas">&nbsp;</small>
             </div>
-
-            <!-- Restaurant Info -->
-            <div class="restaurant-info">
-                <div class="restaurant-header">
-                    <div class="restaurant-avatar" id="restaurant-avatar">
-                        <i class="fas fa-store"></i>
-                    </div>
-                    <div class="restaurant-details">
-                        <h3 id="restaurant-name">Mi Restaurante</h3>
-                        <p class="restaurant-type" id="restaurant-type">restaurante</p>
-                    </div>
-                </div>
-
-                <div class="info-grid">
-                    <div class="info-item">
-                        <div class="info-icon">
-                            <i class="fas fa-map-marker-alt"></i>
-                        </div>
-                        <div class="info-content">
-                            <div class="info-label">Ciudad</div>
-                            <div class="info-value" id="restaurant-city">-</div>
-                        </div>
-                    </div>
-
-                    <div class="info-item">
-                        <div class="info-icon">
-                            <i class="fas fa-phone"></i>
-                        </div>
-                        <div class="info-content">
-                            <div class="info-label">Teléfono</div>
-                            <div class="info-value" id="restaurant-phone">-</div>
-                        </div>
-                    </div>
-
-                    <div class="info-item">
-                        <div class="info-icon">
-                            <i class="fas fa-calendar"></i>
-                        </div>
-                        <div class="info-content">
-                            <div class="info-label">Días Abierto</div>
-                            <div class="info-value" id="days-open">0/7</div>
-                        </div>
-                    </div>
-
-                    <div class="info-item">
-                        <div class="info-icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="info-content">
-                            <div class="info-label">Activo desde</div>
-                            <div class="info-value" id="restaurant-since">-</div>
-                        </div>
-                    </div>
-                </div>
+            <div class="tarjeta kpi" style="animation-delay:.05s">
+                <div class="kpi-top"><span class="kpi-ico c-verde"><i class="fab fa-whatsapp"></i></span><span>Te escribieron por WhatsApp</span></div>
+                <div class="kpi-num" id="whatsapp-clicks"><span class="esqueleto" style="display:inline-block;width:70px;height:28px;border-radius:8px"></span></div>
+                <span class="cambio" id="cambio-whatsapp">&nbsp;</span>
+                <small id="total-whatsapp">&nbsp;</small>
             </div>
-
-            <!-- Charts Analytics Section -->
-            <div class="charts-section" style="grid-template-columns: 1fr 1fr; margin-bottom: 2rem;">
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <h3 class="chart-title">Evolución de Visitas Mensuales</h3>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="viewsEvolutionChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <h3 class="chart-title">Evolución de Calificación Promedio</h3>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="ratingEvolutionChart"></canvas>
-                    </div>
-                </div>
+            <div class="tarjeta kpi" style="animation-delay:.1s">
+                <div class="kpi-top"><span class="kpi-ico c-cian"><i class="fas fa-location-dot"></i></span><span>Pidieron cómo llegar</span></div>
+                <div class="kpi-num" id="map-clicks"><span class="esqueleto" style="display:inline-block;width:70px;height:28px;border-radius:8px"></span></div>
+                <span class="cambio" id="cambio-mapa">&nbsp;</span>
+                <small id="total-mapa">&nbsp;</small>
             </div>
-
-            <!-- Charts Section -->
-            <div class="charts-section">
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <h3 class="chart-title">Distribución de Precios por Categoría</h3>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="pricesChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <h3 class="chart-title">Productos por Categoría</h3>
-                    </div>
-                    <div class="chart-container small">
-                        <canvas id="categoryChart"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Menu Categories Data -->
-            <div class="data-section">
-                <div class="data-header">
-                    <h3 class="data-title">Análisis del Menú</h3>
-                </div>
-                <div class="data-content">
-                    <div class="menu-categories" id="menu-analysis">
-                        <!-- Categories will be loaded here -->
-                    </div>
-                </div>
+            <div class="tarjeta kpi" style="animation-delay:.15s">
+                <div class="kpi-top"><span class="kpi-ico c-ambar"><i class="fas fa-hand-pointer"></i></span><span>Te contactan</span></div>
+                <div class="kpi-num" id="conversion"><span class="esqueleto" style="display:inline-block;width:70px;height:28px;border-radius:8px"></span></div>
+                <span class="cambio" id="conversion-txt">&nbsp;</span>
+                <small>de cada 100 visitas, por WhatsApp o mapa</small>
             </div>
         </div>
+
+        <section class="tarjeta lectura" id="lectura" hidden>
+            <span class="kpi-ico c-azul"><i class="fas fa-lightbulb"></i></span>
+            <div>
+                <h3 style="font-size:1rem;margin-bottom:8px">En pocas palabras</h3>
+                <ul id="lectura-lista"></ul>
+            </div>
+        </section>
+
+        <div class="titulo-sec"><div><h2>Mes a mes</h2><p>Los últimos 6 meses.</p></div></div>
+        <div class="doble">
+            <section class="tarjeta graf">
+                <div class="graf-cab">
+                    <div><h3 id="graf-titulo">Visitas a tu página</h3><p id="graf-sub">Total por mes</p></div>
+                    <div class="chips" role="tablist" aria-label="Qué mostrar">
+                        <button class="chip activo" type="button" role="tab" aria-selected="true" data-serie="vistas">Visitas</button>
+                        <button class="chip" type="button" role="tab" aria-selected="false" data-serie="clicsWhatsapp">WhatsApp</button>
+                        <button class="chip" type="button" role="tab" aria-selected="false" data-serie="clicsMapa">Mapa</button>
+                    </div>
+                </div>
+                <div class="lienzo"><canvas id="viewsEvolutionChart" aria-label="Gráfica mensual"></canvas><div class="graf-vacia" id="vacia-mensual" hidden><i class="fas fa-chart-column"></i>Todavía no hay visitas registradas. Comparte el enlace de tu página para empezar.</div></div>
+            </section>
+            <section class="tarjeta graf">
+                <div class="graf-cab">
+                    <div><h3>Calificación</h3><p>Promedio de reseñas por mes</p></div>
+                    <div class="estrellas-grande" id="rating-actual">–</div>
+                </div>
+                <div class="lienzo"><canvas id="ratingEvolutionChart" aria-label="Gráfica de calificación"></canvas><div class="graf-vacia" id="vacia-rating" hidden><i class="fas fa-star"></i>Aún no tienes reseñas. <a href="/manage-restaurant.html#sec-resenas" style="margin-top:6px">Ver reseñas</a></div></div>
+            </section>
+        </div>
+
+        <div class="titulo-sec">
+            <div><h2>Tu menú</h2><p>Precios por categoría: la barra va del más barato al más caro y la marca es el promedio.</p></div>
+            <a href="/manage-restaurant.html#sec-menu">Editar menú <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <section class="tarjeta menu-res">
+            <div class="resumen-menu" id="resumen-menu"></div>
+            <div id="menu-analysis"></div>
+        </section>
     </main>
 
+    <div class="toasts" id="toasts" aria-live="polite"></div>
+
+    <script src="/js/panel-socio.js"></script>
     <script>
-        const API_BASE = window.location.origin + '/api';
-        let currentRestaurant = null;
-        let analyticsData = null;
-        let charts = {};
-
-        // Funciones de notificación
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
-
-            const icon = type === 'success' ? 'fa-check-circle' :
-                type === 'error' ? 'fa-exclamation-circle' :
-                    type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle';
-
-            notification.innerHTML = `
-                <i class="fas ${icon}"></i>
-                <span class="notification-message">${message}</span>
-                <button class="notification-close">
-                    <i class="fas fa-times"></i>
-                </button>
-            `;
-
-            document.body.appendChild(notification);
-
-            setTimeout(() => notification.classList.add('show'), 100);
-
-            setTimeout(() => {
-                notification.classList.remove('show');
-                setTimeout(() => {
-                    if (document.body.contains(notification)) {
-                        document.body.removeChild(notification);
-                    }
-                }, 300);
-            }, 5000);
-
-            notification.querySelector('.notification-close').onclick = () => {
-                notification.classList.remove('show');
-                setTimeout(() => {
-                    if (document.body.contains(notification)) {
-                        document.body.removeChild(notification);
-                    }
-                }, 300);
-            };
+        const { API_BASE, esc, authHeaders, toast, btnEstado, reduceMotion } = window.Panel;
+        let currentRestaurant = null, analyticsData = null, charts = {}, serieActual = 'vistas';
+        const $ = id => document.getElementById(id);
+        const fmt = n => (Number(n) || 0).toLocaleString('es-MX');
+        const txt = v => (v && typeof v === 'object') ? (v.es || v.en || '') : (v || '');
+        const SERIES = {
+            vistas: { titulo: 'Visitas a tu página', color: '#7c3aed' },
+            clicsWhatsapp: { titulo: 'Clics en WhatsApp', color: '#059669' },
+            clicsMapa: { titulo: 'Clics en "Cómo llegar"', color: '#0891b2' }
+        };
+        if (window.Chart) {
+            Chart.defaults.font.family = 'Outfit, system-ui, sans-serif';
+            Chart.defaults.color = '#6b7280';
+            if (reduceMotion) Chart.defaults.animation = false;
         }
 
-        // Verificar autenticación
-        async function checkAuth() {
-            const token = localStorage.getItem('authToken');
-
-            if (!token) {
-                showNotification('No has iniciado sesión', 'error');
-                setTimeout(() => {
-                    window.location.href = '/login.html';
-                }, 2000);
-                return false;
+        // Últimos n meses como 'YYYY-MM', del más viejo al actual
+        function ultimosMeses(n) {
+            const out = [], d = new Date();
+            d.setDate(1);
+            for (let i = n - 1; i >= 0; i--) {
+                const x = new Date(d.getFullYear(), d.getMonth() - i, 1);
+                out.push(`${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, '0')}`);
             }
+            return out;
+        }
+        const etiquetaMes = ym => { const [y, m] = ym.split('-').map(Number); return new Date(y, m - 1, 1).toLocaleDateString('es-MX', { month: 'short' }).replace('.', ''); };
 
-            try {
-                const response = await fetch(`${API_BASE}/auth/profile`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                const data = await response.json().catch(() => ({}));
-                if (response.ok) return true;
-                const isAccountInactive = data.code === 'ACCOUNT_INACTIVE' || (data.message && data.message.includes('inactiva'));
-                localStorage.removeItem('authToken');
-                showNotification(isAccountInactive ? 'Tu cuenta está desactivada. Contacta al super administrador para reactivarla.' : 'Sesión expirada, redirigiendo...', 'warning');
-                setTimeout(() => { window.location.href = '/login.html'; }, isAccountInactive ? 3000 : 2000);
-                return false;
-            } catch (error) {
-                console.error('Error verificando auth:', error);
-                localStorage.removeItem('authToken');
-                showNotification('Sesión expirada, redirigiendo...', 'warning');
-                setTimeout(() => { window.location.href = '/login.html'; }, 2000);
-                return false;
-            }
+        function historico() {
+            const h = (analyticsData && analyticsData.historicoMensual) || (currentRestaurant && currentRestaurant.estadisticasMensuales) || [];
+            const mapa = {};
+            h.forEach(x => { if (x && x.fecha) mapa[x.fecha] = x; });
+            return ultimosMeses(6).map(f => ({ fecha: f, vistas: mapa[f]?.vistas || 0, clicsWhatsapp: mapa[f]?.clicsWhatsapp || 0, clicsMapa: mapa[f]?.clicsMapa || 0 }));
         }
 
-        // Cargar estadísticas del restaurante
         async function loadRestaurantStats() {
-            const token = localStorage.getItem('authToken');
-
             try {
-                // 1. Cargar datos básicos del restaurante
-                const response = await fetch(`${API_BASE}/admin/my-restaurant`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
+                const response = await fetch(`${API_BASE}/admin/my-restaurant`, { headers: authHeaders() });
                 if (!response.ok) {
                     if (response.status === 404) {
-                        showNotification('No tienes un restaurante registrado aún', 'warning');
+                        toast('Aún no tienes un establecimiento registrado. Te llevamos al panel…', 'aviso');
                         setTimeout(() => { window.location.href = '/admin.html'; }, 3000);
                         return;
                     }
-                    const errData = await response.json().catch(() => ({}));
-                    console.error('Error respuesta my-restaurant:', response.status, errData);
                     throw new Error('Error al cargar datos del restaurante');
                 }
-
-                const result = await response.json();
-                currentRestaurant = result.data;
-                updateStatsUI();
-
-                // 2. Cargar analíticas (independiente, no bloquea la página)
+                currentRestaurant = (await response.json()).data;
+                // Analíticas: si fallan, usamos lo que viene en la ficha
                 try {
-                    const analyticsResponse = await fetch(`${API_BASE}/admin/my-restaurant/analytics`, {
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                    if (analyticsResponse.ok) {
-                        const resultAnalytics = await analyticsResponse.json();
-                        analyticsData = resultAnalytics.data;
-                    } else {
-                        const errText = await analyticsResponse.text();
-                        console.warn('Analytics endpoint respondió con error:', analyticsResponse.status, errText);
-                    }
-                } catch (analyticsError) {
-                    console.warn('Error cargando analíticas (no crítico):', analyticsError);
-                }
-
+                    const a = await fetch(`${API_BASE}/admin/my-restaurant/analytics`, { headers: authHeaders() });
+                    analyticsData = a.ok ? (await a.json()).data : null;
+                } catch (e) { analyticsData = null; }
+                updateStatsUI();
                 createCharts();
-
             } catch (error) {
-                console.error('Error loading restaurant stats:', error);
-                showNotification('Error al cargar estadísticas del restaurante', 'error');
-            } finally {
-                // Ocultar loading
-                document.getElementById('loading-state').style.display = 'none';
-                document.getElementById('content').style.display = 'block';
+                console.error('Error cargando estadísticas:', error);
+                toast('No pudimos cargar tus estadísticas. Revisa tu conexión.', 'err', { action: { label: 'Reintentar', fn: refreshStats } });
             }
         }
 
-        // Actualizar UI con estadísticas
+        function pintarCambio(el, actual, anterior) {
+            if (!anterior && !actual) { el.className = 'cambio'; el.textContent = 'Sin datos aún'; return; }
+            if (!anterior) { el.className = 'cambio sube'; el.innerHTML = '<i class="fas fa-arrow-up"></i> Nuevo este mes'; return; }
+            const p = Math.round((actual - anterior) / anterior * 100);
+            el.className = 'cambio ' + (p > 0 ? 'sube' : p < 0 ? 'baja' : '');
+            el.innerHTML = `<i class="fas ${p > 0 ? 'fa-arrow-up' : p < 0 ? 'fa-arrow-down' : 'fa-equals'}"></i> ${p > 0 ? '+' : ''}${p}% vs. mes pasado`;
+        }
+
         function updateStatsUI() {
-            if (!currentRestaurant) return;
+            const r = currentRestaurant;
+            $('restaurant-name').textContent = r.nombre || 'tu negocio';
+            const ahora = new Date();
+            $('eyebrow-mes').textContent = ahora.toLocaleDateString('es-MX', { month: 'long', year: 'numeric' });
 
-            // Información básica del restaurante
-            const restaurantName = document.getElementById('restaurant-name');
-            const restaurantType = document.getElementById('restaurant-type');
-            const restaurantAvatar = document.getElementById('restaurant-avatar');
-            const restaurantCity = document.getElementById('restaurant-city');
-            const restaurantPhone = document.getElementById('restaurant-phone');
-            const restaurantSince = document.getElementById('restaurant-since');
+            const h = historico();
+            const act = h[h.length - 1], ant = h[h.length - 2];
+            const glob = (analyticsData && analyticsData.estadisticasGlobales) || r.estadisticas || {};
+            $('profile-views').textContent = fmt(act.vistas);
+            $('whatsapp-clicks').textContent = fmt(act.clicsWhatsapp);
+            $('map-clicks').textContent = fmt(act.clicsMapa);
+            pintarCambio($('cambio-vistas'), act.vistas, ant.vistas);
+            pintarCambio($('cambio-whatsapp'), act.clicsWhatsapp, ant.clicsWhatsapp);
+            pintarCambio($('cambio-mapa'), act.clicsMapa, ant.clicsMapa);
+            $('total-vistas').textContent = `${fmt(glob.vistasPerfil)} desde que estás en el sitio`;
+            $('total-whatsapp').textContent = `${fmt(glob.clicsWhatsapp)} desde que estás en el sitio`;
+            $('total-mapa').textContent = `${fmt(glob.clicsMapa)} desde que estás en el sitio`;
 
-            if (restaurantName) {
-                restaurantName.textContent = currentRestaurant.nombre || 'Mi Restaurante';
-            }
+            const conv = act.vistas ? Math.round((act.clicsWhatsapp + act.clicsMapa) / act.vistas * 100) : 0;
+            $('conversion').textContent = act.vistas ? `${Math.min(conv, 100)}` : '–';
+            const ct = $('conversion-txt');
+            if (!act.vistas) { ct.className = 'cambio'; ct.textContent = 'Sin visitas este mes'; }
+            else if (conv >= 15) { ct.className = 'cambio sube'; ct.textContent = 'Muy bien'; }
+            else if (conv >= 5) { ct.className = 'cambio'; ct.textContent = 'Normal'; }
+            else { ct.className = 'cambio baja'; ct.textContent = 'Se puede mejorar'; }
 
-            if (restaurantType) {
-                restaurantType.textContent = currentRestaurant.tipo || 'restaurante';
-            }
-
-            if (restaurantAvatar) {
-                const initials = currentRestaurant.nombre ?
-                    currentRestaurant.nombre.substring(0, 2).toUpperCase() : 'MR';
-                restaurantAvatar.textContent = initials;
-            }
-
-            if (restaurantCity && currentRestaurant.direccion) {
-                restaurantCity.textContent = currentRestaurant.direccion.ciudad || '-';
-            }
-
-            if (restaurantPhone) {
-                restaurantPhone.textContent = currentRestaurant.telefono || '-';
-            }
-
-            if (restaurantSince && currentRestaurant.fechaCreacion) {
-                const date = new Date(currentRestaurant.fechaCreacion);
-                restaurantSince.textContent = date.toLocaleDateString('es-ES', {
-                    year: 'numeric',
-                    month: 'short'
-                });
-            }
-
-            // Estadísticas del menú
-            const menu = currentRestaurant.menu || [];
-            let totalCategories = menu.length;
-            let totalItems = 0;
-            let totalPrice = 0;
-            let itemCount = 0;
-
-            menu.forEach(category => {
-                if (category.items && Array.isArray(category.items)) {
-                    totalItems += category.items.length;
-                    category.items.forEach(item => {
-                        if (item.precio && typeof item.precio === 'number') {
-                            totalPrice += item.precio;
-                            itemCount++;
-                        }
-                    });
-                }
-            });
-
-            const averagePrice = itemCount > 0 ? totalPrice / itemCount : 0;
-
-            // Actualizar tarjetas de estadísticas
-            document.getElementById('total-categories').textContent = totalCategories;
-            document.getElementById('total-items').textContent = totalItems;
-            document.getElementById('average-price').textContent = `$${averagePrice.toFixed(0)}`;
-
-            // Nuevas estadísticas avanzadas
-            if (document.getElementById('profile-views')) {
-                document.getElementById('profile-views').textContent = currentRestaurant.estadisticas?.vistasPerfil || 0;
-            }
-            if (document.getElementById('map-clicks')) {
-                document.getElementById('map-clicks').textContent = currentRestaurant.estadisticas?.clicsMapa || 0;
-            }
-            if (document.getElementById('whatsapp-clicks')) {
-                document.getElementById('whatsapp-clicks').textContent = currentRestaurant.estadisticas?.clicsWhatsapp || 0;
-            }
-
-            // Calcular completitud del perfil
-            const profileCompletion = calculateProfileCompletion();
-            document.getElementById('profile-completion').textContent = `${profileCompletion}%`;
-
-            const completionStatus = document.getElementById('completion-status');
-            if (profileCompletion >= 80) {
-                completionStatus.innerHTML = '<i class="fas fa-check"></i><span>Excelente</span>';
-                completionStatus.className = 'stat-change positive';
-            } else if (profileCompletion >= 50) {
-                completionStatus.innerHTML = '<i class="fas fa-exclamation"></i><span>Mejorable</span>';
-                completionStatus.className = 'stat-change';
-            } else {
-                completionStatus.innerHTML = '<i class="fas fa-times"></i><span>Incompleto</span>';
-                completionStatus.className = 'stat-change negative';
-            }
-
-            // Calcular días abierto
-            const daysOpen = calculateOpenDays();
-            document.getElementById('days-open').textContent = `${daysOpen}/7`;
-
-            // Análisis del menú
+            pintarLectura(act, ant, conv);
             updateMenuAnalysis();
         }
 
-        // Calcular completitud del perfil
-        function calculateProfileCompletion() {
-            if (!currentRestaurant) return 0;
-
-            let completed = 0;
-            let total = 10;
-
-            // Campos básicos (4 puntos)
-            if (currentRestaurant.nombre) completed++;
-            if (currentRestaurant.descripcion) completed++;
-            if (currentRestaurant.telefono) completed++;
-            if (currentRestaurant.email) completed++;
-
-            // Dirección (2 puntos)
-            if (currentRestaurant.direccion?.calle) completed++;
-            if (currentRestaurant.direccion?.ciudad) completed++;
-
-            // Horarios (1 punto)
-            if (currentRestaurant.horarios && Object.keys(currentRestaurant.horarios).length > 0) completed++;
-
-            // Menú (2 puntos)
-            if (currentRestaurant.menu && currentRestaurant.menu.length > 0) completed++;
-            if (currentRestaurant.menu && currentRestaurant.menu.some(cat => cat.items && cat.items.length > 0)) completed++;
-
-            // Redes sociales (1 punto)
-            if (currentRestaurant.redes && Object.values(currentRestaurant.redes).some(red => red)) completed++;
-
-            return Math.round((completed / total) * 100);
+        function pintarLectura(act, ant, conv) {
+            const r = currentRestaurant, items = [];
+            const mesNombre = new Date().toLocaleDateString('es-MX', { month: 'long' });
+            if (act.vistas) items.push(`En ${mesNombre} <b>${fmt(act.vistas)} persona${act.vistas === 1 ? '' : 's'}</b> vieron tu página${ant.vistas ? (act.vistas >= ant.vistas ? `, ${fmt(act.vistas - ant.vistas)} más que el mes pasado.` : `, ${fmt(ant.vistas - act.vistas)} menos que el mes pasado.`) : '.'}`);
+            else items.push('Este mes todavía nadie ha visto tu página. <a href="/admin.html">Copia tu enlace</a> y compártelo en tus redes.');
+            if (!r.whatsappPedidos) items.push('No tienes WhatsApp en tu ficha, así que nadie puede escribirte desde ahí. <a href="/manage-restaurant.html#sec-contacto">Agrégalo</a>.');
+            else if (act.vistas >= 20 && conv < 5) items.push('Muchos te ven pero pocos te contactan. Unas buenas <a href="/manage-images.html">fotos</a> y el <a href="/manage-restaurant.html#sec-menu">menú con precios</a> ayudan a decidir.');
+            if ((r.imagenes || []).length < 3) items.push(`Tienes ${(r.imagenes || []).length} foto${(r.imagenes || []).length === 1 ? '' : 's'}. Las fichas con 3 o más reciben más clics. <a href="/manage-images.html">Subir fotos</a>.`);
+            const c = r.direccion && r.direccion.coordenadas;
+            if (!(c && c.lat && c.lng)) items.push('Tu negocio no tiene punto en el mapa, así que el botón "Cómo llegar" no funciona. <a href="/manage-restaurant.html#sec-ubicacion">Ponlo aquí</a>.');
+            $('lectura-lista').innerHTML = items.map(i => `<li>${i}</li>`).join('');
+            $('lectura').hidden = !items.length;
         }
 
-        // Calcular días abierto
-        function calculateOpenDays() {
-            if (!currentRestaurant?.horarios) return 0;
-
-            const horarios = currentRestaurant.horarios;
-            let daysOpen = 0;
-
-            Object.keys(horarios).forEach(day => {
-                if (horarios[day]?.apertura && horarios[day]?.cierre) {
-                    daysOpen++;
-                }
-            });
-
-            return daysOpen;
-        }
-
-        // Actualizar análisis del menú
         function updateMenuAnalysis() {
-            const container = document.getElementById('menu-analysis');
-            if (!container || !currentRestaurant?.menu) return;
-
-            container.innerHTML = '';
-
-            currentRestaurant.menu.forEach(category => {
-                const categoryDiv = document.createElement('div');
-                categoryDiv.className = 'category-item';
-
-                const items = category.items || [];
-                const totalItems = items.length;
-                const prices = items.map(item => item.precio).filter(price => typeof price === 'number');
-                const avgPrice = prices.length > 0 ? prices.reduce((a, b) => a + b, 0) / prices.length : 0;
-                const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
-                const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
-
-                categoryDiv.innerHTML = `
-                    <div class="category-header">
-                        <h4 class="category-name">${category.categoria}</h4>
-                    </div>
-                    <div class="category-stats">
-                        <span><i class="fas fa-utensils"></i> ${totalItems} productos</span>
-                        <span><i class="fas fa-dollar-sign"></i> Promedio: $${avgPrice.toFixed(0)}</span>
-                        <span><i class="fas fa-arrow-down"></i> Min: $${minPrice}</span>
-                        <span><i class="fas fa-arrow-up"></i> Max: $${maxPrice}</span>
-                    </div>
-                `;
-
-                container.appendChild(categoryDiv);
+            const menu = (currentRestaurant.menu || []).map(c => {
+                const precios = (c.items || []).map(i => Number(i.precio)).filter(p => p > 0);
+                return {
+                    nombre: txt(c.categoria) || 'Sin nombre', n: (c.items || []).length,
+                    min: precios.length ? Math.min(...precios) : 0, max: precios.length ? Math.max(...precios) : 0,
+                    prom: precios.length ? Math.round(precios.reduce((a, b) => a + b, 0) / precios.length) : 0
+                };
             });
+            const totalItems = menu.reduce((a, c) => a + c.n, 0);
+            const todos = (currentRestaurant.menu || []).flatMap(c => (c.items || []).map(i => Number(i.precio)).filter(p => p > 0));
+            const promGeneral = todos.length ? Math.round(todos.reduce((a, b) => a + b, 0) / todos.length) : 0;
+            if (!totalItems) {
+                $('resumen-menu').innerHTML = '';
+                $('menu-analysis').innerHTML = '<div class="vacio" style="margin:12px 0"><i class="fas fa-utensils"></i>Aún no tienes platillos en tu menú. <a href="/manage-restaurant.html#sec-menu">Agregar platillos</a></div>';
+                return;
+            }
+            $('resumen-menu').innerHTML = `<span><b>${menu.length}</b> categoría${menu.length === 1 ? '' : 's'}</span><span><b>${totalItems}</b> platillo${totalItems === 1 ? '' : 's'}</span><span>Precio promedio <b>$${fmt(promGeneral)}</b></span>`;
+            const tope = Math.max(...menu.map(c => c.max), 1);
+            $('menu-analysis').innerHTML = menu.map(c => `
+                <div class="menu-fila">
+                    <div><b>${esc(c.nombre)}</b><small>${c.n} platillo${c.n === 1 ? '' : 's'}${c.max ? ` · $${fmt(c.min)} a $${fmt(c.max)}` : ''}</small></div>
+                    <div class="rango" title="${c.max ? `De $${c.min} a $${c.max}` : 'Sin precios'}">
+                        ${c.max ? `<span style="left:${c.min / tope * 100}%;width:${Math.max((c.max - c.min) / tope * 100, 1.5)}%"></span><i style="left:${c.prom / tope * 100}%"></i>` : ''}
+                    </div>
+                    <div class="precio-prom">${c.prom ? `$${fmt(c.prom)}<small>promedio</small>` : '<small>sin precios</small>'}</div>
+                </div>`).join('');
         }
 
-        // Crear gráficos
+        /* ---------- Gráficas ---------- */
         function createCharts() {
-            if (!currentRestaurant?.menu) return;
-
-            createPricesChart();
-            createCategoryChart();
-            if (analyticsData) {
-                createViewsEvolutionChart();
-                createRatingEvolutionChart();
-            }
+            if (!window.Chart) { toast('No se pudieron cargar las gráficas. Revisa tu conexión.', 'aviso'); return; }
+            crearGraficaMensual();
+            crearGraficaRating();
         }
 
-        // Gráfico de precios por categoría
-        function createPricesChart() {
-            const ctx = document.getElementById('pricesChart');
-            if (!ctx) return;
-
-            const menu = currentRestaurant.menu || [];
-            const categories = [];
-            const avgPrices = [];
-            const minPrices = [];
-            const maxPrices = [];
-
-            menu.forEach(category => {
-                const items = category.items || [];
-                const prices = items.map(item => item.precio).filter(price => typeof price === 'number');
-
-                if (prices.length > 0) {
-                    categories.push(category.categoria);
-                    avgPrices.push(Math.round(prices.reduce((a, b) => a + b, 0) / prices.length));
-                    minPrices.push(Math.min(...prices));
-                    maxPrices.push(Math.max(...prices));
-                }
-            });
-
-            if (charts.pricesChart) {
-                charts.pricesChart.destroy();
-            }
-
-            charts.pricesChart = new Chart(ctx, {
+        function crearGraficaMensual() {
+            const h = historico();
+            const s = SERIES[serieActual];
+            $('graf-titulo').textContent = s.titulo;
+            const datos = h.map(x => x[serieActual]);
+            const total = datos.reduce((a, b) => a + b, 0);
+            $('graf-sub').textContent = `${fmt(total)} en los últimos 6 meses`;
+            $('vacia-mensual').hidden = h.some(x => x.vistas || x.clicsWhatsapp || x.clicsMapa);
+            if (charts.mensual) charts.mensual.destroy();
+            charts.mensual = new Chart($('viewsEvolutionChart'), {
                 type: 'bar',
                 data: {
-                    labels: categories,
-                    datasets: [{
-                        label: 'Precio Promedio',
-                        data: avgPrices,
-                        backgroundColor: 'rgba(37, 99, 235, 0.8)',
-                        borderColor: 'rgba(37, 99, 235, 1)',
-                        borderWidth: 1
-                    }, {
-                        label: 'Precio Mínimo',
-                        data: minPrices,
-                        backgroundColor: 'rgba(16, 185, 129, 0.8)',
-                        borderColor: 'rgba(16, 185, 129, 1)',
-                        borderWidth: 1
-                    }, {
-                        label: 'Precio Máximo',
-                        data: maxPrices,
-                        backgroundColor: 'rgba(245, 158, 11, 0.8)',
-                        borderColor: 'rgba(245, 158, 11, 1)',
-                        borderWidth: 1
-                    }]
+                    labels: h.map(x => etiquetaMes(x.fecha)),
+                    datasets: [{ label: s.titulo, data: datos, backgroundColor: h.map((_, i) => i === h.length - 1 ? s.color : s.color + '55'), borderRadius: 8, maxBarThickness: 46 }]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function (value) {
-                                    return '$' + value;
-                                }
-                            }
-                        }
-                    }
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${fmt(c.parsed.y)}` } } },
+                    scales: { x: { grid: { display: false } }, y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: '#f3f4f6' }, border: { display: false } } }
                 }
             });
         }
 
-        // Gráfico de productos por categoría
-        function createCategoryChart() {
-            const ctx = document.getElementById('categoryChart');
-            if (!ctx) return;
-
-            const menu = currentRestaurant.menu || [];
-            const categories = [];
-            const itemCounts = [];
-            const colors = [
-                '#2563eb', '#16a34a', '#dc2626', '#ca8a04', '#9333ea',
-                '#c2410c', '#0891b2', '#be123c', '#4338ca', '#059669'
-            ];
-
-            menu.forEach((category, index) => {
-                const itemCount = category.items ? category.items.length : 0;
-                if (itemCount > 0) {
-                    categories.push(category.categoria);
-                    itemCounts.push(itemCount);
-                }
-            });
-
-            if (charts.categoryChart) {
-                charts.categoryChart.destroy();
-            }
-
-            charts.categoryChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: categories,
-                    datasets: [{
-                        data: itemCounts,
-                        backgroundColor: colors.slice(0, categories.length),
-                        borderWidth: 2,
-                        borderColor: '#ffffff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                padding: 20,
-                                usePointStyle: true
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        function createViewsEvolutionChart() {
-            const ctx = document.getElementById('viewsEvolutionChart');
-            if (!ctx || !analyticsData.historicoMensual) return;
-
-            const historico = analyticsData.historicoMensual;
-            const labels = historico.map(h => h.fecha);
-            const dataVistas = historico.map(h => h.vistas);
-            const dataWhatsapp = historico.map(h => h.clicsWhatsapp);
-            const dataMap = historico.map(h => h.clicsMapa);
-
-            if (charts.viewsEvolutionChart) charts.viewsEvolutionChart.destroy();
-
-            charts.viewsEvolutionChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels.length > 0 ? labels : ['Sin datos'],
-                    datasets: [
-                        {
-                            label: 'Vistas del perfil',
-                            data: dataVistas.length > 0 ? dataVistas : [0],
-                            backgroundColor: 'rgba(37, 99, 235, 0.7)',
-                            borderColor: 'rgba(37, 99, 235, 1)',
-                            borderWidth: 1
-                        },
-                        {
-                            label: 'Clics de WhatsApp',
-                            data: dataWhatsapp.length > 0 ? dataWhatsapp : [0],
-                            backgroundColor: 'rgba(37, 211, 102, 0.7)',
-                            borderColor: 'rgba(37, 211, 102, 1)',
-                            borderWidth: 1
-                        },
-                        {
-                            label: 'Clics al Mapa',
-                            data: dataMap.length > 0 ? dataMap : [0],
-                            backgroundColor: 'rgba(245, 158, 11, 0.7)',
-                            borderColor: 'rgba(245, 158, 11, 1)',
-                            borderWidth: 1
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'top' } },
-                    scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
-                }
-            });
-        }
-
-        function createRatingEvolutionChart() {
-            const ctx = document.getElementById('ratingEvolutionChart');
-            if (!ctx || !analyticsData.evolucionCalificacion) return;
-
-            const historico = analyticsData.evolucionCalificacion;
-            const labels = historico.map(h => h.mes);
-            const dataPromedio = historico.map(h => h.promedio);
-
-            if (charts.ratingEvolutionChart) charts.ratingEvolutionChart.destroy();
-
-            charts.ratingEvolutionChart = new Chart(ctx, {
+        function crearGraficaRating() {
+            const ev = (analyticsData && analyticsData.evolucionCalificacion) || [];
+            const ultimos = ev.slice(-6);
+            $('vacia-rating').hidden = ultimos.length > 0;
+            const ultimo = ultimos[ultimos.length - 1];
+            $('rating-actual').innerHTML = ultimo ? `${Number(ultimo.promedio).toFixed(1)} <span>★</span>` : '–';
+            if (charts.rating) charts.rating.destroy();
+            if (!ultimos.length) return;
+            charts.rating = new Chart($('ratingEvolutionChart'), {
                 type: 'line',
                 data: {
-                    labels: labels.length > 0 ? labels : ['Sin datos'],
-                    datasets: [{
-                        label: 'Calificación Promedio',
-                        data: dataPromedio.length > 0 ? dataPromedio : [0],
-                        borderColor: 'rgba(239, 68, 68, 1)',
-                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.3
-                    }]
+                    labels: ultimos.map(x => etiquetaMes(x.mes)),
+                    datasets: [{ label: 'Calificación', data: ultimos.map(x => x.promedio), borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,.12)', fill: true, tension: .35, pointRadius: 4, pointBackgroundColor: '#f59e0b' }]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'top' } },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 5,
-                            ticks: { stepSize: 1 }
-                        }
-                    }
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${c.parsed.y} ★` } } },
+                    scales: { x: { grid: { display: false } }, y: { min: 0, max: 5, ticks: { stepSize: 1 }, grid: { color: '#f3f4f6' } } }
                 }
             });
         }
 
-        // Refrescar estadísticas
+        document.querySelectorAll('.chip[data-serie]').forEach(chip => chip.addEventListener('click', () => {
+            document.querySelectorAll('.chip[data-serie]').forEach(c => { c.classList.toggle('activo', c === chip); c.setAttribute('aria-selected', c === chip); });
+            serieActual = chip.dataset.serie;
+            if (window.Chart && currentRestaurant) crearGraficaMensual();
+        }));
+
         async function refreshStats() {
-            showNotification('Actualizando estadísticas...', 'info');
-
-            // Destruir gráficos existentes
-            Object.values(charts).forEach(chart => {
-                if (chart) chart.destroy();
-            });
-            charts = {};
-
+            const btn = $('btn-actualizar');
+            btnEstado(btn, 'guardando', { guardando: 'Actualizando…' });
             await loadRestaurantStats();
-            showNotification('Estadísticas actualizadas correctamente', 'success');
+            btnEstado(btn, currentRestaurant ? 'guardado' : 'error', { guardado: 'Al día' });
         }
 
-        // Event listeners
-        document.addEventListener('DOMContentLoaded', async function () {
-            const isAuthenticated = await checkAuth();
-            if (isAuthenticated) {
-                await loadRestaurantStats();
-            }
+        document.addEventListener('DOMContentLoaded', async () => {
+            $('logout-btn').addEventListener('click', window.Panel.cerrarSesion);
+            const u = await window.Panel.verificarSesion();
+            if (u) loadRestaurantStats();
         });
     </script>
 </body>

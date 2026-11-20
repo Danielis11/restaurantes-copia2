@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Menú digital - Turismo Jalpan</title>
+    <meta name="description" content="Menú digital del establecimiento: platillos, precios y especialidades.">
+    <meta name="theme-color" content="#ffffff">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --tinta: #111827; --texto: #4b5563; --gris: #6b7280; --gris-claro: #9ca3af;
+            --borde: #e5e7eb; --borde-suave: #f3f4f6; --fondo: #f8fafc; --blanco: #fff;
+            --acento: #2563eb; --acento-claro: #eff6ff; --verde: #059669; --verde-claro: #ecfdf5;
+            --rojo: #dc2626; --ambar: #d97706; --ambar-claro: #fffbeb;
+            --ease: cubic-bezier(.2,.8,.2,1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; scroll-padding-top: 70px; }
+        body { font-family: 'Outfit', system-ui, sans-serif; background: var(--fondo); color: var(--tinta); line-height: 1.45; -webkit-font-smoothing: antialiased; padding-bottom: calc(84px + env(safe-area-inset-bottom)); }
+        img { display: block; max-width: 100%; }
+        button { font: inherit; }
+        .envoltura { max-width: 760px; margin: 0 auto; }
+
+        /* Portada */
+        .portada { position: relative; height: 210px; background: #1f2937 center/cover no-repeat; }
+        .portada::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.55)); }
+        .idioma { position: absolute; top: 14px; right: 14px; z-index: 2; display: flex; background: rgba(255,255,255,.92); border-radius: 99px; padding: 3px; backdrop-filter: blur(6px); }
+        .idioma button { border: none; background: none; padding: 5px 11px; border-radius: 99px; font-size: .8rem; font-weight: 600; color: var(--texto); cursor: pointer; }
+        .idioma button.activo { background: var(--tinta); color: #fff; }
+        .cab { position: relative; margin: -46px 16px 0; background: var(--blanco); border-radius: 18px; padding: 18px 18px 16px; box-shadow: 0 10px 30px rgba(15,23,42,.1); z-index: 1; }
+        .cab .eyebrow { font-size: .72rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--acento); }
+        .cab h1 { font-size: 1.55rem; line-height: 1.15; margin: 4px 0 6px; letter-spacing: -.01em; word-break: break-word; }
+        .cab-linea { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; color: var(--gris); font-size: .88rem; }
+        .estado { display: inline-flex; align-items: center; gap: 6px; font-size: .8rem; font-weight: 600; padding: 3px 10px; border-radius: 99px; }
+        .estado::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+        .estado.abierto { background: var(--verde-claro); color: var(--verde); }
+        .estado.cerrado { background: #fef2f2; color: var(--rojo); }
+
+        /* Navegación de categorías */
+        .barra-cat { position: sticky; top: 0; z-index: 5; background: rgba(248,250,252,.94); backdrop-filter: blur(10px); padding: 12px 0 10px; margin-top: 14px; border-bottom: 1px solid transparent; transition: border-color .2s; }
+        .barra-cat.pegada { border-bottom-color: var(--borde); }
+        .buscador { position: relative; margin: 0 16px 10px; }
+        .buscador i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--gris-claro); }
+        .buscador input { width: 100%; border: 1px solid var(--borde); background: var(--blanco); border-radius: 12px; padding: 11px 14px 11px 40px; font: inherit; font-size: 16px; color: var(--tinta); outline: none; transition: border-color .2s, box-shadow .2s; }
+        .buscador input:focus { border-color: var(--acento); box-shadow: 0 0 0 3px rgba(37,99,235,.15); }
+        .cats { display: flex; gap: 8px; overflow-x: auto; padding: 0 16px; scrollbar-width: none; }
+        .cats::-webkit-scrollbar { display: none; }
+        .cat { flex-shrink: 0; border: 1px solid var(--borde); background: var(--blanco); color: var(--texto); padding: 7px 14px; border-radius: 99px; font-size: .88rem; font-weight: 500; cursor: pointer; white-space: nowrap; transition: background .2s, color .2s, border-color .2s; }
+        .cat.activa { background: var(--tinta); border-color: var(--tinta); color: #fff; }
+
+        /* Promos */
+        .promos { display: flex; gap: 10px; overflow-x: auto; padding: 14px 16px 0; scrollbar-width: none; }
+        .promos::-webkit-scrollbar { display: none; }
+        .promo { flex: 0 0 auto; max-width: 280px; background: var(--ambar-claro); border: 1px solid #fde68a; border-radius: 14px; padding: 12px 14px; display: flex; gap: 10px; align-items: flex-start; }
+        .promo i { color: var(--ambar); margin-top: 3px; }
+        .promo b { display: block; font-size: .92rem; }
+        .promo small { color: var(--texto); font-size: .82rem; }
+
+        /* Secciones */
+        .seccion { padding: 22px 16px 4px; animation: subir .4s var(--ease) both; }
+        .seccion h2 { font-size: 1.2rem; display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; }
+        .seccion h2 small { color: var(--gris-claro); font-weight: 500; font-size: .85rem; }
+        .platillo { display: flex; gap: 14px; background: var(--blanco); border: 1px solid var(--borde); border-radius: 14px; padding: 14px; margin-bottom: 10px; }
+        .platillo .info { flex: 1; min-width: 0; }
+        .platillo h3 { font-size: 1rem; font-weight: 600; line-height: 1.3; word-break: break-word; }
+        .platillo p { color: var(--gris); font-size: .88rem; margin-top: 3px; word-break: break-word; }
+        .precio { font-weight: 700; font-size: 1rem; margin-top: 8px; color: var(--tinta); }
+        .especial { display: inline-flex; align-items: center; gap: 4px; font-size: .72rem; font-weight: 600; color: var(--ambar); background: var(--ambar-claro); padding: 2px 8px; border-radius: 99px; margin-bottom: 5px; }
+        .foto { width: 96px; height: 96px; flex-shrink: 0; border-radius: 12px; overflow: hidden; background: var(--borde-suave); cursor: zoom-in; border: none; padding: 0; }
+        .foto img { width: 100%; height: 100%; object-fit: cover; }
+        .destacados { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
+        .destacados::-webkit-scrollbar { display: none; }
+        .destacado { flex: 0 0 200px; background: var(--blanco); border: 1px solid var(--borde); border-radius: 14px; overflow: hidden; }
+        .destacado .img { height: 120px; background: var(--borde-suave) center/cover no-repeat; display: flex; align-items: center; justify-content: center; color: var(--gris-claro); font-size: 1.6rem; }
+        .destacado .txt { padding: 10px 12px; }
+        .destacado h3 { font-size: .94rem; font-weight: 600; line-height: 1.25; }
+        .destacado .precio { margin-top: 4px; font-size: .94rem; }
+
+        .vacio { text-align: center; padding: 48px 20px; color: var(--gris); }
+        .vacio i { font-size: 2rem; color: #cbd5e1; display: block; margin-bottom: 10px; }
+        .esq { background: linear-gradient(90deg, #eef0f3 25%, #f6f7f9 37%, #eef0f3 63%); background-size: 400% 100%; animation: brillo 1.4s ease infinite; border-radius: 14px; }
+
+        /* Barra inferior */
+        .acciones { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; background: rgba(255,255,255,.96); backdrop-filter: blur(10px); border-top: 1px solid var(--borde); padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); }
+        .acciones .envoltura { display: flex; gap: 10px; }
+        .btn { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 14px; border-radius: 12px; font-weight: 600; font-size: .95rem; text-decoration: none; border: 1px solid var(--borde); color: var(--tinta); background: var(--blanco); }
+        .btn.wa { flex: 2; background: #16a34a; border-color: #16a34a; color: #fff; }
+        .btn { white-space: nowrap; }
+        .pie { text-align: center; color: var(--gris-claro); font-size: .78rem; padding: 26px 16px 10px; }
+        .pie a { color: var(--gris); }
+
+        /* Visor de foto */
+        .visor { position: fixed; inset: 0; z-index: 20; background: rgba(0,0,0,.85); display: none; align-items: center; justify-content: center; padding: 20px; }
+        .visor.abierto { display: flex; animation: fundido .2s ease; }
+        .visor img { max-height: 80vh; border-radius: 12px; }
+        .visor button { position: absolute; top: 16px; right: 16px; width: 42px; height: 42px; border-radius: 50%; border: none; background: rgba(255,255,255,.15); color: #fff; font-size: 1.1rem; cursor: pointer; }
+
+        @keyframes subir { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+        @keyframes fundido { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes brillo { to { background-position: -200% 0; } }
+        @media (min-width: 760px) { .portada { height: 260px; } .cab { margin: -56px 0 0; } .barra-cat, .seccion, .promos { padding-left: 0; padding-right: 0; } .buscador { margin-left: 0; margin-right: 0; } .cats { padding: 0; } }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } html { scroll-behavior: auto; } }
+    </style>
+</head>
+
+<body>
+    <div class="portada" id="portada">
+        <div class="idioma" role="group" aria-label="Idioma">
+            <button type="button" data-lang="es" class="activo">ES</button>
+            <button type="button" data-lang="en">EN</button>
+        </div>
+    </div>
+
+    <div class="envoltura">
+        <header class="cab" id="cab">
+            <p class="eyebrow" id="t-eyebrow">Menú digital</p>
+            <h1 id="nombre"><span class="esq" style="display:inline-block;width:200px;height:28px"></span></h1>
+            <div class="cab-linea" id="cab-linea"></div>
+        </header>
+
+        <div id="promos" class="promos" hidden></div>
+
+        <div class="barra-cat" id="barra-cat" hidden>
+            <div class="buscador">
+                <i class="fas fa-magnifying-glass"></i>
+                <input type="search" id="buscar" placeholder="Buscar un platillo…" aria-label="Buscar un platillo" autocomplete="off">
+            </div>
+            <nav class="cats" id="cats" aria-label="Categorías del menú"></nav>
+        </div>
+
+        <main id="contenido">
+            <div style="padding:22px 16px">
+                <div class="esq" style="height:96px;margin-bottom:10px"></div>
+                <div class="esq" style="height:96px;margin-bottom:10px"></div>
+                <div class="esq" style="height:96px"></div>
+            </div>
+        </main>
+
+        <p class="pie"><a href="#" id="ver-ficha">Ver ficha completa del lugar</a> · Turismo Jalpan de Serra</p>
+    </div>
+
+    <div class="acciones" id="acciones" hidden>
+        <div class="envoltura" id="acciones-in"></div>
+    </div>
+
+    <div class="visor" id="visor" role="dialog" aria-modal="true" aria-label="Foto del platillo">
+        <button type="button" aria-label="Cerrar"><i class="fas fa-times"></i></button>
+        <img alt="">
+    </div>
+
+    <script>
+        (function () {
+            const params = new URLSearchParams(location.search);
+            const id = params.get('id');
+            let lang = params.get('lang') === 'en' ? 'en' : (localStorage.getItem('menuLang') === 'en' ? 'en' : 'es');
+            let R = null;
+            const $ = s => document.querySelector(s);
+            const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+            // Textos bilingües: {es, en} o texto plano
+            const tx = v => (v && typeof v === 'object') ? (v[lang] || v.es || v.en || '') : (v || '');
+            const precio = n => Number(n) > 0 ? '$' + Number(n).toLocaleString('es-MX', { maximumFractionDigits: 2 }) : '';
+            const urlImg = v => typeof v === 'string' ? v : (v && v.url) || '';
+            const T = {
+                es: { eyebrow: 'Menú digital', buscar: 'Buscar un platillo…', esp: 'Especialidades de la casa', esp1: 'Especialidad', abierto: 'Abierto ahora', cerrado: 'Cerrado ahora', hoy: 'Hoy', pedir: 'Pedir por WhatsApp', llamar: 'Llamar', ficha: 'Ver ficha completa del lugar', sinMenu: 'Este lugar aún no ha publicado su menú.', sinRes: 'No encontramos platillos con esa búsqueda.', noEnc: 'No encontramos este menú.', noEncSub: 'Revisa que el código QR esté completo o pregunta al personal.', todo: 'Todo', platillos: n => `${n} platillo${n === 1 ? '' : 's'}`, waMsg: n => `Hola, vi su menú digital de ${n} y quiero hacer un pedido.` },
+                en: { eyebrow: 'Digital menu', buscar: 'Search a dish…', esp: 'House specialties', esp1: 'Specialty', abierto: 'Open now', cerrado: 'Closed now', hoy: 'Today', pedir: 'Order on WhatsApp', llamar: 'Call', ficha: 'See full place details', sinMenu: 'This place has not published its menu yet.', sinRes: 'No dishes match your search.', noEnc: 'Menu not found.', noEncSub: 'Make sure the QR code is complete or ask the staff.', todo: 'All', platillos: n => `${n} dish${n === 1 ? '' : 'es'}`, waMsg: n => `Hi, I saw the digital menu of ${n} and I'd like to order.` }
+            };
+            const t = () => T[lang];
+
+            function estadoHoy(h) {
+                if (!h) return '';
+                const dias = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
+                const d = h[dias[new Date().getDay()]];
+                if (!d || !d.abierto || !d.apertura || !d.cierre) return d && !d.abierto ? `<span class="estado cerrado">${t().cerrado}</span>` : '';
+                const ahora = new Date(), min = ahora.getHours() * 60 + ahora.getMinutes();
+                const [ah, am] = d.apertura.split(':').map(Number), [ch, cm] = d.cierre.split(':').map(Number);
+                const ini = ah * 60 + am; let fin = ch * 60 + cm; if (fin <= ini) fin += 24 * 60;
+                const abierto = (min >= ini && min < fin) || (min + 1440 >= ini && min + 1440 < fin);
+                return `<span class="estado ${abierto ? 'abierto' : 'cerrado'}">${abierto ? t().abierto : t().cerrado}</span><span>${t().hoy} ${esc(d.apertura)}–${esc(d.cierre)}</span>`;
+            }
+
+            function categorias() {
+                return (R.menu || []).map((c, i) => ({
+                    id: 'cat-' + i,
+                    nombre: tx(c.categoria) || `${t().todo} ${i + 1}`,
+                    items: (c.items || []).filter(it => it && it.disponible !== false && tx(it.nombre))
+                })).filter(c => c.items.length);
+            }
+
+            function tarjeta(it) {
+                const img = urlImg(it.imagen);
+                return `<article class="platillo">
+                    <div class="info">
+                        ${it.esEspecialidad ? `<span class="especial"><i class="fas fa-star"></i> ${t().esp1}</span>` : ''}
+                        <h3>${esc(tx(it.nombre))}</h3>
+                        ${tx(it.descripcion) ? `<p>${esc(tx(it.descripcion))}</p>` : ''}
+                        ${precio(it.precio) ? `<div class="precio">${precio(it.precio)}</div>` : ''}
+                    </div>
+                    ${img ? `<button type="button" class="foto" data-foto="${esc(img)}" aria-label="Ver foto de ${esc(tx(it.nombre))}"><img src="${esc(img)}" alt="" loading="lazy"></button>` : ''}
+                </article>`;
+            }
+
+            function pintar() {
+                document.documentElement.lang = lang;
+                document.querySelectorAll('.idioma button').forEach(b => b.classList.toggle('activo', b.dataset.lang === lang));
+                $('#t-eyebrow').textContent = t().eyebrow;
+                $('#buscar').placeholder = t().buscar;
+                $('#ver-ficha').textContent = t().ficha;
+                $('#nombre').textContent = R.nombre || '';
+                document.title = `${R.nombre ? R.nombre + ' · ' : ''}${t().eyebrow}`;
+                const tipo = tx(R.tipoComida);
+                $('#cab-linea').innerHTML = [tipo ? `<span>${esc(tipo)}</span>` : '', estadoHoy(R.horarios)].filter(Boolean).join('');
+
+                const portada = (R.imagenes || []).map(urlImg).find(Boolean);
+                if (portada) $('#portada').style.backgroundImage = `url("${encodeURI(portada)}")`;
+
+                const promos = (R.promociones || []).filter(p => p && p.activa !== false && tx(p.titulo));
+                $('#promos').hidden = !promos.length;
+                $('#promos').innerHTML = promos.map(p => `<div class="promo"><i class="fas fa-tag"></i><div><b>${esc(tx(p.titulo))}</b>${tx(p.descripcion) ? `<small>${esc(tx(p.descripcion))}</small>` : ''}</div></div>`).join('');
+
+                const cats = categorias();
+                const q = $('#buscar').value.trim().toLowerCase();
+                $('#barra-cat').hidden = !cats.length;
+                if (!cats.length) { $('#contenido').innerHTML = `<div class="vacio"><i class="fas fa-utensils"></i>${t().sinMenu}</div>`; return; }
+
+                $('#cats').innerHTML = cats.map((c, i) => `<button type="button" class="cat ${i === 0 ? 'activa' : ''}" data-ir="${c.id}">${esc(c.nombre)}</button>`).join('');
+
+                const coincide = it => !q || (tx(it.nombre) + ' ' + tx(it.descripcion)).toLowerCase().includes(q);
+                let html = '';
+                const especiales = cats.flatMap(c => c.items).filter(it => it.esEspecialidad);
+                if (!q && especiales.length) {
+                    html += `<section class="seccion"><h2>${t().esp}</h2><div class="destacados">${especiales.map(it => {
+                        const img = urlImg(it.imagen);
+                        return `<div class="destacado"><div class="img" ${img ? `style="background-image:url('${esc(encodeURI(img))}')"` : ''}>${img ? '' : '<i class="fas fa-utensils"></i>'}</div><div class="txt"><h3>${esc(tx(it.nombre))}</h3>${precio(it.precio) ? `<div class="precio">${precio(it.precio)}</div>` : ''}</div></div>`;
+                    }).join('')}</div></section>`;
+                }
+                let hay = false;
+                cats.forEach(c => {
+                    const items = c.items.filter(coincide);
+                    if (!items.length) return;
+                    hay = true;
+                    html += `<section class="seccion" id="${c.id}" data-cat><h2>${esc(c.nombre)} <small>${t().platillos(items.length)}</small></h2>${items.map(tarjeta).join('')}</section>`;
+                });
+                if (!hay) html += `<div class="vacio"><i class="fas fa-magnifying-glass"></i>${t().sinRes}</div>`;
+                $('#contenido').innerHTML = html;
+                observarSecciones();
+            }
+
+            function pintarAcciones() {
+                const btns = [];
+                const wa = String(R.whatsappPedidos || '').replace(/\D/g, '');
+                if (wa) btns.push(`<a class="btn wa" id="btn-wa" href="https://wa.me/${wa}?text=${encodeURIComponent(t().waMsg(R.nombre || ''))}" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> ${t().pedir}</a>`);
+                const tel = String(R.telefono || '').replace(/[^\d+]/g, '');
+                if (tel) btns.push(`<a class="btn" href="tel:${tel}"><i class="fas fa-phone"></i> ${t().llamar}</a>`);
+                $('#acciones').hidden = !btns.length;
+                $('#acciones-in').innerHTML = btns.join('');
+                if (!btns.length) document.body.style.paddingBottom = '0';
+                const b = $('#btn-wa');
+                if (b) b.addEventListener('click', () => { fetch(`/api/restaurants/${encodeURIComponent(id)}/click-whatsapp`, { method: 'POST' }).catch(() => {}); });
+            }
+
+            // Resalta la categoría visible
+            let obs = null;
+            function observarSecciones() {
+                if (obs) obs.disconnect();
+                if (!('IntersectionObserver' in window)) return;
+                obs = new IntersectionObserver(entries => {
+                    entries.forEach(e => {
+                        if (!e.isIntersecting) return;
+                        document.querySelectorAll('.cat').forEach(b => b.classList.toggle('activa', b.dataset.ir === e.target.id));
+                        const activa = document.querySelector('.cat.activa');
+                        if (activa) activa.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+                    });
+                }, { rootMargin: '-120px 0px -60% 0px' });
+                document.querySelectorAll('[data-cat]').forEach(s => obs.observe(s));
+            }
+
+            async function cargar() {
+                if (!id) return fallo();
+                try {
+                    const r = await fetch(`/api/restaurants/${encodeURIComponent(id)}?allLangs=true`);
+                    if (!r.ok) return fallo();
+                    const data = await r.json();
+                    R = data.data && (data.data.restaurant || data.data);
+                    if (!R) return fallo();
+                    $('#ver-ficha').href = `/restaurante.html?id=${encodeURIComponent(id)}`;
+                    pintar();
+                    pintarAcciones();
+                    // Cuenta como visita (el servidor solo cuenta una por visitante)
+                    fetch(`/api/restaurants/${encodeURIComponent(id)}/view`, { method: 'POST' }).catch(() => {});
+                } catch (e) {
+                    console.error(e);
+                    fallo();
+                }
+            }
+            function fallo() {
+                $('#nombre').textContent = t().noEnc;
+                $('#contenido').innerHTML = `<div class="vacio"><i class="fas fa-qrcode"></i>${t().noEncSub}</div>`;
+                $('.pie').hidden = true;
+            }
+
+            /* Eventos */
+            document.querySelector('.idioma').addEventListener('click', e => {
+                const b = e.target.closest('[data-lang]');
+                if (!b || b.dataset.lang === lang) return;
+                lang = b.dataset.lang;
+                try { localStorage.setItem('menuLang', lang); } catch (_) {}
+                if (R) { pintar(); pintarAcciones(); }
+            });
+            $('#cats').addEventListener('click', e => {
+                const b = e.target.closest('[data-ir]');
+                if (!b) return;
+                const s = document.getElementById(b.dataset.ir);
+                if (s) s.scrollIntoView({ block: 'start' });
+                document.querySelectorAll('.cat').forEach(x => x.classList.toggle('activa', x === b));
+            });
+            let tBuscar;
+            $('#buscar').addEventListener('input', () => { clearTimeout(tBuscar); tBuscar = setTimeout(() => R && pintar(), 150); });
+            const visor = $('#visor');
+            document.addEventListener('click', e => {
+                const f = e.target.closest('[data-foto]');
+                if (f) { visor.querySelector('img').src = f.dataset.foto; visor.classList.add('abierto'); return; }
+                if (visor.classList.contains('abierto') && (e.target === visor || e.target.closest('.visor button'))) visor.classList.remove('abierto');
+            });
+            document.addEventListener('keydown', e => { if (e.key === 'Escape') visor.classList.remove('abierto'); });
+            const barra = $('#barra-cat');
+            window.addEventListener('scroll', () => {
+                barra.classList.toggle('pegada', barra.getBoundingClientRect().top <= 0);
+                // Al llegar al final, marca la última categoría
+                if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) {
+                    const cats = document.querySelectorAll('.cat');
+                    if (cats.length) cats.forEach((x, i) => x.classList.toggle('activa', i === cats.length - 1));
+                }
+            }, { passive: true });
+
+            cargar();
+        })();
+    </script>
+</body>
+
+</html>

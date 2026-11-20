@@ -4,642 +4,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Imágenes - RestauranteWeb</title>
+    <title>Fotos de mi negocio - Turismo Jalpan</title>
 
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--gray-50);
-            color: var(--gray-900);
-        }
-
-        /* Header */
-        .header {
-            background-color: var(--white);
-            border-bottom: 1px solid var(--gray-200);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .nav {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 70px;
-        }
-
-        .nav-left {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .back-btn {
-            background: none;
-            border: none;
-            color: var(--gray-600);
-            cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            transition: all 0.2s;
-        }
-
-        .back-btn:hover {
-            background-color: var(--gray-100);
-            color: var(--primary);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--primary);
-            text-decoration: none;
-            font-size: 1.25rem;
-            font-weight: 700;
-        }
-
-        .user-section {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .user-info {
-            text-align: right;
-        }
-
-        .user-name {
-            font-weight: 600;
-            color: var(--gray-900);
-            font-size: 0.9rem;
-        }
-
-        .user-role {
-            font-size: 0.8rem;
-            color: var(--gray-500);
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--white);
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        /* Main Content */
-        .main {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem 1.5rem;
-        }
-
-        .page-header {
-            margin-bottom: 2rem;
-        }
-
-        .page-title {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--gray-900);
-            margin-bottom: 0.5rem;
-        }
-
-        .page-subtitle {
-            color: var(--gray-600);
-            font-size: 1.1rem;
-        }
-
-        /* Upload Section */
-        .upload-section {
-            background: var(--white);
-            border-radius: 0.75rem;
-            border: 1px solid var(--gray-200);
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .upload-area {
-            border: 2px dashed var(--gray-300);
-            border-radius: 0.75rem;
-            padding: 3rem 2rem;
-            text-align: center;
-            transition: all 0.3s;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .upload-area:hover {
-            border-color: var(--primary);
-            background-color: var(--gray-50);
-        }
-
-        .upload-area.dragover {
-            border-color: var(--primary);
-            background-color: #eff6ff;
-        }
-
-        .upload-icon {
-            font-size: 3rem;
-            color: var(--gray-400);
-            margin-bottom: 1rem;
-        }
-
-        .upload-text {
-            color: var(--gray-600);
-            margin-bottom: 1rem;
-        }
-
-        .upload-text strong {
-            color: var(--primary);
-        }
-
-        .upload-hint {
-            font-size: 0.9rem;
-            color: var(--gray-500);
-        }
-
-        #file-input {
-            display: none;
-        }
-
-        .upload-button {
-            background-color: var(--primary);
-            color: var(--white);
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s;
-            margin-top: 1rem;
-        }
-
-        .upload-button:hover {
-            background-color: var(--primary-dark);
-        }
-
-        /* Gallery Section */
-        .gallery-section {
-            background: var(--white);
-            border-radius: 0.75rem;
-            border: 1px solid var(--gray-200);
-            padding: 2rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .gallery-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .gallery-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--gray-900);
-        }
-
-        .gallery-stats {
-            color: var(--gray-600);
-            font-size: 0.9rem;
-        }
-
-        /* ===== CAMBIOS PRINCIPALES: GRID MASONRY PARA MANTENER FORMATO ORIGINAL ===== */
-        .gallery-grid {
-            columns: 300px;
-            column-gap: 1.5rem;
-            column-fill: balance;
-        }
-
-        .image-card {
-            background: var(--white);
-            border: 1px solid var(--gray-200);
-            border-radius: 0.75rem;
-            overflow: hidden;
-            transition: all 0.3s;
-            position: relative;
-            display: inline-block;
-            width: 100%;
-            margin-bottom: 1.5rem;
-            break-inside: avoid;
-            cursor: grab;
-        }
-
-        .image-card:active {
-            cursor: grabbing;
-        }
-
-        .image-card:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transform: translateY(-2px);
-        }
-
-        /* ===== DRAG & DROP STATES ===== */
-        .image-card.dragging {
-            opacity: 0.4;
-            transform: scale(0.95);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-        }
-
-        .image-card.drop-target-before {
-            box-shadow: -4px 0 0 var(--primary, #2563eb);
-        }
-
-        .image-card.drop-target-after {
-            box-shadow: 4px 0 0 var(--primary, #2563eb);
-        }
-
-        /* Drag handle (grip icon) */
-        .drag-handle {
-            position: absolute;
-            top: 0.6rem;
-            left: 0.6rem;
-            z-index: 5;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.95);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #6b7280;
-            font-size: 0.85rem;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-            opacity: 0;
-            transition: opacity 0.2s;
-            pointer-events: none;
-        }
-
-        .image-card:hover .drag-handle {
-            opacity: 1;
-        }
-
-        /* Reorder hint banner */
-        .reorder-hint {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            padding: 0.75rem 1rem;
-            background: #eff6ff;
-            border: 1px solid #bfdbfe;
-            border-radius: 0.5rem;
-            color: #1e40af;
-            font-size: 0.875rem;
-            margin-bottom: 1rem;
-        }
-
-        .reorder-hint i {
-            font-size: 1rem;
-        }
-
-        /* ===== CONTENEDOR DE IMAGEN ADAPTABLE CON TAMAÑO NATURAL ===== */
-        .image-container {
-            position: relative;
-            width: 100%;
-            background: var(--gray-50);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 120px;
-            max-height: 400px;
-            overflow: hidden;
-        }
-
-        /* ===== IMAGEN CON TAMAÑO NATURAL Y LÍMITES APROPIADOS ===== */
-        .image-container img {
-            max-width: 100%;
-            max-height: 350px;
-            width: auto;
-            height: auto;
-            object-fit: contain;
-            transition: transform 0.3s;
-            display: block;
-        }
-
-        /* ===== PARA IMÁGENES MUY PEQUEÑAS, PERMITIR TAMAÑO NATURAL ===== */
-        .image-container img[style*="width"] {
-            max-width: min(100%, 300px);
-        }
-
-        .image-card:hover .image-container img {
-            transform: scale(1.02);
-        }
-
-        .image-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.7) 100%);
-            opacity: 0;
-            transition: opacity 0.3s;
-            display: flex;
-            align-items: flex-end;
-            padding: 1rem;
-        }
-
-        .image-card:hover .image-overlay {
-            opacity: 1;
-        }
-
-        .image-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .action-btn {
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
-            padding: 0.5rem;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            color: var(--gray-700);
-        }
-
-        .action-btn:hover {
-            background: var(--white);
-            transform: scale(1.1);
-        }
-
-        .action-btn.primary {
-            background: var(--primary);
-            color: var(--white);
-        }
-
-        .action-btn.primary:hover {
-            background: var(--primary-dark);
-        }
-
-        .action-btn.danger {
-            background: var(--error);
-            color: var(--white);
-        }
-
-        .action-btn.danger:hover {
-            background: #dc2626;
-        }
-
-        .main-badge {
-            position: absolute;
-            top: 0.75rem;
-            left: 0.75rem;
-            background: var(--success);
-            color: var(--white);
-            padding: 0.25rem 0.75rem;
-            border-radius: 1rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            z-index: 10;
-        }
-
-        .image-info {
-            padding: 1rem;
-        }
-
-        .image-filename {
-            font-size: 0.9rem;
-            color: var(--gray-900);
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-
-        .image-meta {
-            font-size: 0.8rem;
-            color: var(--gray-500);
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: var(--gray-500);
-        }
-
-        .empty-state i {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            color: var(--gray-300);
-        }
-
-        /* Loading */
-        .loading {
-            text-align: center;
-            padding: 2rem;
-            color: var(--gray-500);
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--gray-200);
-            border-top: 3px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* Notifications */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 10000;
-            max-width: 400px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-            border-left: 4px solid var(--primary);
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-            display: flex;
-            align-items: center;
-            padding: 16px;
-            gap: 12px;
-        }
-
-        .notification.show {
-            transform: translateX(0);
-        }
-
-        .notification.success {
-            border-left-color: var(--success);
-        }
-
-        .notification.error {
-            border-left-color: var(--error);
-        }
-
-        .notification.warning {
-            border-left-color: var(--warning);
-        }
-
-        .notification i {
-            font-size: 18px;
-            color: var(--primary);
-        }
-
-        .notification.success i {
-            color: var(--success);
-        }
-
-        .notification.error i {
-            color: var(--error);
-        }
-
-        .notification.warning i {
-            color: var(--warning);
-        }
-
-        .notification-message {
-            flex: 1;
-            font-size: 14px;
-            line-height: 1.4;
-        }
-
-        .notification-close {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 4px;
-            border-radius: 4px;
-            color: var(--gray-400);
-        }
-
-        .notification-close:hover {
-            background: var(--gray-100);
-            color: var(--gray-600);
-        }
-
-        /* Progress Bar */
-        .progress-container {
-            display: none;
-            margin-top: 1rem;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: var(--gray-200);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: var(--primary);
-            transition: width 0.3s ease;
-            width: 0%;
-        }
-
-        .progress-text {
-            text-align: center;
-            margin-top: 0.5rem;
-            font-size: 0.9rem;
-            color: var(--gray-600);
-        }
-
-        /* ===== RESPONSIVE ADAPTADO PARA MASONRY ===== */
-        @media (max-width: 768px) {
-            .nav {
-                padding: 0.5rem 1rem;
-                height: auto;
-                min-height: 70px;
-                flex-wrap: wrap;
-                gap: 0.5rem;
-            }
-
-            .logo {
-                font-size: 1rem;
-            }
-
-            .user-section {
-                gap: 0.5rem;
-            }
-
-            .user-info {
-                display: none;
-            }
-
-            .main {
-                padding: 1rem;
-            }
-
-            .gallery-grid {
-                columns: 250px;
-                column-gap: 1rem;
-            }
-
-            .image-card {
-                margin-bottom: 1rem;
-            }
-
-            .upload-section {
-                padding: 1.5rem;
-            }
-
-            .upload-area {
-                padding: 2rem 1rem;
-            }
-
-            .page-title {
-                font-size: 1.5rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .gallery-grid {
-                columns: 1;
-                column-gap: 0;
-            }
-
-            .image-card {
-                margin-bottom: 1rem;
-            }
-        }
-    </style>
-    <link rel="stylesheet" href="/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/panel-socio.css">
+
+    <style>
+        .migas { display: inline-flex; align-items: center; gap: 6px; color: var(--gris); font-size: .88rem; text-decoration: none; margin-bottom: 10px; }
+        .migas:hover { color: var(--azul); }
+        .cabecera { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+        .cabecera h1 { font-size: 1.6rem; letter-spacing: -.01em; }
+        .cabecera p { color: var(--texto); margin-top: 4px; }
+        .contador { min-width: 220px; }
+        .contador-top { display: flex; justify-content: space-between; font-size: .86rem; color: var(--gris); margin-bottom: 6px; }
+        .contador-top b { color: var(--tinta); font-size: 1rem; }
+        .barra { height: 8px; background: var(--borde-suave); border-radius: 99px; overflow: hidden; }
+        .barra > span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--azul), #60a5fa); border-radius: 99px; transition: width .6s var(--ease), background .3s; }
+        .barra.lleno > span { background: var(--ambar); }
+
+        .arriba { display: grid; grid-template-columns: 1.6fr 1fr; gap: 16px; align-items: stretch; }
+
+        /* Zona de subida */
+        .subir { padding: 18px; display: flex; flex-direction: column; }
+        .zona { flex: 1; border: 2px dashed #cbd5e1; border-radius: 12px; padding: 30px 18px; text-align: center; cursor: pointer; transition: border-color .2s, background .2s, transform .2s var(--ease); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; background: var(--fondo); }
+        .zona:hover, .zona:focus-visible { border-color: var(--azul); background: var(--azul-claro); outline: none; }
+        .zona.encima { border-color: var(--azul); background: var(--azul-claro); transform: scale(1.01); }
+        .zona.bloqueada { cursor: not-allowed; opacity: .6; }
+        .zona-ico { width: 54px; height: 54px; border-radius: 50%; background: var(--blanco); color: var(--azul); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; box-shadow: var(--sombra); margin-bottom: 6px; }
+        .zona b { font-size: 1rem; }
+        .zona small { color: var(--gris); }
+        .cola { display: none; margin-top: 14px; }
+        .cola.activa { display: block; animation: aparecer .2s var(--ease); }
+        .cola-mini { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+        .cola-mini img { width: 54px; height: 54px; object-fit: cover; border-radius: 8px; border: 1px solid var(--borde); }
+        .cola-txt { display: flex; justify-content: space-between; font-size: .86rem; color: var(--texto); margin-bottom: 6px; }
+
+        /* Vista previa de portada */
+        .portada { padding: 18px; }
+        .portada .eyebrow { margin-bottom: 10px; }
+        .ficha-mini { border: 1px solid var(--borde); border-radius: 14px; overflow: hidden; background: var(--blanco); box-shadow: var(--sombra); }
+        .ficha-mini .foto { aspect-ratio: 16/10; background: var(--borde-suave) center/cover no-repeat; display: flex; align-items: center; justify-content: center; color: var(--gris-claro); font-size: 2rem; transition: background-image .3s; }
+        .ficha-mini .datos { padding: 12px 14px; }
+        .ficha-mini b { display: block; font-size: 1rem; }
+        .ficha-mini small { color: var(--gris); font-size: .82rem; }
+        .portada p.ayuda-txt { color: var(--gris); font-size: .82rem; margin-top: 10px; }
+
+        /* Galería */
+        .galeria { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+        .foto-card { background: var(--blanco); border: 1px solid var(--borde); border-radius: 14px; overflow: hidden; position: relative; transition: transform .2s var(--ease), box-shadow .2s, opacity .2s, border-color .2s; animation: subir .35s var(--ease) both; }
+        .foto-card:hover { box-shadow: var(--sombra-alta); }
+        .foto-card.es-portada { border-color: var(--azul); box-shadow: 0 0 0 2px rgba(37,99,235,.2); }
+        .foto-card.arrastrando { opacity: .4; }
+        .foto-card.antes { box-shadow: -4px 0 0 0 var(--azul); }
+        .foto-card.despues { box-shadow: 4px 0 0 0 var(--azul); }
+        .foto-card.quitando { opacity: 0; transform: scale(.94); }
+        .foto-card .img { aspect-ratio: 4/3; background: var(--borde-suave); cursor: grab; }
+        .foto-card .img img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+        .num { position: absolute; top: 10px; left: 10px; background: rgba(17,24,39,.7); color: #fff; font-size: .75rem; font-weight: 600; border-radius: 99px; padding: 3px 9px; backdrop-filter: blur(4px); }
+        .num.portada-tag { background: var(--azul); }
+        .foto-acc { display: flex; align-items: center; gap: 2px; padding: 6px; border-top: 1px solid var(--borde-suave); }
+        .foto-acc .btn-portada { flex: 1; justify-content: flex-start; font-size: .82rem; padding: 7px 8px; }
+        .foto-acc .icono-btn { width: 34px; height: 34px; font-size: .9rem; }
+        .foto-acc .icono-btn:disabled { opacity: .3; cursor: default; background: none; }
+        .es-portada-txt { flex: 1; font-size: .82rem; font-weight: 600; color: var(--azul); padding: 0 8px; display: flex; align-items: center; gap: 6px; }
+
+        .consejos { display: flex; gap: 8px 18px; flex-wrap: wrap; color: var(--gris); font-size: .84rem; margin-top: 10px; }
+        .consejos i { color: var(--verde); margin-right: 4px; }
+
+        @media (max-width: 860px) { .arriba { grid-template-columns: 1fr; } .portada { display: none; } }
+        @media (max-width: 720px) {
+            .cabecera h1 { font-size: 1.3rem; }
+            .contador { width: 100%; }
+            .galeria { grid-template-columns: 1fr 1fr; gap: 10px; }
+            .foto-acc .btn-portada span { display: none; }
+            .foto-acc .btn-portada { flex: 0; }
+            .foto-acc { justify-content: space-between; }
+            .es-portada-txt { flex: 0; padding: 0 8px; }
+            .es-portada-txt span { display: none; }
+            .foto-acc .icono-btn { width: 32px; }
+            .zona { padding: 22px 14px; }
+        }
+    </style>
     <!-- PWA: app instalable -->
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#2563eb">
@@ -652,682 +100,356 @@
 </head>
 
 <body>
-    <!-- Header -->
     <header class="header">
         <nav class="nav">
-            <div class="nav-left">
-                <button class="back-btn" onclick="goBack()">
-                    <i class="fas fa-arrow-left"></i>
-                </button>
-                <a href="/admin.html" class="logo">
-                    <i class="fas fa-images"></i>
-                    Gestión de Imágenes
-                </a>
+            <a href="/index.html" class="logo" title="Ir al sitio de turismo">
+                <img src="/images/PueblosMágicos.svg.png" alt="Logo Turismo">
+                <span>Turismo Admin</span>
+            </a>
+            <div class="nav-links">
+                <a href="/admin.html" class="nav-link"><i class="fas fa-home"></i> Panel</a>
+                <a href="/manage-restaurant.html" class="nav-link"><i class="fas fa-store"></i> Mi ficha</a>
+                <a href="/manage-images.html" class="nav-link activo"><i class="fas fa-images"></i> Fotos</a>
             </div>
-
             <div class="user-section">
                 <div class="user-info">
                     <div class="user-name" id="user-name">Cargando...</div>
                     <div class="user-role" id="user-role">admin</div>
                 </div>
-                <div class="user-avatar" id="user-avatar">
-                    <i class="fas fa-user"></i>
-                </div>
+                <a class="user-avatar" id="user-avatar" href="/mi-perfil.html" title="Mi perfil" style="text-decoration:none"><i class="fas fa-user"></i></a>
+                <button class="icono-btn peligro" id="logout-btn" title="Cerrar sesión" aria-label="Cerrar sesión"><i class="fas fa-sign-out-alt"></i></button>
             </div>
         </nav>
     </header>
 
-    <!-- Main Content -->
-    <main class="main">
-        <!-- Page Header & Restaurant Info -->
-        <div class="page-header">
-            <h1 class="page-title">Gestión de Imágenes</h1>
-            <p class="page-subtitle">Administra las fotos de tu establecimiento</p>
-        </div>
-
-        <div id="restaurant-info-card" style="background: var(--white); border-radius: 0.75rem; border: 1px solid var(--gray-200); padding: 1.5rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: none;">
-            <div id="restaurant-icon-container" style="background: #e0e7ff; color: var(--primary); width: 60px; height: 60px; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; font-size: 2rem;">
-                <i class="fas fa-store"></i>
+    <main>
+        <a class="migas" href="/admin.html"><i class="fas fa-arrow-left"></i> Volver al panel</a>
+        <div class="cabecera">
+            <div>
+                <p class="eyebrow">Se ve en tu página pública</p>
+                <h1>Fotos de <span id="nombre-negocio">tu negocio</span></h1>
+                <p>La primera foto es tu <b>portada</b>: es la que ven los turistas en el listado.</p>
             </div>
-            <div class="restaurant-details">
-                <h2 style="font-size: 1.25rem; color: var(--gray-900); margin-bottom: 0.5rem; text-transform: capitalize;" id="restaurant-name-display">Cargando...</h2>
-                <div style="display: flex; gap: 1.5rem; color: var(--gray-600); font-size: 0.9rem; flex-wrap: wrap;" id="restaurant-meta-display">
-                    <span id="restaurant-location-display"><i class="fas fa-map-marker-alt"></i> Cargando...</span>
-                </div>
+            <div class="contador">
+                <div class="contador-top"><span>Fotos</span><span><b id="image-count">0</b> de 20</span></div>
+                <div class="barra" id="barra-fotos"><span></span></div>
             </div>
         </div>
 
-        <!-- Upload Section -->
-        <div class="upload-section">
-            <h2 style="margin-bottom: 1.5rem; font-size: 1.25rem; color: var(--gray-900);">Subir Nuevas Imágenes</h2>
+        <div class="arriba">
+            <section class="tarjeta subir">
+                <div class="zona" id="upload-area" role="button" tabindex="0" aria-describedby="zona-ayuda">
+                    <div class="zona-ico"><i class="fas fa-cloud-arrow-up"></i></div>
+                    <b id="zona-titulo">Arrastra tus fotos aquí o toca para elegirlas</b>
+                    <small id="zona-ayuda">JPG, PNG o WebP · hasta 5 MB cada una · hasta 10 a la vez</small>
+                </div>
+                <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" multiple hidden>
+                <div class="cola" id="progress-container" aria-live="polite">
+                    <div class="cola-mini" id="cola-mini"></div>
+                    <div class="cola-txt"><span id="progress-text">Subiendo…</span><span id="progress-pct">0%</span></div>
+                    <div class="barra"><span id="progress-fill"></span></div>
+                </div>
+                <div class="consejos">
+                    <span><i class="fas fa-check"></i>Fotos horizontales y con buena luz</span>
+                    <span><i class="fas fa-check"></i>Tus platillos, el lugar y la fachada</span>
+                    <span><i class="fas fa-check"></i>Mínimo 3 fotos</span>
+                </div>
+            </section>
 
-            <div class="upload-area" id="upload-area">
-                <div class="upload-icon">
-                    <i class="fas fa-cloud-upload-alt"></i>
+            <aside class="tarjeta portada" aria-label="Vista previa de tu portada">
+                <p class="eyebrow">Así te ven en el listado</p>
+                <div class="ficha-mini">
+                    <div class="foto" id="prev-foto"><i class="fas fa-image"></i></div>
+                    <div class="datos"><b id="prev-nombre">Tu negocio</b><small id="prev-meta">Jalpan de Serra</small></div>
                 </div>
-                <div class="upload-text">
-                    <strong>Haz clic aquí</strong> o arrastra las imágenes para subirlas
-                </div>
-                <div class="upload-hint">
-                    Formatos soportados: JPG, PNG • Máximo 5MB por imagen • Hasta 10 imágenes
-                </div>
-                <button type="button" class="upload-button">
-                    <i class="fas fa-plus"></i>
-                    Seleccionar Imágenes
-                </button>
-            </div>
-
-            <input type="file" id="file-input" multiple accept="image/jpeg, image/png, image/webp">
-
-            <div class="progress-container" id="progress-container">
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progress-fill"></div>
-                </div>
-                <div class="progress-text" id="progress-text">Subiendo imágenes...</div>
-            </div>
+                <p class="ayuda-txt">Para cambiarla, toca <b>"Hacer portada"</b> en cualquier foto.</p>
+            </aside>
         </div>
 
-        <!-- Gallery Section -->
-        <div class="gallery-section">
-            <div class="gallery-header">
-                <h2 class="gallery-title">Galería de Imágenes</h2>
-                <div class="gallery-stats" id="gallery-stats">
-                    <span id="image-count">0</span> imágenes
-                </div>
-            </div>
-
-            <div id="loading" class="loading">
-                <div class="spinner"></div>
-                <p>Cargando imágenes...</p>
-            </div>
-
-            <div id="reorder-hint" class="reorder-hint" style="display: none;">
-                <i class="fas fa-hand-rock"></i>
-                <span>Arrastra las imágenes para reordenarlas. La primera será la imagen principal.</span>
-            </div>
-
-            <div id="gallery-grid" class="gallery-grid" style="display: none;">
-                <!-- Las imágenes se cargarán aquí dinámicamente -->
-            </div>
-
-            <div id="empty-state" class="empty-state" style="display: none;">
-                <i class="fas fa-images"></i>
-                <h3>No hay imágenes</h3>
-                <p>Sube tus primeras imágenes para comenzar</p>
-            </div>
+        <div class="titulo-sec">
+            <div><h2>Tus fotos</h2><p id="hint-orden">Arrastra las fotos o usa las flechas para cambiar el orden.</p></div>
+            <a href="#" id="ver-pagina" hidden>Ver mi página <i class="fas fa-arrow-up-right-from-square"></i></a>
+        </div>
+        <div id="gallery-grid" class="galeria" aria-live="polite">
+            <div class="esqueleto" style="aspect-ratio:4/3;border-radius:14px"></div>
+            <div class="esqueleto" style="aspect-ratio:4/3;border-radius:14px"></div>
+            <div class="esqueleto" style="aspect-ratio:4/3;border-radius:14px"></div>
         </div>
     </main>
 
+    <div class="toasts" id="toasts" aria-live="polite"></div>
+
+    <script src="/js/panel-socio.js"></script>
     <script>
-        // Variables globales
-        const API_BASE = window.location.origin + '/api';
-        let currentUser = null;
+        const { API_BASE, esc, token, authHeaders, toast, confirmar } = window.Panel;
+        const MAX_FOTOS = 20, MAX_LOTE = 10, MAX_MB = 5;
+        const TIPOS = ['image/jpeg', 'image/png', 'image/webp'];
         let images = [];
+        let subiendo = false;
 
-        // Elementos del DOM
-        const fileInput = document.getElementById('file-input');
-        const uploadArea = document.getElementById('upload-area');
-        const progressContainer = document.getElementById('progress-container');
-        const progressFill = document.getElementById('progress-fill');
-        const progressText = document.getElementById('progress-text');
-        const galleryGrid = document.getElementById('gallery-grid');
-        const loadingElement = document.getElementById('loading');
-        const emptyState = document.getElementById('empty-state');
-        const imageCount = document.getElementById('image-count');
+        const $ = id => document.getElementById(id);
+        const galleryGrid = $('gallery-grid'), uploadArea = $('upload-area'), fileInput = $('file-input');
 
-        // Funciones de notificación
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
-
-            const icon = type === 'success' ? 'fa-check-circle' :
-                type === 'error' ? 'fa-exclamation-circle' :
-                    type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle';
-
-            notification.innerHTML = `
-                <i class="fas ${icon}"></i>
-                <span class="notification-message">${message}</span>
-                <button class="notification-close">
-                    <i class="fas fa-times"></i>
-                </button>
-            `;
-
-            document.body.appendChild(notification);
-
-            setTimeout(() => notification.classList.add('show'), 100);
-
-            setTimeout(() => {
-                notification.classList.remove('show');
-                setTimeout(() => {
-                    if (document.body.contains(notification)) {
-                        document.body.removeChild(notification);
-                    }
-                }, 300);
-            }, 8000);
-
-            notification.querySelector('.notification-close').onclick = () => {
-                notification.classList.remove('show');
-                setTimeout(() => {
-                    if (document.body.contains(notification)) {
-                        document.body.removeChild(notification);
-                    }
-                }, 300);
-            };
-        }
-
-        // Verificar autenticación
-        async function checkAuth() {
-            const token = localStorage.getItem('authToken');
-
-            if (!token) {
-                showNotification('No has iniciado sesión', 'error');
-                setTimeout(() => {
-                    window.location.href = '/login.html';
-                }, 2000);
-                return;
-            }
-
-            try {
-                const response = await fetch(`${API_BASE}/auth/profile`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                const data = await response.json().catch(() => ({}));
-                if (response.ok) {
-                    currentUser = data.data.admin;
-                    updateUserInterface();
-                } else {
-                    const isAccountInactive = data.code === 'ACCOUNT_INACTIVE' || (data.message && data.message.includes('inactiva'));
-                    localStorage.removeItem('authToken');
-                    showNotification(isAccountInactive ? 'Tu cuenta está desactivada. Contacta al super administrador para reactivarla.' : 'Sesión expirada, redirigiendo...', 'warning');
-                    setTimeout(() => { window.location.href = '/login.html'; }, isAccountInactive ? 3000 : 2000);
-                }
-            } catch (error) {
-                console.error('Error verificando auth:', error);
-                localStorage.removeItem('authToken');
-                showNotification('Sesión expirada, redirigiendo...', 'warning');
-                setTimeout(() => { window.location.href = '/login.html'; }, 2000);
-            }
-        }
-
-        // Cargar detalles del restaurante
+        /* ---------- Datos del negocio ---------- */
         async function loadRestaurantInfo() {
-            const token = localStorage.getItem('authToken');
-            if (!token) return;
-
             try {
-                const response = await fetch(`${API_BASE}/restaurants/my-restaurant`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.data) {
-                        displayRestaurantInfo(data.data);
-                    }
-                }
-            } catch (error) {
-                console.error('Error cargando información del restaurante:', error);
-            }
+                const r = await fetch(`${API_BASE}/restaurants/my-restaurant`, { headers: authHeaders() });
+                if (!r.ok) return;
+                const d = (await r.json()).data;
+                if (!d) return;
+                $('nombre-negocio').textContent = d.nombre || 'tu negocio';
+                $('prev-nombre').textContent = d.nombre || 'Tu negocio';
+                const ciudad = d.direccion && typeof d.direccion === 'object' ? d.direccion.ciudad : '';
+                $('prev-meta').textContent = [d.tipoComida, ciudad].filter(Boolean).join(' · ') || 'Jalpan de Serra';
+                if (d._id) { const a = $('ver-pagina'); a.href = `/restaurante.html?id=${encodeURIComponent(d._id)}`; a.target = '_blank'; a.rel = 'noopener'; a.hidden = false; }
+            } catch (e) { console.error('Error cargando el negocio:', e); }
         }
 
-        function displayRestaurantInfo(restaurant) {
-            const card = document.getElementById('restaurant-info-card');
-            const nameDisplay = document.getElementById('restaurant-name-display');
-            const metaDisplay = document.getElementById('restaurant-meta-display');
-            const iconContainer = document.getElementById('restaurant-icon-container');
-
-            if (card) card.style.display = 'flex';
-            if (nameDisplay) nameDisplay.textContent = restaurant.nombre || 'Establecimiento';
-            
-            const typeStr = (restaurant.tipo || '').toLowerCase();
-            const isHotel = typeStr.includes('hotel') || typeStr.includes('hospedaje') || typeStr.includes('cabaña');
-            
-            if (iconContainer) {
-                iconContainer.innerHTML = isHotel ? '<i class="fas fa-hotel"></i>' : '<i class="fas fa-utensils"></i>';
-            }
-
-            let metaHtml = '';
-            if (restaurant.direccion && restaurant.direccion.ciudad) {
-                metaHtml += `<span><i class="fas fa-map-marker-alt"></i> ${restaurant.direccion.ciudad}${restaurant.direccion.estado ? ', ' + restaurant.direccion.estado : ''}</span>`;
-            } else if (restaurant.ubicacion) {
-                metaHtml += `<span><i class="fas fa-map-marker-alt"></i> ${restaurant.ubicacion}</span>`;
-            } else if (restaurant.direccion && typeof restaurant.direccion === 'string') {
-                metaHtml += `<span><i class="fas fa-map-marker-alt"></i> ${restaurant.direccion}</span>`;
-            }
-
-            if (isHotel && restaurant.capacidadInstalada && restaurant.capacidadInstalada.habitaciones) {
-                metaHtml += `<span><i class="fas fa-bed"></i> ${restaurant.capacidadInstalada.habitaciones} habitaciones</span>`;
-            } else if (restaurant.habitaciones) {
-                metaHtml += `<span><i class="fas fa-bed"></i> ${restaurant.habitaciones} habitaciones</span>`;
-            }
-
-            if (isHotel && restaurant.capacidadInstalada && restaurant.capacidadInstalada.personas) {
-                metaHtml += `<span><i class="fas fa-users"></i> ${restaurant.capacidadInstalada.personas} huéspedes</span>`;
-            } else if (restaurant.capacidad || restaurant.capacidadTotal) {
-                metaHtml += `<span><i class="fas fa-users"></i> ${restaurant.capacidad || restaurant.capacidadTotal} huéspedes</span>`;
-            }
-
-            if (metaDisplay && metaHtml) {
-                metaDisplay.innerHTML = metaHtml;
-            }
-        }
-
-        // Actualizar interfaz de usuario
-        function updateUserInterface() {
-            if (!currentUser) return;
-
-            const userName = document.getElementById('user-name');
-            const userRole = document.getElementById('user-role');
-            const userAvatar = document.getElementById('user-avatar');
-
-            if (userName) {
-                userName.textContent = `${currentUser.nombre} ${currentUser.apellido}`;
-            }
-
-            if (userRole) {
-                userRole.textContent = currentUser.rol;
-            }
-
-            if (userAvatar) {
-                const initials = (currentUser.nombre?.charAt(0) || '') + (currentUser.apellido?.charAt(0) || '');
-                userAvatar.textContent = initials.toUpperCase();
-            }
-        }
-
-        // Cargar imágenes
+        /* ---------- Galería ---------- */
         async function loadImages() {
-            const token = localStorage.getItem('authToken');
-            if (!token) return;
-
             try {
-                const response = await fetch(`${API_BASE}/restaurants/images`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    images = data.data || [];
-                    displayImages();
-                } else {
-                    throw new Error('Error cargando imágenes');
-                }
-            } catch (error) {
-                console.error('Error cargando imágenes:', error);
-                showNotification('Error cargando imágenes', 'error');
-                showEmptyState();
+                const r = await fetch(`${API_BASE}/restaurants/images`, { headers: authHeaders() });
+                if (!r.ok) throw new Error();
+                images = (await r.json()).data || [];
+                displayImages();
+            } catch (e) {
+                console.error('Error cargando imágenes:', e);
+                galleryGrid.innerHTML = '<div class="vacio" style="grid-column:1/-1"><i class="fas fa-triangle-exclamation"></i>No pudimos cargar tus fotos. <button class="btn btn-sm" type="button" onclick="loadImages()" style="margin-top:10px">Reintentar</button></div>';
             }
         }
 
-        // Mostrar imágenes
-        function displayImages() {
-            loadingElement.style.display = 'none';
+        function actualizarContador() {
+            const n = images.length;
+            $('image-count').textContent = n;
+            const barra = $('barra-fotos');
+            barra.firstElementChild.style.width = Math.min(100, n / MAX_FOTOS * 100) + '%';
+            barra.classList.toggle('lleno', n >= MAX_FOTOS);
+            const lleno = n >= MAX_FOTOS;
+            uploadArea.classList.toggle('bloqueada', lleno);
+            uploadArea.setAttribute('aria-disabled', lleno);
+            $('zona-titulo').textContent = lleno ? 'Llegaste al máximo de 20 fotos' : 'Arrastra tus fotos aquí o toca para elegirlas';
+            $('zona-ayuda').textContent = lleno ? 'Elimina alguna para subir otra.' : `JPG, PNG o WebP · hasta ${MAX_MB} MB cada una · puedes subir ${Math.min(MAX_LOTE, MAX_FOTOS - n)} más ahora`;
+            const portada = images[0];
+            const prev = $('prev-foto');
+            if (portada) { prev.style.backgroundImage = `url("${encodeURI(portada.url)}")`; prev.innerHTML = ''; }
+            else { prev.style.backgroundImage = ''; prev.innerHTML = '<i class="fas fa-image"></i>'; }
+            $('hint-orden').textContent = n > 1 ? 'Arrastra las fotos o usa las flechas para cambiar el orden.' : n === 1 ? 'Sube más fotos para mostrar tus platillos y el lugar.' : '';
+        }
 
-            if (images.length === 0) {
-                showEmptyState();
-                document.getElementById('reorder-hint').style.display = 'none';
+        function displayImages() {
+            actualizarContador();
+            if (!images.length) {
+                galleryGrid.innerHTML = '<div class="vacio" style="grid-column:1/-1"><i class="fas fa-camera"></i><b style="display:block;color:var(--tinta)">Aún no tienes fotos</b>Sube la primera: será tu portada.</div>';
                 return;
             }
-
-            emptyState.style.display = 'none';
-            galleryGrid.style.display = 'block';
-            imageCount.textContent = images.length;
-            document.getElementById('reorder-hint').style.display = images.length > 1 ? 'flex' : 'none';
-
-            galleryGrid.innerHTML = images.map((image, index) => `
-                <div class="image-card" data-image-id="${image.id}" draggable="true">
-                    <div class="drag-handle" title="Arrastra para reordenar">
-                        <i class="fas fa-grip-vertical"></i>
+            const ultimo = images.length - 1;
+            galleryGrid.innerHTML = images.map((img, i) => {
+                const portada = i === 0;
+                return `<article class="foto-card ${portada ? 'es-portada' : ''}" data-image-id="${esc(img.id)}" draggable="true" style="animation-delay:${Math.min(i, 8) * 30}ms">
+                    <div class="img"><img src="${esc(img.url)}" alt="Foto ${i + 1}${portada ? ' (portada)' : ''}" loading="lazy" draggable="false"></div>
+                    <span class="num ${portada ? 'portada-tag' : ''}">${portada ? '<i class="fas fa-star"></i> Portada' : i + 1}</span>
+                    <div class="foto-acc">
+                        ${portada
+                            ? '<span class="es-portada-txt" title="Es tu portada"><i class="fas fa-circle-check"></i><span>Es tu portada</span></span>'
+                            : `<button type="button" class="btn btn-texto btn-portada" onclick="setMainImage('${esc(img.id)}', this)" title="Hacer portada"><i class="fas fa-star"></i><span>Hacer portada</span></button>`}
+                        <button type="button" class="icono-btn" onclick="mover('${esc(img.id)}', -1)" ${i === 0 ? 'disabled' : ''} title="Mover a la izquierda" aria-label="Mover antes"><i class="fas fa-arrow-left"></i></button>
+                        <button type="button" class="icono-btn" onclick="mover('${esc(img.id)}', 1)" ${i === ultimo ? 'disabled' : ''} title="Mover a la derecha" aria-label="Mover después"><i class="fas fa-arrow-right"></i></button>
+                        <button type="button" class="icono-btn peligro" onclick="deleteImage('${esc(img.id)}')" title="Eliminar foto" aria-label="Eliminar foto"><i class="fas fa-trash-can"></i></button>
                     </div>
-                    ${image.esPrincipal ? '<div class="main-badge">Principal</div>' : ''}
-                    <div class="image-container">
-                        <img src="${image.url}" alt="${image.filename}" loading="lazy" draggable="false">
-                        <div class="image-overlay">
-                            <div class="image-actions">
-                                ${!image.esPrincipal ? `
-                                    <button class="action-btn primary" onclick="setMainImage('${image.id}')" title="Establecer como principal">
-                                        <i class="fas fa-star"></i>
-                                    </button>
-                                ` : ''}
-                                <button class="action-btn danger" onclick="deleteImage('${image.id}')">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="image-info">
-                        <div class="image-filename">${image.filename}</div>
-                        <div class="image-meta">
-                            <span>${formatFileSize(image.size)}</span>
-                            <span>Posición: ${index + 1}</span>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-
+                </article>`;
+            }).join('');
             setupImageDragAndDrop();
         }
 
-        // ===== DRAG & DROP PARA REORDENAR IMÁGENES =====
-        let draggedCard = null;
-
-        function setupImageDragAndDrop() {
-            const cards = galleryGrid.querySelectorAll('.image-card');
-
-            cards.forEach(card => {
-                card.addEventListener('dragstart', (e) => {
-                    draggedCard = card;
-                    card.classList.add('dragging');
-                    e.dataTransfer.effectAllowed = 'move';
-                    e.dataTransfer.setData('text/plain', card.dataset.imageId);
-                });
-
-                card.addEventListener('dragend', () => {
-                    card.classList.remove('dragging');
-                    cards.forEach(c => c.classList.remove('drop-target-before', 'drop-target-after'));
-                    draggedCard = null;
-                });
-
-                card.addEventListener('dragover', (e) => {
-                    if (!draggedCard || draggedCard === card) return;
-                    e.preventDefault();
-                    e.dataTransfer.dropEffect = 'move';
-
-                    // Decide if the drop is before or after based on horizontal midpoint
-                    const rect = card.getBoundingClientRect();
-                    const isBefore = (e.clientX - rect.left) < rect.width / 2;
-                    card.classList.toggle('drop-target-before', isBefore);
-                    card.classList.toggle('drop-target-after', !isBefore);
-                });
-
-                card.addEventListener('dragleave', () => {
-                    card.classList.remove('drop-target-before', 'drop-target-after');
-                });
-
-                card.addEventListener('drop', async (e) => {
-                    e.preventDefault();
-                    if (!draggedCard || draggedCard === card) return;
-
-                    const rect = card.getBoundingClientRect();
-                    const isBefore = (e.clientX - rect.left) < rect.width / 2;
-
-                    const draggedId = draggedCard.dataset.imageId;
-                    const targetId = card.dataset.imageId;
-
-                    // Reordenar el arreglo local
-                    const fromIndex = images.findIndex(img => img.id === draggedId);
-                    const toIndexRaw = images.findIndex(img => img.id === targetId);
-                    if (fromIndex === -1 || toIndexRaw === -1) return;
-
-                    const [moved] = images.splice(fromIndex, 1);
-                    // Recalcular el índice destino tras el splice
-                    let toIndex = images.findIndex(img => img.id === targetId);
-                    if (!isBefore) toIndex += 1;
-                    images.splice(toIndex, 0, moved);
-
-                    // Actualizar flag de principal (primera imagen)
-                    images.forEach((img, idx) => { img.esPrincipal = idx === 0; });
-
-                    card.classList.remove('drop-target-before', 'drop-target-after');
-
-                    // Re-render optimista
-                    displayImages();
-
-                    // Persistir en el servidor
-                    await persistImageOrder();
-                });
-            });
+        /* ---------- Reordenar ---------- */
+        let ordenTimer = null, ordenAntes = null;
+        function aplicarOrden() {
+            images.forEach((img, i) => { img.esPrincipal = i === 0; });
+            displayImages();
+            // Agrupa varios movimientos seguidos en una sola petición
+            clearTimeout(ordenTimer);
+            ordenTimer = setTimeout(persistImageOrder, 600);
         }
-
+        function mover(id, delta) {
+            const i = images.findIndex(x => x.id === id), j = i + delta;
+            if (i < 0 || j < 0 || j >= images.length) return;
+            if (!ordenAntes) ordenAntes = images.map(x => x.id);
+            [images[i], images[j]] = [images[j], images[i]];
+            aplicarOrden();
+            const btn = galleryGrid.querySelector(`[data-image-id="${CSS.escape(id)}"] [aria-label="${delta < 0 ? 'Mover antes' : 'Mover después'}"]`);
+            if (btn && !btn.disabled) btn.focus({ preventScroll: true });
+        }
         async function persistImageOrder() {
-            const token = localStorage.getItem('authToken');
-            if (!token) return;
-
+            const antes = ordenAntes; ordenAntes = null;
             const imageIds = images.map(img => img.id);
-
+            if (antes && antes.join() === imageIds.join()) return;
             try {
-                const response = await fetch(`${API_BASE}/restaurants/images/reorder`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ imageIds })
-                });
-
-                const data = await response.json().catch(() => ({}));
-                if (!response.ok) {
-                    showNotification(data.message || 'No se pudo guardar el orden', 'error');
-                    // Recargar para mantener consistencia con el servidor
-                    loadImages();
-                } else {
-                    showNotification('Orden actualizado', 'success');
-                }
-            } catch (error) {
-                console.error('Error guardando orden:', error);
-                showNotification('Error al guardar el orden de las imágenes', 'error');
+                const r = await fetch(`${API_BASE}/restaurants/images/reorder`, { method: 'PATCH', headers: authHeaders({ 'Content-Type': 'application/json' }), body: JSON.stringify({ imageIds }) });
+                const data = await r.json().catch(() => ({}));
+                if (!r.ok) throw new Error(data.message || 'No se pudo guardar el orden.');
+                toast('Orden guardado.', 'ok', { duration: 2200 });
+            } catch (e) {
+                toast(e.message || 'No se pudo guardar el orden.', 'err', { action: { label: 'Reintentar', fn: persistImageOrder } });
                 loadImages();
             }
         }
 
-        // Formatear tamaño de archivo
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-
-        // Mostrar estado vacío
-        function showEmptyState() {
-            loadingElement.style.display = 'none';
-            galleryGrid.style.display = 'none';
-            emptyState.style.display = 'block';
-            imageCount.textContent = '0';
-        }
-
-        // Drag and drop
-        function setupDragAndDrop() {
-            uploadArea.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                uploadArea.classList.add('dragover');
-            });
-
-            uploadArea.addEventListener('dragleave', (e) => {
-                e.preventDefault();
-                uploadArea.classList.remove('dragover');
-            });
-
-            uploadArea.addEventListener('drop', (e) => {
-                e.preventDefault();
-                uploadArea.classList.remove('dragover');
-
-                const files = Array.from(e.dataTransfer.files);
-                if (files.length > 0) {
-                    validateAndUpload(files);
-                }
-            });
-
-            uploadArea.addEventListener('click', () => {
-                fileInput.click();
+        let draggedCard = null;
+        function setupImageDragAndDrop() {
+            const cards = galleryGrid.querySelectorAll('.foto-card');
+            const lado = (card, e) => { const r = card.getBoundingClientRect(); return (e.clientX - r.left) < r.width / 2; };
+            cards.forEach(card => {
+                card.addEventListener('dragstart', e => {
+                    draggedCard = card; card.classList.add('arrastrando');
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/plain', card.dataset.imageId);
+                });
+                card.addEventListener('dragend', () => { card.classList.remove('arrastrando'); cards.forEach(c => c.classList.remove('antes', 'despues')); draggedCard = null; });
+                card.addEventListener('dragover', e => {
+                    if (!draggedCard || draggedCard === card) return;
+                    e.preventDefault();
+                    const antes = lado(card, e);
+                    card.classList.toggle('antes', antes); card.classList.toggle('despues', !antes);
+                });
+                card.addEventListener('dragleave', () => card.classList.remove('antes', 'despues'));
+                card.addEventListener('drop', e => {
+                    e.preventDefault();
+                    if (!draggedCard || draggedCard === card) return;
+                    const antes = lado(card, e);
+                    const from = images.findIndex(x => x.id === draggedCard.dataset.imageId);
+                    if (from < 0) return;
+                    if (!ordenAntes) ordenAntes = images.map(x => x.id);
+                    const [movida] = images.splice(from, 1);
+                    let to = images.findIndex(x => x.id === card.dataset.imageId);
+                    if (!antes) to += 1;
+                    images.splice(to, 0, movida);
+                    aplicarOrden();
+                });
             });
         }
 
-        // Manejar selección de archivos
-        fileInput.addEventListener('change', (e) => {
-            const files = Array.from(e.target.files);
-            if (files.length > 0) {
-                validateAndUpload(files);
-            }
-        });
+        /* ---------- Subir ---------- */
+        function abrirSelector() {
+            if (subiendo) return;
+            if (images.length >= MAX_FOTOS) return toast('Ya tienes 20 fotos, el máximo. Elimina alguna para subir otra.', 'aviso');
+            fileInput.click();
+        }
+        uploadArea.addEventListener('click', abrirSelector);
+        uploadArea.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); abrirSelector(); } });
+        ['dragenter', 'dragover'].forEach(ev => uploadArea.addEventListener(ev, e => { if (draggedCard) return; e.preventDefault(); uploadArea.classList.add('encima'); }));
+        ['dragleave', 'drop'].forEach(ev => uploadArea.addEventListener(ev, e => { e.preventDefault(); uploadArea.classList.remove('encima'); }));
+        uploadArea.addEventListener('drop', e => { if (draggedCard) return; const f = Array.from(e.dataTransfer.files || []); if (f.length) validateAndUpload(f); });
+        fileInput.addEventListener('change', e => { const f = Array.from(e.target.files); if (f.length) validateAndUpload(f); fileInput.value = ''; });
 
-        // Validar y subir
         function validateAndUpload(files) {
-            const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
-            const maxSizeBytes = 5 * 1024 * 1024; // 5MB
-
-            let validFiles = [];
-            for (let file of files) {
-                if (!validTypes.includes(file.type)) {
-                    showNotification(`El archivo "${file.name}" no es JPG, PNG o WEBP. Por favor sube solo imágenes en estos formatos.`, 'warning');
-                    continue;
-                }
-                if (file.size > maxSizeBytes) {
-                    showNotification(`El archivo "${file.name}" supera el límite de 5MB. Por favor sube una imagen más ligera.`, 'warning');
-                    continue;
-                }
-                validFiles.push(file);
+            if (subiendo) return toast('Espera a que terminen de subirse las fotos anteriores.', 'aviso');
+            const malos = [], validos = [];
+            for (const f of files) {
+                if (!TIPOS.includes(f.type)) malos.push(`"${f.name}" no es JPG, PNG o WebP`);
+                else if (f.size > MAX_MB * 1024 * 1024) malos.push(`"${f.name}" pesa más de ${MAX_MB} MB`);
+                else validos.push(f);
             }
-
-            if (validFiles.length > 0) {
-                handleFileUpload(validFiles);
+            if (malos.length) toast(malos.length === 1 ? `${malos[0]}.` : `${malos.length} archivos no se pueden subir (formato o tamaño).`, 'aviso', { duration: 6000 });
+            const libres = MAX_FOTOS - images.length;
+            const cupo = Math.min(libres, MAX_LOTE);
+            if (!validos.length) return;
+            if (cupo <= 0) return toast('Ya tienes 20 fotos, el máximo. Elimina alguna para subir otra.', 'aviso');
+            if (validos.length > cupo) {
+                toast(libres < MAX_LOTE ? `Solo te quedan ${libres} lugares: subiremos las primeras ${cupo}.` : `Puedes subir ${MAX_LOTE} a la vez: subiremos las primeras ${MAX_LOTE}.`, 'aviso', { duration: 6000 });
             }
+            handleFileUpload(validos.slice(0, cupo));
         }
 
-        // Subir archivos
-        async function handleFileUpload(files) {
-            if (files.length > 10) {
-                showNotification('Máximo 10 imágenes por vez', 'warning');
-                return;
-            }
+        function handleFileUpload(files) {
+            subiendo = true;
+            const cont = $('progress-container'), fill = $('progress-fill'), pct = $('progress-pct'), txt = $('progress-text');
+            const urls = files.map(f => URL.createObjectURL(f));
+            $('cola-mini').innerHTML = urls.map(u => `<img src="${u}" alt="">`).join('');
+            cont.classList.add('activa');
+            fill.style.width = '0%'; pct.textContent = '0%';
+            txt.textContent = `Subiendo ${files.length} foto${files.length === 1 ? '' : 's'}…`;
+            uploadArea.classList.add('bloqueada');
 
-            const token = localStorage.getItem('authToken');
-            if (!token) return;
-
+            const fin = () => {
+                subiendo = false;
+                urls.forEach(u => URL.revokeObjectURL(u));
+                setTimeout(() => cont.classList.remove('activa'), 400);
+                actualizarContador();
+            };
             const formData = new FormData();
-            files.forEach(file => {
-                formData.append('images', file);
+            files.forEach(f => formData.append('images', f));
+            const xhr = new XMLHttpRequest();
+            xhr.upload.addEventListener('progress', e => {
+                if (!e.lengthComputable) return;
+                const p = Math.round(e.loaded / e.total * 100);
+                fill.style.width = p + '%'; pct.textContent = p + '%';
+                if (p === 100) txt.textContent = 'Procesando…';
             });
-
-            // Mostrar progress
-            progressContainer.style.display = 'block';
-            progressFill.style.width = '0%';
-            progressText.textContent = `Subiendo ${files.length} imagen(es)...`;
-
-            try {
-                const xhr = new XMLHttpRequest();
-
-                xhr.upload.addEventListener('progress', (e) => {
-                    if (e.lengthComputable) {
-                        const percentComplete = (e.loaded / e.total) * 100;
-                        progressFill.style.width = percentComplete + '%';
-                        progressText.textContent = `Subiendo... ${Math.round(percentComplete)}%`;
-                    }
-                });
-
-                xhr.addEventListener('load', () => {
-                    progressContainer.style.display = 'none';
-
-                    if (xhr.status === 200) {
-                        const data = JSON.parse(xhr.responseText);
-                        showNotification(data.message, 'success');
-                        loadImages(); // Recargar galería
-                        fileInput.value = ''; // Limpiar input
-                    } else {
-                        const error = JSON.parse(xhr.responseText);
-                        showNotification(error.message || 'Error subiendo imágenes', 'error');
-                    }
-                });
-
-                xhr.addEventListener('error', () => {
-                    progressContainer.style.display = 'none';
-                    showNotification('Error de conexión al subir imágenes', 'error');
-                });
-
-                xhr.open('POST', `${API_BASE}/restaurants/images/upload`);
-                xhr.setRequestHeader('Authorization', `Bearer ${token}`);
-                xhr.send(formData);
-
-            } catch (error) {
-                progressContainer.style.display = 'none';
-                console.error('Error subiendo imágenes:', error);
-                showNotification('Error subiendo imágenes', 'error');
-            }
-        }
-
-        // Establecer imagen principal
-        async function setMainImage(imageId) {
-            const token = localStorage.getItem('authToken');
-            if (!token) return;
-
-            try {
-                const response = await fetch(`${API_BASE}/restaurants/images/${imageId}/set-main`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    showNotification(data.message, 'success');
-                    loadImages(); // Recargar galería
+            xhr.addEventListener('load', () => {
+                let data = {};
+                try { data = JSON.parse(xhr.responseText); } catch (_) {}
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    toast(data.message || '¡Fotos subidas!', 'ok');
+                    loadImages();
                 } else {
-                    showNotification(data.message || 'Error estableciendo imagen principal', 'error');
+                    toast(data.message || 'No se pudieron subir las fotos.', 'err');
                 }
-            } catch (error) {
-                console.error('Error estableciendo imagen principal:', error);
-                showNotification('Error de conexión', 'error');
+                fin();
+            });
+            xhr.addEventListener('error', () => { toast('Error de conexión al subir las fotos. Intenta de nuevo.', 'err'); fin(); });
+            xhr.open('POST', `${API_BASE}/restaurants/images/upload`);
+            xhr.setRequestHeader('Authorization', `Bearer ${token()}`);
+            xhr.send(formData);
+        }
+
+        /* ---------- Portada y eliminar ---------- */
+        async function setMainImage(imageId, btn) {
+            if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spin" style="border-color:#e5e7eb;border-top-color:#2563eb"></span>'; }
+            try {
+                const r = await fetch(`${API_BASE}/restaurants/images/${encodeURIComponent(imageId)}/set-main`, { method: 'PATCH', headers: authHeaders() });
+                const data = await r.json().catch(() => ({}));
+                if (!r.ok) throw new Error(data.message || 'No se pudo cambiar la portada.');
+                toast('¡Listo! Esa foto ahora es tu portada.', 'ok');
+                await loadImages();
+                if (!window.Panel.reduceMotion) window.scrollTo({ top: galleryGrid.offsetTop - 120, behavior: 'smooth' });
+            } catch (e) {
+                toast(e.message || 'Error de conexión.', 'err');
+                displayImages();
             }
         }
 
-        // Eliminar imagen
         async function deleteImage(imageId) {
-            const confirmed = confirm('¿Estás seguro de que quieres eliminar esta imagen?');
-            if (!confirmed) return;
-
-            const token = localStorage.getItem('authToken');
-            if (!token) return;
-
+            const esPortada = images[0] && images[0].id === imageId;
+            const ok = await confirmar({
+                titulo: '¿Eliminar esta foto?',
+                mensaje: esPortada ? 'Es tu portada: la siguiente foto pasará a ser la portada. No se puede deshacer.' : 'Se quitará de tu página pública. No se puede deshacer.',
+                aceptar: 'Eliminar foto'
+            });
+            if (!ok) return;
+            const card = galleryGrid.querySelector(`[data-image-id="${CSS.escape(imageId)}"]`);
+            if (card) card.classList.add('quitando');
             try {
-                const response = await fetch(`${API_BASE}/restaurants/images/${imageId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    showNotification(data.message, 'success');
-                    loadImages(); // Recargar galería
-                } else {
-                    showNotification(data.message || 'Error eliminando imagen', 'error');
-                }
-            } catch (error) {
-                console.error('Error eliminando imagen:', error);
-                showNotification('Error de conexión', 'error');
+                const r = await fetch(`${API_BASE}/restaurants/images/${encodeURIComponent(imageId)}`, { method: 'DELETE', headers: authHeaders() });
+                const data = await r.json().catch(() => ({}));
+                if (!r.ok) throw new Error(data.message || 'No se pudo eliminar la foto.');
+                toast('Foto eliminada.', 'ok');
+                loadImages();
+            } catch (e) {
+                if (card) card.classList.remove('quitando');
+                toast(e.message || 'Error de conexión.', 'err');
             }
         }
 
-        // Función para volver atrás
-        function goBack() {
-            window.history.back();
-        }
+        // Evita que soltar un archivo fuera de la zona abra la imagen en el navegador
+        ['dragover', 'drop'].forEach(ev => window.addEventListener(ev, e => { if (!e.target.closest || !e.target.closest('#upload-area, .foto-card')) e.preventDefault(); }));
 
-        // Inicialización
-        document.addEventListener('DOMContentLoaded', function () {
-            checkAuth();
-            setupDragAndDrop();
-            loadImages();
+        document.addEventListener('DOMContentLoaded', async () => {
+            $('logout-btn').addEventListener('click', window.Panel.cerrarSesion);
+            const u = await window.Panel.verificarSesion();
+            if (!u) return;
             loadRestaurantInfo();
-
-            console.log('Gestión de imágenes cargada');
+            loadImages();
         });
-
-        // Verificar autenticación periódicamente
-        setInterval(() => {
-            if (!localStorage.getItem('authToken')) {
-                window.location.href = '/login.html';
-            }
-        }, 30000);
     </script>
 </body>
 
