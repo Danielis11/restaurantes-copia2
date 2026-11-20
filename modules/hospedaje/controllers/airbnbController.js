@@ -1,4 +1,5 @@
 const Airbnb = require('../models/Airbnb');
+const { recalcularCalificacion } = require('../utils/moderacionResenas');
 const Review = require('../models/Review');
 
 // Obtener todos los alojamientos (público + super admin ve TODO)
@@ -374,18 +375,15 @@ exports.createReview = async (req, res) => {
       user: req.user.id,
       nombreUsuario: req.user.nombre,
       rating: Number(rating),
-      comentario
+      comentario,
+      estado: 'pendiente'
     };
 
     if (!airbnb.reviews) airbnb.reviews = [];
     airbnb.reviews.push(review);
 
-    // Recalcular promedio
-    airbnb.calificacion.totalReviews = airbnb.reviews.length;
-
-    const sum = airbnb.reviews.reduce((acc, item) => acc + item.rating, 0);
-    // Redondear a 1 decimal
-    airbnb.calificacion.promedio = Math.round((sum / airbnb.reviews.length) * 10) / 10;
+    // Llega como pendiente: el promedio solo cuenta las aprobadas
+    recalcularCalificacion(airbnb, 'airbnb');
 
     await airbnb.save();
 
@@ -398,7 +396,8 @@ exports.createReview = async (req, res) => {
         tipoHospedaje: 'airbnb',
         nombreHospedaje: airbnb.nombre,
         rating: Number(rating),
-        comentario
+        comentario,
+        estado: 'pendiente'
       });
       console.log('✅ Reseña guardada en colección reviews');
     } catch (reviewErr) {
@@ -407,7 +406,7 @@ exports.createReview = async (req, res) => {
 
     res.status(201).json({
       status: 'success',
-      message: 'Reseña agregada exitosamente',
+      message: '¡Gracias! Tu opinión se publicará en cuanto la revise el equipo de turismo.',
       data: {
         review,
         calificacion: airbnb.calificacion

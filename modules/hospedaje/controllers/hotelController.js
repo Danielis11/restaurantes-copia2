@@ -1,4 +1,5 @@
 const Hotel = require('../models/Hotel');
+const { recalcularCalificacion } = require('../utils/moderacionResenas');
 const Review = require('../models/Review');
 const multer = require('multer');
 const path = require('path');
@@ -556,18 +557,15 @@ exports.createReview = async (req, res) => {
       user: req.user.id,
       nombreUsuario: req.user.nombre,
       rating: Number(rating),
-      comentario
+      comentario,
+      estado: 'pendiente'
     };
 
     if (!hotel.reviews) hotel.reviews = [];
     hotel.reviews.push(review);
 
-    // Recalcular promedio
-    hotel.calificacion.totalReviews = hotel.reviews.length;
-
-    const sum = hotel.reviews.reduce((acc, item) => acc + item.rating, 0);
-    // Redondear a 1 decimal
-    hotel.calificacion.promedio = Math.round((sum / hotel.reviews.length) * 10) / 10;
+    // Llega como pendiente: el promedio solo cuenta las aprobadas
+    recalcularCalificacion(hotel, 'hotel');
 
     await hotel.save();
 
@@ -580,7 +578,8 @@ exports.createReview = async (req, res) => {
         tipoHospedaje: 'hotel',
         nombreHospedaje: hotel.nombre,
         rating: Number(rating),
-        comentario
+        comentario,
+        estado: 'pendiente'
       });
       console.log('✅ Reseña guardada en colección reviews');
     } catch (reviewErr) {
@@ -589,7 +588,7 @@ exports.createReview = async (req, res) => {
 
     res.status(201).json({
       status: 'success',
-      message: 'Reseña agregada exitosamente',
+      message: '¡Gracias! Tu opinión se publicará en cuanto la revise el equipo de turismo.',
       data: {
         review,
         calificacion: hotel.calificacion

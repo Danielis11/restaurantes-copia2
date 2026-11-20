@@ -1,4 +1,5 @@
 const Cabana = require('../models/Cabana');
+const { recalcularCalificacion } = require('../utils/moderacionResenas');
 const Review = require('../models/Review');
 
 // Obtener todas las cabañas (público + super admin ve TODO)
@@ -242,18 +243,15 @@ exports.createReview = async (req, res) => {
       user: req.user.id,
       nombreUsuario: req.user.nombre,
       rating: Number(rating),
-      comentario
+      comentario,
+      estado: 'pendiente'
     };
 
     if (!cabana.reviews) cabana.reviews = [];
     cabana.reviews.push(review);
 
-    // Recalcular promedio
-    cabana.calificacion.numeroReviews = cabana.reviews.length;
-
-    const sum = cabana.reviews.reduce((acc, item) => acc + item.rating, 0);
-    // Redondear a 1 decimal
-    cabana.calificacion.promedio = Math.round((sum / cabana.reviews.length) * 10) / 10;
+    // Llega como pendiente: el promedio solo cuenta las aprobadas
+    recalcularCalificacion(cabana, 'cabana');
 
     await cabana.save();
 
@@ -266,7 +264,8 @@ exports.createReview = async (req, res) => {
         tipoHospedaje: 'cabana',
         nombreHospedaje: cabana.nombre,
         rating: Number(rating),
-        comentario
+        comentario,
+        estado: 'pendiente'
       });
       console.log('✅ Reseña guardada en colección reviews');
     } catch (reviewErr) {
@@ -275,7 +274,7 @@ exports.createReview = async (req, res) => {
 
     res.status(201).json({
       status: 'success',
-      message: 'Reseña agregada exitosamente',
+      message: '¡Gracias! Tu opinión se publicará en cuanto la revise el equipo de turismo.',
       data: {
         review,
         calificacion: cabana.calificacion

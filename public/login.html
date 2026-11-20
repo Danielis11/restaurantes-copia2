@@ -399,7 +399,7 @@
                             window.location.href = redirectUrl;
                         } else {
                             const rol = data.data.admin.rol;
-                            if (rol === 'super-admin') window.location.href = '/super-admin.html';
+                            if (rol === 'super-admin') window.location.href = '/panel-central.html';
                             else if (rol === 'admin-turismo') window.location.href = '/admin-turismo.html';
                             else if (rol === 'gobernamental') window.location.href = '/admin-gobierno.html';
                             else if (rol === 'admin-ranking') window.location.href = '/admin-ranking.html';
@@ -474,7 +474,7 @@
                             window.location.href = redirectUrl;
                         } else {
                             const rol = data.data.admin.rol;
-                            if (rol === 'super-admin') window.location.href = '/super-admin.html';
+                            if (rol === 'super-admin') window.location.href = '/panel-central.html';
                             else if (rol === 'admin-turismo') window.location.href = '/admin-turismo.html';
                             else if (rol === 'gobernamental') window.location.href = '/admin-gobierno.html';
                             else if (rol === 'admin-ranking') window.location.href = '/admin-ranking.html';
@@ -581,7 +581,7 @@
                             const rol = user.rol || storedUser.rol || (url.includes('user') ? 'turista' : 'admin');
                             user.rol = rol; // Ensure rol is always saved
                             localStorage.setItem('currentUser', JSON.stringify(user));
-                            if (rol === 'super-admin') window.location.replace('/super-admin.html');
+                            if (rol === 'super-admin') window.location.replace('/panel-central.html');
                             else if (rol === 'admin-turismo') window.location.replace('/admin-turismo.html');
                             else if (rol === 'gobernamental') window.location.replace('/admin-gobierno.html');
                             else if (rol === 'admin-ranking') window.location.replace('/admin-ranking.html');

@@ -852,7 +852,7 @@ async function renderAuthNavbar() {
                 <a href="/user-panel.html#opiniones" class="profile-dropdown-link"><i class="fas fa-star"></i> Mis Opiniones</a>
             `;
         } else if (currentUser.rol === 'super-admin') {
-            links = `<a href="/super-admin.html" class="profile-dropdown-link"><i class="fas fa-crown"></i> Panel Super Admin</a>`;
+            links = `<a href="/panel-central.html" class="profile-dropdown-link"><i class="fas fa-crown"></i> Panel central</a>`;
         } else if (currentUser.rol === 'admin-turismo') {
             links = `<a href="/admin-turismo.html" class="profile-dropdown-link"><i class="fas fa-compass"></i> Panel Turismo</a>`;
         } else if (currentUser.rol === 'gobernamental') {

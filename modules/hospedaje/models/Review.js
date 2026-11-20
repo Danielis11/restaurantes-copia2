@@ -34,6 +34,12 @@ const ReviewSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  // Moderación (las viejas sin estado cuentan como aprobadas)
+  estado: {
+    type: String,
+    enum: ['pendiente', 'aprobada', 'rechazada'],
+    default: 'aprobada'
+  },
   fecha: {
     type: Date,
     default: Date.now

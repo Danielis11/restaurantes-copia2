@@ -113,6 +113,7 @@ app.use('/api/admin', require('./routes/admin'));
 app.use('/api/restaurants', require('./routes/restaurants'));
 app.use('/api/itinerarios', require('./routes/itinerarioRoutes'));
 app.use('/api/super-admin', require('./routes/superAdminRoutes'));
+app.use('/api/panel-central', require('./routes/panelCentralRoutes')); // panel único del super admin (alimentos + hospedaje)
 app.use('/api/ranking-admin', require('./routes/rankingAdminRoutes'));
 app.use('/api/ofertas-flash', require('./routes/ofertaFlashRoutes'));
 app.use('/api/crm-quejas', require('./routes/crmQuejasRoutes'));

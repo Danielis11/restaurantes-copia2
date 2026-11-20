@@ -244,6 +244,8 @@ const CabanaSchema = new mongoose.Schema({
 
   // Reseñas de turistas
   reviews: [{
+    // Moderación: las nuevas llegan pendientes; las viejas (sin estado) cuentan como aprobadas
+    estado: { type: String, enum: ['pendiente', 'aprobada', 'rechazada'], default: 'aprobada' },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
@@ -328,5 +330,13 @@ CabanaSchema.methods.actualizarDisponibilidad = function (nuevaDisponibilidad) {
   }
   return this.save();
 };
+
+// Al público solo salen las reseñas aprobadas (las pendientes las ve el super admin)
+CabanaSchema.set('toJSON', {
+  transform(doc, ret) {
+    if (Array.isArray(ret.reviews)) ret.reviews = ret.reviews.filter((r) => !r.estado || r.estado === 'aprobada');
+    return ret;
+  }
+});
 
 module.exports = conexion.model('Cabana', CabanaSchema);

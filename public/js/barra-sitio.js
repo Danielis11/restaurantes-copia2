@@ -56,7 +56,7 @@
                 '<a href="/user-panel.html#opiniones-section" class="profile-dropdown-link"><i class="fas fa-star"></i> Mis Opiniones</a>';
         }
         var paneles = {
-            'super-admin': ['/super-admin.html', 'fa-crown', 'Panel Super Admin'],
+            'super-admin': ['/panel-central.html', 'fa-crown', 'Panel central'],
             'admin-turismo': ['/admin-turismo.html', 'fa-compass', 'Panel Turismo'],
             gobernamental: ['/admin-gobierno.html', 'fa-landmark', 'Panel Gubernamental'],
             'admin-ranking': ['/admin-ranking.html', 'fa-list-ol', 'Panel Ranking']

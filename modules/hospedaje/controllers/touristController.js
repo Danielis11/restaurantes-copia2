@@ -65,11 +65,11 @@ exports.getMyReviews = async (req, res) => {
                     comentario: review.comentario,
                     imagenUrl: null,
                     fotos: [],
-                    estado: 'aprobada',
+                    estado: review.estado || 'aprobada',
                     fechaCreacion: review.fecha || review.createdAt,
                     tipoLugar: config.tipoLugar,
                     lugarNombre: review.nombreHospedaje || config.tipoLugar,
-                    lugarUrl: `/hospedaje-detalle.html?tipo=${review.tipoHospedaje}&id=${review.hospedajeId}`,
+                    lugarUrl: `/hospedaje/hospedaje-detalle.html?tipo=${review.tipoHospedaje}&id=${review.hospedajeId}`,
                     origen: 'local'
                 };
             });
@@ -141,6 +141,12 @@ exports.deleteMyHospedajeReview = async (req, res) => {
         }
 
         await Review.deleteOne({ _id: reviewId });
+        // También quitarla de la página del hospedaje y recalcular su promedio
+        try {
+            await require('../utils/moderacionResenas').aplicarAEmbebida(review, { borrar: true });
+        } catch (e) {
+            console.error('No se pudo quitar la reseña del hospedaje:', e.message);
+        }
 
         res.json({
             success: true,

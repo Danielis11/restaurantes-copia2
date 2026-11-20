@@ -6,7 +6,7 @@ class AuthManager {
     }
 
     getDashboardByRole(rol) {
-        if (rol === 'super-admin') return '/super-admin.html';
+        if (rol === 'super-admin') return '/panel-central.html';
         if (rol === 'admin-turismo') return '/admin-turismo.html';
         if (rol === 'gobernamental') return '/admin-gobierno.html';
         if (rol === 'admin-ranking') return '/admin-ranking.html';
@@ -311,7 +311,7 @@ class AuthManager {
         const currentPath = window.location.pathname;
 
         // Rutas que requieren autenticación
-        const protectedRoutes = ['/admin.html', '/admin', '/super-admin.html', '/admin-turismo.html', '/admin-gobierno.html', '/admin-ranking.html', '/admin-ranking'];
+        const protectedRoutes = ['/admin.html', '/admin', '/super-admin.html', '/panel-central.html', '/admin-turismo.html', '/admin-gobierno.html', '/admin-ranking.html', '/admin-ranking'];
         
         // Rutas que NO deben ser accesibles si ya está autenticado
         const authRoutes = ['/login.html', '/register.html'];

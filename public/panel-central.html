@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel central - Jalpan de Serra</title>
+    <meta name="robots" content="noindex">
+    <link rel="icon" href="/images/PueblosMágicos.svg.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --azul: #2563eb; --azul-osc: #1e40af; --azul-claro: #eff6ff;
+            --tinta: #111827; --texto: #4b5563; --gris: #6b7280; --gris-claro: #9ca3af;
+            --borde: #e5e7eb; --borde-suave: #f3f4f6; --fondo: #f9fafb; --blanco: #fff;
+            --verde: #059669; --verde-claro: #ecfdf5; --rojo: #dc2626; --rojo-claro: #fef2f2; --ambar: #f59e0b;
+            --radio: 12px;
+        }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--fondo); color: var(--tinta); -webkit-font-smoothing: antialiased; }
+        button, input { font: inherit; }
+        a { color: inherit; }
+
+        /* Encabezado */
+        .cabecera { background: var(--blanco); border-bottom: 1px solid var(--borde); position: sticky; top: 0; z-index: 50; }
+        .cabecera-in { max-width: 1120px; margin: 0 auto; padding: 0 24px; height: 64px; display: flex; align-items: center; gap: 16px; }
+        .marca { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 700; font-size: 1.1rem; }
+        .marca img { width: 28px; height: 28px; object-fit: contain; }
+        .marca small { font-weight: 500; color: var(--gris); font-size: .85rem; }
+        .usuario { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+        .usuario-nombre { font-size: .9rem; color: var(--texto); }
+        .avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--azul); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: .85rem; }
+        .icono-btn { background: none; border: none; width: 36px; height: 36px; border-radius: 8px; color: var(--gris); cursor: pointer; }
+        .icono-btn:hover { background: var(--borde-suave); color: var(--tinta); }
+
+        /* Pestañas */
+        .pestanas { background: var(--blanco); border-bottom: 1px solid var(--borde); position: sticky; top: 64px; z-index: 40; }
+        .pestanas-in { max-width: 1120px; margin: 0 auto; padding: 0 24px; display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+        .pestanas-in::-webkit-scrollbar { display: none; }
+        .pestana { background: none; border: none; border-bottom: 2px solid transparent; padding: 14px 14px; color: var(--gris); font-weight: 500; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 8px; }
+        .pestana:hover { color: var(--tinta); }
+        .pestana.activa { color: var(--azul); border-bottom-color: var(--azul); }
+        .globo { background: var(--rojo); color: #fff; border-radius: 9999px; font-size: .7rem; font-weight: 600; padding: 1px 7px; min-width: 20px; text-align: center; }
+        .globo:empty, .globo[data-n="0"] { display: none; }
+
+        /* Contenido */
+        main { max-width: 1120px; margin: 0 auto; padding: 32px 24px 64px; }
+        .vista { display: none; }
+        .vista.activa { display: block; animation: aparecer .2s ease; }
+        @keyframes aparecer { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+        h1 { font-size: 1.6rem; margin: 0 0 4px; }
+        .sub { color: var(--gris); margin: 0 0 24px; }
+
+        /* Números */
+        .numeros { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+        .numero { background: var(--blanco); border: 1px solid var(--borde-suave); border-radius: var(--radio); padding: 20px; box-shadow: 0 1px 2px rgba(0,0,0,.04); text-align: left; cursor: pointer; transition: border-color .15s; }
+        .numero:hover { border-color: var(--azul); }
+        .numero-ico { width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center; background: var(--azul-claro); color: var(--azul); margin-bottom: 14px; }
+        .numero strong { display: block; font-size: 2rem; line-height: 1; margin-bottom: 4px; }
+        .numero span { color: var(--gris); font-size: .9rem; }
+        .numero.alerta .numero-ico { background: #fffbeb; color: var(--ambar); }
+
+        .cajas { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .caja { background: var(--blanco); border: 1px solid var(--borde-suave); border-radius: var(--radio); padding: 20px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+        .caja h3 { margin: 0 0 16px; font-size: 1rem; display: flex; justify-content: space-between; align-items: center; }
+        .caja h3 a { font-size: .85rem; color: var(--azul); text-decoration: none; font-weight: 500; }
+        .fila-barra { display: grid; grid-template-columns: 120px 1fr 40px; align-items: center; gap: 12px; font-size: .9rem; color: var(--texto); padding: 6px 0; }
+        .barra { height: 8px; border-radius: 9999px; background: var(--borde-suave); overflow: hidden; }
+        .barra div { height: 100%; background: var(--azul); border-radius: 9999px; }
+        .fila-barra b { text-align: right; color: var(--tinta); font-weight: 600; }
+
+        /* Barra de herramientas */
+        .herramientas { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
+        .buscar { position: relative; flex: 1; min-width: 220px; }
+        .buscar i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--gris-claro); }
+        .buscar input { width: 100%; padding: 10px 12px 10px 36px; border: 1px solid var(--borde); border-radius: 10px; background: var(--blanco); }
+        .buscar input:focus { outline: none; border-color: var(--azul); box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
+        .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+        .chip { background: var(--blanco); border: 1px solid var(--borde); border-radius: 9999px; padding: 7px 14px; font-size: .85rem; color: var(--texto); cursor: pointer; }
+        .chip:hover { border-color: var(--gris-claro); }
+        .chip.activa { background: var(--tinta); border-color: var(--tinta); color: #fff; }
+
+        /* Listas */
+        .lista { background: var(--blanco); border: 1px solid var(--borde-suave); border-radius: var(--radio); box-shadow: 0 1px 2px rgba(0,0,0,.04); overflow: hidden; }
+        .fila { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-bottom: 1px solid var(--borde-suave); }
+        .fila:last-child { border-bottom: none; }
+        .miniatura { width: 44px; height: 44px; border-radius: 10px; background: var(--borde-suave) center/cover no-repeat; display: flex; align-items: center; justify-content: center; color: var(--gris); font-weight: 600; flex-shrink: 0; }
+        .fila-datos { flex: 1; min-width: 0; }
+        .fila-nombre { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .fila-meta { color: var(--gris); font-size: .85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .etiqueta { display: inline-block; font-size: .75rem; font-weight: 500; padding: 2px 9px; border-radius: 9999px; background: var(--borde-suave); color: var(--texto); margin-right: 6px; }
+        .etiqueta.azul { background: var(--azul-claro); color: var(--azul-osc); }
+        .estado-txt { font-size: .8rem; color: var(--gris); width: 72px; text-align: right; }
+        .vacio { text-align: center; color: var(--gris); padding: 48px 16px; }
+        .vacio i { font-size: 2rem; color: var(--borde); display: block; margin-bottom: 10px; }
+        .contador { color: var(--gris); font-size: .85rem; margin: 0 0 10px; }
+
+        /* Interruptor */
+        .interruptor { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+        .interruptor input { opacity: 0; width: 0; height: 0; }
+        .interruptor span { position: absolute; inset: 0; background: var(--borde); border-radius: 9999px; cursor: pointer; transition: background .15s; }
+        .interruptor span::before { content: ''; position: absolute; width: 16px; height: 16px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: transform .15s; box-shadow: 0 1px 2px rgba(0,0,0,.2); }
+        .interruptor input:checked + span { background: var(--verde); }
+        .interruptor input:checked + span::before { transform: translateX(18px); }
+        .interruptor input:focus-visible + span { outline: 2px solid var(--azul); outline-offset: 2px; }
+
+        /* Reseñas */
+        .resenas { display: grid; gap: 12px; }
+        .resena { background: var(--blanco); border: 1px solid var(--borde-suave); border-radius: var(--radio); padding: 18px 20px; box-shadow: 0 1px 2px rgba(0,0,0,.04); transition: opacity .25s, transform .25s; }
+        .resena.saliendo { opacity: 0; transform: translateX(16px); }
+        .resena-arriba { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+        .resena-lugar { font-weight: 600; }
+        .estrellas { color: var(--ambar); font-size: .85rem; white-space: nowrap; }
+        .resena-autor { color: var(--gris); font-size: .85rem; margin-top: 2px; }
+        .resena-texto { margin: 12px 0 0; color: var(--texto); line-height: 1.55; white-space: pre-line; overflow-wrap: anywhere; }
+        .resena-fotos { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+        .resena-fotos img { width: 64px; height: 64px; object-fit: cover; border-radius: 8px; }
+        .resena-acciones { display: flex; gap: 8px; margin-top: 14px; justify-content: flex-end; }
+        .btn { border: 1px solid var(--borde); background: var(--blanco); color: var(--tinta); border-radius: 8px; padding: 8px 16px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+        .btn:hover { border-color: var(--gris-claro); }
+        .btn:disabled { opacity: .5; cursor: wait; }
+        .btn.aprobar { background: var(--verde); border-color: var(--verde); color: #fff; }
+        .btn.aprobar:hover { background: #047857; }
+        .btn.rechazar:hover { color: var(--rojo); border-color: var(--rojo); background: var(--rojo-claro); }
+
+        .pie { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--borde); color: var(--gris); font-size: .85rem; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+        .pie a { color: var(--azul); text-decoration: none; }
+
+        .aviso { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--tinta); color: #fff; padding: 12px 20px; border-radius: 10px; font-size: .9rem; opacity: 0; transition: all .2s; z-index: 100; pointer-events: none; max-width: calc(100% - 32px); }
+        .aviso.visible { opacity: 1; transform: translateX(-50%); }
+        .aviso.error { background: var(--rojo); }
+
+        .cargando { color: var(--gris); padding: 32px; text-align: center; }
+
+        @media (max-width: 860px) {
+            .numeros { grid-template-columns: repeat(2, 1fr); }
+            .cajas { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 560px) {
+            .cabecera-in, .pestanas-in, main { padding-left: 16px; padding-right: 16px; }
+            .marca small, .usuario-nombre { display: none; }
+            main { padding-top: 24px; }
+            h1 { font-size: 1.35rem; }
+            .numero { padding: 16px; }
+            .numero strong { font-size: 1.6rem; }
+            .fila { padding: 12px 14px; gap: 10px; }
+            .estado-txt { display: none; }
+            .fila-barra { grid-template-columns: 90px 1fr 32px; }
+            .resena-acciones .btn { flex: 1; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <header class="cabecera">
+        <div class="cabecera-in">
+            <a href="/" class="marca" title="Ir al sitio"><img src="/images/PueblosMágicos.svg.png" alt=""> Jalpan <small>Panel central</small></a>
+            <div class="usuario">
+                <span class="usuario-nombre" id="nombreUsuario">Super administrador</span>
+                <div class="avatar" id="avatar">SA</div>
+                <button class="icono-btn" id="salir" title="Cerrar sesión" aria-label="Cerrar sesión"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <nav class="pestanas" aria-label="Secciones">
+        <div class="pestanas-in">
+            <button class="pestana activa" data-vista="resumen"><i class="fas fa-home"></i> Resumen</button>
+            <button class="pestana" data-vista="alimentos"><i class="fas fa-utensils"></i> Alimentos</button>
+            <button class="pestana" data-vista="hospedaje"><i class="fas fa-bed"></i> Hospedaje</button>
+            <button class="pestana" data-vista="resenas"><i class="fas fa-star"></i> Reseñas <span class="globo" id="globoResenas" data-n="0"></span></button>
+            <button class="pestana" data-vista="cuentas"><i class="fas fa-users"></i> Cuentas</button>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Resumen -->
+        <section class="vista activa" id="vista-resumen">
+            <h1 id="saludo">Hola</h1>
+            <p class="sub">Todo lo de alimentos y hospedaje en un solo lugar.</p>
+            <div class="numeros">
+                <button class="numero" data-ir="alimentos"><div class="numero-ico"><i class="fas fa-utensils"></i></div><strong id="nAlimentos">–</strong><span>Lugares de comida activos</span></button>
+                <button class="numero" data-ir="hospedaje"><div class="numero-ico"><i class="fas fa-bed"></i></div><strong id="nHospedaje">–</strong><span>Hospedajes y servicios activos</span></button>
+                <button class="numero alerta" data-ir="resenas"><div class="numero-ico"><i class="fas fa-star"></i></div><strong id="nResenas">–</strong><span>Reseñas por revisar</span></button>
+                <button class="numero" data-ir="cuentas"><div class="numero-ico"><i class="fas fa-users"></i></div><strong id="nCuentas">–</strong><span>Cuentas de negocios</span></button>
+            </div>
+            <div class="cajas">
+                <div class="caja"><h3>Alimentos <a href="#" data-ir="alimentos">Ver todo</a></h3><div id="barrasAlimentos" class="cargando">Cargando…</div></div>
+                <div class="caja"><h3>Hospedaje <a href="#" data-ir="hospedaje">Ver todo</a></h3><div id="barrasHospedaje" class="cargando">Cargando…</div></div>
+            </div>
+        </section>
+
+        <!-- Alimentos -->
+        <section class="vista" id="vista-alimentos">
+            <h1>Alimentos</h1>
+            <p class="sub">Restaurantes, bares y cafeterías. Apaga el interruptor para ocultar un lugar del sitio.</p>
+            <div class="herramientas">
+                <div class="buscar"><i class="fas fa-search"></i><input type="search" id="buscarAlimentos" placeholder="Buscar por nombre o responsable"></div>
+                <div class="chips" data-filtro="alimentos">
+                    <button class="chip activa" data-valor="">Todos</button>
+                    <button class="chip" data-valor="restaurante">Restaurantes</button>
+                    <button class="chip" data-valor="bar">Bares</button>
+                    <button class="chip" data-valor="cafeteria">Cafeterías</button>
+                </div>
+            </div>
+            <p class="contador" id="contAlimentos"></p>
+            <div class="lista" id="listaAlimentos"><div class="cargando">Cargando…</div></div>
+        </section>
+
+        <!-- Hospedaje -->
+        <section class="vista" id="vista-hospedaje">
+            <h1>Hospedaje</h1>
+            <p class="sub">Hoteles, cabañas, airbnb, guías y tour operadoras. Apaga el interruptor para ocultarlos del sitio.</p>
+            <div class="herramientas">
+                <div class="buscar"><i class="fas fa-search"></i><input type="search" id="buscarHospedaje" placeholder="Buscar por nombre o responsable"></div>
+                <div class="chips" data-filtro="hospedaje">
+                    <button class="chip activa" data-valor="">Todos</button>
+                    <button class="chip" data-valor="hotel">Hoteles</button>
+                    <button class="chip" data-valor="cabana">Cabañas</button>
+                    <button class="chip" data-valor="airbnb">Airbnb</button>
+                    <button class="chip" data-valor="guia">Guías</button>
+                    <button class="chip" data-valor="operadora">Operadoras</button>
+                </div>
+            </div>
+            <p class="contador" id="contHospedaje"></p>
+            <div class="lista" id="listaHospedaje"><div class="cargando">Cargando…</div></div>
+        </section>
+
+        <!-- Reseñas -->
+        <section class="vista" id="vista-resenas">
+            <h1>Reseñas</h1>
+            <p class="sub">Las opiniones nuevas de restaurantes y hospedajes se publican cuando las apruebas.</p>
+            <div class="herramientas">
+                <div class="chips" data-filtro="estadoResenas">
+                    <button class="chip activa" data-valor="pendiente">Por revisar</button>
+                    <button class="chip" data-valor="aprobada">Aprobadas</button>
+                    <button class="chip" data-valor="rechazada">Rechazadas</button>
+                </div>
+                <div class="chips" data-filtro="origenResenas">
+                    <button class="chip activa" data-valor="">Todo</button>
+                    <button class="chip" data-valor="alimentos">Alimentos</button>
+                    <button class="chip" data-valor="hospedaje">Hospedaje</button>
+                </div>
+            </div>
+            <div class="resenas" id="listaResenas"><div class="cargando">Cargando…</div></div>
+        </section>
+
+        <!-- Cuentas -->
+        <section class="vista" id="vista-cuentas">
+            <h1>Cuentas</h1>
+            <p class="sub">Responsables de negocios. Una cuenta bloqueada no puede entrar a su panel.</p>
+            <div class="herramientas">
+                <div class="buscar"><i class="fas fa-search"></i><input type="search" id="buscarCuentas" placeholder="Buscar por nombre o correo"></div>
+                <div class="chips" data-filtro="cuentas">
+                    <button class="chip activa" data-valor="">Todas</button>
+                    <button class="chip" data-valor="alimentos">Alimentos</button>
+                    <button class="chip" data-valor="hospedaje">Hospedaje</button>
+                </div>
+            </div>
+            <p class="contador" id="contCuentas"></p>
+            <div class="lista" id="listaCuentas"><div class="cargando">Cargando…</div></div>
+        </section>
+
+        <div class="pie">
+            <span>Las experiencias las administra el equipo de turismo.</span>
+            <a href="/super-admin.html"><i class="fas fa-sliders-h"></i> Herramientas avanzadas (altas, precios, noticias)</a>
+        </div>
+    </main>
+
+    <div class="aviso" id="aviso" role="status"></div>
+
+    <script>
+    (function () {
+        'use strict';
+        const API = '/api/panel-central';
+        const token = localStorage.getItem('authToken');
+        const estado = {
+            alimentos: [], hospedaje: [], cuentas: [], resenas: [],
+            filtros: { alimentos: '', hospedaje: '', cuentas: '', estadoResenas: 'pendiente', origenResenas: '' },
+            cargado: {}
+        };
+
+        // ---------- utilidades ----------
+        const $ = (id) => document.getElementById(id);
+        const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const normal = (t) => String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+        const TIPO_COMIDA = { restaurante: 'Restaurante', bar: 'Bar', cafeteria: 'Cafetería', 'obrador-artesanal': 'Obrador artesanal' };
+
+        let tAviso;
+        function avisar(texto, error) {
+            const a = $('aviso');
+            a.textContent = texto;
+            a.className = 'aviso visible' + (error ? ' error' : '');
+            clearTimeout(tAviso);
+            tAviso = setTimeout(() => { a.className = 'aviso'; }, 2800);
+        }
+
+        async function api(ruta, opciones) {
+            const res = await fetch(API + ruta, Object.assign({
+                headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' }
+            }, opciones || {}));
+            if (res.status === 401 || res.status === 403) {
+                avisar('Tu sesión no es de super administrador', true);
+                setTimeout(() => { location.href = '/login.html'; }, 1500);
+                throw new Error('sin permiso');
+            }
+            const json = await res.json().catch(() => ({}));
+            if (!res.ok || json.success === false) throw new Error(json.message || 'Error del servidor');
+            return json.data !== undefined ? json.data : json;
+        }
+
+        // ---------- sesión ----------
+        async function verificar() {
+            if (!token) { location.href = '/login.html'; return false; }
+            try {
+                const res = await fetch('/api/auth/profile', { headers: { 'Authorization': 'Bearer ' + token } });
+                const json = await res.json().catch(() => ({}));
+                const admin = json.data && json.data.admin;
+                if (!res.ok || !admin) { location.href = '/login.html'; return false; }
+                if (admin.rol !== 'super-admin') { location.href = '/admin.html'; return false; }
+                const nombre = [admin.nombre, admin.apellido].filter(Boolean).join(' ') || 'Super administrador';
+                $('nombreUsuario').textContent = nombre;
+                $('avatar').textContent = nombre.split(/\s+/).slice(0, 2).map((p) => p.charAt(0)).join('').toUpperCase();
+                $('saludo').textContent = 'Hola, ' + (admin.nombre || 'super administrador');
+                return true;
+            } catch (e) {
+                location.href = '/login.html';
+                return false;
+            }
+        }
+
+        $('salir').addEventListener('click', async () => {
+            if (!confirm('¿Cerrar sesión?')) return;
+            try { await fetch('/api/auth/logout', { method: 'POST', headers: { 'Authorization': 'Bearer ' + token } }); } catch (e) { /* ignorar */ }
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('currentUser');
+            location.href = '/login.html';
+        });
+
+        // ---------- navegación ----------
+        function irA(vista) {
+            document.querySelectorAll('.pestana').forEach((p) => p.classList.toggle('activa', p.dataset.vista === vista));
+            document.querySelectorAll('.vista').forEach((v) => v.classList.toggle('activa', v.id === 'vista-' + vista));
+            if (history.replaceState) history.replaceState(null, '', '#' + vista);
+            window.scrollTo({ top: 0 });
+            cargarVista(vista);
+        }
+        document.querySelectorAll('.pestana').forEach((p) => p.addEventListener('click', () => irA(p.dataset.vista)));
+        document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', (e) => { e.preventDefault(); irA(b.dataset.ir); }));
+
+        document.querySelectorAll('.chips').forEach((grupo) => {
+            grupo.addEventListener('click', (e) => {
+                const chip = e.target.closest('.chip');
+                if (!chip) return;
+                grupo.querySelectorAll('.chip').forEach((c) => c.classList.toggle('activa', c === chip));
+                const filtro = grupo.dataset.filtro;
+                estado.filtros[filtro] = chip.dataset.valor;
+                if (filtro === 'estadoResenas') cargarResenas();
+                else if (filtro === 'origenResenas') pintarResenas();
+                else pintar(filtro);
+            });
+        });
+        ['alimentos', 'hospedaje', 'cuentas'].forEach((n) => {
+            const input = $('buscar' + n.charAt(0).toUpperCase() + n.slice(1));
+            input.addEventListener('input', () => pintar(n));
+        });
+
+        function cargarVista(vista) {
+            if (vista === 'resumen') return cargarResumen();
+            if (vista === 'resenas') return cargarResenas();
+            if (!estado.cargado[vista]) cargarLista(vista);
+        }
+
+        // ---------- resumen ----------
+        function barras(filas) {
+            const max = Math.max(1, ...filas.map((f) => f.n));
+            return filas.map((f) => '<div class="fila-barra"><span>' + esc(f.texto) + '</span><div class="barra"><div style="width:' + Math.round((f.n / max) * 100) + '%"></div></div><b>' + f.n + '</b></div>').join('');
+        }
+        async function cargarResumen() {
+            try {
+                const d = await api('/resumen');
+                const h = d.hospedaje;
+                const hospActivos = Object.values(h).reduce((a, x) => a + x.activos, 0);
+                $('nAlimentos').textContent = d.alimentos.activos;
+                $('nHospedaje').textContent = hospActivos;
+                $('nResenas').textContent = d.resenasPendientes.total;
+                $('nCuentas').textContent = d.cuentas.administradores + d.cuentas.socios;
+                ponerGlobo(d.resenasPendientes.total);
+                const t = d.alimentos.porTipo || {};
+                $('barrasAlimentos').className = '';
+                $('barrasAlimentos').innerHTML = barras([
+                    { texto: 'Restaurantes', n: t.restaurante || 0 },
+                    { texto: 'Bares', n: t.bar || 0 },
+                    { texto: 'Cafeterías', n: t.cafeteria || 0 },
+                    { texto: 'Otros', n: Object.keys(t).filter((k) => !['restaurante', 'bar', 'cafeteria'].includes(k)).reduce((a, k) => a + t[k], 0) }
+                ].filter((f, i) => i < 3 || f.n > 0));
+                $('barrasHospedaje').className = '';
+                $('barrasHospedaje').innerHTML = barras([
+                    { texto: 'Hoteles', n: h.hotel.total },
+                    { texto: 'Cabañas', n: h.cabana.total },
+                    { texto: 'Airbnb', n: h.airbnb.total },
+                    { texto: 'Guías', n: h.guia.total },
+                    { texto: 'Operadoras', n: h.operadora.total }
+                ]);
+            } catch (e) {
+                if (e.message !== 'sin permiso') avisar('No se pudo cargar el resumen', true);
+            }
+        }
+        function ponerGlobo(n) {
+            const g = $('globoResenas');
+            g.textContent = n > 99 ? '99+' : n;
+            g.dataset.n = n;
+        }
+
+        // ---------- listas (alimentos, hospedaje, cuentas) ----------
+        async function cargarLista(nombre) {
+            try {
+                estado[nombre] = await api('/' + nombre);
+                estado.cargado[nombre] = true;
+                pintar(nombre);
+            } catch (e) {
+                if (e.message !== 'sin permiso') $('lista' + cap(nombre)).innerHTML = '<div class="vacio"><i class="fas fa-exclamation-circle"></i>No se pudo cargar. Recarga la página.</div>';
+            }
+        }
+        const cap = (t) => t.charAt(0).toUpperCase() + t.slice(1);
+
+        function filtrar(nombre) {
+            const q = normal($('buscar' + cap(nombre)).value);
+            const f = estado.filtros[nombre];
+            return estado[nombre].filter((x) => {
+                if (nombre === 'alimentos' && f && x.tipo !== f) return false;
+                if (nombre === 'hospedaje' && f && x.tipo !== f) return false;
+                if (nombre === 'cuentas' && f && x.area !== f) return false;
+                return !q || normal([x.nombre, x.responsable, x.correo].join(' ')).includes(q);
+            });
+        }
+
+        function miniatura(x) {
+            const inicial = esc((x.nombre || '?').trim().charAt(0).toUpperCase());
+            if (x.imagen && /^(https?:)?\//.test(x.imagen)) return '<div class="miniatura" style="background-image:url(\'' + esc(x.imagen).replace(/'/g, '%27') + '\')"></div>';
+            return '<div class="miniatura">' + inicial + '</div>';
+        }
+        function interruptor(nombre, x) {
+            return '<span class="estado-txt">' + (x.activo ? 'Visible' : 'Oculto') + '</span>' +
+                '<label class="interruptor" title="' + (x.activo ? 'Ocultar' : 'Mostrar') + '"><input type="checkbox" ' + (x.activo ? 'checked' : '') +
+                ' data-lista="' + nombre + '" data-id="' + esc(x._id) + '" aria-label="Visible: ' + esc(x.nombre) + '"><span></span></label>';
+        }
+
+        function pintar(nombre) {
+            if (!estado.cargado[nombre]) return;
+            const lista = filtrar(nombre);
+            const caja = $('lista' + cap(nombre));
+            $('cont' + cap(nombre)).textContent = lista.length + ' de ' + estado[nombre].length;
+            if (!lista.length) { caja.innerHTML = '<div class="vacio"><i class="fas fa-search"></i>Sin resultados</div>'; return; }
+            caja.innerHTML = lista.map((x) => {
+                let etiqueta = '', meta = '', ver = '';
+                if (nombre === 'alimentos') {
+                    etiqueta = '<span class="etiqueta">' + esc(TIPO_COMIDA[x.tipo] || 'Restaurante') + '</span>';
+                    meta = x.responsable ? esc(x.responsable) : 'Sin responsable';
+                    ver = x.url;
+                } else if (nombre === 'hospedaje') {
+                    etiqueta = '<span class="etiqueta azul">' + esc(x.tipoTexto) + '</span>';
+                    meta = (x.responsable ? esc(x.responsable) : 'Sin responsable') + (x.calificacion ? ' · ★ ' + Number(x.calificacion).toFixed(1) : '');
+                    ver = x.url;
+                } else {
+                    etiqueta = '<span class="etiqueta ' + (x.area === 'hospedaje' ? 'azul' : '') + '">' + esc(x.rol) + '</span>';
+                    meta = esc(x.correo);
+                }
+                return '<div class="fila">' + miniatura(x) +
+                    '<div class="fila-datos"><div class="fila-nombre">' + esc(x.nombre) + '</div><div class="fila-meta">' + etiqueta + meta + '</div></div>' +
+                    (ver ? '<a class="icono-btn" href="' + esc(ver) + '" target="_blank" rel="noopener" title="Ver en el sitio" aria-label="Ver en el sitio" style="display:flex;align-items:center;justify-content:center"><i class="fas fa-external-link-alt"></i></a>' : '') +
+                    interruptor(nombre, x) + '</div>';
+            }).join('');
+        }
+
+        document.addEventListener('change', async (e) => {
+            const input = e.target.closest('.interruptor input');
+            if (!input) return;
+            const nombre = input.dataset.lista;
+            const x = estado[nombre].find((i) => String(i._id) === input.dataset.id);
+            if (!x) return;
+            const apagar = !input.checked;
+            if (apagar && !confirm(nombre === 'cuentas' ? '¿Bloquear la cuenta de ' + x.nombre + '?' : '¿Ocultar «' + x.nombre + '» del sitio?')) { input.checked = true; return; }
+            input.disabled = true;
+            try {
+                const ruta = nombre === 'alimentos' ? '/alimentos/' + x._id + '/activo'
+                    : nombre === 'hospedaje' ? '/hospedaje/' + x.tipo + '/' + x._id + '/activo'
+                        : '/cuentas/' + x.origen + '/' + x._id + '/activo';
+                const r = await api(ruta, { method: 'PATCH' });
+                x.activo = r.activo;
+                avisar(x.nombre + (x.activo ? (nombre === 'cuentas' ? ' desbloqueada' : ' visible') : (nombre === 'cuentas' ? ' bloqueada' : ' oculto')));
+            } catch (err) {
+                input.checked = !input.checked;
+                if (err.message !== 'sin permiso') avisar(err.message || 'No se pudo cambiar', true);
+            }
+            input.disabled = false;
+            pintar(nombre);
+        });
+
+        // ---------- reseñas ----------
+        async function cargarResenas() {
+            $('listaResenas').innerHTML = '<div class="cargando">Cargando…</div>';
+            try {
+                estado.resenas = await api('/resenas?estado=' + estado.filtros.estadoResenas);
+                if (estado.filtros.estadoResenas === 'pendiente') ponerGlobo(estado.resenas.length);
+                pintarResenas();
+            } catch (e) {
+                if (e.message !== 'sin permiso') $('listaResenas').innerHTML = '<div class="vacio"><i class="fas fa-exclamation-circle"></i>No se pudieron cargar las reseñas.</div>';
+            }
+        }
+        function estrellas(n) {
+            let s = '';
+            for (let i = 1; i <= 5; i++) s += '<i class="' + (i <= n ? 'fas' : 'far') + ' fa-star"></i>';
+            return s;
+        }
+        function pintarResenas() {
+            const f = estado.filtros.origenResenas;
+            const lista = estado.resenas.filter((r) => !f || r.origen === f);
+            const caja = $('listaResenas');
+            const est = estado.filtros.estadoResenas;
+            if (!lista.length) {
+                caja.innerHTML = '<div class="lista"><div class="vacio"><i class="fas fa-check-circle"></i>' + (est === 'pendiente' ? 'No hay reseñas por revisar. ¡Todo al día!' : 'No hay reseñas aquí.') + '</div></div>';
+                return;
+            }
+            caja.innerHTML = lista.map((r) => {
+                const fecha = r.fecha ? new Date(r.fecha).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+                const fotos = (r.fotos || []).filter((u) => /^(https?:)?\//.test(u)).map((u) => '<a href="' + esc(u) + '" target="_blank" rel="noopener"><img src="' + esc(u) + '" alt="Foto de la reseña" loading="lazy"></a>').join('');
+                const botones = (est !== 'aprobada' ? '<button class="btn aprobar" data-accion="aprobada"><i class="fas fa-check"></i> Aprobar</button>' : '') +
+                    (est !== 'rechazada' ? '<button class="btn rechazar" data-accion="rechazada"><i class="fas fa-times"></i> Rechazar</button>' : '');
+                return '<article class="resena" data-origen="' + r.origen + '" data-id="' + esc(r._id) + '">' +
+                    '<div class="resena-arriba"><div><div class="resena-lugar">' + esc(r.lugar) + ' <span class="etiqueta ' + (r.origen === 'hospedaje' ? 'azul' : '') + '">' + esc(r.tipoTexto) + '</span></div>' +
+                    '<div class="resena-autor">' + esc(r.autor) + (r.correo ? ' · ' + esc(r.correo) : '') + ' · ' + fecha + '</div></div>' +
+                    '<div class="estrellas" aria-label="' + r.rating + ' de 5">' + estrellas(r.rating) + '</div></div>' +
+                    '<p class="resena-texto">' + esc(r.comentario) + '</p>' +
+                    (fotos ? '<div class="resena-fotos">' + fotos + '</div>' : '') +
+                    '<div class="resena-acciones">' + botones + '</div></article>';
+            }).join('');
+        }
+        $('listaResenas').addEventListener('click', async (e) => {
+            const btn = e.target.closest('button[data-accion]');
+            if (!btn) return;
+            const tarjeta = btn.closest('.resena');
+            const accion = btn.dataset.accion;
+            tarjeta.querySelectorAll('button').forEach((b) => { b.disabled = true; });
+            try {
+                await api('/resenas/' + tarjeta.dataset.origen + '/' + tarjeta.dataset.id, { method: 'PATCH', body: JSON.stringify({ estado: accion }) });
+                estado.resenas = estado.resenas.filter((r) => String(r._id) !== tarjeta.dataset.id);
+                if (estado.filtros.estadoResenas === 'pendiente') ponerGlobo(estado.resenas.length);
+                avisar(accion === 'aprobada' ? 'Reseña aprobada: ya se ve en el sitio' : 'Reseña rechazada');
+                tarjeta.classList.add('saliendo');
+                setTimeout(pintarResenas, 250);
+            } catch (err) {
+                tarjeta.querySelectorAll('button').forEach((b) => { b.disabled = false; });
+                if (err.message !== 'sin permiso') avisar(err.message || 'No se pudo guardar', true);
+            }
+        });
+
+        // ---------- arranque ----------
+        verificar().then((ok) => {
+            if (!ok) return;
+            const inicial = (location.hash || '').replace('#', '');
+            const vistas = ['resumen', 'alimentos', 'hospedaje', 'resenas', 'cuentas'];
+            if (vistas.includes(inicial) && inicial !== 'resumen') { cargarResumen(); irA(inicial); }
+            else cargarResumen();
+        });
+    })();
+    </script>
+</body>
+</html>

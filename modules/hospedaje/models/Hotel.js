@@ -132,6 +132,8 @@ const HotelSchema = new mongoose.Schema({
   }],
   // Reseñas de turistas
   reviews: [{
+    // Moderación: las nuevas llegan pendientes; las viejas (sin estado) cuentan como aprobadas
+    estado: { type: String, enum: ['pendiente', 'aprobada', 'rechazada'], default: 'aprobada' },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
@@ -185,5 +187,13 @@ HotelSchema.index({ precio: 1 });
 HotelSchema.index({ calificacion: -1 });
 // Nuevo índice para filtrar hoteles ecológicos
 HotelSchema.index({ esEcologico: 1 });
+
+// Al público solo salen las reseñas aprobadas (las pendientes las ve el super admin)
+HotelSchema.set('toJSON', {
+  transform(doc, ret) {
+    if (Array.isArray(ret.reviews)) ret.reviews = ret.reviews.filter((r) => !r.estado || r.estado === 'aprobada');
+    return ret;
+  }
+});
 
 module.exports = conexion.model('Hotel', HotelSchema);
