@@ -40,6 +40,8 @@ const ReviewSchema = new mongoose.Schema({
     enum: ['pendiente', 'aprobada', 'rechazada'],
     default: 'aprobada'
   },
+  respuesta: { type: String, trim: true, maxlength: 1000 },
+  fechaRespuesta: Date,
   fecha: {
     type: Date,
     default: Date.now

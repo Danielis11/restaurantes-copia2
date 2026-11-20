@@ -853,6 +853,7 @@ function renderReviews(reviews) {
                 <div class="resena-estrellas">${estrellasHtml(r.rating)}</div>
             </div>
             <p class="resena-texto">${escHtml(r.comentario)}</p>
+            ${r.respuesta ? `<div class="resena-respuesta"><b><i class="fas fa-reply"></i> Respuesta del establecimiento</b><p>${escHtml(r.respuesta)}</p></div>` : ''}
         </div>`;
     }).join('');
     actualizarBotonResena();

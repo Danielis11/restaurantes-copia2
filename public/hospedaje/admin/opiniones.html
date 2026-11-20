@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opiniones - Panel de hospedaje</title>
+    <meta name="robots" content="noindex">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/hospedaje/css/tema-panel.css">
+    <script src="/hospedaje/js/encabezado-panel.js" defer></script>
+    <style>
+        .op-resumen { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+        .op-dato { background: #fff; border: 1px solid #f3f4f6; border-radius: 12px; padding: 1rem 1.25rem; box-shadow: 0 1px 2px rgba(0,0,0,.05); min-width: 160px; }
+        .op-dato strong { display: block; font-size: 1.75rem; color: #111827; }
+        .op-dato span { color: #6b7280; font-size: .9rem; }
+        .op-filtros { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+        .op-chip { background: #fff; border: 1px solid #e5e7eb; border-radius: 9999px; padding: .45rem 1rem; font: inherit; font-size: .9rem; color: #4b5563; cursor: pointer; }
+        .op-chip.activa { background: #111827; border-color: #111827; color: #fff; }
+        .op-tarjeta { background: #fff; border: 1px solid #f3f4f6; border-radius: 12px; padding: 1.25rem; margin-bottom: .75rem; box-shadow: 0 1px 2px rgba(0,0,0,.05); }
+        .op-arriba { display: flex; justify-content: space-between; gap: 1rem; align-items: flex-start; }
+        .op-lugar { font-weight: 600; color: #111827; }
+        .op-etiqueta { display: inline-block; font-size: .75rem; padding: 2px 9px; border-radius: 9999px; background: #eff6ff; color: #1e40af; margin-left: .35rem; font-weight: 500; }
+        .op-autor { color: #6b7280; font-size: .85rem; margin-top: 2px; }
+        .op-estrellas { color: #f59e0b; white-space: nowrap; }
+        .op-texto { margin: .75rem 0 0; color: #374151; line-height: 1.55; white-space: pre-line; overflow-wrap: anywhere; }
+        .op-respuesta { margin-top: 1rem; background: #f9fafb; border-left: 3px solid #2563eb; border-radius: 0 8px 8px 0; padding: .75rem 1rem; }
+        .op-respuesta b { display: block; font-size: .85rem; color: #1e40af; margin-bottom: .25rem; }
+        .op-respuesta p { margin: 0; color: #374151; white-space: pre-line; overflow-wrap: anywhere; }
+        .op-form { margin-top: 1rem; }
+        .op-form textarea { width: 100%; box-sizing: border-box; min-height: 90px; padding: .75rem; border: 1px solid #d1d5db; border-radius: 8px; font: inherit; resize: vertical; }
+        .op-acciones { display: flex; justify-content: flex-end; gap: .5rem; margin-top: .5rem; align-items: center; }
+        .op-contador { color: #9ca3af; font-size: .8rem; margin-right: auto; }
+        .op-btn { border: 1px solid #d1d5db; background: #fff; color: #374151; border-radius: 8px; padding: .55rem 1rem; font: inherit; font-weight: 500; cursor: pointer; }
+        .op-btn.principal { background: #2563eb; border-color: #2563eb; color: #fff; }
+        .op-btn.principal:hover { background: #1e40af; }
+        .op-btn:disabled { opacity: .6; cursor: wait; }
+        .op-vacio { text-align: center; color: #6b7280; background: #fff; border: 1px dashed #e5e7eb; border-radius: 12px; padding: 2.5rem 1rem; }
+        .op-vacio i { font-size: 2rem; color: #d1d5db; display: block; margin-bottom: .5rem; }
+        .op-consejo { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e3a8a; border-radius: 12px; padding: .9rem 1.1rem; margin-bottom: 1.5rem; font-size: .9rem; }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <ul class="sidebar-menu">
+            <li class="menu-item"><a href="dashboard.html" class="menu-link"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a></li>
+            <li class="menu-item"><a href="hoteles-admin.html" class="menu-link"><i class="fas fa-hotel"></i><span>Mis Hoteles</span></a></li>
+            <li class="menu-item"><a href="cabanas-admin.html" class="menu-link"><i class="fas fa-tree"></i><span>Mis Cabañas</span></a></li>
+            <li class="menu-item"><a href="airbnb-admin.html" class="menu-link"><i class="fas fa-home"></i><span>Mis Airbnb</span></a></li>
+            <li class="menu-item"><a href="opiniones.html" class="menu-link active"><i class="fas fa-star"></i><span>Opiniones</span></a></li>
+            <li class="menu-item"><a href="perfil.html" class="menu-link"><i class="fas fa-user-cog"></i><span>Mi Perfil</span></a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="top-bar"><h1 class="page-title">Opiniones</h1></div>
+
+        <div class="op-consejo"><i class="fas fa-lightbulb"></i> Tu respuesta se publica debajo de la opinión, en la página de tu hospedaje. Agradece, sé amable y, si hubo un problema, explica cómo lo resolviste.</div>
+
+        <div class="op-resumen">
+            <div class="op-dato"><strong id="opTotal">–</strong><span>Opiniones publicadas</span></div>
+            <div class="op-dato"><strong id="opPromedio">–</strong><span>Calificación promedio</span></div>
+            <div class="op-dato"><strong id="opSinResponder">–</strong><span>Sin responder</span></div>
+            <div class="op-dato"><strong id="opPendientes">–</strong><span>En revisión por turismo</span></div>
+        </div>
+
+        <div class="op-filtros">
+            <button class="op-chip activa" data-filtro="sin">Sin responder</button>
+            <button class="op-chip" data-filtro="todas">Todas</button>
+            <button class="op-chip" data-filtro="respondidas">Respondidas</button>
+        </div>
+
+        <div id="opLista"><div class="op-vacio">Cargando…</div></div>
+    </main>
+
+    <script>
+    (function () {
+        'use strict';
+        const token = localStorage.getItem('hospAuthToken');
+        if (!token) { location.href = '/hospedaje/login.html'; return; }
+        let opiniones = [];
+        let filtro = 'sin';
+
+        const $ = (id) => document.getElementById(id);
+        const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const fecha = (f) => f ? new Date(f).toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+        const estrellas = (n) => { let s = ''; for (let i = 1; i <= 5; i++) s += '<i class="' + (i <= n ? 'fas' : 'far') + ' fa-star"></i>'; return s; };
+
+        async function cargar() {
+            try {
+                const res = await fetch('/api/hospedaje/opiniones', { headers: { 'Authorization': 'Bearer ' + token } });
+                if (res.status === 401) { location.href = '/hospedaje/login.html'; return; }
+                const json = await res.json();
+                if (!json.success) throw new Error(json.message);
+                opiniones = json.data || [];
+                $('opPendientes').textContent = json.pendientes || 0;
+                resumen();
+                pintar();
+            } catch (e) {
+                $('opLista').innerHTML = '<div class="op-vacio"><i class="fas fa-exclamation-circle"></i>No se pudieron cargar las opiniones.</div>';
+            }
+        }
+
+        function resumen() {
+            $('opTotal').textContent = opiniones.length;
+            $('opPromedio').textContent = opiniones.length ? (opiniones.reduce((a, o) => a + (o.rating || 0), 0) / opiniones.length).toFixed(1) + ' ★' : '–';
+            $('opSinResponder').textContent = opiniones.filter((o) => !o.respuesta).length;
+        }
+
+        function pintar() {
+            const lista = opiniones.filter((o) => filtro === 'todas' || (filtro === 'sin' ? !o.respuesta : !!o.respuesta));
+            if (!lista.length) {
+                $('opLista').innerHTML = '<div class="op-vacio"><i class="far fa-comment-dots"></i>' +
+                    (filtro === 'sin' && opiniones.length ? '¡Respondiste todas tus opiniones!' : 'Aún no hay opiniones aquí.') + '</div>';
+                return;
+            }
+            $('opLista').innerHTML = lista.map((o) => {
+                const clave = o.tipo + '/' + o.hospedajeId + '/' + o._id;
+                return '<article class="op-tarjeta" data-clave="' + esc(clave) + '">' +
+                    '<div class="op-arriba"><div><div class="op-lugar">' + esc(o.lugar) + '<span class="op-etiqueta">' + esc(o.tipoTexto) + '</span></div>' +
+                    '<div class="op-autor">' + esc(o.autor) + ' · ' + fecha(o.fecha) + '</div></div>' +
+                    '<div class="op-estrellas">' + estrellas(o.rating) + '</div></div>' +
+                    '<p class="op-texto">' + esc(o.comentario) + '</p>' +
+                    (o.respuesta
+                        ? '<div class="op-respuesta"><b>Tu respuesta · ' + fecha(o.fechaRespuesta) + '</b><p>' + esc(o.respuesta) + '</p></div>' +
+                          '<div class="op-acciones"><button class="op-btn" data-accion="editar">Editar respuesta</button></div>'
+                        : formulario(''))
+                    + '</article>';
+            }).join('');
+        }
+
+        function formulario(texto) {
+            return '<div class="op-form"><textarea maxlength="1000" placeholder="Escribe tu respuesta pública…">' + esc(texto) + '</textarea>' +
+                '<div class="op-acciones"><span class="op-contador">' + texto.length + '/1000</span>' +
+                (texto ? '<button class="op-btn" data-accion="cancelar">Cancelar</button>' : '') +
+                '<button class="op-btn principal" data-accion="guardar"><i class="fas fa-reply"></i> Publicar respuesta</button></div></div>';
+        }
+
+        document.querySelectorAll('.op-chip').forEach((c) => c.addEventListener('click', () => {
+            document.querySelectorAll('.op-chip').forEach((x) => x.classList.toggle('activa', x === c));
+            filtro = c.dataset.filtro;
+            pintar();
+        }));
+
+        $('opLista').addEventListener('input', (e) => {
+            if (e.target.tagName !== 'TEXTAREA') return;
+            const cont = e.target.parentElement.querySelector('.op-contador');
+            if (cont) cont.textContent = e.target.value.length + '/1000';
+        });
+
+        $('opLista').addEventListener('click', async (e) => {
+            const btn = e.target.closest('button[data-accion]');
+            if (!btn) return;
+            const tarjeta = btn.closest('.op-tarjeta');
+            const o = opiniones.find((x) => x.tipo + '/' + x.hospedajeId + '/' + x._id === tarjeta.dataset.clave);
+            if (!o) return;
+            if (btn.dataset.accion === 'editar') {
+                tarjeta.querySelector('.op-respuesta').remove();
+                btn.parentElement.outerHTML = formulario(o.respuesta);
+                tarjeta.querySelector('textarea').focus();
+                return;
+            }
+            if (btn.dataset.accion === 'cancelar') { pintar(); return; }
+            const texto = tarjeta.querySelector('textarea').value.trim();
+            if (!texto && !o.respuesta) { tarjeta.querySelector('textarea').focus(); return; }
+            btn.disabled = true;
+            try {
+                const res = await fetch('/api/hospedaje/opiniones/' + tarjeta.dataset.clave, {
+                    method: 'PUT',
+                    headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ respuesta: texto })
+                });
+                const json = await res.json();
+                if (!res.ok || !json.success) throw new Error(json.message || 'No se pudo guardar');
+                o.respuesta = json.data.respuesta;
+                o.fechaRespuesta = json.data.fechaRespuesta;
+                resumen();
+                pintar();
+            } catch (err) {
+                btn.disabled = false;
+                alert(err.message);
+            }
+        });
+
+        cargar();
+    })();
+    </script>
+</body>
+</html>

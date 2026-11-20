@@ -22,7 +22,8 @@ const hosp = {
 };
 const ResenaHospedaje = () => require('../modules/hospedaje/models/Review');
 const Socio = () => require('../modules/hospedaje/models/User');
-const { aplicarAEmbebida } = require('../modules/hospedaje/utils/moderacionResenas');
+const { aplicarAEmbebida, modeloDe } = require('../modules/hospedaje/utils/moderacionResenas');
+const { enviarAvisoNuevaResena } = require('../utils/correo');
 
 const ETIQUETA_HOSP = { hotel: 'Hotel', cabana: 'Cabaña', airbnb: 'Airbnb', guia: 'Guía turística', operadora: 'Tour operadora' };
 const ESTADOS = ['pendiente', 'aprobada', 'rechazada'];
@@ -203,17 +204,40 @@ router.patch('/resenas/:origen/:id', async (req, res) => {
     if (!ESTADOS.includes(estado) || !esId(id)) return res.status(400).json({ success: false, message: 'Datos inválidos' });
 
     if (origen === 'alimentos') {
+      const antes = await Review.findById(id).select('estado');
+      if (!antes) return res.status(404).json({ success: false, message: 'Reseña no encontrada' });
       const r = await Review.findByIdAndUpdate(id, { estado }, { new: true });
-      if (!r) return res.status(404).json({ success: false, message: 'Reseña no encontrada' });
-      return res.json({ success: true, estado });
+      res.json({ success: true, estado });
+      // Aviso por correo al responsable del restaurante (sin hacer esperar al panel)
+      if (estado === 'aprobada' && antes.estado !== 'aprobada') {
+        Restaurant.findById(r.restaurantId).select('nombre adminId').populate('adminId', 'nombre email').lean()
+          .then((rest) => rest && rest.adminId && enviarAvisoNuevaResena({
+            para: rest.adminId.email, nombre: rest.adminId.nombre, lugar: rest.nombre,
+            rating: r.rating, comentario: r.comentario, enlacePanel: '/admin.html'
+          }))
+          .catch((e) => console.error('Aviso de reseña (alimentos):', e.message));
+      }
+      return;
     }
     if (origen === 'hospedaje') {
       const r = await ResenaHospedaje().findById(id);
       if (!r) return res.status(404).json({ success: false, message: 'Reseña no encontrada' });
+      const estadoAnterior = r.estado || 'aprobada';
       r.estado = estado;
       await r.save();
       await aplicarAEmbebida(r, { estado }); // la copia que se ve en la página del hospedaje
-      return res.json({ success: true, estado });
+      res.json({ success: true, estado });
+      // Aviso por correo al socio dueño del hospedaje
+      const Modelo = modeloDe(r.tipoHospedaje);
+      if (estado === 'aprobada' && estadoAnterior !== 'aprobada' && Modelo) {
+        Modelo.findById(r.hospedajeId).select('nombre propietario').populate('propietario', 'nombre email').lean()
+          .then((h) => h && h.propietario && enviarAvisoNuevaResena({
+            para: h.propietario.email, nombre: h.propietario.nombre, lugar: h.nombre,
+            rating: r.rating, comentario: r.comentario, enlacePanel: '/hospedaje/admin/opiniones.html'
+          }))
+          .catch((e) => console.error('Aviso de reseña (hospedaje):', e.message));
+      }
+      return;
     }
     res.status(400).json({ success: false, message: 'Origen inválido' });
   } catch (e) { fallo(res, e, 'Error al moderar la reseña'); }

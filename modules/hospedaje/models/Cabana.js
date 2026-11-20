@@ -246,6 +246,9 @@ const CabanaSchema = new mongoose.Schema({
   reviews: [{
     // Moderación: las nuevas llegan pendientes; las viejas (sin estado) cuentan como aprobadas
     estado: { type: String, enum: ['pendiente', 'aprobada', 'rechazada'], default: 'aprobada' },
+    // Respuesta pública del establecimiento
+    respuesta: { type: String, trim: true, maxlength: 1000 },
+    fechaRespuesta: Date,
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',

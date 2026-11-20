@@ -200,3 +200,6 @@ footer.footer { margin-top: 4rem; }
     .resena-invitacion-botones a { flex: 1; text-align: center; }
     .resena-boton-escribir { width: 100%; justify-content: center; }
 }
+.resena-respuesta { margin-top: .75rem; background: #f9fafb; border-left: 3px solid #2563eb; border-radius: 0 8px 8px 0; padding: .65rem .9rem; }
+.resena-respuesta b { display: block; font-size: .8rem; color: #1e40af; margin-bottom: .2rem; }
+.resena-respuesta p { margin: 0; color: #374151; font-size: .92rem; line-height: 1.5; white-space: pre-line; overflow-wrap: anywhere; }

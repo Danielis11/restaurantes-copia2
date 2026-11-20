@@ -46,4 +46,36 @@ async function enviarCodigoVerificacion(usuario, codigo) {
   }
 }
 
-module.exports = { enviarCodigoVerificacion, obtenerTransporte };
+// Aviso al negocio: le publicaron una opinión nueva (se llama al aprobarla en el panel central)
+async function enviarAvisoNuevaResena({ para, nombre, lugar, rating, comentario, enlacePanel }) {
+  const t = obtenerTransporte();
+  if (!t || !para) return false;
+  const n = Math.max(0, Math.min(5, Math.round(Number(rating) || 0)));
+  const estrellas = '★'.repeat(n) + '☆'.repeat(5 - n);
+  const enlace = (process.env.SITIO_URL || '') + enlacePanel;
+  try {
+    await t.sendMail({
+      from: `"Turismo Jalpan de Serra" <${process.env.EMAIL_USER}>`,
+      to: para,
+      subject: `Nueva opinión de ${lugar}`,
+      text: `Hola ${nombre || ''}:\n\n${lugar} recibió una opinión nueva (${n}/5):\n\n"${comentario}"\n\nPuedes contestarla desde tu panel: ${enlace}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 520px; margin: 0 auto; padding: 24px; color: #111827;">
+          <h2 style="margin: 0 0 8px; color: #2563eb;">Nueva opinión de ${esc(lugar)}</h2>
+          <p style="color: #4b5563;">Hola ${esc(nombre || '')}, un viajero dejó esta opinión y ya está publicada:</p>
+          <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; margin: 16px 0;">
+            <div style="color: #f59e0b; font-size: 18px;">${estrellas}</div>
+            <p style="margin: 8px 0 0; color: #374151; white-space: pre-line;">${esc(comentario)}</p>
+          </div>
+          <p style="color: #4b5563;">Responder a tiempo y con amabilidad ayuda a que más viajeros te elijan.</p>
+          <a href="${esc(enlace)}" style="display: inline-block; background: #2563eb; color: #fff; text-decoration: none; padding: 12px 20px; border-radius: 8px; font-weight: bold;">Responder desde mi panel</a>
+        </div>`
+    });
+    return true;
+  } catch (e) {
+    console.error('No se pudo enviar el aviso de reseña:', e.message);
+    return false;
+  }
+}
+
+module.exports = { enviarCodigoVerificacion, enviarAvisoNuevaResena, obtenerTransporte };
