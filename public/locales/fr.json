@@ -271,7 +271,7 @@
         "hero_sub": "Le cœur de la Sierra Gorda : missions, rivières et cuisine de montagne.",
         "hero_btn": "Découvrir le village",
         "foto_mision": "Mission de Santiago de Jalpan",
-        "foto_plaza": "La place principale la nuit",
+        "foto_plaza": "La place principale et la Mission",
         "foto_rio": "Rivière Jalpan",
         "foto_museo": "Musée historique de la Sierra Gorda",
         "acc_comer": "Où manger",
@@ -305,6 +305,11 @@
         "imp5_tipo": "Nature",
         "imp5": "Rivière Jalpan",
         "imp5_d": "Cyprès géants et eau calme à quelques minutes du centre.",
+        "imp6_d": "Maisons aux murs épais, rues pavées et lanternes pour flâner sans hâte.",
+        "imp6": "Centre historique",
+        "imp6_tipo": "Architecture",
+        "foto_jardin": "Jardin du centre historique",
+        "foto_calle": "Les rues du centre",
         "nt_eti": "Du nouveau à Jalpan",
         "nt_title": "Actualités et événements",
         "sab_eti": "Saveurs et traditions",
@@ -326,6 +331,6 @@
         "llegar_btn": "Itinéraire",
         "llegar_mapa": "Voir la carte",
         "creditos": "Crédits photos",
-        "creditos_d": "Photos de Wikimedia Commons, sous licence libre :"
+        "creditos_d": "Certaines photos viennent de Wikimedia Commons, sous licence libre :"
     }
 }

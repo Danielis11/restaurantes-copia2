@@ -271,7 +271,7 @@
         "hero_sub": "El corazón de la Sierra Gorda: misiones, ríos y cocina serrana.",
         "hero_btn": "Descubre el pueblo",
         "foto_mision": "Misión de Santiago de Jalpan",
-        "foto_plaza": "Plaza principal de noche",
+        "foto_plaza": "Plaza principal y la Misión",
         "foto_rio": "Río Jalpan",
         "foto_museo": "Museo Histórico de la Sierra Gorda",
         "acc_comer": "Dónde comer",
@@ -305,6 +305,11 @@
         "imp5_tipo": "Naturaleza",
         "imp5": "Río Jalpan",
         "imp5_d": "Sabinos enormes y agua tranquila a pocos minutos del centro.",
+        "imp6_d": "Casonas de muros gruesos, calles empedradas y faroles para caminar sin prisa.",
+        "imp6": "Centro histórico",
+        "imp6_tipo": "Arquitectura",
+        "foto_jardin": "Jardín del centro histórico",
+        "foto_calle": "Calles del centro",
         "nt_eti": "Lo nuevo en Jalpan",
         "nt_title": "Noticias y eventos",
         "sab_eti": "Sabores y tradiciones",
@@ -326,6 +331,6 @@
         "llegar_btn": "Cómo llegar",
         "llegar_mapa": "Ver el mapa",
         "creditos": "Créditos de las fotos",
-        "creditos_d": "Fotos de Wikimedia Commons, usadas con licencia libre:"
+        "creditos_d": "Algunas fotos son de Wikimedia Commons, usadas con licencia libre:"
     }
 }
