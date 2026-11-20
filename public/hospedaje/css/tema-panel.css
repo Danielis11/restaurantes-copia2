@@ -406,6 +406,10 @@ html.ps-socio .main-content select, html.ps-socio .main-content textarea {
     min-height: 42px; padding: 9px 12px !important; border-radius: 10px !important; font-size: .95rem !important; transition: border-color .2s, box-shadow .2s;
 }
 html.ps-socio .main-content textarea { min-height: 96px; line-height: 1.5; }
+/* Las filas de campos piden columnas de 300-400px: en el celular se salían de la pantalla */
+html.ps-socio .form-row { grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)) !important; }
+html.ps-socio .form-row > *, html.ps-socio .form-group { min-width: 0; }
+html.ps-socio .main-content input, html.ps-socio .main-content select, html.ps-socio .main-content textarea { max-width: 100%; box-sizing: border-box; }
 html.ps-socio .service-item, html.ps-socio .payment-option, html.ps-socio .eco-practice-item {
     border: 1px solid var(--ps-borde) !important; border-radius: 10px !important; background: #fff !important; box-shadow: none !important; transition: border-color .2s, background .2s;
 }
