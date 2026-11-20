@@ -1886,7 +1886,7 @@ async function loadNativeReviews() {
 window.handleEscribirOpinion = function() {
     console.log("handleEscribirOpinion clicked!");
     const token = localStorage.getItem('authToken');
-    if (token && (!window.AccesoResena || AccesoResena.esViajero())) {
+    if (token && (!window.AccesoResena || (AccesoResena.esViajero() && !AccesoResena.necesitaVerificar()))) {
         openReviewModal();
     } else {
         AccesoResena.pedir(openReviewModal);

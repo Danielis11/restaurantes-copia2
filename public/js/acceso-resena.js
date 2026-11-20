@@ -49,8 +49,99 @@
         document.head.appendChild(s);
     }
 
+    // ¿La cuenta de viajero todavía no confirma su correo?
+    function necesitaVerificar() {
+        var u = leer('currentUser');
+        return !!u && u.emailVerificado === false;
+    }
+
+    function guardarVerificado() {
+        var u = leer('currentUser') || {};
+        u.emailVerificado = true;
+        try { localStorage.setItem('currentUser', JSON.stringify(u)); } catch (e) { /* ignorar */ }
+    }
+
+    // Paso para escribir el código de 6 dígitos que llegó al correo
+    function verificar(alListo, aviso) {
+        ponerCss();
+        var viejo = document.getElementById('acr-fondo');
+        if (viejo) viejo.remove();
+        var u = leer('currentUser') || {};
+        var fondo = document.createElement('div');
+        fondo.className = 'acr-fondo';
+        fondo.id = 'acr-fondo';
+        fondo.innerHTML =
+            '<div class="acr-caja" role="dialog" aria-modal="true" aria-labelledby="acr-titulo">' +
+            '<button type="button" class="acr-cerrar" aria-label="Cerrar"><i class="fas fa-times"></i></button>' +
+            '<div class="acr-icono"><i class="fas fa-envelope-open-text"></i></div>' +
+            '<h3 class="acr-titulo" id="acr-titulo">Confirma tu correo</h3>' +
+            '<p class="acr-texto">Te enviamos un código de 6 dígitos a <strong></strong>. Escríbelo aquí para poder opinar.</p>' +
+            (aviso ? '<p class="acr-aviso"></p>' : '') +
+            '<form class="acr-form" novalidate>' +
+            '<div class="acr-campo"><label for="acr-codigo">Código</label><input id="acr-codigo" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" style="font-size:1.4rem;letter-spacing:.4em;text-align:center"></div>' +
+            '<button type="submit" class="acr-boton">Confirmar</button>' +
+            '<p class="acr-error" role="alert"></p>' +
+            '</form>' +
+            '<p class="acr-pie">¿No te llegó? Revisa tu carpeta de spam o <a href="#" class="acr-reenviar">envíame otro código</a></p>' +
+            '</div>';
+        fondo.querySelector('.acr-texto strong').textContent = u.email || 'tu correo';
+        if (aviso) fondo.querySelector('.acr-aviso').textContent = aviso;
+        document.body.appendChild(fondo);
+        requestAnimationFrame(function () { fondo.classList.add('acr-visible'); });
+
+        var error = fondo.querySelector('.acr-error');
+        var boton = fondo.querySelector('.acr-boton');
+        var input = fondo.querySelector('#acr-codigo');
+        function cerrar() {
+            fondo.classList.remove('acr-visible');
+            document.removeEventListener('keydown', alTeclear);
+            setTimeout(function () { fondo.remove(); }, 200);
+        }
+        function alTeclear(e) { if (e.key === 'Escape') cerrar(); }
+        document.addEventListener('keydown', alTeclear);
+        fondo.addEventListener('click', function (e) { if (e.target === fondo) cerrar(); });
+        fondo.querySelector('.acr-cerrar').addEventListener('click', cerrar);
+        input.addEventListener('input', function () { input.value = input.value.replace(/\D/g, '').slice(0, 6); });
+
+        function llamar(ruta, datos) {
+            return fetch(ruta, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (localStorage.getItem('authToken') || '') },
+                body: JSON.stringify(datos || {})
+            }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { j._ok = r.ok; return j; }); });
+        }
+
+        fondo.querySelector('.acr-reenviar').addEventListener('click', function (e) {
+            e.preventDefault();
+            error.style.color = '';
+            llamar('/api/auth/user/reenviar-verificacion').then(function (j) {
+                error.style.color = j._ok ? '#059669' : '';
+                error.textContent = j.message || (j._ok ? 'Código enviado' : 'No se pudo enviar');
+            }).catch(function () { error.textContent = 'Error de conexión.'; });
+        });
+
+        fondo.querySelector('.acr-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            error.style.color = '';
+            if (!/^\d{6}$/.test(input.value)) { error.textContent = 'Escribe los 6 dígitos.'; return; }
+            boton.disabled = true;
+            llamar('/api/auth/user/verificar-correo', { codigo: input.value }).then(function (j) {
+                boton.disabled = false;
+                if (!j._ok || !j.success) { error.textContent = j.message || 'No se pudo confirmar.'; return; }
+                guardarVerificado();
+                cerrar();
+                if (alListo) setTimeout(alListo, 250);
+            }).catch(function () { boton.disabled = false; error.textContent = 'Error de conexión.'; });
+        });
+        setTimeout(function () { input.focus(); }, 100);
+    }
+
     function pedir(alEntrar) {
-        if (esViajero()) { if (alEntrar) alEntrar(); return; }
+        if (esViajero()) {
+            if (necesitaVerificar()) { verificar(alEntrar); return; }
+            if (alEntrar) alEntrar();
+            return;
+        }
         ponerCss();
         var viejo = document.getElementById('acr-fondo');
         if (viejo) viejo.remove();
@@ -143,6 +234,13 @@
                 // Actualiza la barra si la página sabe hacerlo
                 if (typeof window.renderAuthNavbar === 'function') { try { window.renderAuthNavbar(); } catch (er) { /* ignorar */ } }
                 if (window.BarraSitio && typeof window.BarraSitio.pintarSesion === 'function') { try { window.BarraSitio.pintarSesion(); } catch (er) { /* ignorar */ } }
+                // Cuenta nueva (o sin confirmar): primero el código del correo
+                if (json.data.user && json.data.user.emailVerificado === false) {
+                    setTimeout(function () {
+                        verificar(alEntrar, json.data.correoEnviado === false ? 'Si el correo tarda, usa «envíame otro código» en un minuto.' : '');
+                    }, 250);
+                    return;
+                }
                 if (alEntrar) setTimeout(alEntrar, 250);
             }).catch(function () {
                 error.textContent = 'Error de conexión. Intenta de nuevo.';
@@ -153,5 +251,5 @@
         setTimeout(function () { var c = fondo.querySelector('#acr-correo'); if (c) c.focus(); }, 100);
     }
 
-    window.AccesoResena = { pedir: pedir, esViajero: esViajero };
+    window.AccesoResena = { pedir: pedir, esViajero: esViajero, necesitaVerificar: necesitaVerificar, verificar: verificar };
 })();

@@ -7,7 +7,7 @@ const Review = require('../models/Review');
 const Guia = require('../models/Guia');
 const Tour = require('../models/Tour');
 const { verificarToken, verificarSuperAdmin, verificarTokenUsuario } = require('../middleware/auth');
-const { antispamResenas } = require('../middleware/antispamResenas');
+const { antispamResenas, correoVerificado } = require('../middleware/antispamResenas');
 const { getUploadMiddleware } = require('../middleware/upload');
 
 const router = express.Router();
@@ -39,7 +39,7 @@ router.post('/api/restaurants/:id/reviews', verificarTokenUsuario, (req, res, ne
     }
     next();
   });
-}, antispamResenas, async (req, res) => {
+}, correoVerificado, antispamResenas, async (req, res) => {
   try {
     const { rating, comentario } = req.body;
 
@@ -163,7 +163,7 @@ router.post('/api/tours/:id/reviews', verificarTokenUsuario, (req, res, next) =>
   const { getUploadMiddleware } = require('../middleware/upload');
   const middlewareUpload = getUploadMiddleware();
   middlewareUpload.array('fotos', 5)(req, res, next);
-}, antispamResenas, async (req, res) => {
+}, correoVerificado, antispamResenas, async (req, res) => {
   try {
     const { rating, comentario } = req.body;
     
@@ -249,7 +249,7 @@ router.post('/api/guias/:id/reviews', verificarTokenUsuario, (req, res, next) =>
   const { getUploadMiddleware } = require('../middleware/upload');
   const middlewareUpload = getUploadMiddleware();
   middlewareUpload.array('fotos', 5)(req, res, next);
-}, antispamResenas, async (req, res) => {
+}, correoVerificado, antispamResenas, async (req, res) => {
   try {
     const { rating, comentario } = req.body;
     

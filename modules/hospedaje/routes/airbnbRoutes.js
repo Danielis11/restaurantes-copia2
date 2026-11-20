@@ -1,6 +1,6 @@
 const express = require('express');
 const { verificarTokenUsuario } = require('../../../middleware/auth');
-const { antispamResenas } = require('../../../middleware/antispamResenas');
+const { antispamResenas, correoVerificado } = require('../../../middleware/antispamResenas');
 const airbnbController = require('../controllers/airbnbController');
 const authMiddleware = require('../middlewares/authMiddleware');
 const Airbnb = require('../models/Airbnb');
@@ -433,7 +433,7 @@ router.use((error, req, res, next) => {
 
 // 📝 Crear reseña
 // Solo viajeros con cuenta del sitio (no socios ni administradores) y con filtro anti-spam
-router.post('/:id/reviews', verificarTokenUsuario, antispamResenas, airbnbController.createReview);
+router.post('/:id/reviews', verificarTokenUsuario, correoVerificado, antispamResenas, airbnbController.createReview);
 
 module.exports = router;
 

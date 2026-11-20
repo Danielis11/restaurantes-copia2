@@ -328,7 +328,7 @@ function renderReviewCard(review) {
 
 function setupReviewForm(itemId) {
     const token = localStorage.getItem('authToken');
-    if(token && (!window.AccesoResena || AccesoResena.esViajero())) {
+    if(token && (!window.AccesoResena || (AccesoResena.esViajero() && !AccesoResena.necesitaVerificar()))) {
         $('#login-prompt').style.display = 'none';
         $('#review-form').style.display = 'block';
         

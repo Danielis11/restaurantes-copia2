@@ -106,4 +106,17 @@ setInterval(() => {
   }
 }, HORA).unref();
 
-module.exports = { antispamResenas, revisarTexto };
+// Solo cuentas con el correo confirmado pueden publicar (las viejas y las de Google ya cuentan como confirmadas)
+function correoVerificado(req, res, next) {
+  if (req.user && req.user.emailVerificado === false) {
+    return res.status(403).json({
+      success: false,
+      status: 'error',
+      code: 'EMAIL_NO_VERIFICADO',
+      message: 'Confirma tu correo para publicar tu opinión. Te enviamos un código al registrarte.'
+    });
+  }
+  next();
+}
+
+module.exports = { antispamResenas, revisarTexto, correoVerificado };

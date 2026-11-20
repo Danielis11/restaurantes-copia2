@@ -25,6 +25,13 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
+  // Verificación de correo. Las cuentas viejas (sin el campo) y las de Google cuentan como verificadas;
+  // las nuevas con contraseña se crean en false hasta que escriben el código que les llega.
+  emailVerificado: { type: Boolean, default: true },
+  codigoVerificacion: { type: String, select: false },          // guardado con hash
+  codigoVerificacionExpira: { type: Date, select: false },
+  codigoVerificacionEnviado: { type: Date, select: false },
+  intentosVerificacion: { type: Number, default: 0, select: false },
   favoritos: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Restaurant'
@@ -99,6 +106,25 @@ userSchema.methods.crearResetToken = function() {
   this.resetPasswordToken = code;
   this.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // 15 minutos
   return code;
+};
+
+// Crea un código de 6 dígitos para confirmar el correo (se guarda con hash, vence en 30 min)
+userSchema.methods.crearCodigoVerificacion = function() {
+  const crypto = require('crypto');
+  const codigo = crypto.randomInt(100000, 1000000).toString();
+  this.codigoVerificacion = crypto.createHash('sha256').update(codigo).digest('hex');
+  this.codigoVerificacionExpira = new Date(Date.now() + 30 * 60 * 1000);
+  this.codigoVerificacionEnviado = new Date();
+  this.intentosVerificacion = 0;
+  return codigo;
+};
+
+// Revisa un código escrito por el usuario
+userSchema.methods.codigoVerificacionValido = function(codigo) {
+  const crypto = require('crypto');
+  if (!this.codigoVerificacion || !this.codigoVerificacionExpira || this.codigoVerificacionExpira < new Date()) return false;
+  const hash = crypto.createHash('sha256').update(String(codigo || '').trim()).digest('hex');
+  return crypto.timingSafeEqual(Buffer.from(hash), Buffer.from(this.codigoVerificacion));
 };
 
 const User = mongoose.model('User', userSchema);

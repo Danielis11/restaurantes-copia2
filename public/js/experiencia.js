@@ -979,7 +979,7 @@ async function loadRecomendaciones(currentTour) {
 
 window.handleEscribirOpinion = function() {
     const token = localStorage.getItem('authToken');
-    if (token && (!window.AccesoResena || AccesoResena.esViajero())) {
+    if (token && (!window.AccesoResena || (AccesoResena.esViajero() && !AccesoResena.necesitaVerificar()))) {
         openReviewModal();
     } else {
         AccesoResena.pedir(openReviewModal);

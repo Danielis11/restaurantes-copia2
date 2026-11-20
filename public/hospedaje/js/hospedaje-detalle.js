@@ -966,6 +966,11 @@ function setupReviewForm() {
                 AccesoResena.pedir(abrirFormularioResena);
                 return;
             }
+            if (data.code === 'EMAIL_NO_VERIFICADO') {
+                // Falta confirmar el correo: se pide el código y se reintenta
+                AccesoResena.verificar(() => form.requestSubmit());
+                return;
+            }
             if (!res.ok) { error.textContent = data.message || 'No se pudo publicar tu opinión.'; return; }
             form.reset();
             ratingInput.value = 0;

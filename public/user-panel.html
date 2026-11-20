@@ -409,6 +409,7 @@
     <meta name="apple-mobile-web-app-title" content="Jalpan">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <script src="/js/pwa.js" defer></script>
+    <script src="/js/acceso-resena.js" defer></script>
 </head>
 
 <body>
@@ -435,6 +436,12 @@
 
     <!-- Main Content -->
     <main class="main">
+        <!-- Aviso para confirmar el correo (solo cuentas nuevas sin confirmar) -->
+        <div id="aviso-correo" style="display:none; align-items:center; gap:1rem; flex-wrap:wrap; background:#fffbeb; border:1px solid #fde68a; color:#92400e; border-radius:12px; padding:1rem 1.25rem; margin-bottom:1.5rem;">
+            <i class="fas fa-envelope" style="font-size:1.25rem;"></i>
+            <div style="flex:1; min-width:200px;"><strong>Confirma tu correo</strong><br><span style="font-size:.9rem;">Así podrás dejar opiniones. Te enviamos un código al registrarte.</span></div>
+            <button type="button" id="btn-confirmar-correo" style="background:#2563eb; color:#fff; border:none; border-radius:8px; padding:.6rem 1.1rem; font:inherit; font-weight:600; cursor:pointer;">Confirmar ahora</button>
+        </div>
         <!-- Page Header -->
         <div class="page-header">
             <h1 class="page-title">Bienvenido a tu Panel Principal</h1>
@@ -699,6 +706,25 @@
             };
         }
 
+        function mostrarAvisoCorreo(usuario) {
+            const aviso = document.getElementById('aviso-correo');
+            if (!aviso || !usuario) return;
+            // Mantener al día lo que guardó el login
+            try {
+                const guardado = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                guardado.emailVerificado = usuario.emailVerificado !== false;
+                if (!guardado.email) guardado.email = usuario.email;
+                localStorage.setItem('currentUser', JSON.stringify(guardado));
+            } catch (e) { /* ignorar */ }
+            aviso.style.display = usuario.emailVerificado === false ? 'flex' : 'none';
+            document.getElementById('btn-confirmar-correo').onclick = () => {
+                if (window.AccesoResena) AccesoResena.verificar(() => {
+                    aviso.style.display = 'none';
+                    showNotification('¡Correo confirmado! Ya puedes opinar.', 'success');
+                });
+            };
+        }
+
         async function checkAuth() {
             const token = localStorage.getItem('authToken');
 
@@ -719,6 +745,7 @@
                 if (response.ok) {
                     currentUser = json.data;
                     updateUserInterface();
+                    mostrarAvisoCorreo(currentUser);
                     showNotification(`¡Bienvenido a tu panel turístico, ${currentUser.nombre}!`, 'success');
 
                     // Cargar los favoritos

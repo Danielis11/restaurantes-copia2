@@ -8,6 +8,8 @@ const Tour = require('../models/Tour');
 const Agencia = require('../models/Agencia');
 const { ReviewTurismo } = require('../models/turismoModels');
 const { verificarTokenUsuario, generarToken } = require('../middleware/auth');
+const { authLimiter } = require('../middleware/rateLimits');
+const { enviarCodigoVerificacion } = require('../utils/correo');
 
 const router = express.Router();
 // POST /api/auth/user/register
@@ -23,14 +25,19 @@ router.post('/api/auth/user/register', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Ya existe una cuenta con este correo' });
     }
 
-    const newUser = await User.create({ nombre, email, password });
+    // La cuenta nace sin verificar: se manda un código al correo
+    const newUser = new User({ nombre, email, password, emailVerificado: false });
+    const codigo = newUser.crearCodigoVerificacion();
+    await newUser.save();
+    const correoEnviado = await enviarCodigoVerificacion(newUser, codigo);
     const token = generarToken(newUser._id); // Usamos la misma función de JWT del admin
 
     res.status(201).json({
       success: true,
       data: {
-        user: { id: newUser._id, nombre: newUser.nombre, email: newUser.email, rol: 'turista' },
-        token
+        user: { id: newUser._id, nombre: newUser.nombre, email: newUser.email, rol: 'turista', emailVerificado: false },
+        token,
+        correoEnviado
       }
     });
   } catch (error) {
@@ -66,12 +73,61 @@ router.post('/api/auth/user/login', async (req, res) => {
     res.json({
       success: true,
       data: {
-        user: { id: user._id, nombre: user.nombre, email: user.email, rol: 'turista' },
+        user: { id: user._id, nombre: user.nombre, email: user.email, rol: 'turista', emailVerificado: user.emailVerificado !== false },
         token
       }
     });
   } catch (error) {
     console.error('Error login turista:', error);
+    res.status(500).json({ success: false, message: 'Error interno del servidor' });
+  }
+});
+
+// POST /api/auth/user/verificar-correo - Confirmar la cuenta con el código del correo
+router.post('/api/auth/user/verificar-correo', verificarTokenUsuario, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select('+codigoVerificacion +codigoVerificacionExpira +intentosVerificacion');
+    if (!user) return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
+    if (user.emailVerificado !== false) return res.json({ success: true, message: 'Tu correo ya está confirmado' });
+    if ((user.intentosVerificacion || 0) >= 5) {
+      return res.status(429).json({ success: false, message: 'Demasiados intentos. Pide un código nuevo.' });
+    }
+    if (!/^\d{6}$/.test(String(req.body.codigo || '').trim()) || !user.codigoVerificacionValido(req.body.codigo)) {
+      user.intentosVerificacion = (user.intentosVerificacion || 0) + 1;
+      await user.save({ validateBeforeSave: false });
+      const vencido = user.codigoVerificacionExpira && user.codigoVerificacionExpira < new Date();
+      return res.status(400).json({ success: false, message: vencido ? 'El código ya venció. Pide uno nuevo.' : 'El código no es correcto.' });
+    }
+    user.emailVerificado = true;
+    user.codigoVerificacion = undefined;
+    user.codigoVerificacionExpira = undefined;
+    user.intentosVerificacion = 0;
+    await user.save({ validateBeforeSave: false });
+    res.json({ success: true, message: '¡Correo confirmado!' });
+  } catch (error) {
+    console.error('Error verificando correo:', error);
+    res.status(500).json({ success: false, message: 'Error interno del servidor' });
+  }
+});
+
+// POST /api/auth/user/reenviar-verificacion - Mandar otro código (uno por minuto)
+router.post('/api/auth/user/reenviar-verificacion', authLimiter, verificarTokenUsuario, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select('+codigoVerificacionEnviado');
+    if (!user) return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
+    if (user.emailVerificado !== false) return res.json({ success: true, message: 'Tu correo ya está confirmado' });
+    if (user.codigoVerificacionEnviado && Date.now() - user.codigoVerificacionEnviado.getTime() < 60 * 1000) {
+      return res.status(429).json({ success: false, message: 'Espera un minuto antes de pedir otro código.' });
+    }
+    const codigo = user.crearCodigoVerificacion();
+    await user.save({ validateBeforeSave: false });
+    const enviado = await enviarCodigoVerificacion(user, codigo);
+    if (!enviado && process.env.NODE_ENV === 'production') {
+      return res.status(502).json({ success: false, message: 'No pudimos enviar el correo. Intenta más tarde.' });
+    }
+    res.json({ success: true, message: 'Te enviamos un código nuevo a ' + user.email });
+  } catch (error) {
+    console.error('Error reenviando verificación:', error);
     res.status(500).json({ success: false, message: 'Error interno del servidor' });
   }
 });
@@ -107,19 +163,24 @@ router.put('/api/auth/user/profile', verificarTokenUsuario, async (req, res) => 
             return res.status(400).json({ success: false, message: 'El correo electrónico ya está en uso' });
          }
       }
-      user.email = email;
+      if (email !== user.email) {
+        user.email = email;
+        user.emailVerificado = false;
+        var codigoNuevoCorreo = user.crearCodigoVerificacion();
+      }
     }
     if (password) {
       user.password = password; // Se hasheará en el pre-save hook de Mongoose
     }
 
     await user.save();
+    if (codigoNuevoCorreo) await enviarCodigoVerificacion(user, codigoNuevoCorreo);
     
     // Devolver el super user act. sin password
     res.json({ 
       success: true, 
       message: 'Perfil actualizado correctamente', 
-      data: { _id: user._id, nombre: user.nombre, email: user.email, rol: user.rol }
+      data: { _id: user._id, nombre: user.nombre, email: user.email, rol: user.rol, emailVerificado: user.emailVerificado !== false }
     });
   } catch (error) {
     console.error('Error actualizando perfil turista:', error);
