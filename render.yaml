@@ -1,0 +1,49 @@
+# Configuración para publicar el sitio en Render (render.com).
+# En Render: New → Blueprint → elige este repositorio. Render lee este archivo
+# y crea el servicio; solo pide los valores marcados con «sync: false».
+# Guía completa: DESPLIEGUE.md
+services:
+  - type: web
+    name: turismo-jalpan
+    runtime: node
+    # starter (7 USD/mes) no se duerme; free se duerme tras 15 min sin visitas
+    # y la primera visita tarda ~1 minuto en despertar.
+    plan: starter
+    region: ohio
+    branch: main
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /salud
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "22"
+      # Render genera uno nuevo y seguro (así también queda rotado el que se filtró)
+      - key: JWT_SECRET
+        generateValue: true
+      - key: MONGODB_URI
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: MAPBOX_TOKEN
+        sync: false
+      - key: DEEPL_API_KEY
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASS
+        sync: false
+      # Dirección pública del sitio, p. ej. https://turismo-jalpan.onrender.com
+      # (o tu dominio propio cuando lo tengas)
+      - key: SITIO_URL
+        sync: false
+      - key: SITE_URL
+        sync: false

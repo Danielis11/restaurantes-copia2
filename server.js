@@ -34,6 +34,13 @@ if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
 app.set('trust proxy', 1);
 app.disable('x-powered-by');
 
+// Revisión de salud para el hosting: responde 200 solo si la base de datos está conectada
+app.get('/salud', (req, res) => {
+  const lista = require('mongoose').connection.readyState === 1;
+  res.set('Cache-Control', 'no-store');
+  res.status(lista ? 200 : 503).json({ ok: lista });
+});
+
 // ===== MIDDLEWARES =====
 
 // Seguridad: cabeceras HTTP protectoras
