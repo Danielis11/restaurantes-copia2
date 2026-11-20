@@ -8,6 +8,7 @@
     "dev": "nodemon server.js",
     "server": "nodemon server.js",
     "seed": "node seedDatabase.js",
+    "respaldo": "node scripts/respaldo-bd.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [

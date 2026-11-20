@@ -58,3 +58,6 @@ public/debug_*.png
 # Fotos del módulo de hospedaje (435 MB): se quedan fuera de git; subir a Cloudinary para producción
 public/hospedaje/img_jalpan/
 !public/hospedaje/uploads/
+
+# Respaldos de la base de datos (contienen datos personales)
+respaldos/
