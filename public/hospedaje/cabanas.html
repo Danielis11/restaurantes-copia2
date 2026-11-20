@@ -1745,7 +1745,7 @@
         </div>
 
         <!-- Cabins Grid -->
-        <div class="cabanas-grid" id="cabanasGrid" style="display: none;" data-aos="fade-up" data-aos-delay="200">
+        <div class="cabanas-grid" id="cabanasGrid" style="display: none;">
             <!-- Las cabañas se cargarán aquí dinámicamente -->
         </div>
 
@@ -2111,7 +2111,7 @@
             const delay = (index % 4) * 100 + 100;
 
             return `
-                <div class="cabana-card" data-aos="fade-up" data-aos-delay="${delay}" onclick="openCabanaModal('${cabana._id}')">
+                <div class="cabana-card" onclick="openCabanaModal('${cabana._id}')">
                     <div class="cabana-image">
                         <img src="${imageUrl}" alt="${cabana.nombre}" onerror="this.src='https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'">
                         

@@ -1816,7 +1816,7 @@
         </div>
 
         <!-- Airbnb Grid -->
-        <div class="airbnb-grid" id="airbnbGrid" data-aos="fade-up" data-aos-delay="200">
+        <div class="airbnb-grid" id="airbnbGrid">
             <!-- Los alojamientos se cargarán aquí dinámicamente -->
         </div>
     </section>
@@ -2194,7 +2194,7 @@
             const delay = (index % 4) * 100 + 100;
 
             return `
-                <div class="airbnb-card" data-aos="fade-up" data-aos-delay="${delay}">
+                <div class="airbnb-card">
                     <div class="airbnb-image-slider">
                         <img class="airbnb-main-image" 
                              src="${getImageUrl(images[0])}" 

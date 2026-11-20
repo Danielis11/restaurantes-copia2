@@ -294,3 +294,38 @@ footer.footer { margin-top: 4rem; }
 @media (max-width: 760px) {
     .top-cards-grid { grid-template-columns: 1fr !important; padding: 0 1rem !important; gap: 1rem !important; }
 }
+
+/* Calificación sobre la foto: mismo estilo discreto que el precio */
+.hotel-image .rating-badge, .airbnb-image .rating-badge, .cabana-image .rating-badge {
+    top: auto !important; bottom: 12px !important; left: 12px !important; right: auto !important;
+    background: rgba(17, 24, 39, .72) !important; color: #fff !important;
+    padding: .3rem .65rem !important; border-radius: 8px !important; font-size: .8rem !important;
+    font-weight: 600 !important; box-shadow: none !important; backdrop-filter: blur(4px);
+}
+.hotel-image .rating-badge i, .airbnb-image .rating-badge i, .cabana-image .rating-badge i { color: #fbbf24; }
+/* Botón de vista rápida junto a «Ver detalles» (todas las páginas): redondo y sin relleno */
+.hotel-footer .view-details-btn + .view-details-btn, .cabana-footer .view-details-btn + .view-details-btn,
+.airbnb-footer .view-details-btn + .view-details-btn {
+    background: #fff !important; color: var(--sitio-azul) !important; border: 1px solid var(--sitio-borde) !important;
+    border-radius: 50% !important; width: 40px; height: 40px; padding: 0 !important; min-width: 0 !important;
+    display: inline-flex !important; align-items: center; justify-content: center;
+}
+.hotel-footer .view-details-btn + .view-details-btn:hover, .cabana-footer .view-details-btn + .view-details-btn:hover,
+.airbnb-footer .view-details-btn + .view-details-btn:hover { background: var(--sitio-azul-claro) !important; }
+.airbnb-features .feature-tag i, .hotel-features .feature-tag i { display: none; }
+/* Airbnb: sus etiquetas viven en .airbnb-badges; mismo estilo que las demás tarjetas */
+.airbnb-badges .type-badge {
+    background: #fff !important; color: #111827 !important; text-transform: none !important; letter-spacing: 0 !important;
+    padding: .3rem .65rem !important; border-radius: 8px !important; font-size: .8rem !important; font-weight: 600 !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,.15) !important;
+}
+.airbnb-badges .price-badge, .airbnb-badges .rating-badge {
+    background: rgba(17, 24, 39, .72) !important; color: #fff !important; box-shadow: none !important;
+    padding: .35rem .7rem !important; border-radius: 8px !important; font-size: .85rem !important; font-weight: 600 !important;
+    backdrop-filter: blur(4px);
+}
+.airbnb-badges .rating-badge i { color: #fbbf24; }
+.capacity-info i { color: #6b7280 !important; }
+.hotel-footer, .airbnb-footer { flex-wrap: wrap; row-gap: .75rem; }
+.hotel-footer .capacity-info, .airbnb-footer .capacity-info { display: flex; gap: .9rem; flex-wrap: wrap; }
+.capacity-info span { white-space: nowrap; display: inline-flex; align-items: center; gap: .35rem; }

@@ -1881,7 +1881,7 @@
         </div>
 
         <!-- Hotels Grid -->
-        <div class="hotels-grid" id="hotelsGrid" style="display: none;" data-aos="fade-up" data-aos-delay="200">
+        <div class="hotels-grid" id="hotelsGrid" style="display: none;">
             <!-- Los hoteles se cargarán aquí dinámicamente -->
         </div>
 
@@ -2286,7 +2286,7 @@
             const delay = (index % 4) * 100 + 100;
 
             return `
-                <div class="hotel-card" data-aos="fade-up" data-aos-delay="${delay}" onclick="viewHotelDetails('${hotel._id}')">
+                <div class="hotel-card" onclick="viewHotelDetails('${hotel._id}')">
                     <div class="hotel-image">
                         <img src="${imageUrl}" 
                              alt="${hotel.nombre}" 
@@ -2320,7 +2320,7 @@
                         
                         ${servicios.length > 0 ? `
                             <div class="hotel-features">
-                                ${servicios.map(servicio => `<span class="feature-tag">${servicio}</span>`).join('')}
+                                ${servicios.map(servicio => `<span class="feature-tag">${formatService(servicio)}</span>`).join('')}
                                 ${hotel.servicios && hotel.servicios.length > 3 ? `<span class="feature-tag more">+${hotel.servicios.length - 3} más</span>` : ''}
                             </div>
                         ` : ''}
