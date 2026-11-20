@@ -195,9 +195,52 @@ function renderPage() {
     document.getElementById('loading-state').style.display = 'none';
     document.getElementById('restaurant-content').style.display = 'block';
     document.getElementById('restaurant-content').classList.add('rs-listo');
+    renderAccionesMovil(r);
 
     // Cargar widgets de reseñas (Elfsight / Trustmary)
     initReviewWidgets();
+}
+
+function urlComoLlegar(r) {
+    const c = r.direccion && r.direccion.coordenadas;
+    if (c && c.lat && c.lng) return `https://www.google.com/maps/dir/?api=1&destination=${c.lat},${c.lng}`;
+    const d = r.direccion || {};
+    const q = [d.calle, d.ciudad || 'Jalpan de Serra', d.estado || 'Querétaro'].filter(Boolean).join(', ');
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((r.nombre ? r.nombre + ', ' : '') + q)}`;
+}
+function registrarClicMapa(id) {
+    if (id) fetch(`/api/restaurants/${id}/click-map`, { method: 'POST' }).catch(() => {});
+}
+function renderAccionesMovil(r) {
+    const id = r._id || r.id;
+    const llegar = document.getElementById('link-como-llegar');
+    if (llegar) { llegar.href = urlComoLlegar(r); llegar.addEventListener('click', () => registrarClicMapa(id)); }
+    const wa = String(r.whatsappPedidos || '').replace(/[^0-9]/g, '');
+    const tel = String(r.telefono || '').replace(/[^0-9+]/g, '');
+    const barra = document.createElement('div');
+    barra.className = 'rs-acciones';
+    barra.setAttribute('aria-label', 'Acciones rápidas');
+    const primero = wa
+        ? `<a class="rs-wa" href="https://wa.me/${wa}" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> WhatsApp</a>`
+        : (tel ? `<a href="tel:${tel}"><i class="fas fa-phone"></i> Llamar</a>` : '');
+    barra.innerHTML = primero + `<a class="rs-llegar" href="${urlComoLlegar(r)}" target="_blank" rel="noopener"><i class="fas fa-directions"></i> Cómo llegar</a>`;
+    document.body.appendChild(barra);
+    document.body.classList.add('rs-con-barra');
+    const bWa = barra.querySelector('.rs-wa');
+    if (bWa) bWa.addEventListener('click', () => registrarClicWhatsapp(id));
+    barra.querySelector('.rs-llegar').addEventListener('click', () => registrarClicMapa(id));
+    // Se coloca encima de la barra de navegación inferior del sitio
+    const ajustar = () => {
+        const nav = document.getElementById('nav-menu');
+        const fija = nav && getComputedStyle(nav).position === 'fixed' && nav.getBoundingClientRect().top > innerHeight / 2;
+        document.documentElement.style.setProperty('--rs-nav-alto', fija ? nav.offsetHeight + 'px' : '0px');
+    };
+    ajustar();
+    window.addEventListener('resize', ajustar);
+    // Aparece al bajar un poco, para no tapar la portada
+    const mostrar = () => barra.classList.toggle('visible', scrollY > 240);
+    mostrar();
+    window.addEventListener('scroll', mostrar, { passive: true });
 }
 
 const escRS = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -630,29 +673,24 @@ function renderPromociones(promociones) {
         return;
     }
 
-    // Main column card
+    // Tarjeta principal (una sola lista; la del costado ya no se repite)
     if (card && body) {
         card.style.display = 'block';
         body.innerHTML = activas.map(p => {
-            let fechaText = '';
-            if (p.fechaFin) {
-                fechaText = `<div style="font-size: 0.75rem; color: var(--error); font-weight: 600; margin-top: 0.5rem;"><i class="fas fa-clock"></i> Válido hasta: ${new Date(p.fechaFin).toLocaleDateString('es-MX', {timeZone: 'UTC'})}</div>`;
-            }
+            const vence = p.fechaFin ? `<span class="rs-vence"><i class="fas fa-clock"></i> Hasta el ${new Date(p.fechaFin).toLocaleDateString('es-MX', { day: 'numeric', month: 'long', timeZone: 'UTC' })}</span>` : '';
+            const img = typeof p.imagen === 'string' ? p.imagen : (p.imagen && p.imagen.url) || '';
             return `
-                <div style="background: linear-gradient(to right, #fef3c7, #fde68a); border: 1px dashed #f59e0b; border-radius: var(--radius-md); padding: 1rem; margin-bottom: 0.75rem;">
-                    <div style="display: flex; align-items: start; gap: 1rem;">
-                        <div style="flex-shrink: 0; width: 40px; height: 40px; background: #fffbeb; color: #f59e0b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
-                            <i class="fas fa-ticket-alt"></i>
-                        </div>
-                        <div>
-                            <h4 style="color: #b45309; font-weight: 700; margin: 0 0 0.25rem 0; font-size: 1rem;">${getL(p.titulo)}</h4>
-                            <p style="color: #92400e; font-size: 0.85rem; margin: 0;">${getL(p.descripcion)}</p>
-                            ${fechaText}
-                        </div>
+                <div class="rs-promo">
+                    <div class="rs-promo-ico${img ? ' con-img' : ''}"><i class="fas fa-ticket-alt"></i>${img ? `<img class="rs-promo-img" loading="lazy" decoding="async" src="${escRS(img)}" alt="" onerror="this.remove()">` : ''}</div>
+                    <div>
+                        <h4>${escRS(getL(p.titulo))}</h4>
+                        ${getL(p.descripcion) ? `<p>${escRS(getL(p.descripcion))}</p>` : ''}
+                        ${vence}
                     </div>
-                </div>
-            `;
+                </div>`;
         }).join('');
+        if (sidebarCard) sidebarCard.style.display = 'none';
+        return;
     }
 
     // Sidebar card (below address) with image support

@@ -192,6 +192,7 @@ function renderPage() {
     // Mostrar contenido
     document.getElementById('loading-state').style.display = 'none';
     document.getElementById('restaurant-content').style.display = 'block';
+    document.getElementById('restaurant-content').classList.add('rs-listo');
 
     // Cargar widgets de reseñas (Elfsight / Trustmary)
     initReviewWidgets();
@@ -258,7 +259,10 @@ function renderHero(r) {
         img.className = 'hero-img';
         img.src = r.imagenes[0].url;
         img.alt = r.nombre;
-        img.onerror = () => { placeholder.style.display = 'flex'; img.remove(); imgBg.remove(); };
+        const heroSec = document.getElementById('hero-section');
+        img.onload = () => { img.classList.add('rs-cargada'); if (heroSec) heroSec.classList.add('rs-foto-lista'); };
+        imgBg.onload = () => imgBg.classList.add('rs-cargada');
+        img.onerror = () => { placeholder.style.display = 'flex'; img.remove(); imgBg.remove(); if (heroSec) heroSec.classList.add('rs-foto-lista'); };
         gallery.insertBefore(img, gallery.children[1]); // después del fondo
 
         // Función para cambiar imagen con transición suave
@@ -403,8 +407,8 @@ function renderInfoAdicional(r) {
                     <div class="contact-icon"><i class="fas fa-wallet" style="color:#8b5cf6"></i></div>
                     <div>
                         <div class="contact-label">Opciones de Pago</div>
-                        <div class="contact-value" style="display:flex; flex-wrap:wrap; gap:0.5rem; font-size:0.8rem;">
-                            ${metodos.join(' | ')}
+                        <div class="contact-value">
+                            <div class="rs-chips">${metodos.map(x => `<span class="rs-chip">${x}</span>`).join('')}</div>
                         </div>
                     </div>
                 </div>
@@ -428,8 +432,8 @@ function renderInfoAdicional(r) {
                     <div class="contact-icon"><i class="fas fa-concierge-bell" style="color:var(--primary)"></i></div>
                     <div>
                         <div class="contact-label">Servicios</div>
-                        <div class="contact-value" style="display:flex; flex-wrap:wrap; gap:0.5rem; font-size:0.8rem;">
-                            ${srv.join(' | ')}
+                        <div class="contact-value">
+                            <div class="rs-chips">${srv.map(x => `<span class="rs-chip">${x}</span>`).join('')}</div>
                         </div>
                     </div>
                 </div>

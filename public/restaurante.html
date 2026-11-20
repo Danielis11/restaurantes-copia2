@@ -1673,6 +1673,29 @@
         .rs-menu-digital { display: inline-flex; align-items: center; gap: .4rem; font-size: .82rem; font-weight: 600; color: var(--primary, #2563eb); text-decoration: none; padding: .35rem .75rem; border-radius: 99px; background: #eff6ff; transition: background .2s; }
         .rs-menu-digital:hover { background: #dbeafe; }
         @media (prefers-reduced-motion: reduce) { .rs-sk, .restaurant-hero, #restaurant-content.rs-listo { animation: none !important; } .hero-img, .hero-img-bg { transition: none; } }
+        /* Promociones */
+        .rs-promo { display: flex; gap: .9rem; align-items: flex-start; padding: .9rem 0; border-bottom: 1px solid #f3f4f6; }
+        .rs-promo:first-child { padding-top: 0; }
+        .rs-promo:last-child { border-bottom: 0; padding-bottom: 0; }
+        .rs-promo-ico { width: 38px; height: 38px; border-radius: 10px; background: #fffbeb; color: #d97706; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .rs-promo-ico { position: relative; overflow: hidden; }
+        .rs-promo-ico.con-img { width: 64px; height: 64px; }
+        .rs-promo-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+        .rs-promo h4 { font-size: .98rem; font-weight: 700; color: #111827; margin: 0 0 .2rem; }
+        .rs-promo p { font-size: .88rem; color: #6b7280; margin: 0; line-height: 1.45; }
+        .rs-promo .rs-vence { display: inline-flex; align-items: center; gap: .3rem; margin-top: .45rem; font-size: .75rem; font-weight: 600; color: #b45309; background: #fffbeb; padding: .15rem .55rem; border-radius: 99px; }
+
+        /* Barra fija en celular: WhatsApp y Cómo llegar */
+        .rs-acciones { display: none; }
+        @media (max-width: 768px) {
+            .rs-acciones { display: flex; gap: .6rem; position: fixed; left: .75rem; right: .75rem; bottom: calc(var(--rs-nav-alto, 0px) + .6rem); z-index: 900; padding: .5rem; background: rgba(255,255,255,.96); backdrop-filter: blur(10px); border: 1px solid #eef0f3; border-radius: 16px; box-shadow: 0 8px 24px rgba(15,23,42,.12); transform: translateY(150%); opacity: 0; pointer-events: none; transition: transform .35s cubic-bezier(.2,.8,.2,1), opacity .25s; }
+            .rs-acciones.visible { transform: none; opacity: 1; pointer-events: auto; }
+            .rs-acciones a { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: .45rem; padding: .7rem .5rem; border-radius: 11px; font-weight: 600; font-size: .9rem; text-decoration: none; white-space: nowrap; color: #111827; background: #f3f4f6; }
+            .rs-acciones a.rs-wa { background: #16a34a; color: #fff; }
+            body.rs-con-barra { padding-bottom: 76px; }
+            body.rs-con-barra .back-to-top { bottom: calc(var(--rs-nav-alto, 0px) + 5.2rem) !important; }
+        }
+        @media (prefers-reduced-motion: reduce) { .rs-acciones { transition: none; } }
     </style>
 </head>
 
@@ -1862,10 +1885,9 @@
                     </div>
 
                     <!-- Promociones -->
-                    <div class="content-card" id="promotions-card"
-                        style="display:none; border:2px solid #fde68a; background:#fffbeb;">
-                        <div class="card-header-section" style="background:#fef3c7; border-bottom:1px solid #fde68a;">
-                            <h3><i class="fas fa-star" style="color:#d97706;"></i> <span style="color:#b45309;"
+                    <div class="content-card" id="promotions-card" style="display:none;">
+                        <div class="card-header-section">
+                            <h3><i class="fas fa-tag" style="color:#d97706;"></i> <span
                                     data-i18n="restaurante.promociones">Promociones Especiales</span></h3>
                         </div>
                         <div class="card-body" id="promotions-body">
@@ -2168,9 +2190,9 @@
                             <div class="mini-map-card">
                                 <div id="restaurant-minimap"></div>
                             </div>
-                            <a href="/mapa.html" target="_blank"
+                            <a href="/mapa.html" target="_blank" rel="noopener" id="link-como-llegar"
                                 style="display:block; padding:0.75rem; text-align:center; color:var(--primary); font-weight:600; font-size:0.9rem; text-decoration:none;">
-                                <i class="fas fa-map-marked-alt"></i> Ver en el Mapa
+                                <i class="fas fa-directions"></i> Cómo llegar
                             </a>
                         </div>
                     </div>
@@ -2341,7 +2363,7 @@
     </script>
     <script src="/js/i18n.js"></script>
     <script src="/js/utils.js"></script>
-    <script src="/js/restaurante.js?v=6"></script>
+    <script src="/js/restaurante.js?v=8"></script>
     <!-- AUTH MODAL (LOGIN/REGISTER FOR TOURISTS) -->
     <div class="modal" id="tourist-auth-modal">
         <div class="modal-content" style="max-width: 400px;">
