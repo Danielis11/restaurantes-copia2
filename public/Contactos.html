@@ -822,14 +822,11 @@
 
                 <div class="faq-item">
                     <button class="faq-question">
-                        <span data-i18n="contacto.faq_2_q">¿Hay algún costo por usar RestauranteWeb?</span>
+                        <span data-i18n="contacto.faq_2_q">¿Tiene algún costo usar el sitio?</span>
                         <i class="fas fa-chevron-down"></i>
                     </button>
                     <div class="faq-answer">
-                        <p data-i18n="contacto.faq_2_a">No, RestauranteWeb es completamente gratuito para todos los
-                            establecimientos de Jalpan de
-                            Serra. Nuestro objetivo es promover la gastronomía local sin costo alguno para los
-                            propietarios.</p>
+                        <p data-i18n="contacto.faq_2_a">No, el sitio es completamente gratuito para todos los visitantes. Su objetivo es dar a conocer la gastronomía, los hospedajes y las experiencias de Jalpan de Serra.</p>
                     </div>
                 </div>
 
@@ -1060,7 +1057,7 @@
                     subject: data.asunto,
                     message: data.mensaje,
                     date: new Date().toLocaleString('es-MX'),
-                    source: 'Página de Contacto Web - RestauranteWeb Jalpan'
+                    source: 'Página de Contacto - Turismo Jalpan de Serra'
                 };
 
                 // Intentar enviar con EmailJS
@@ -1079,7 +1076,7 @@
                 console.log('EmailJS no configurado o error, usando fallback mailto:', error);
 
                 // Fallback: enviar por email usando mailto con el email correcto
-                const emailSubject = encodeURIComponent(`[RestauranteWeb] ${data.asunto} - ${data.nombre} ${data.apellido}`);
+                const emailSubject = encodeURIComponent(`[Turismo Jalpan] ${data.asunto} - ${data.nombre} ${data.apellido}`);
                 const emailBody = encodeURIComponent(
                     `NUEVO MENSAJE DE CONTACTO - RESTAURANTEWEB JALPAN\n\n` +
                     `═══════════════════════════════════════\n\n` +
@@ -1096,7 +1093,7 @@
                     `${data.mensaje}\n\n` +
                     `═══════════════════════════════════════\n` +
                     `📅 Fecha: ${new Date().toLocaleString('es-MX')}\n` +
-                    `🌐 Origen: RestauranteWeb - Página de Contacto\n` +
+                    `🌐 Origen: Turismo Jalpan de Serra - Página de Contacto\n` +
                     `📧 Responder a: ${data.email}`
                 );
 

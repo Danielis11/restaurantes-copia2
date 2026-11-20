@@ -449,7 +449,7 @@ router.post('/api/auth/forgot-password', authLimiter, async (req, res) => {
 
     // Enviar email con el código
     const mailOptions = {
-      from: `"RestauranteWeb" <${process.env.EMAIL_USER}>`,
+      from: `"Turismo Jalpan de Serra" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: '🔐 Código de recuperación — RestauranteWeb',
       html: `
