@@ -141,6 +141,8 @@ function renderPage() {
     if (r.menu && r.menu.length > 0) {
         renderMenu(r.menu);
         document.getElementById('menu-card').style.display = 'block';
+        const linkMenu = document.getElementById('link-menu-digital');
+        if (linkMenu) linkMenu.href = `/menu.html?id=${encodeURIComponent(r._id || r.id)}`;
     }
 
     // Galería
@@ -192,10 +194,13 @@ function renderPage() {
     // Mostrar contenido
     document.getElementById('loading-state').style.display = 'none';
     document.getElementById('restaurant-content').style.display = 'block';
+    document.getElementById('restaurant-content').classList.add('rs-listo');
 
     // Cargar widgets de reseñas (Elfsight / Trustmary)
     initReviewWidgets();
 }
+
+const escRS = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 // ===== HERO =====
 function renderHero(r) {
@@ -258,7 +263,10 @@ function renderHero(r) {
         img.className = 'hero-img';
         img.src = r.imagenes[0].url;
         img.alt = r.nombre;
-        img.onerror = () => { placeholder.style.display = 'flex'; img.remove(); imgBg.remove(); };
+        const heroSec = document.getElementById('hero-section');
+        img.onload = () => { img.classList.add('rs-cargada'); if (heroSec) heroSec.classList.add('rs-foto-lista'); };
+        imgBg.onload = () => imgBg.classList.add('rs-cargada');
+        img.onerror = () => { placeholder.style.display = 'flex'; img.remove(); imgBg.remove(); if (heroSec) heroSec.classList.add('rs-foto-lista'); };
         gallery.insertBefore(img, gallery.children[1]); // después del fondo
 
         // Función para cambiar imagen con transición suave
@@ -403,8 +411,8 @@ function renderInfoAdicional(r) {
                     <div class="contact-icon"><i class="fas fa-wallet" style="color:#8b5cf6"></i></div>
                     <div>
                         <div class="contact-label">Opciones de Pago</div>
-                        <div class="contact-value" style="display:flex; flex-wrap:wrap; gap:0.5rem; font-size:0.8rem;">
-                            ${metodos.join(' | ')}
+                        <div class="contact-value">
+                            <div class="rs-chips">${metodos.map(x => `<span class="rs-chip">${x}</span>`).join('')}</div>
                         </div>
                     </div>
                 </div>
@@ -428,8 +436,8 @@ function renderInfoAdicional(r) {
                     <div class="contact-icon"><i class="fas fa-concierge-bell" style="color:var(--primary)"></i></div>
                     <div>
                         <div class="contact-label">Servicios</div>
-                        <div class="contact-value" style="display:flex; flex-wrap:wrap; gap:0.5rem; font-size:0.8rem;">
-                            ${srv.join(' | ')}
+                        <div class="contact-value">
+                            <div class="rs-chips">${srv.map(x => `<span class="rs-chip">${x}</span>`).join('')}</div>
                         </div>
                     </div>
                 </div>
@@ -547,11 +555,6 @@ function renderContacto(r) {
     const lang = localStorage.getItem('appLang') || 'es';
     
     const phoneLabel = lang === 'en' ? 'Phone' : lang === 'fr' ? 'Téléphone' : 'Teléfono';
-    const photosLabel = lang === 'en' ? 'Photos' : lang === 'fr' ? 'Photos' : 'Fotos';
-    const imgLabel = lang === 'en' ? 'image(s)' : lang === 'fr' ? 'image(s)' : 'imagen(es)';
-    const statusLabel = lang === 'en' ? 'Status' : lang === 'fr' ? 'Statut' : 'Estado';
-    const activeLabel = lang === 'en' ? '✓ Active' : lang === 'fr' ? '✓ Actif' : '✓ Activo';
-    const inactiveLabel = lang === 'en' ? '✗ Inactive' : lang === 'fr' ? '✗ Inactif' : '✗ Inactivo';
     
     body.innerHTML = `
         <div class="contact-item">
@@ -569,22 +572,6 @@ function renderContacto(r) {
                 <div class="contact-label">Email</div>
                 <div class="contact-value">
                     <a href="mailto:${r.email}">${r.email}</a>
-                </div>
-            </div>
-        </div>
-        <div class="contact-item">
-            <div class="contact-icon"><i class="fas fa-images"></i></div>
-            <div>
-                <div class="contact-label">${photosLabel}</div>
-                <div class="contact-value">${r.imagenes?.length || 0} ${imgLabel}</div>
-            </div>
-        </div>
-        <div class="contact-item">
-            <div class="contact-icon"><i class="fas fa-toggle-on"></i></div>
-            <div>
-                <div class="contact-label">${statusLabel}</div>
-                <div class="contact-value" style="color: ${r.activo ? 'var(--success)' : 'var(--error)'}">
-                    ${r.activo ? activeLabel : inactiveLabel}
                 </div>
             </div>
         </div>
@@ -2508,17 +2495,17 @@ async function cargarBolsaTrabajo(restaurantId) {
         if (data.success && data.data && data.data.length > 0) {
             container.style.display = 'block';
             listContainer.innerHTML = data.data.map(v => `
-                <div style="border-bottom: 1px solid var(--gray-200); padding-bottom: 1rem;">
+                <div class="rs-vacante">
                     <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.5rem;">
-                        <div style="font-weight:700; font-size:1.1rem; color:var(--gray-900);">${v.titulo}</div>
-                        ${v.sueldo ? `<span style="background:#ecfdf5; color:#10b981; font-weight:700; font-size:0.85rem; padding:0.2rem 0.6rem; border-radius:1rem;">${v.sueldo}</span>` : ''}
+                        <div style="font-weight:700; font-size:1.1rem; color:var(--gray-900);">${escRS(v.titulo)}</div>
+                        ${v.sueldo ? `<span style="background:#ecfdf5; color:#10b981; font-weight:700; font-size:0.85rem; padding:0.2rem 0.6rem; border-radius:1rem;">${escRS(v.sueldo)}</span>` : ''}
                     </div>
-                    <p style="font-size:0.9rem; color:var(--gray-600); line-height:1.5; margin-bottom:0.75rem;">${v.descripcion}</p>
+                    <p style="font-size:0.9rem; color:var(--gray-600); line-height:1.5; margin-bottom:0.75rem;">${escRS(v.descripcion)}</p>
                     <div style="display:inline-block; background:var(--gray-50); border:1px solid var(--gray-200); padding:0.4rem 0.8rem; border-radius:0.4rem; font-size:0.85rem; font-weight:600; color:var(--gray-700);">
-                        <i class="fas fa-hand-pointer" style="color:var(--primary); margin-right:0.3rem;"></i> ${v.contacto}
+                        <i class="fas fa-hand-pointer" style="color:var(--primary); margin-right:0.3rem;"></i> ${escRS(v.contacto)}
                     </div>
                 </div>
-            `).join('<div style="height:0.5rem;"></div>');
+            `).join('');
         } else {
             container.style.display = 'none';
         }

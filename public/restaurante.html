@@ -1635,6 +1635,45 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <script src="/js/pwa.js" defer></script>
     <script src="/js/acceso-resena.js" defer></script>
+    <style>
+        /* ===== Ajustes de diseño (carga clara, tarjetas ligeras) ===== */
+        @keyframes rsBrillo { to { background-position: -200% 0; } }
+        @keyframes rsAparecer { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+        .rs-carga { max-width: 1100px; margin: 90px auto 0; padding: 0 1rem 2rem; }
+        .rs-sk { display: block; border-radius: 10px; background: linear-gradient(90deg, #eef1f5 25%, #f7f8fa 37%, #eef1f5 63%); background-size: 400% 100%; animation: rsBrillo 1.4s ease infinite; }
+        .rs-cab { padding: 1.5rem 0 1.25rem; }
+        .rs-hero { height: 420px; border-radius: var(--radius-lg, 16px); }
+        .rs-cols { display: grid; grid-template-columns: 1fr 340px; gap: 1.5rem; margin-top: 1.5rem; }
+        .rs-card { background: #fff; border: 1px solid #eef0f3; border-radius: 16px; padding: 1.25rem; margin-bottom: 1.25rem; }
+        .rs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-top: 1rem; }
+        .rs-grid .rs-sk { height: 120px; }
+        @media (max-width: 900px) { .rs-cols { grid-template-columns: 1fr; } .rs-hero { height: 260px; } }
+        #restaurant-content.rs-listo { animation: rsAparecer .45s cubic-bezier(.2,.8,.2,1) both; }
+
+        /* Carrusel: sin fondo negro mientras cargan las fotos */
+        .restaurant-hero { background: linear-gradient(90deg, #eef1f5 25%, #f7f8fa 37%, #eef1f5 63%); background-size: 400% 100%; animation: rsBrillo 1.4s ease infinite; }
+        .restaurant-hero.rs-foto-lista { animation: none; background: #e5e7eb; }
+        .hero-img, .hero-img-bg { opacity: 0; transition: opacity .5s ease; }
+        .hero-img.rs-cargada { opacity: 1; }
+        .hero-img-bg.rs-cargada { opacity: 1; }
+        .hero-img-bg { filter: blur(28px) brightness(.85) saturate(1.1); }
+
+        /* Tarjetas más ligeras */
+        .content-card, .sidebar-card { box-shadow: 0 1px 2px rgba(15,23,42,.04); border-color: #eef0f3; transition: box-shadow .25s ease; }
+        .content-card:hover, .sidebar-card:hover { box-shadow: 0 6px 20px rgba(15,23,42,.06); }
+        .card-header-section, .sidebar-header { background: #fff; border-bottom-color: #f3f4f6; }
+        .card-header-section h3 i, .sidebar-header h4 i { color: #9ca3af; font-size: .9rem; }
+        .contact-icon { background: #f3f4f6 !important; color: #4b5563 !important; }
+        .contact-icon i { color: inherit !important; }
+        .rs-chips { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .3rem; }
+        .rs-chip { display: inline-flex; align-items: center; gap: .35rem; padding: .25rem .6rem; border-radius: 99px; background: #f3f4f6; color: #374151; font-size: .78rem; font-weight: 500; }
+        .rs-chip i { color: #6b7280; font-size: .75rem; }
+        .rs-bolsa .card-header-section h3 i { color: #0d9488; }
+        .rs-vacante + .rs-vacante { border-top: 1px solid #f3f4f6; padding-top: 1rem; }
+        .rs-menu-digital { display: inline-flex; align-items: center; gap: .4rem; font-size: .82rem; font-weight: 600; color: var(--primary, #2563eb); text-decoration: none; padding: .35rem .75rem; border-radius: 99px; background: #eff6ff; transition: background .2s; }
+        .rs-menu-digital:hover { background: #dbeafe; }
+        @media (prefers-reduced-motion: reduce) { .rs-sk, .restaurant-hero, #restaurant-content.rs-listo { animation: none !important; } .hero-img, .hero-img-bg { transition: none; } }
+    </style>
 </head>
 
 <body>
@@ -1675,44 +1714,20 @@
     <!-- CONTENIDO PRINCIPAL -->
     <div id="page-content">
         <!-- Estado de carga (skeleton) -->
-        <div class="page-loading" id="loading-state">
-            <div class="skel-detail-hero">
-                <div class="skel-hero-overlay">
-                    <div class="skel skel-line lg" style="width: 30%;"></div>
-                    <div class="skel skel-line lg" style="width: 60%; height: 32px;"></div>
-                    <div class="skel skel-line" style="width: 45%;"></div>
-                </div>
+        <div class="rs-carga" id="loading-state" aria-busy="true" aria-label="Cargando ficha">
+            <div class="rs-cab">
+                <span class="rs-sk" style="width:110px;height:24px;border-radius:99px"></span>
+                <span class="rs-sk" style="width:min(420px,80%);height:38px;margin-top:12px"></span>
+                <span class="rs-sk" style="width:min(320px,65%);height:16px;margin-top:12px"></span>
             </div>
-            <div class="skel-detail-content">
+            <div class="rs-sk rs-hero"></div>
+            <div class="rs-cols">
                 <div>
-                    <div class="skel-section">
-                        <div class="skel skel-line lg" style="width: 40%; margin-bottom: 1rem;"></div>
-                        <div class="skel skel-line"></div>
-                        <div class="skel skel-line"></div>
-                        <div class="skel skel-line" style="width: 75%;"></div>
-                    </div>
-                    <div class="skel-section">
-                        <div class="skel skel-line lg" style="width: 30%; margin-bottom: 1rem;"></div>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.75rem;">
-                            <div class="skel" style="height: 120px; border-radius: 8px;"></div>
-                            <div class="skel" style="height: 120px; border-radius: 8px;"></div>
-                            <div class="skel" style="height: 120px; border-radius: 8px;"></div>
-                            <div class="skel" style="height: 120px; border-radius: 8px;"></div>
-                        </div>
-                    </div>
+                    <div class="rs-card"><span class="rs-sk" style="width:40%;height:18px"></span><span class="rs-sk" style="height:12px;margin-top:16px"></span><span class="rs-sk" style="height:12px;margin-top:8px;width:85%"></span></div>
+                    <div class="rs-card"><span class="rs-sk" style="width:30%;height:18px"></span><div class="rs-grid"><span class="rs-sk"></span><span class="rs-sk"></span></div></div>
                 </div>
                 <div>
-                    <div class="skel-section">
-                        <div class="skel skel-line lg" style="width: 50%; margin-bottom: 1rem;"></div>
-                        <div class="skel skel-line"></div>
-                        <div class="skel skel-line" style="width: 80%;"></div>
-                        <div class="skel skel-line" style="width: 65%;"></div>
-                    </div>
-                    <div class="skel-section">
-                        <div class="skel skel-line lg" style="width: 45%; margin-bottom: 1rem;"></div>
-                        <div class="skel skel-line"></div>
-                        <div class="skel skel-line" style="width: 70%;"></div>
-                    </div>
+                    <div class="rs-card"><span class="rs-sk" style="width:55%;height:18px"></span><span class="rs-sk" style="height:12px;margin-top:16px"></span><span class="rs-sk" style="height:12px;margin-top:8px;width:70%"></span></div>
                 </div>
             </div>
         </div>
@@ -1835,17 +1850,7 @@
                         </div>
                     </div>
 
-                    <!-- BOLSA DE TRABAJO (LETRERO) -->
-                    <div id="bolsa-trabajo-container" style="display:none; margin-bottom:1.5rem;">
-                        <div style="background: var(--white); border: 2px dashed #14b8a6; border-radius: 1rem; padding: 1.5rem; position: relative;">
-                            <div style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #14b8a6; color: white; padding: 0.2rem 1rem; border-radius: 1rem; font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; letter-spacing: 1px;">
-                                <i class="fas fa-briefcase"></i> Estamos Contratando
-                            </div>
-                            <div id="bolsa-trabajo-list" style="margin-top: 0.5rem; display:flex; flex-direction:column; gap:1rem;">
-                                <!-- Aquí se inyectan las vacantes -->
-                            </div>
-                        </div>
-                    </div>                    <!-- Descripción -->
+                    <!-- Descripción -->
                     <div class="content-card">
                         <div class="card-header-section">
                             <h3><i class="fas fa-info-circle"></i> <span data-i18n="restaurante.sobre">Sobre el
@@ -1892,9 +1897,18 @@
                     <div class="content-card" id="menu-card" style="display:none;">
                         <div class="card-header-section">
                             <h3><i class="fas fa-book-open"></i> <span data-i18n="restaurante.menu">Menú</span></h3>
+                            <a class="rs-menu-digital" id="link-menu-digital" href="#" target="_blank" rel="noopener"><i class="fas fa-mobile-alt"></i> <span>Menú digital</span></a>
                         </div>
                         <div class="card-body" id="menu-body">
                         </div>
+                    </div>
+
+                    <!-- BOLSA DE TRABAJO -->
+                    <div class="content-card rs-bolsa" id="bolsa-trabajo-container" style="display:none;">
+                        <div class="card-header-section">
+                            <h3><i class="fas fa-briefcase"></i> <span>Estamos contratando</span></h3>
+                        </div>
+                        <div class="card-body" id="bolsa-trabajo-list" style="display:flex; flex-direction:column; gap:1rem;"></div>
                     </div>
 
                     <!-- Galería -->
@@ -2327,7 +2341,7 @@
     </script>
     <script src="/js/i18n.js"></script>
     <script src="/js/utils.js"></script>
-    <script src="/js/restaurante.js?v=5"></script>
+    <script src="/js/restaurante.js?v=6"></script>
     <!-- AUTH MODAL (LOGIN/REGISTER FOR TOURISTS) -->
     <div class="modal" id="tourist-auth-modal">
         <div class="modal-content" style="max-width: 400px;">
