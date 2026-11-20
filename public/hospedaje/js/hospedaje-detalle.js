@@ -563,15 +563,15 @@ function renderPage(tipo) {
     if (d.contacto?.sitioWeb) {
         let cleanUrl = d.contacto.sitioWeb.replace(/^https?:\/\/(www\.)?/, '').split('?')[0];
         if (cleanUrl.endsWith('/')) cleanUrl = cleanUrl.slice(0, -1);
-        cHTML += `<a href="${d.contacto.sitioWeb}" target="_blank" class="contact-btn web" style="background-color:var(--primary-color)"><i class="fas fa-globe"></i><div style="overflow: hidden;"><div class="contact-type">Sitio Web</div><div class="contact-value" title="${d.contacto.sitioWeb}" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${cleanUrl}</div></div></a>`;
+        cHTML += `<a href="${d.contacto.sitioWeb}" target="_blank" class="contact-btn web"><i class="fas fa-globe"></i><div style="overflow: hidden;"><div class="contact-type">Sitio Web</div><div class="contact-value" title="${d.contacto.sitioWeb}" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${cleanUrl}</div></div></a>`;
     }
 
     // Check for social media
     if (d.contacto?.redesSociales) {
-        if (d.contacto.redesSociales.facebook) cHTML += `<a href="${d.contacto.redesSociales.facebook}" target="_blank" class="contact-btn web" style="background-color:#1877F2; color:white;"><i class="fab fa-facebook"></i><div><div class="contact-type">Facebook</div><div class="contact-value">Ver Perfil</div></div></a>`;
-        if (d.contacto.redesSociales.instagram) cHTML += `<a href="${d.contacto.redesSociales.instagram}" target="_blank" class="contact-btn web" style="background-color:#E4405F; color:white;"><i class="fab fa-instagram"></i><div><div class="contact-type">Instagram</div><div class="contact-value">Ver Perfil</div></div></a>`;
-        if (d.contacto.redesSociales.twitter) cHTML += `<a href="${d.contacto.redesSociales.twitter}" target="_blank" class="contact-btn web" style="background-color:#1DA1F2; color:white;"><i class="fab fa-twitter"></i><div><div class="contact-type">X / Twitter</div><div class="contact-value">Ver Perfil</div></div></a>`;
-        if (d.contacto.redesSociales.tiktok) cHTML += `<a href="${d.contacto.redesSociales.tiktok}" target="_blank" class="contact-btn web" style="background-color:#000000; color:white;"><i class="fab fa-tiktok"></i><div><div class="contact-type">TikTok</div><div class="contact-value">Ver Perfil</div></div></a>`;
+        if (d.contacto.redesSociales.facebook) cHTML += `<a href="${d.contacto.redesSociales.facebook}" target="_blank" class="contact-btn red-facebook"><i class="fab fa-facebook"></i><div><div class="contact-type">Facebook</div><div class="contact-value">Ver Perfil</div></div></a>`;
+        if (d.contacto.redesSociales.instagram) cHTML += `<a href="${d.contacto.redesSociales.instagram}" target="_blank" class="contact-btn red-instagram"><i class="fab fa-instagram"></i><div><div class="contact-type">Instagram</div><div class="contact-value">Ver Perfil</div></div></a>`;
+        if (d.contacto.redesSociales.twitter) cHTML += `<a href="${d.contacto.redesSociales.twitter}" target="_blank" class="contact-btn red-twitter"><i class="fab fa-twitter"></i><div><div class="contact-type">X / Twitter</div><div class="contact-value">Ver Perfil</div></div></a>`;
+        if (d.contacto.redesSociales.tiktok) cHTML += `<a href="${d.contacto.redesSociales.tiktok}" target="_blank" class="contact-btn red-tiktok"><i class="fab fa-tiktok"></i><div><div class="contact-type">TikTok</div><div class="contact-value">Ver Perfil</div></div></a>`;
     }
 
     if (!cHTML) cHTML = '<p style="color:#888;text-align:center;padding:1rem">Contacto no disponible</p>';
@@ -1043,21 +1043,23 @@ async function loadExperiencias() {
                 imgUrl = tour.imagenes[0].url || tour.imagenes[0];
             }
 
-            const hasImage = imgUrl && imgUrl.startsWith('http') && !imgUrl.includes('default');
-            const delay = index * 100;
+            const hasImage = imgUrl && /^(https?:)?\//.test(imgUrl) && !imgUrl.includes('default');
+            const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+            const textoCategoria = String(categoria).replace(/[-_]/g, ' ');
+            const enlace = tour._id ? `/experiencia.html?id=${encodeURIComponent(tour._id)}` : '/experiencias.html';
 
             return `
-                <a href="/experiencias.html" class="experiencia-card ${hasImage ? 'has-image' : ''}" data-aos="fade-up" data-aos-delay="${delay}">
-                    ${hasImage ? `<img src="${imgUrl}" alt="${nombre}" class="experiencia-bg">` : ''}
-                    <div class="experiencia-overlay"></div>
-                    <div class="experiencia-content">
-                        <span class="experiencia-badge">
-                            <i class="fas fa-tag"></i> ${categoria}
-                        </span>
-                        <div class="experiencia-icon">
-                            <i class="${iconClass}"></i>
-                        </div>
-                        <h4 class="experiencia-nombre">${nombre}</h4>
+                <a href="${enlace}" class="interes-card">
+                    <div class="interes-foto">
+                        ${hasImage
+                            ? `<img src="${esc(imgUrl)}" alt="${esc(nombre)}" loading="lazy" onerror="this.remove()">`
+                            : ''}
+                        <i class="${iconClass}" aria-hidden="true"></i>
+                    </div>
+                    <div class="interes-texto">
+                        <span class="interes-categoria"><i class="${iconClass}"></i> ${esc(textoCategoria)}</span>
+                        <h4 class="interes-nombre">${esc(nombre)}</h4>
+                        <span class="interes-ver">Ver experiencia <i class="fas fa-arrow-right"></i></span>
                     </div>
                 </a>
             `;

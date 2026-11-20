@@ -95,7 +95,7 @@ body[data-pagina="tourOperadora"] { --portada: url('/images/CUEVA%20DEL%20AGUA%2
 }
 
 /* ---------- Botones ---------- */
-.btn-search, .view-details-btn, .contact-btn, .cta-button, .retry-btn, .gastronomy-button,
+.btn-search, .view-details-btn, .cta-button, .retry-btn, .gastronomy-button,
 .filter-btn.active, .btn-primary {
     background: var(--sitio-azul) !important;
     background-image: none !important;
@@ -105,7 +105,7 @@ body[data-pagina="tourOperadora"] { --portada: url('/images/CUEVA%20DEL%20AGUA%2
     box-shadow: none !important;
     font-weight: 600;
 }
-.btn-search:hover, .view-details-btn:hover, .contact-btn:hover, .cta-button:hover,
+.btn-search:hover, .view-details-btn:hover, .cta-button:hover,
 .retry-btn:hover, .gastronomy-button:hover, .btn-primary:hover {
     background: var(--sitio-azul-oscuro) !important;
     transform: none;
@@ -203,3 +203,94 @@ footer.footer { margin-top: 4rem; }
 .resena-respuesta { margin-top: .75rem; background: #f9fafb; border-left: 3px solid #2563eb; border-radius: 0 8px 8px 0; padding: .65rem .9rem; }
 .resena-respuesta b { display: block; font-size: .8rem; color: #1e40af; margin-bottom: .2rem; }
 .resena-respuesta p { margin: 0; color: #374151; font-size: .92rem; line-height: 1.5; white-space: pre-line; overflow-wrap: anywhere; }
+
+/* ---------- Íconos y etiquetas sin relleno (solo con fondo sobre fotos) ---------- */
+/* Sobre la foto sí hace falta fondo para leer: oscuro translúcido y discreto */
+.cabana-image .price-badge, .hotel-image .price-badge, .airbnb-image .price-badge {
+    top: 12px !important; right: 12px !important; left: auto !important; bottom: auto !important;
+    background: rgba(17, 24, 39, .72) !important; color: #fff !important;
+    padding: .35rem .7rem !important; border-radius: 8px !important; font-size: .85rem !important;
+    font-weight: 600 !important; box-shadow: none !important; backdrop-filter: blur(4px);
+}
+.cabana-image .capacity-badge, .hotel-image .capacity-badge, .airbnb-image .capacity-badge {
+    top: auto !important; bottom: 12px !important; right: 12px !important; left: auto !important;
+    background: rgba(17, 24, 39, .72) !important; color: #fff !important;
+    padding: .3rem .65rem !important; border-radius: 8px !important; font-size: .8rem !important;
+    font-weight: 500 !important; gap: .35rem; box-shadow: none !important; backdrop-filter: blur(4px);
+}
+.cabana-image .type-badge, .hotel-image .type-badge, .airbnb-image .type-badge {
+    top: 12px !important; left: 12px !important; bottom: auto !important; right: auto !important;
+    background: #fff !important; color: #111827 !important;
+    padding: .3rem .65rem !important; border-radius: 8px !important; font-size: .8rem !important;
+    font-weight: 600 !important; box-shadow: 0 1px 3px rgba(0,0,0,.15) !important;
+}
+.cabana-image .type-badge i, .hotel-image .type-badge i, .airbnb-image .type-badge i { color: var(--sitio-azul); margin-right: .2rem; }
+
+/* Servicios de la tarjeta: texto simple con separador, sin píldoras */
+.cabana-features .feature-tag, .hotel-features .feature-tag, .airbnb-features .feature-tag {
+    background: none !important; color: var(--sitio-texto, #4b5563) !important; padding: 0 !important;
+    border-radius: 0 !important; font-size: .85rem !important; font-weight: 400 !important;
+}
+.cabana-features .feature-tag + .feature-tag::before, .hotel-features .feature-tag + .feature-tag::before,
+.airbnb-features .feature-tag + .feature-tag::before { content: '·'; margin: 0 .45rem; color: #9ca3af; }
+.cabana-features .more-features, .hotel-features .more-features, .airbnb-features .more-features {
+    background: none !important; color: #6b7280 !important; padding: 0 0 0 .45rem !important; font-size: .85rem !important;
+}
+
+/* Llamar / correo en las tarjetas: solo el ícono */
+.contact-info .contact-btn {
+    background: none !important; color: #6b7280 !important; border: 1px solid #e5e7eb !important;
+    width: 38px !important; height: 38px !important; border-radius: 50% !important; padding: 0 !important;
+    display: inline-flex !important; align-items: center; justify-content: center; box-shadow: none !important;
+    font-size: .95rem !important; transform: none !important;
+}
+.contact-info .contact-btn:hover { color: var(--sitio-azul) !important; border-color: var(--sitio-azul) !important; background: none !important; }
+
+/* Contacto en la ficha: filas limpias, ícono de color y texto oscuro */
+#topContactContainer { display: flex; flex-direction: column; gap: 0 !important; }
+#topContactContainer .contact-btn {
+    background: none !important; color: #111827 !important; border: none !important;
+    border-bottom: 1px solid #f3f4f6 !important; border-radius: 0 !important; box-shadow: none !important;
+    padding: .85rem .25rem !important; margin: 0 !important; display: flex !important; align-items: center;
+    gap: .85rem; text-decoration: none; transform: none !important; min-height: 0 !important;
+}
+#topContactContainer .contact-btn:last-child { border-bottom: none !important; }
+#topContactContainer .contact-btn:hover { background: #f9fafb !important; }
+#topContactContainer .contact-btn > i {
+    width: 22px; text-align: center; font-size: 1.1rem !important; margin: 0 !important;
+    background: none !important; color: var(--sitio-azul) !important; flex-shrink: 0;
+}
+#topContactContainer .contact-btn.red-facebook > i { color: #1877f2 !important; }
+#topContactContainer .contact-btn.red-instagram > i { color: #e4405f !important; }
+#topContactContainer .contact-btn.red-twitter > i { color: #111827 !important; }
+#topContactContainer .contact-btn.red-tiktok > i { color: #111827 !important; }
+#topContactContainer .contact-btn > div { min-width: 0; }
+#topContactContainer .contact-type {
+    color: #6b7280 !important; font-size: .78rem !important; font-weight: 500 !important;
+    text-transform: none !important; letter-spacing: 0 !important; opacity: 1 !important;
+}
+#topContactContainer .contact-value {
+    color: #111827 !important; font-size: .95rem !important; font-weight: 500 !important;
+    overflow-wrap: anywhere; opacity: 1 !important;
+}
+
+/* Te podría interesar: tarjetas simples con foto */
+#experienciasContainer { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
+.interes-card { display: flex; flex-direction: column; background: #fff; border: 1px solid #f3f4f6; border-radius: 12px; overflow: hidden; text-decoration: none; color: #111827; transition: transform .15s, box-shadow .15s; }
+.interes-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15,23,42,.08); }
+.interes-foto { position: relative; height: 130px; background: #f3f4f6; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 1.8rem; overflow: hidden; }
+.interes-foto img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.interes-texto { padding: .85rem 1rem 1rem; display: flex; flex-direction: column; gap: .3rem; }
+.interes-categoria { color: #6b7280; font-size: .8rem; text-transform: capitalize; }
+.interes-categoria i { color: var(--sitio-azul); margin-right: .2rem; }
+.interes-nombre { margin: 0; font-size: 1rem; font-weight: 600; line-height: 1.35; color: #111827; }
+.interes-ver { color: var(--sitio-azul); font-size: .85rem; font-weight: 500; margin-top: .2rem; }
+.interes-ver i { font-size: .75rem; margin-left: .2rem; }
+.cabana-footer, .hotel-footer, .airbnb-footer { gap: .5rem; }
+.cabana-footer .view-details-btn, .hotel-footer .view-details-btn, .airbnb-footer .view-details-btn { white-space: nowrap; padding: .6rem 1rem !important; font-size: .9rem; }
+.cabana-footer .contact-info, .hotel-footer .contact-info, .airbnb-footer .contact-info { display: flex; gap: .4rem; }
+
+/* Ficha: «Sobre el establecimiento» y «Contacto» una debajo de la otra en pantallas chicas */
+@media (max-width: 760px) {
+    .top-cards-grid { grid-template-columns: 1fr !important; padding: 0 1rem !important; gap: 1rem !important; }
+}

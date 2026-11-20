@@ -230,10 +230,10 @@ function createCard(item) {
     }
 
     // Config de ícono por tipo
-    let typeIcon = 'fa-bed';
+    let typeIcon = 'fas fa-bed';
     let typeName = formatTipoPropiedad(item.tipo);
-    if (item.tipo === 'hotel') typeIcon = 'fa-hotel';
-    else if (item.tipo === 'cabana') { typeIcon = 'fa-tree'; typeName = "Cabaña"; }
+    if (item.tipo === 'hotel') typeIcon = 'fas fa-hotel';
+    else if (item.tipo === 'cabana') { typeIcon = 'fas fa-tree'; typeName = "Cabaña"; }
     else if (item.tipo === 'airbnb') typeIcon = 'fab fa-airbnb';
 
     return `
@@ -288,7 +288,7 @@ function createCard(item) {
                             <i class="fas fa-eye"></i>
                             Ver detalles
                         </a>
-                        <button class="view-details-btn" onclick="event.stopPropagation(); openQuickView('${item.tipo}', '${item._id}')" style="padding:10px 12px;border-radius:50%;background:#f0f0f0;color:#555;box-shadow:none;min-width:auto;">
+                        <button class="view-details-btn" onclick="event.stopPropagation(); openQuickView('${item.tipo}', '${item._id}')" title="Vista rápida" aria-label="Vista rápida">
                             <i class="fas fa-info-circle" style="margin:0;"></i>
                         </button>
                     </div>
