@@ -42,13 +42,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             lng: e.coords.longitude,
             lat: e.coords.latitude
         };
-        // Re-renderizar para actualizar distancias manteniendo el filtro actual
-        const activeFilterBtn = document.querySelector('.filter-btn.active');
-        if (activeFilterBtn) {
-            activeFilterBtn.click(); // Forzar re-render con el filtro actual
-        } else {
-            renderMapAndList(getAllItems());
-        }
+        // Ordenar la lista por cercanía
+        estado.cerca = true;
+        btnCerca.classList.remove('buscando');
+        btnCerca.classList.add('activo');
+        if (entradas.length) aplicar(false);
     });
 
     // Calcular distancia Haversine (en km)
@@ -180,7 +178,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Obtener URL de detalle según el tipo
     function getDetailUrl(item) {
         if (item._itemType === 'agencia') return `/agencia.html?id=${item._id}`;
-        if (item._itemType === 'hospedaje') return null; // No hay página de detalle aún
+        if (item._itemType === 'hospedaje') return `/hospedaje/hospedaje-detalle.html?tipo=${item._tipoHospedaje || 'hotel'}&id=${item._id}`;
         return `/restaurante.html?id=${item.id || item._id}`;
     }
 
@@ -198,13 +196,289 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Cargar todo y renderizar
+    const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const TXT = {
+        es: { lugares: n => `${n} ${n === 1 ? 'lugar' : 'lugares'} en el mapa`, cerca: 'Cerca de ti', todos: 'Todos los lugares', nuevo: 'Nuevo', detalles: 'Ver detalles', llegar: 'Cómo llegar', vacio: 'No encontramos lugares con esa búsqueda.', limpiar: 'Quitar filtros', buscar: 'Buscar un lugar', error: 'No pudimos cargar los lugares.', sinUbic: 'Activa tu ubicación para ver lo más cercano.',
+              tipos: { restaurante: 'Restaurante', cafeteria: 'Cafetería', bar: 'Bar', 'comida-rapida': 'Comida rápida', panaderia: 'Panadería', 'obrador-artesanal': 'Obrador', agencia: 'Agencia', hotel: 'Hotel', cabana: 'Cabaña', airbnb: 'Airbnb' } },
+        en: { lugares: n => `${n} ${n === 1 ? 'place' : 'places'} on the map`, cerca: 'Near you', todos: 'All places', nuevo: 'New', detalles: 'View details', llegar: 'Directions', vacio: 'No places match your search.', limpiar: 'Clear filters', buscar: 'Search a place', error: 'We could not load the places.', sinUbic: 'Turn on your location to see what is nearby.',
+              tipos: { restaurante: 'Restaurant', cafeteria: 'Café', bar: 'Bar', 'comida-rapida': 'Fast food', panaderia: 'Bakery', 'obrador-artesanal': 'Artisan', agencia: 'Agency', hotel: 'Hotel', cabana: 'Cabin', airbnb: 'Airbnb' } },
+        fr: { lugares: n => `${n} ${n === 1 ? 'lieu' : 'lieux'} sur la carte`, cerca: 'Près de vous', todos: 'Tous les lieux', nuevo: 'Nouveau', detalles: 'Voir les détails', llegar: 'Itinéraire', vacio: 'Aucun lieu ne correspond.', limpiar: 'Effacer les filtres', buscar: 'Chercher un lieu', error: 'Impossible de charger les lieux.', sinUbic: 'Activez votre position pour voir les lieux proches.',
+              tipos: { restaurante: 'Restaurant', cafeteria: 'Café', bar: 'Bar', 'comida-rapida': 'Restauration rapide', panaderia: 'Boulangerie', 'obrador-artesanal': 'Artisan', agencia: 'Agence', hotel: 'Hôtel', cabana: 'Cabane', airbnb: 'Airbnb' } }
+    };
+    const t = () => TXT[(document.documentElement.lang || 'es').slice(0, 2)] || TXT.es;
+    const sinAcentos = v => String(v || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+    const esMovil = () => window.innerWidth <= 768;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const panel = document.getElementById('map-panel');
+    const lista = document.getElementById('sidebar-list');
+    const inputQ = document.getElementById('mp-q');
+    const btnLimpiar = document.getElementById('mp-limpiar');
+    const btnCerca = document.getElementById('mp-cerca');
+    const btnVolver = document.getElementById('mp-volver');
+    const totalEl = document.getElementById('mp-total');
+
+    const estado = { cat: 'all', q: '', cerca: false };
+    let entradas = [];          // { item, style, lng, lat, cat, texto, marker, el, li }
+    let seleccion = null;       // entrada abierta
+    let popupActual = null;
+    let vistaPrevia = null;     // vista antes de hacer zoom
+    let cambiando = false;      // se cambia de un lugar a otro sin volver
+
+    function categoria(item) {
+        if (item._itemType === 'agencia') return 'agencia';
+        if (item._itemType === 'hospedaje') return item._tipoHospedaje || 'hotel';
+        return (item.tipo || 'otro').toLowerCase();
+    }
+
+    function urlComoLlegar(e) {
+        return `https://www.google.com/maps/dir/?api=1&destination=${e.lat},${e.lng}`;
+    }
+
+    // Altura de la barra de navegación inferior (solo celular)
+    function ajustarNav() {
+        const nav = document.getElementById('nav-menu');
+        const fija = nav && getComputedStyle(nav).position === 'fixed' && nav.getBoundingClientRect().top > innerHeight / 2;
+        panel.style.setProperty('--mp-nav', fija ? nav.offsetHeight + 'px' : '0px');
+    }
+
+    function vistaActual() {
+        return { center: map.getCenter(), zoom: map.getZoom(), pitch: map.getPitch(), bearing: map.getBearing() };
+    }
+
+    // Desplazamiento para que el lugar quede visible junto al panel y con espacio para la ficha
+    function desfase() {
+        if (esMovil()) {
+            // El panel se reduce a 150px: el lugar queda justo encima y su ficha arriba de él
+            const caja = map.getContainer().getBoundingClientRect();
+            const nav = parseFloat(panel.style.getPropertyValue('--mp-nav')) || 0;
+            const yPin = innerHeight - nav - 150 - 24;
+            return [0, Math.round(yPin - (caja.top + caja.height / 2))];
+        }
+        return [Math.round((panel.offsetWidth + 16) / 2), 110];
+    }
+
+    function popupHTML(e) {
+        const { item, style } = e;
+        const rating = getRating(item);
+        const address = getAddress(item);
+        const detailUrl = getDetailUrl(item);
+        const img = getImage(item);
+        const esLogo = item._itemType === 'agencia' || img === '/images/PueblosMágicos.svg.png';
+        const tipo = t().tipos[e.cat] || style.label || '';
+        return `
+            <div class="popup-header">
+                <img src="${esc(img)}" alt="" onerror="this.onerror=null;this.src='/images/PueblosMágicos.svg.png';this.style.objectFit='contain';this.style.padding='1.2rem';"
+                     style="${esLogo ? 'object-fit:contain;background:#fff;padding:1.2rem;' : ''}">
+                <span class="popup-badge" style="background:${style.color}">${esc(tipo)}</span>
+            </div>
+            <div class="popup-body">
+                <h3 class="popup-title">${esc(item.nombre)}</h3>
+                ${rating.score > 0
+                    ? `<div class="popup-rating"><i class="fas fa-star"></i><b>${rating.score.toFixed(1)}</b>${rating.count ? `<span>(${rating.count})</span>` : ''}</div>`
+                    : `<div class="popup-rating"><span style="color:#059669;font-weight:600">${t().nuevo}</span></div>`}
+                ${address ? `<div class="popup-address"><i class="fas fa-map-marker-alt" style="color:${style.color}"></i><span>${esc(address)}</span></div>` : ''}
+                <div class="popup-acciones">
+                    ${detailUrl ? `<a href="${esc(detailUrl)}" class="popup-btn" style="background:${style.color}">${t().detalles} <i class="fas fa-arrow-right"></i></a>` : ''}
+                    <a href="${urlComoLlegar(e)}" target="_blank" rel="noopener" class="popup-btn sec" title="${t().llegar}" aria-label="${t().llegar}"><i class="fas fa-directions"></i></a>
+                </div>
+            </div>`;
+    }
+
+    function registrarClic(e) {
+        if (e.item._itemType === 'restaurant') {
+            const restId = e.item.id || e.item._id;
+            fetch(`${API_BASE}/restaurants/${restId}/click-map`, { method: 'POST' }).catch(() => {});
+        }
+    }
+
+    function marcarActivo(e) {
+        entradas.forEach(x => {
+            x.el.classList.toggle('activo', x === e);
+            if (x.li) x.li.classList.toggle('activo', x === e);
+        });
+    }
+
+    // Abrir un lugar: zoom suave hacia él y su ficha
+    function seleccionar(e) {
+        if (seleccion === e) return;
+        registrarClic(e);
+        if (!seleccion) vistaPrevia = vistaActual();
+        if (popupActual) { cambiando = true; popupActual.remove(); cambiando = false; }
+        seleccion = e;
+        marcarActivo(e);
+        if (esMovil()) { panel.classList.remove('abierto'); panel.classList.add('mini'); }
+
+        map.flyTo({ center: [e.lng, e.lat], zoom: Math.max(map.getZoom(), 16.5), pitch: 50, offset: desfase(), speed: 1.1, curve: 1.4, essential: true, duration: reduceMotion ? 0 : undefined });
+
+        popupActual = new mapboxgl.Popup({ anchor: 'bottom', offset: 26, closeButton: true, closeOnClick: true, maxWidth: 'none', focusAfterOpen: false })
+            .setLngLat([e.lng, e.lat])
+            .setHTML(popupHTML(e))
+            .addTo(map);
+        popupActual.on('close', () => {
+            popupActual = null;
+            if (cambiando) return;
+            deseleccionar();
+        });
+        btnVolver.classList.add('visible');
+        if (e.li) e.li.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
+    }
+
+    // Cerrar la ficha: regresar a la vista que se tenía antes
+    function deseleccionar() {
+        if (popupActual) { const p = popupActual; popupActual = null; cambiando = true; p.remove(); cambiando = false; }
+        seleccion = null;
+        marcarActivo(null);
+        btnVolver.classList.remove('visible');
+        panel.classList.remove('mini');
+        if (vistaPrevia) {
+            map.flyTo({ ...vistaPrevia, speed: 1.2, curve: 1.4, essential: true, duration: reduceMotion ? 0 : undefined });
+            vistaPrevia = null;
+        }
+    }
+    btnVolver.addEventListener('click', deseleccionar);
+    document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && seleccion) deseleccionar(); });
+
+    // Crear los pines una sola vez
+    function construir() {
+        entradas = getAllItems().map(item => {
+            const c = getCoords(item);
+            const lat = Number(c.lat), lng = Number(c.lng);
+            if (!lat || !lng) return null;
+            const style = getItemStyle(item);
+            const e = { item, style, lat, lng, cat: categoria(item), texto: sinAcentos(item.nombre + ' ' + getAddress(item)) };
+
+            const el = document.createElement('div');
+            el.className = 'marker-wrapper';
+            el.innerHTML = `<div class="custom-marker" style="background:${style.color}"><i class="fas ${style.icon}"></i></div>`;
+            el.setAttribute('role', 'button');
+            el.setAttribute('aria-label', item.nombre || '');
+            el.addEventListener('click', ev => { ev.stopPropagation(); seleccionar(e); });
+            el.addEventListener('mouseenter', () => e.li && e.li.classList.add('resaltado'));
+            el.addEventListener('mouseleave', () => e.li && e.li.classList.remove('resaltado'));
+            e.el = el;
+            e.marker = new mapboxgl.Marker({ element: el }).setLngLat([lng, lat]);
+            return e;
+        }).filter(Boolean);
+    }
+
+    function itemLista(e, i) {
+        const { item, style } = e;
+        const rating = getRating(item);
+        const img = getImage(item);
+        const esLogo = item._itemType === 'agencia' || img === '/images/PueblosMágicos.svg.png';
+        const detailUrl = getDetailUrl(item);
+        let dist = '';
+        if (e.distance !== undefined && e.distance !== Infinity) {
+            dist = e.distance < 1 ? `${Math.round(e.distance * 1000)} m` : `${e.distance.toFixed(1)} km`;
+        }
+        const li = document.createElement('div');
+        li.className = 'list-item' + (seleccion === e ? ' activo' : '');
+        li.style.setProperty('--c', style.color);
+        li.style.setProperty('--i', Math.min(i, 12));
+        li.tabIndex = 0;
+        li.setAttribute('role', 'button');
+        li.innerHTML = `
+            <div class="mp-foto"><i class="fas ${style.icon}"></i>${esLogo ? '' : `<img alt="" loading="lazy" decoding="async" src="${esc(img)}">`}</div>
+            <div class="list-item-content">
+                <div class="list-item-title">${esc(item.nombre)}</div>
+                <div class="mp-meta">
+                    <span class="mp-tipo">${esc(t().tipos[e.cat] || style.label || '')}</span>
+                    ${rating.score > 0 ? `<span class="mp-est"><i class="fas fa-star"></i> ${rating.score.toFixed(1)}</span>` : `<span class="mp-nuevo">${t().nuevo}</span>`}
+                </div>
+                ${getAddress(item) ? `<div class="list-item-address">${esc(getAddress(item))}</div>` : ''}
+            </div>
+            ${dist ? `<span class="mp-dist">${dist}</span>` : ''}
+            ${detailUrl ? `<a class="mp-ir" href="${esc(detailUrl)}" title="${t().detalles}" aria-label="${t().detalles}: ${esc(item.nombre)}"><i class="fas fa-chevron-right"></i></a>` : ''}`;
+        const im = li.querySelector('img');
+        if (im) {
+            im.onload = () => im.classList.add('ok');
+            im.onerror = () => im.remove();
+        }
+        const ir = li.querySelector('.mp-ir');
+        if (ir) ir.addEventListener('click', ev => ev.stopPropagation());
+        li.addEventListener('click', () => seleccionar(e));
+        li.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); seleccionar(e); } });
+        li.addEventListener('mouseenter', () => e.el.classList.add('resaltado'));
+        li.addEventListener('mouseleave', () => e.el.classList.remove('resaltado'));
+        e.li = li;
+        return li;
+    }
+
+    function coincideBusqueda(e) {
+        if (!estado.q) return true;
+        return estado.q.split(/\s+/).every(p => e.texto.includes(p));
+    }
+
+    function aplicar(ajustar = false) {
+        const porBusqueda = entradas.filter(coincideBusqueda);
+        const visibles = estado.cat === 'all' ? porBusqueda : porBusqueda.filter(e => e.cat === estado.cat);
+
+        // Conteos por categoría (según la búsqueda) y ocultar las vacías
+        document.querySelectorAll('#map-filters .filter-btn').forEach(b => {
+            const f = b.dataset.filter;
+            const n = f === 'all' ? porBusqueda.length : porBusqueda.filter(e => e.cat === f).length;
+            b.querySelector('b').textContent = n;
+            b.classList.toggle('vacio', f !== 'all' && n === 0 && f !== estado.cat);
+        });
+
+        // Pines: mostrar solo los visibles
+        const set = new Set(visibles);
+        entradas.forEach(e => {
+            if (set.has(e)) { if (!e.enMapa) { e.marker.addTo(map); e.enMapa = true; } }
+            else if (e.enMapa) { e.marker.remove(); e.enMapa = false; }
+        });
+        if (seleccion && !set.has(seleccion)) deseleccionar();
+
+        // Distancias
+        visibles.forEach(e => {
+            e.distance = currentLocation ? calculateDistance(currentLocation.lat, currentLocation.lng, e.lat, e.lng) : Infinity;
+        });
+        const orden = estado.cerca && currentLocation ? [...visibles].sort((a, b) => a.distance - b.distance) : visibles;
+
+        totalEl.textContent = t().lugares(visibles.length);
+        lista.innerHTML = '';
+        entradas.forEach(e => { e.li = null; });
+        if (!orden.length) {
+            lista.innerHTML = `<div class="mp-vacio"><i class="fas fa-map-marker-alt"></i>${t().vacio}<br><button type="button" id="mp-reset">${t().limpiar}</button></div>`;
+            document.getElementById('mp-reset').addEventListener('click', limpiarTodo);
+            return;
+        }
+        const titulo = document.createElement('div');
+        titulo.className = 'mp-seccion';
+        titulo.textContent = estado.cerca && currentLocation ? t().cerca : t().todos;
+        lista.appendChild(titulo);
+        const frag = document.createDocumentFragment();
+        orden.forEach((e, i) => frag.appendChild(itemLista(e, i)));
+        lista.appendChild(frag);
+
+        if (ajustar) encuadrar(visibles);
+    }
+
+    function encuadrar(lista) {
+        if (!lista.length) return;
+        const bounds = new mapboxgl.LngLatBounds();
+        lista.forEach(e => bounds.extend([e.lng, e.lat]));
+        const movil = esMovil();
+        const abajo = movil ? panel.getBoundingClientRect().height + (parseFloat(panel.style.getPropertyValue('--mp-nav')) || 0) + 30 : 50;
+        map.fitBounds(bounds, { padding: { top: 60, bottom: abajo, left: movil ? 40 : panel.offsetWidth + 50, right: 60 }, maxZoom: 15, duration: reduceMotion ? 0 : 900 });
+    }
+
+    function limpiarTodo() {
+        estado.q = ''; inputQ.value = ''; btnLimpiar.hidden = true;
+        estado.cat = 'all';
+        document.querySelectorAll('#map-filters .filter-btn').forEach(b => b.classList.toggle('active', b.dataset.filter === 'all'));
+        aplicar(true);
+    }
+
     async function cargarTodo() {
         try {
             await Promise.all([cargarRestaurantes(), cargarAgencias(), cargarHospedajes()]);
-            renderMapAndList(getAllItems(), true);
+            construir();
+            aplicar(true);
         } catch (error) {
             console.error("Error cargando datos:", error);
-            document.getElementById('sidebar-list').innerHTML = '<p class="text-error">Error al cargar la lista.</p>';
+            lista.innerHTML = `<div class="mp-vacio"><i class="fas fa-exclamation-circle"></i>${t().error}</div>`;
         }
     }
 
@@ -212,224 +486,66 @@ document.addEventListener('DOMContentLoaded', async () => {
         return [...allRestaurants, ...allAgencias, ...allHospedajes];
     }
 
-    // Dibujar marcadores y la lista
-    function renderMapAndList(items, fitBoundsEnabled = false) {
-        // Limpiar marcadores antiguos
-        markers.forEach(m => m.remove());
-        markers = [];
-        const sidebarList = document.getElementById('sidebar-list');
-        sidebarList.innerHTML = '';
-
-        if (items.length === 0) {
-            sidebarList.innerHTML = '<p style="color: var(--gray-500); font-size: 0.9rem;">No se encontraron resultados para esta categoría.</p>';
-            return;
-        }
-
-        const boundsCoords = [];
-        const fallbackImg = '/images/PueblosMágicos.svg.png';
-
-        // Mapear items con su distancia si hay ubicación
-        let processedItems = items.map(item => {
-            const coords = getCoords(item);
-            let distance = Infinity;
-            if (currentLocation && coords.lat && coords.lng) {
-                distance = calculateDistance(currentLocation.lat, currentLocation.lng, coords.lat, coords.lng);
-            }
-            return { ...item, coords, distance };
-        });
-
-        // Ordenar por distancia (del más cercano al más lejano)
-        if (currentLocation) {
-            processedItems.sort((a, b) => a.distance - b.distance);
-        }
-
-        processedItems.forEach(item => {
-            const { lat, lng } = item.coords;
-            if (!lat || !lng) return;
-
-            const style = getItemStyle(item);
-            const rating = getRating(item);
-            const address = getAddress(item);
-            const imgUrl = getImage(item);
-            const detailUrl = getDetailUrl(item);
-
-            let distanceText = '';
-            if (item.distance !== Infinity) {
-                if (item.distance < 1) {
-                    distanceText = `<span style="color:var(--primary); font-weight:600; font-size: 0.75rem;"><i class="fas fa-location-arrow"></i> a ${Math.round(item.distance * 1000)}m de ti</span>`;
-                } else {
-                    distanceText = `<span style="color:var(--primary); font-weight:600; font-size: 0.75rem;"><i class="fas fa-location-arrow"></i> a ${item.distance.toFixed(1)}km de ti</span>`;
-                }
-            }
-
-            // Crear popup HTML
-            let ratingHtml = '';
-            if (rating.score > 0) {
-                ratingHtml = `
-                    <div style="display:flex; align-items:center; gap:0.3rem; margin-bottom:0.5rem;">
-                        <span style="color:#f59e0b; font-size:0.85rem;">${'★'.repeat(Math.round(rating.score))}${'☆'.repeat(5 - Math.round(rating.score))}</span>
-                        <span style="font-size:0.8rem; color:#6b7280; font-weight:600;">${rating.score.toFixed(1)}</span>
-                        ${rating.count ? `<span style="font-size:0.75rem; color:#9ca3af;">(${rating.count})</span>` : ''}
-                    </div>
-                `;
-            }
-
-            const detailBtnHtml = detailUrl
-                ? `<a href="${detailUrl}" class="popup-btn" style="background-color: ${style.color}; border-color: ${style.color};">Ver Detalles</a>`
-                : '';
-
-            const popupHTML = `
-                <div class="popup-header">
-                    <img src="${imgUrl}" alt="${item.nombre}" onerror="this.onerror=null;this.src='${fallbackImg}';"
-                         style="${item._itemType === 'agencia' ? 'object-fit: contain; background: white; padding: 1rem;' : ''}">
-                    <span class="popup-badge" style="background-color: ${style.color};">${style.label}</span>
-                </div>
-                <div class="popup-body">
-                    <h3 class="popup-title">${item.nombre}</h3>
-                    ${ratingHtml}
-                    ${address ? `
-                        <div class="popup-address">
-                            <i class="fas fa-map-marker-alt" style="color: ${style.color};"></i>
-                            <span>${address}</span>
-                        </div>
-                    ` : ''}
-                    ${detailBtnHtml}
-                </div>
-            `;
-
-            const popup = new mapboxgl.Popup({ offset: 25, closeButton: true })
-                .setHTML(popupHTML);
-
-            // Crear pin de marcador
-            const el = document.createElement('div');
-            el.className = 'marker-wrapper';
-
-            const pin = document.createElement('div');
-            pin.className = 'custom-marker';
-            pin.style.backgroundColor = style.color;
-            pin.style.width = '30px';
-            pin.style.height = '30px';
-            pin.style.borderRadius = '50% 50% 50% 0';
-            pin.style.transform = 'rotate(-45deg)';
-            pin.style.display = 'flex';
-            pin.style.alignItems = 'center';
-            pin.style.justifyContent = 'center';
-            pin.style.boxShadow = '0 3px 6px rgba(0,0,0,0.3)';
-            pin.style.cursor = 'pointer';
-            pin.style.border = '2px solid white';
-            
-            const i = document.createElement('i');
-            i.className = `fas ${style.icon}`;
-            i.style.color = 'white';
-            i.style.transform = 'rotate(45deg)';
-            i.style.fontSize = '12px';
-            
-            pin.appendChild(i);
-            el.appendChild(pin);
-
-            // Track click (solo restaurantes)
-            const trackClick = () => {
-                if (item._itemType === 'restaurant') {
-                    const restId = item.id || item._id;
-                    fetch(`${API_BASE}/restaurants/${restId}/click-map`, { method: 'POST' })
-                        .catch(err => console.error('Error registrando clic en mapa:', err));
-                }
-            };
-
-            el.addEventListener('click', trackClick);
-            const marker = new mapboxgl.Marker(el)
-                .setLngLat([lng, lat])
-                .setPopup(popup)
-                .addTo(map);
-            
-            markers.push(marker);
-            boundsCoords.push([lng, lat]);
-
-            // Lista del sidebar
-            const ratingHtmlSidebar = rating.score > 0 ? `
-                <div style="display:flex; align-items:center; gap:0.2rem; color:#f59e0b; font-size:0.8rem; margin-top:2px;">
-                    <i class="fas fa-star"></i>
-                    <span style="color:#374151; font-weight:600;">${rating.score.toFixed(1)}</span>
-                    ${rating.count ? `<span style="color:#6b7280; font-weight:normal; font-size:0.75rem;">(${rating.count})</span>` : ''}
-                </div>
-            ` : `
-                <div style="font-size:0.75rem; color:#9ca3af; margin-top:2px;">Nuevo</div>
-            `;
-
-            const listItem = document.createElement('div');
-            listItem.className = 'list-item';
-            listItem.innerHTML = `
-                <div class="list-item-icon ${style.tipoLower}" style="background-color: ${style.color};">
-                    <i class="fas ${style.icon}"></i>
-                </div>
-                <div class="list-item-content">
-                    <div class="list-item-title">${item.nombre}</div>
-                    ${ratingHtmlSidebar}
-                    <div class="list-item-address" style="margin-top:4px;">
-                        ${address}
-                        ${distanceText ? `<br>${distanceText}` : ''}
-                    </div>
-                </div>
-            `;
-            
-            listItem.addEventListener('click', () => {
-                trackClick();
-                map.flyTo({
-                    center: [lng, lat],
-                    zoom: 16,
-                    essential: true
-                });
-                const popUps = document.getElementsByClassName('mapboxgl-popup');
-                if (popUps[0]) popUps[0].remove();
-                marker.togglePopup();
-            });
-
-            sidebarList.appendChild(listItem);
-        });
-
-        // Ajustar bounds
-        if (fitBoundsEnabled && boundsCoords.length > 0) {
-            const bounds = new mapboxgl.LngLatBounds();
-            boundsCoords.forEach(c => bounds.extend(c));
-            const isMobile = window.innerWidth <= 768;
-            map.fitBounds(bounds, {
-                padding: {
-                    top: 50, 
-                    bottom: isMobile ? 300 : 50, 
-                    left: isMobile ? 50 : 350, 
-                    right: 50
-                }, 
-                maxZoom: 15
-            });
-        }
-    }
-
-    // Filtros
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            e.target.classList.add('active');
-            
-            const category = e.target.dataset.filter;
-            if (category === 'all') {
-                renderMapAndList(getAllItems());
-            } else if (category === 'agencia') {
-                renderMapAndList(allAgencias);
-            } else if (category === 'hotel') {
-                renderMapAndList(allHospedajes.filter(h => h._tipoHospedaje === 'hotel'));
-            } else if (category === 'cabana') {
-                renderMapAndList(allHospedajes.filter(h => h._tipoHospedaje === 'cabana'));
-            } else if (category === 'airbnb') {
-                renderMapAndList(allHospedajes.filter(h => h._tipoHospedaje === 'airbnb'));
-            } else {
-                const filtered = allRestaurants.filter(r => r.tipo && r.tipo.toLowerCase() === category.toLowerCase());
-                renderMapAndList(filtered);
-            }
+    // Categorías
+    document.querySelectorAll('#map-filters .filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('#map-filters .filter-btn').forEach(b => b.classList.toggle('active', b === btn));
+            estado.cat = btn.dataset.filter;
+            btn.scrollIntoView({ inline: 'center', block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
+            if (seleccion) deseleccionar();
+            aplicar(true);
         });
     });
 
-    // Iniciar
-    map.on('load', () => {
-        cargarTodo();
+    // Búsqueda
+    let tBusca;
+    inputQ.addEventListener('input', () => {
+        btnLimpiar.hidden = !inputQ.value;
+        clearTimeout(tBusca);
+        tBusca = setTimeout(() => { estado.q = sinAcentos(inputQ.value.trim()); aplicar(false); }, 150);
     });
+    inputQ.addEventListener('keydown', ev => {
+        if (ev.key === 'Enter') {
+            ev.preventDefault();
+            const primero = entradas.find(e => e.li);
+            if (primero) seleccionar(primero);
+        }
+    });
+    inputQ.addEventListener('focus', () => { if (esMovil()) { panel.classList.remove('mini'); panel.classList.add('abierto'); } });
+    btnLimpiar.addEventListener('click', () => { inputQ.value = ''; btnLimpiar.hidden = true; estado.q = ''; aplicar(false); inputQ.focus(); });
+
+    // Cerca de mí
+    btnCerca.addEventListener('click', () => {
+        if (estado.cerca && currentLocation) {
+            estado.cerca = false; btnCerca.classList.remove('activo'); aplicar(false); return;
+        }
+        estado.cerca = true;
+        btnCerca.classList.add('buscando');
+        if (!geolocateControl.trigger()) btnCerca.classList.remove('buscando');
+    });
+    geolocateControl.on('error', () => {
+        estado.cerca = false;
+        btnCerca.classList.remove('buscando', 'activo');
+        btnCerca.title = t().sinUbic;
+    });
+
+    // Hoja inferior en celular
+    document.getElementById('mp-asa').addEventListener('click', () => {
+        const abierto = panel.classList.contains('abierto');
+        panel.classList.remove('mini');
+        panel.classList.toggle('abierto', !abierto);
+        document.getElementById('mp-asa').setAttribute('aria-expanded', String(!abierto));
+    });
+
+    document.addEventListener('languageChanged', () => {
+        inputQ.placeholder = t().buscar;
+        if (entradas.length) aplicar(false);
+    });
+    inputQ.placeholder = t().buscar;
+
+    ajustarNav();
+    window.addEventListener('resize', ajustarNav);
+
+    // Iniciar: los lugares se piden de inmediato, sin esperar a que se dibuje todo el mapa
+    cargarTodo();
 });

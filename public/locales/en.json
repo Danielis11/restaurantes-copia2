@@ -238,6 +238,8 @@
         "faq_4_a": "Customers can find your establishment through a search by name, type of food, location, or by using the filters available on the home page."
     },
     "mapa": {
+        "cerca_btn": "Near me",
+        "volver": "Show whole map",
         "titulo": "Explore Jalpan",
         "descripcion": "Discover the best flavors of the Sierra Gorda. Filter by type or explore the map.",
         "filtrar": "Filter by category",

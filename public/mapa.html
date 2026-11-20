@@ -74,280 +74,145 @@
             left: 0;
         }
 
-        /* Map overlays */
+        /* ===== Panel lateral ===== */
         .map-sidebar {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            z-index: 10;
-            width: 320px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(12px);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-lg);
-            border: 1px solid var(--gray-200);
-            padding: 1.5rem;
-            max-height: calc(100vh - 110px);
-            overflow-y: auto;
+            position: absolute; top: 16px; left: 16px; bottom: 16px; z-index: 10;
+            width: 340px; display: flex; flex-direction: column;
+            background: rgba(255,255,255,.97); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+            border-radius: 20px; border: 1px solid rgba(15,23,42,.06);
+            box-shadow: 0 12px 40px rgba(15,23,42,.14);
+            padding: 1.15rem 1.15rem 0; overflow: hidden;
+            animation: mpEntra .45s cubic-bezier(.2,.8,.2,1) both;
         }
+        @keyframes mpEntra { from { opacity: 0; transform: translateX(-14px); } }
+        .mp-asa { display: none; }
+        .mp-cab { display: flex; align-items: flex-start; justify-content: space-between; gap: .75rem; }
+        .map-sidebar h2 { font-size: 1.2rem; font-weight: 700; letter-spacing: -.02em; color: #111827; margin: 0; line-height: 1.2; }
+        .mp-total { font-size: .82rem; color: #6b7280; margin: .15rem 0 0; }
+        .mp-cerca { flex-shrink: 0; display: inline-flex; align-items: center; gap: .4rem; padding: .45rem .75rem; border: 0; border-radius: 99px; background: #eff6ff; color: #1d4ed8; font: inherit; font-size: .8rem; font-weight: 600; cursor: pointer; transition: background .2s, color .2s, transform .2s; }
+        .mp-cerca:hover { background: #dbeafe; }
+        .mp-cerca:active { transform: scale(.96); }
+        .mp-cerca.activo { background: #2563eb; color: #fff; }
+        .mp-cerca.buscando i { animation: mpPulso 1s ease-in-out infinite; }
+        @keyframes mpPulso { 50% { opacity: .3; } }
 
-        .map-sidebar h2 {
-            font-size: 1.25rem;
-            color: var(--gray-900);
-            margin-bottom: 0.5rem;
-        }
+        .mp-buscar { position: relative; display: flex; align-items: center; margin: .9rem 0 .7rem; }
+        .mp-buscar > i { position: absolute; left: .85rem; color: #9ca3af; font-size: .85rem; pointer-events: none; transition: color .2s; }
+        .mp-buscar input { width: 100%; padding: .65rem 2.2rem .65rem 2.3rem; border: 1px solid #e5e7eb; border-radius: 12px; background: #f9fafb; font: inherit; font-size: .9rem; color: #111827; transition: border-color .2s, background .2s, box-shadow .2s; }
+        .mp-buscar input::-webkit-search-cancel-button { display: none; }
+        .mp-buscar input:focus { outline: none; background: #fff; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
+        .mp-buscar:focus-within > i { color: #2563eb; }
+        .mp-limpiar { position: absolute; right: .45rem; width: 26px; height: 26px; border: 0; border-radius: 50%; background: #e5e7eb; color: #4b5563; font-size: .7rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .mp-limpiar[hidden] { display: none; }
 
-        .map-sidebar p {
-            color: var(--gray-600);
-            font-size: 0.9rem;
-            margin-bottom: 1.5rem;
-            line-height: 1.4;
-        }
+        .mp-chips { display: flex; gap: .4rem; overflow-x: auto; scrollbar-width: none; margin: 0 -1.15rem; padding: 0 1.15rem .85rem; border-bottom: 1px solid #f3f4f6; }
+        .mp-chips::-webkit-scrollbar { display: none; }
+        .filter-btn { flex: 0 0 auto; display: inline-flex; align-items: center; gap: .4rem; padding: .4rem .7rem; border-radius: 99px; border: 1px solid #e5e7eb; background: #fff; color: #374151; font: inherit; font-size: .82rem; font-weight: 500; cursor: pointer; transition: background .2s, color .2s, border-color .2s, transform .15s; }
+        .filter-btn:hover { border-color: #d1d5db; background: #f9fafb; }
+        .filter-btn:active { transform: scale(.95); }
+        .filter-btn i { width: 8px; height: 8px; border-radius: 50%; background: var(--c, #111827); transition: background .2s; }
+        .filter-btn b { font-weight: 600; font-size: .72rem; color: #9ca3af; transition: color .2s; }
+        .filter-btn.active { background: var(--c, #111827); border-color: var(--c, #111827); color: #fff; }
+        .filter-btn.active i { background: rgba(255,255,255,.85); }
+        .filter-btn.active b { color: rgba(255,255,255,.8); }
+        .filter-btn.vacio { display: none; }
 
-        .filter-group {
-            margin-bottom: 1.5rem;
-        }
+        .mp-lista { flex: 1; overflow-y: auto; margin: 0 -1.15rem; padding: .6rem .6rem 1rem; display: flex; flex-direction: column; gap: 2px; scrollbar-width: thin; }
+        .mp-seccion { font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: #9ca3af; padding: .35rem .55rem .25rem; }
+        .list-item { display: flex; align-items: center; gap: .75rem; padding: .55rem; border-radius: 14px; cursor: pointer; transition: background .2s; animation: mpItem .35s ease both; animation-delay: calc(var(--i, 0) * 30ms); position: relative; flex-shrink: 0; }
+        @keyframes mpItem { from { opacity: 0; transform: translateY(6px); } }
+        .list-item:hover, .list-item.resaltado { background: #f3f4f6; }
+        .list-item.activo { background: #eff6ff; }
+        .list-item.activo::before { content: ''; position: absolute; left: 0; top: 12px; bottom: 12px; width: 3px; border-radius: 3px; background: var(--c); }
+        .mp-foto { width: 52px; height: 52px; border-radius: 12px; flex-shrink: 0; position: relative; background: #f3f4f6; color: var(--c); display: flex; align-items: center; justify-content: center; font-size: 1.05rem; overflow: hidden; }
+        .mp-foto img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .3s, transform .3s; }
+        .mp-foto img.ok { opacity: 1; }
+        .mp-foto img.logo { object-fit: contain; background: #fff; padding: 4px; }
+        .list-item:hover .mp-foto img.ok:not(.logo) { transform: scale(1.06); }
+        .list-item-content { flex: 1; min-width: 0; }
+        .list-item-title { font-size: .93rem; font-weight: 600; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .mp-meta { display: flex; align-items: center; gap: .4rem; font-size: .76rem; color: #6b7280; margin-top: 1px; white-space: nowrap; overflow: hidden; }
+        .mp-meta .mp-tipo { color: var(--c); font-weight: 600; }
+        .mp-meta .mp-est { color: #374151; font-weight: 600; }
+        .mp-meta .mp-est i { color: #f59e0b; font-size: .7rem; }
+        .mp-meta .mp-nuevo { color: #059669; font-weight: 600; }
+        .list-item-address { font-size: .76rem; color: #9ca3af; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+        .mp-dist { flex-shrink: 0; align-self: flex-start; margin-top: .2rem; font-size: .72rem; font-weight: 600; color: #1d4ed8; background: #eff6ff; padding: .12rem .45rem; border-radius: 99px; }
+        .mp-ir { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: .75rem; text-decoration: none; transition: color .2s, background .2s, transform .2s; }
+        .mp-ir:hover { color: #fff; background: var(--c); }
+        .list-item:hover .mp-ir { color: #374151; }
+        .list-item:hover .mp-ir:hover { color: #fff; }
+        .mp-vacio { text-align: center; padding: 2rem 1rem; color: #6b7280; font-size: .9rem; }
+        .mp-vacio i { display: block; font-size: 1.5rem; color: #d1d5db; margin-bottom: .6rem; }
+        .mp-vacio button { margin-top: .75rem; border: 0; background: #f3f4f6; color: #111827; font: inherit; font-size: .85rem; font-weight: 600; padding: .45rem .9rem; border-radius: 99px; cursor: pointer; }
+        .mp-esq { height: 64px; flex-shrink: 0; border-radius: 14px; margin: 0 .1rem 6px; background: linear-gradient(90deg, #f3f4f6 25%, #f9fafb 50%, #f3f4f6 75%); background-size: 200% 100%; animation: mpBrillo 1.2s linear infinite; }
+        @keyframes mpBrillo { to { background-position: -200% 0; } }
 
-        .filter-title {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--gray-500);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 0.75rem;
-        }
+        /* Pines */
+        .marker-wrapper { cursor: pointer; }
+        .custom-marker { width: 30px; height: 30px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 6px rgba(0,0,0,.3); border: 2px solid #fff; transition: transform .2s cubic-bezier(.2,.8,.2,1), box-shadow .2s; }
+        .custom-marker i { color: #fff; transform: rotate(45deg); font-size: 12px; }
+        .marker-wrapper:hover .custom-marker, .marker-wrapper.resaltado .custom-marker { transform: rotate(-45deg) scale(1.25); box-shadow: 0 6px 14px rgba(0,0,0,.35); }
+        .marker-wrapper.resaltado, .marker-wrapper.activo { z-index: 5; }
+        .marker-wrapper.activo .custom-marker { transform: rotate(-45deg) scale(1.4); box-shadow: 0 8px 18px rgba(0,0,0,.35); animation: mpSalto .55s ease; }
+        @keyframes mpSalto { 0% { transform: rotate(-45deg) scale(1); } 45% { transform: rotate(-45deg) translate(8px,-8px) scale(1.4); } 100% { transform: rotate(-45deg) scale(1.4); } }
 
-        .filter-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
+        /* Popup del lugar */
+        .mapboxgl-popup { z-index: 6; }
+        .mapboxgl-popup-content { padding: 0; border-radius: 18px; overflow: hidden; box-shadow: 0 16px 40px rgba(15,23,42,.22); border: none; width: 270px; animation: mpPop .3s cubic-bezier(.2,.8,.2,1); }
+        @keyframes mpPop { from { opacity: 0; transform: translateY(8px) scale(.96); } }
+        .mapboxgl-popup-tip { display: none; }
+        .popup-header { height: 130px; width: 100%; background: #f3f4f6; position: relative; }
+        .popup-header img { width: 100%; height: 100%; object-fit: cover; }
+        .popup-badge { position: absolute; left: 10px; bottom: 10px; padding: 3px 10px; border-radius: 99px; font-size: .72rem; font-weight: 600; color: #fff; text-transform: capitalize; box-shadow: 0 2px 8px rgba(0,0,0,.2); }
+        .popup-body { padding: .9rem 1rem 1rem; }
+        .popup-title { font-size: 1.05rem; font-weight: 700; color: #111827; margin: 0 0 .2rem; line-height: 1.25; }
+        .popup-rating { display: flex; align-items: center; gap: .3rem; font-size: .8rem; color: #6b7280; margin-bottom: .4rem; }
+        .popup-rating i { color: #f59e0b; font-size: .75rem; }
+        .popup-rating b { color: #111827; }
+        .popup-address { font-size: .82rem; color: #6b7280; margin-bottom: .85rem; display: flex; align-items: flex-start; gap: .35rem; line-height: 1.35; }
+        .popup-address i { margin-top: 3px; }
+        .popup-acciones { display: flex; gap: .5rem; }
+        .popup-btn { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: .4rem; padding: .6rem .5rem; color: #fff; text-decoration: none; border-radius: 12px; font-size: .88rem; font-weight: 600; transition: filter .2s, transform .15s; }
+        .popup-btn:hover { filter: brightness(1.08); color: #fff; }
+        .popup-btn:active { transform: scale(.97); }
+        .popup-btn.sec { flex: 0 0 auto; width: 42px; background: #f3f4f6; color: #374151; }
+        .popup-btn.sec:hover { background: #e5e7eb; color: #111827; filter: none; }
+        .mapboxgl-popup-close-button { width: 28px; height: 28px; background: rgba(255,255,255,.92); color: #111827; border-radius: 50%; right: 8px; top: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; line-height: 1; box-shadow: 0 2px 8px rgba(0,0,0,.15); }
+        .mapboxgl-popup-close-button:hover { background: #fff; }
 
-        .filter-btn {
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            border: 1px solid var(--gray-200);
-            background: white;
-            color: var(--gray-700);
-            cursor: pointer;
-            transition: var(--transition);
-        }
+        /* Volver a la vista anterior */
+        .mp-volver { position: absolute; top: 16px; left: 50%; z-index: 11; transform: translate(-50%, -20px); opacity: 0; pointer-events: none; display: inline-flex; align-items: center; gap: .45rem; padding: .55rem 1rem; border: 0; border-radius: 99px; background: #111827; color: #fff; font: inherit; font-size: .85rem; font-weight: 600; box-shadow: 0 8px 24px rgba(15,23,42,.25); cursor: pointer; transition: opacity .25s, transform .3s cubic-bezier(.2,.8,.2,1); }
+        .mp-volver.visible { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+        .mp-volver:hover { background: #2563eb; }
 
-        .filter-btn:hover {
-            border-color: var(--gray-300);
-            background: var(--gray-50);
-        }
-
-        .filter-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .restaurant-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        .list-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--gray-100);
-            cursor: pointer;
-            transition: var(--transition);
-            background: white;
-        }
-
-        .list-item:hover {
-            border-color: var(--primary-light);
-            background: var(--gray-50);
-            transform: translateX(4px);
-        }
-
-        .list-item-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            flex-shrink: 0;
-        }
-
-        .list-item-icon.restaurante {
-            background: #f59e0b;
-        }
-
-        .list-item-icon.bar {
-            background: #8b5cf6;
-        }
-
-        .list-item-icon.cafeteria {
-            background: #06b6d4;
-        }
-
-        .list-item-icon.comida-rapida {
-            background: #ef4444;
-        }
-
-        .list-item-icon.panaderia {
-            background: #d97706;
-        }
-
-        .list-item-icon.otro {
-            background: #6b7280;
-        }
-
-        .list-item-icon.agencia {
-            background: #0d9488;
-        }
-
-        .list-item-icon.hotel {
-            background: #3b82f6;
-        }
-
-        .list-item-icon.cabana {
-            background: #22c55e;
-        }
-
-        .list-item-icon.airbnb {
-            background: #f43f5e;
-        }
-
-        .list-item-content {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .list-item-title {
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: var(--gray-900);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .list-item-address {
-            font-size: 0.8rem;
-            color: var(--gray-500);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        /* Mapbox Custom Popups */
-        .mapboxgl-popup-content {
-            padding: 0;
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            box-shadow: var(--shadow-lg);
-            border: none;
-            width: 260px;
-        }
-
-        .popup-header {
-            height: 120px;
-            width: 100%;
-            background: var(--gray-200);
-            position: relative;
-        }
-
-        .popup-header img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .popup-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: white;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
-            text-transform: capitalize;
-        }
-
-        .popup-body {
-            padding: 1rem;
-        }
-
-        .popup-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--gray-900);
-            margin-bottom: 0.25rem;
-        }
-
-        .popup-address {
-            font-size: 0.85rem;
-            color: var(--gray-600);
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: flex-start;
-            gap: 0.25rem;
-        }
-
-        .popup-address i {
-            margin-top: 3px;
-        }
-
-        .popup-btn {
-            display: block;
-            width: 100%;
-            text-align: center;
-            padding: 0.5rem;
-            background: var(--primary);
-            color: white;
-            text-decoration: none;
-            border-radius: var(--radius-md);
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: var(--transition);
-        }
-
-        .popup-btn:hover {
-            background: var(--primary-dark);
-        }
-
-        .mapboxgl-popup-close-button {
-            width: 24px;
-            height: 24px;
-            background: rgba(0, 0, 0, 0.5);
-            color: white;
-            border-radius: 50%;
-            right: 8px;
-            top: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-        }
-
-        .mapboxgl-popup-close-button:hover {
-            background: rgba(0, 0, 0, 0.8);
+        @media (prefers-reduced-motion: reduce) {
+            .map-sidebar, .list-item, .mp-esq, .marker-wrapper.activo .custom-marker, .mapboxgl-popup-content { animation: none !important; }
         }
 
         /* Responsive */
         @media (max-width: 768px) {
             .map-sidebar {
-                width: calc(100% - 40px);
-                max-height: 40vh;
-                top: auto;
-                bottom: 20px;
+                left: 0; right: 0; width: auto; top: auto;
+                bottom: var(--mp-nav, 0px);
+                height: 46%; border-radius: 20px 20px 0 0; padding-top: .2rem;
+                border-bottom: 0;
+                box-shadow: 0 -8px 30px rgba(15,23,42,.14);
+                transition: height .35s cubic-bezier(.2,.8,.2,1);
+                animation-name: mpSube;
             }
+            @keyframes mpSube { from { transform: translateY(30px); opacity: 0; } }
+            .map-sidebar.abierto { height: calc(100% - 12px); }
+            .map-sidebar.mini { height: 150px; }
+            .mp-asa { display: flex; justify-content: center; width: 100%; padding: .4rem 0 .5rem; border: 0; background: none; cursor: pointer; flex-shrink: 0; }
+            .mp-asa span { width: 40px; height: 4px; border-radius: 4px; background: #d1d5db; }
+            .map-sidebar h2 { font-size: 1.05rem; }
+            .mp-buscar { margin: .55rem 0 .5rem; }
+            .mp-buscar input { font-size: 16px; padding-top: .55rem; padding-bottom: .55rem; }
+            .mp-chips { padding-bottom: .6rem; }
+            .mapboxgl-popup-content { width: 240px; }
+            .popup-header { height: 100px; }
+            .mp-volver { top: 12px; }
         }
     </style>
     <!-- PWA: app instalable -->
@@ -400,39 +265,48 @@
     <main class="map-section">
         <div class="map-wrapper">
             <div id="public-map"></div>
+            <button type="button" class="mp-volver" id="mp-volver"><i class="fas fa-expand-arrows-alt"></i> <span data-i18n="mapa.volver">Ver todo el mapa</span></button>
 
-            <div class="map-sidebar">
-                <h2 data-i18n="mapa.titulo">Explorar Jalpan</h2>
-                <p data-i18n="mapa.descripcion">Descubre los mejores sabores de la Sierra Gorda. Filtra por tipo o explora en el mapa.</p>
-
-                <div class="filter-group">
-                    <div class="filter-title" data-i18n="mapa.filtrar">Filtrar por categoría</div>
-                    <div class="filter-buttons" id="map-filters">
-                        <button class="filter-btn active" data-filter="all" data-i18n="filters.all">Todos</button>
-                        <button class="filter-btn" data-filter="restaurante" data-i18n="filters.restaurants">Restaurantes</button>
-                        <button class="filter-btn" data-filter="cafeteria" data-i18n="filters.cafes">Cafeterías</button>
-                        <button class="filter-btn" data-filter="bar" data-i18n="filters.bars">Bares</button>
-                        <button class="filter-btn" data-filter="obrador-artesanal" data-i18n="mapa.obradores">Obradores</button>
-                        <button class="filter-btn" data-filter="agencia" data-i18n="mapa.agencias">Agencias</button>
-                        <button class="filter-btn" data-filter="hotel" data-i18n="mapa.hoteles">Hoteles</button>
-                        <button class="filter-btn" data-filter="cabana" data-i18n="mapa.cabanas">Cabañas</button>
-                        <button class="filter-btn" data-filter="airbnb" data-i18n="mapa.airbnb">Airbnbs</button>
+            <aside class="map-sidebar" id="map-panel" aria-label="Explorar lugares">
+                <button type="button" class="mp-asa" id="mp-asa" aria-label="Mostrar u ocultar la lista" aria-expanded="false"><span></span></button>
+                <div class="mp-cab">
+                    <div>
+                        <h2 data-i18n="mapa.titulo">Explorar Jalpan</h2>
+                        <p class="mp-total" id="mp-total" aria-live="polite">&nbsp;</p>
                     </div>
+                    <button type="button" class="mp-cerca" id="mp-cerca" title="Ordenar por cercanía">
+                        <i class="fas fa-location-arrow"></i><span data-i18n="mapa.cerca_btn">Cerca de mí</span>
+                    </button>
                 </div>
 
-                <div class="filter-group">
-                    <div class="filter-title" data-i18n="mapa.cerca">Cerca de ti</div>
-                    <div class="restaurant-list" id="sidebar-list">
-                        <!-- Lista generada por JS -->
-                    </div>
+                <label class="mp-buscar">
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input type="search" id="mp-q" placeholder="Buscar un lugar" autocomplete="off" aria-label="Buscar un lugar">
+                    <button type="button" class="mp-limpiar" id="mp-limpiar" aria-label="Borrar búsqueda" hidden><i class="fas fa-times"></i></button>
+                </label>
+
+                <div class="mp-chips" id="map-filters" role="group" aria-label="Categorías">
+                    <button class="filter-btn active" data-filter="all"><span data-i18n="filters.all">Todos</span><b></b></button>
+                    <button class="filter-btn" data-filter="restaurante" style="--c:#f59e0b"><i></i><span data-i18n="filters.restaurants">Restaurantes</span><b></b></button>
+                    <button class="filter-btn" data-filter="cafeteria" style="--c:#06b6d4"><i></i><span data-i18n="filters.cafes">Cafeterías</span><b></b></button>
+                    <button class="filter-btn" data-filter="bar" style="--c:#8b5cf6"><i></i><span data-i18n="filters.bars">Bares</span><b></b></button>
+                    <button class="filter-btn" data-filter="obrador-artesanal" style="--c:#a16207"><i></i><span data-i18n="mapa.obradores">Obradores</span><b></b></button>
+                    <button class="filter-btn" data-filter="agencia" style="--c:#0d9488"><i></i><span data-i18n="mapa.agencias">Agencias</span><b></b></button>
+                    <button class="filter-btn" data-filter="hotel" style="--c:#3b82f6"><i></i><span data-i18n="mapa.hoteles">Hoteles</span><b></b></button>
+                    <button class="filter-btn" data-filter="cabana" style="--c:#22c55e"><i></i><span data-i18n="mapa.cabanas">Cabañas</span><b></b></button>
+                    <button class="filter-btn" data-filter="airbnb" style="--c:#f43f5e"><i></i><span data-i18n="mapa.airbnb">Airbnbs</span><b></b></button>
                 </div>
-            </div>
+
+                <div class="mp-lista" id="sidebar-list" aria-live="polite">
+                    <div class="mp-esq"></div><div class="mp-esq"></div><div class="mp-esq"></div><div class="mp-esq"></div>
+                </div>
+            </aside>
         </div>
     </main>
 
     <!-- Removed duplicate inline footer in favor of the full footer at EOF -->
 
-    <script src="/js/map.js"></script>
+    <script src="/js/map.js?v=2"></script>
     <script>
         async function renderAuthNavbar() {
             const nav = document.getElementById('navbar-actions');
