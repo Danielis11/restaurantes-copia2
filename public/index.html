@@ -1649,6 +1649,54 @@
                 gap: var(--spacing-sm);
             }
         }
+        /* ===== Buscador minimalista ===== */
+        .filters { padding-top: 2.25rem !important; padding-bottom: .5rem; }
+        .filters .buscar { max-width: 640px; margin: 0 auto; padding: 0 16px; }
+        .filters .antojo-titulo { font-family: inherit; font-size: 1.6rem; font-weight: 700; letter-spacing: -.02em; color: #111827; margin: 0 0 1rem; text-align: center; }
+        .filters .buscador-lugares { max-width: none; margin: 0 !important; }
+        .filters .buscador-lugares .search-wrapper::before { display: none; }
+        .filters .buscador-lugares .search-box { background: #fff; border: 1px solid #e5e7eb; box-shadow: 0 1px 2px rgba(15,23,42,.04); padding: 4px 4px 4px 18px; backdrop-filter: none; -webkit-backdrop-filter: none; }
+        .filters .buscador-lugares .search-box:focus-within { border-color: #2563eb; box-shadow: 0 0 0 4px rgba(37,99,235,.12); }
+        .filters .buscador-lugares .search-icon-left { color: #9ca3af; }
+        .filters .buscador-lugares .search-box:focus-within .search-icon-left { color: #2563eb; }
+        .filters .buscador-lugares .search-input { font-size: 1rem; color: #111827; }
+        .filters .buscador-lugares .search-input::placeholder { color: #9ca3af; font-size: .95rem; }
+        .filters .buscador-lugares .search-btn { width: 42px; height: 42px; background: #111827; box-shadow: none; transition: background .2s; }
+        .filters .buscador-lugares .search-btn:hover { transform: none; background: #2563eb; box-shadow: none; }
+
+        .filters .antojo { margin: .85rem 0 0; max-width: none; text-align: left; }
+        .filters .antojo-chips { flex-wrap: nowrap; justify-content: center; gap: .4rem; min-height: 0; overflow-x: auto; scrollbar-width: none; }
+        .filters .antojo-chips::-webkit-scrollbar { display: none; }
+        .filters .antojo-chip { flex: 0 0 auto; padding: .38rem .85rem; border: 0; background: #f3f4f6; color: #374151; font-size: .86rem; font-weight: 500; box-shadow: none; }
+        .filters .antojo-chip:hover, .filters .antojo-chip:focus-visible { transform: none; background: #e5e7eb; box-shadow: none; border-color: transparent; }
+        .filters .antojo-chip.activo { background: #111827; color: #fff; }
+
+        .filters .filtros-fila { justify-content: space-between; flex-wrap: nowrap; gap: .75rem; margin: 1.5rem 0 .75rem; padding: 0; border-bottom: 1px solid #f3f4f6; }
+        .filters .filtros-fila .filter-tabs { display: flex !important; background: none; padding: 0; margin: 0 !important; gap: 1.4rem; border-radius: 0; overflow-x: auto; scrollbar-width: none; width: auto !important; grid-template-columns: none; }
+        .filters .filtros-fila .filter-tabs::-webkit-scrollbar { display: none; }
+        .filters .filtros-fila .filter-tab { width: auto !important; flex: 0 0 auto; padding: .65rem 0 !important; background: none !important; box-shadow: none !important; border-radius: 0; border-bottom: 2px solid transparent !important; margin-bottom: -1px; color: #6b7280; font-size: .95rem !important; font-weight: 500; }
+        .filters .filtros-fila .filter-tab i { display: none; }
+        .filters .filtros-fila .filter-tab:hover { color: #111827; }
+        .filters .filtros-fila .filter-tab.active { color: #111827; font-weight: 600; border-bottom-color: #111827 !important; }
+        .filters .btn-mas-filtros { flex: 0 0 auto; padding: .45rem .8rem; border: 0; background: none; color: #4b5563; font-size: .9rem; font-weight: 500; border-radius: 10px; margin-bottom: 4px; }
+        .filters .btn-mas-filtros:hover, .filters .btn-mas-filtros[aria-expanded="true"] { background: #f3f4f6; color: #111827; }
+        .filters .btn-mas-filtros .mas-filtros-punto { top: 4px; right: 4px; }
+        .filters .advanced-filters { margin: .25rem 0 1rem; max-width: none; background: none; padding: 0; justify-content: flex-start; gap: .4rem; }
+        .filters .advanced-filters .adv-filter-chip { box-shadow: none; }
+
+        @media (max-width: 768px) {
+            .filters { padding-top: 1.5rem !important; }
+            .filters .antojo-titulo { font-size: 1.3rem; margin-bottom: .75rem; }
+            .filters .antojo-chips { justify-content: flex-start; margin: 0 -16px; padding: 0 16px; }
+            .filters .filtros-fila .filter-tabs { gap: 1.1rem; }
+            .filters .filtros-fila .filter-tab { font-size: .9rem !important; }
+            .filters .btn-mas-filtros span[data-i18n] { display: inline; }
+        }
+        /* Encabezado de resultados: título y conteo discretos */
+        .results { padding-top: 1.25rem !important; }
+        .results-header { align-items: baseline !important; gap: .75rem; margin-bottom: 1.25rem !important; }
+        .results-title { font-size: 1.35rem !important; letter-spacing: -.01em; line-height: 1.2; }
+        .results-info, #results-count { font-size: .85rem; color: #9ca3af; font-weight: 400; white-space: nowrap; }
     </style>
 
     }
@@ -2128,11 +2176,8 @@
         <!-- Filters Section -->
         <section class="filters">
             <div class="container">
-                <!-- ¿Qué se te antoja? Atajos por comida (se ocultan los que no tienen lugares) -->
-                <div class="antojo">
-                    <h2 class="antojo-titulo" data-i18n="home.antojo_titulo">¿Qué se te antoja?</h2>
-                    <div class="antojo-chips" id="antojo-chips" role="group" aria-label="Buscar por comida"></div>
-                </div>
+                <div class="buscar">
+                <h2 class="antojo-titulo" data-i18n="home.antojo_titulo">¿Qué se te antoja?</h2>
 
                 <!-- Búsqueda de lugares para comer -->
                 <div class="hero-search buscador-lugares">
@@ -2140,13 +2185,18 @@
                         <div class="search-box">
                             <i class="fas fa-search search-icon-left"></i>
                             <input type="text" id="search-input" data-i18n="home.search_placeholder"
-                                placeholder="Busca un platillo o un lugar: enchiladas, café, mezcal..." class="search-input"
+                                placeholder="Platillo o lugar: tacos, café…" class="search-input"
                                 autocomplete="off" aria-label="Buscar restaurantes, bares o cafeterías">
                             <button class="search-btn" id="search-btn" aria-label="Buscar">
                                 <i class="fas fa-arrow-right"></i>
                             </button>
                         </div>
                     </div>
+                </div>
+
+                <!-- Sugerencias por comida (se ocultan las que no tienen lugares) -->
+                <div class="antojo">
+                    <div class="antojo-chips" id="antojo-chips" role="group" aria-label="Sugerencias por comida"></div>
                 </div>
 
                 <div class="filtros-fila">
@@ -2207,6 +2257,7 @@
                         <i class="fas fa-times"></i> Limpiar
                     </button>
                 </div>
+                </div>
             </div>
         </section>
 
@@ -2214,7 +2265,7 @@
         <section id="restaurantes" class="results">
             <div class="container">
                 <div class="results-header">
-                    <h2 class="results-title" data-i18n="home.available_places">Establecimientos Disponibles</h2>
+                    <h2 class="results-title" data-i18n="home.available_places">Dónde comer</h2>
                     <div class="results-info">
                         <span id="results-count">Cargando...</span>
                     </div>
@@ -3387,11 +3438,9 @@
                 if (total === 0) {
                     resultsCount.textContent = lang === 'en' ? 'No results found' : 'No hay resultados';
                 } else if (total === 1) {
-                    resultsCount.textContent = lang === 'en' ? '1 establishment found' : '1 establecimiento encontrado';
+                    resultsCount.textContent = lang === 'en' ? '1 place' : '1 lugar';
                 } else {
-                    resultsCount.textContent = lang === 'en'
-                        ? `Showing ${start}-${end} of ${total} establishments`
-                        : `Mostrando ${start}-${end} de ${total} establecimientos`;
+                    resultsCount.textContent = lang === 'en' ? `${total} places` : `${total} lugares`;
                 }
             }
 
@@ -4214,8 +4263,7 @@
                 if (!cont) return;
                 const lang = localStorage.getItem('appLang') || 'es';
                 const visibles = ANTOJOS.filter(a => cuentas[a.q] >= 4).slice(0, 6);
-                cont.innerHTML = visibles.map(a => `<button type="button" class="antojo-chip${activo === a.q ? ' activo' : ''}" data-q="${a.q}" aria-pressed="${activo === a.q}">
-                        <i class="fas ${a.icon}" aria-hidden="true"></i>${a.txt[lang] || a.txt.es}</button>`).join('');
+                cont.innerHTML = visibles.map(a => `<button type="button" class="antojo-chip${activo === a.q ? ' activo' : ''}" data-q="${a.q}" aria-pressed="${activo === a.q}">${a.txt[lang] || a.txt.es}</button>`).join('');
                 cont.closest('.antojo').style.display = visibles.length ? '' : 'none';
             }
 

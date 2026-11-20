@@ -17,7 +17,7 @@
         btn.type = 'button';
         btn.setAttribute('aria-label', 'Volver arriba');
         btn.setAttribute('title', 'Volver arriba');
-        btn.innerHTML = '<i class="fas fa-arrow-up"></i>';
+        btn.innerHTML = '<i class="fas fa-chevron-up"></i>';
         document.body.appendChild(btn);
 
         // If a WhatsApp floating button exists, lift the FAB above it

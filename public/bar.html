@@ -1692,6 +1692,27 @@
         .rs-chip { background: rgba(255,255,255,.08); color: inherit; }
         .rs-chip i { color: inherit; opacity: .8; }
         .content-card, .sidebar-card { border-color: rgba(255,255,255,.08); }
+        /* Buzón privado: tono amable */
+        .buzon { padding: 1.25rem !important; margin-top: 1rem; }
+        .buzon-cab { display: flex; gap: .75rem; align-items: flex-start; margin-bottom: 1rem; }
+        .buzon-ico { width: 38px; height: 38px; border-radius: 12px; background: #eff6ff; color: #2563eb; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .buzon h3 { font-size: 1rem; font-weight: 700; margin: 0 0 .15rem; color: #111827; }
+        .buzon p { font-size: .84rem; color: #6b7280; margin: 0; line-height: 1.4; }
+        .buzon form { display: flex; flex-direction: column; gap: .55rem; }
+        .buzon-fila { display: grid; grid-template-columns: 1fr; gap: .55rem; }
+        .buzon textarea, .buzon input { width: 100%; padding: .7rem .8rem; border-radius: 12px; border: 1px solid #e5e7eb; background: #f9fafb; font: inherit; font-size: .9rem; color: #111827; transition: border-color .2s, background .2s, box-shadow .2s; }
+        .buzon textarea { resize: vertical; min-height: 84px; }
+        .buzon textarea:focus, .buzon input:focus { outline: none; background: #fff; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
+        .buzon button { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; padding: .7rem 1rem; border: 0; border-radius: 12px; background: #eff6ff; color: #1d4ed8; font: inherit; font-weight: 600; font-size: .92rem; cursor: pointer; transition: background .2s, color .2s; }
+        .buzon button:hover { background: #2563eb; color: #fff; }
+        .buzon button:disabled { opacity: .7; cursor: default; }
+        .buzon h3 { color: #f1f5f9; }
+        .buzon p { color: #94a3b8; }
+        .buzon-ico { background: rgba(139,92,246,.15); color: #c4b5fd; }
+        .buzon textarea, .buzon input { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.1); color: #f1f5f9; }
+        .buzon textarea:focus, .buzon input:focus { background: rgba(255,255,255,.08); border-color: #8b5cf6; box-shadow: 0 0 0 3px rgba(139,92,246,.2); }
+        .buzon button { background: rgba(139,92,246,.18); color: #ddd6fe; }
+        .buzon button:hover { background: #8b5cf6; color: #fff; }
     </style>
 </head>
 
@@ -2219,20 +2240,21 @@
 
 
                     <!-- Buzón Privado (Sidebar) -->
-                    <div class="sidebar-card" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 1rem; border-radius: 0.75rem; margin-top: 1rem;">
-                        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.5rem; margin-bottom: 1rem;">
-                            <i class="fas fa-headset" style="font-size: 1.5rem; color: #ef4444;"></i>
+                    <div class="sidebar-card buzon">
+                        <div class="buzon-cab">
+                            <span class="buzon-ico"><i class="fas fa-comment-dots"></i></span>
                             <div>
-                                <h3 style="font-size: 1.05rem; color: #0f172a; margin: 0;">Línea con Gerencia</h3>
-                                <p style="font-size: 0.8rem; color: #64748b; margin: 0; line-height: 1.3;">Sugerencias y comentarios 100% privados.</p>
+                                <h3>¿Cómo te fue?</h3>
+                                <p>Cuéntale al encargado. Tu mensaje es privado y no se publica.</p>
                             </div>
                         </div>
-                        
-                        <form id="buzon-form" onsubmit="submitBuzonForm(event)" style="display: flex; flex-direction: column; gap: 0.6rem;">
-                            <input type="text" id="buzon-nombre" placeholder="Nombre (Opcional)" style="padding: 0.6rem; border-radius: 0.4rem; border: 1px solid #cbd5e1; font-size: 0.85rem;">
-                            <input type="text" id="buzon-contacto" placeholder="Email / Teléfono" style="padding: 0.6rem; border-radius: 0.4rem; border: 1px solid #cbd5e1; font-size: 0.85rem;">
-                            <textarea id="buzon-mensaje" rows="3" placeholder="Tu experiencia..." required style="padding: 0.6rem; border-radius: 0.4rem; border: 1px solid #cbd5e1; font-size: 0.85rem; resize: vertical;"></textarea>
-                            <button type="submit" style="background: #ef4444; color: white; border: none; padding: 0.75rem; border-radius: 0.4rem; font-weight: bold; cursor: pointer; font-size: 0.9rem;">Enviar a Gerencia</button>
+                        <form id="buzon-form" onsubmit="submitBuzonForm(event)">
+                            <textarea id="buzon-mensaje" rows="3" placeholder="Escribe aquí tu comentario o sugerencia" required aria-label="Tu comentario"></textarea>
+                            <div class="buzon-fila">
+                                <input type="text" id="buzon-nombre" placeholder="Tu nombre (opcional)" aria-label="Tu nombre (opcional)">
+                                <input type="text" id="buzon-contacto" placeholder="Correo o teléfono (opcional)" aria-label="Correo o teléfono, por si quieren responderte">
+                            </div>
+                            <button type="submit"><i class="fas fa-paper-plane"></i> Enviar comentario</button>
                         </form>
                     </div>
 
