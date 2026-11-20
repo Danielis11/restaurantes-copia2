@@ -1661,7 +1661,7 @@
                 const data = await response.json();
 
                 if (data.status === 'success' && data.data.alojamientos.length > 0) {
-                    const airbnb = data.data.alojamientos[0];
+                    const airbnb = (data.data.alojamientos.find(a => a._id === localStorage.getItem('currentAirbnbId')) || data.data.alojamientos[0]);
                     airbnbId = airbnb._id;
 
                     await loadAirbnbDetails(airbnbId);

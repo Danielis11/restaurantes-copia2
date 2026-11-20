@@ -1176,7 +1176,7 @@ console.log('✅ BaseURL configurado:', baseURL);
                 const data = await response.json();
                 
                 if (data.status === 'success' && data.data.hoteles.length > 0) {
-                    hotelData = data.data.hoteles[0];
+                    hotelData = (data.data.hoteles.find(h => h._id === localStorage.getItem('currentHotelId')) || data.data.hoteles[0]);
                     updateHotelInfo();
                     initializeCalendar();
                     loadRoomAvailability();

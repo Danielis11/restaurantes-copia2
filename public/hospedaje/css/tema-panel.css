@@ -302,3 +302,156 @@ body {
     .main-content { padding: 1.5rem 1rem !important; }
     .page-title { font-size: 1.5rem !important; }
 }
+
+/* =====================================================================
+   Rediseño de las páginas de socios: mismo aspecto que el panel de
+   restaurantes (css/panel-socio.css, manage-restaurant.html).
+   Todo va bajo html.ps-socio (lo pone encabezado-panel.js), así el
+   panel del super admin conserva su diseño.
+   ===================================================================== */
+:root {
+    --ps-azul: #2563eb; --ps-azul-claro: #eff6ff;
+    --ps-tinta: #111827; --ps-texto: #4b5563; --ps-gris: #6b7280;
+    --ps-borde: #e5e7eb; --ps-borde-suave: #f3f4f6; --ps-fondo: #f8fafc;
+    --ps-radio: 14px; --ps-sombra: 0 1px 3px rgba(15,23,42,.06), 0 1px 2px rgba(15,23,42,.04);
+    --ps-ease: cubic-bezier(.2,.8,.2,1);
+}
+
+/* Enlaces del encabezado (también el «Panel» del super admin) */
+.panel-encabezado-links { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+.panel-encabezado-links::-webkit-scrollbar { display: none; }
+.panel-encabezado-link { color: var(--ps-texto); text-decoration: none; padding: 8px 12px; border-radius: 9px; font-size: .92rem; display: inline-flex; gap: 8px; align-items: center; white-space: nowrap; transition: background .2s, color .2s; }
+.panel-encabezado-link:hover { background: var(--ps-borde-suave); color: var(--ps-tinta); }
+.panel-encabezado-link.activo { color: var(--ps-azul); background: var(--ps-azul-claro); }
+.panel-encabezado-avatar { text-decoration: none; }
+
+html.ps-socio .panel-encabezado { box-shadow: none; }
+html.ps-socio .panel-encabezado-nav { max-width: 1180px; min-height: 64px; padding: 0 24px; gap: 14px; justify-content: flex-start; }
+html.ps-socio .panel-encabezado-logo { color: var(--ps-tinta); font-size: 1.05rem; gap: 10px; }
+html.ps-socio .panel-encabezado-logo img { width: 30px; height: 30px; }
+html.ps-socio .panel-encabezado-links { margin-left: 12px; }
+html.ps-socio .panel-encabezado-usuario { margin-left: auto; gap: 10px; }
+html.ps-socio .panel-encabezado-avatar { width: 36px; height: 36px; background: var(--ps-azul); font-size: .85rem; }
+html.ps-socio .panel-encabezado-salir { width: 38px; height: 38px; border-radius: 9px; }
+html.ps-socio .panel-encabezado-salir:hover { color: #dc2626; background: #fef2f2; }
+
+/* Lo viejo que ya cubre el encabezado */
+html.ps-socio .sidebar,
+html.ps-socio body > header.header,
+html.ps-socio .breadcrumb,
+html.ps-socio .form-container > .form-header { display: none !important; }
+html.ps-socio body { background: var(--ps-fondo) !important; color: var(--ps-tinta); -webkit-font-smoothing: antialiased; }
+
+/* Contenido centrado como el de restaurantes */
+html.ps-socio .main-content,
+html.ps-socio main.main {
+    margin: 0 auto !important; max-width: 1180px !important; width: 100% !important;
+    padding: 28px 24px 110px !important; background: transparent !important; min-height: 0 !important;
+}
+
+/* Título de la página como tarjeta de encabezado */
+html.ps-socio .top-bar,
+html.ps-socio .page-header {
+    background: #fff !important; border: 1px solid var(--ps-borde) !important; border-radius: var(--ps-radio) !important;
+    box-shadow: var(--ps-sombra) !important; padding: 22px 24px !important; margin: 0 0 6px !important; position: static !important;
+}
+html.ps-socio .top-bar { display: block !important; text-align: left !important; }
+html.ps-socio .quick-actions, html.ps-socio .calendar-section {
+    background: #fff !important; border: 1px solid var(--ps-borde) !important; border-radius: var(--ps-radio) !important;
+    box-shadow: var(--ps-sombra) !important; padding: 20px 24px !important; margin-top: 18px !important;
+}
+html.ps-socio .action-card {
+    background: #fff !important; border: 1px solid var(--ps-borde) !important; border-top: 1px solid var(--ps-borde) !important;
+    border-radius: 12px !important; padding: 16px !important; transition: border-color .2s, background .2s;
+}
+html.ps-socio .action-card::before { display: none !important; }
+html.ps-socio .action-card:hover { border-color: #93c5fd !important; background: var(--ps-azul-claro) !important; transform: none !important; }
+html.ps-socio .top-bar::before {
+    content: "Tu anuncio"; display: block; font-size: .78rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ps-azul); margin-bottom: 4px;
+}
+html.ps-socio .page-title { font-size: 1.6rem !important; letter-spacing: -.01em; margin: 0 !important; color: var(--ps-tinta) !important; }
+html.ps-socio .page-subtitle { color: var(--ps-gris) !important; margin-top: 4px !important; }
+
+/* Chips para saltar entre secciones (los arma encabezado-panel.js) */
+.ps-secnav { position: sticky; top: 64px; z-index: 40; background: rgba(248,250,252,.92); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); margin: 12px -24px 0; padding: 10px 24px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+.ps-secnav::-webkit-scrollbar { display: none; }
+.ps-chip { flex-shrink: 0; display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--ps-borde); background: #fff; color: var(--ps-texto); border-radius: 99px; padding: 7px 14px; font-size: .86rem; font-weight: 500; text-decoration: none; transition: background .2s, color .2s, border-color .2s; }
+.ps-chip:hover { border-color: #cbd5e1; color: var(--ps-tinta); }
+.ps-chip.activo { background: var(--ps-tinta); border-color: var(--ps-tinta); color: #fff; }
+.ps-chip i { font-size: .82rem; }
+
+/* El contenedor del formulario ya no es una caja: cada sección es su propia tarjeta */
+html.ps-socio .form-container { background: none !important; border: none !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important; overflow: visible !important; }
+html.ps-socio .form-body { padding: 0 !important; background: none !important; }
+html.ps-socio .form-section {
+    background: #fff !important; border: 1px solid var(--ps-borde) !important; border-radius: var(--ps-radio) !important;
+    box-shadow: var(--ps-sombra) !important; padding: 0 24px 22px !important; margin: 18px 0 0 !important;
+    animation: psSubir .45s var(--ps-ease) both; scroll-margin-top: 130px;
+}
+html.ps-socio .form-section::before, html.ps-socio .form-section::after { display: none !important; }
+html.ps-socio .section-title {
+    display: flex !important; align-items: center; gap: 14px; font-size: 1.12rem !important; font-weight: 700 !important;
+    color: var(--ps-tinta) !important; margin: 0 -24px 18px !important; padding: 18px 24px 14px !important;
+    border: none !important; border-bottom: 1px solid var(--ps-borde-suave) !important; background: none !important;
+}
+html.ps-socio .section-title::before, html.ps-socio .section-title::after { display: none !important; }
+.ps-sec-ico { width: 40px; height: 40px; border-radius: 11px; background: var(--ps-azul-claro); color: var(--ps-azul); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.ps-sec-ico i { color: inherit !important; margin: 0 !important; font-size: 1rem; }
+
+/* Campos */
+html.ps-socio .form-label { font-weight: 600 !important; font-size: .86rem !important; color: var(--ps-tinta) !important; margin-bottom: 6px !important; }
+html.ps-socio .form-hint { color: var(--ps-gris) !important; font-size: .8rem !important; }
+html.ps-socio .main-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+html.ps-socio .main-content select, html.ps-socio .main-content textarea {
+    min-height: 42px; padding: 9px 12px !important; border-radius: 10px !important; font-size: .95rem !important; transition: border-color .2s, box-shadow .2s;
+}
+html.ps-socio .main-content textarea { min-height: 96px; line-height: 1.5; }
+html.ps-socio .service-item, html.ps-socio .payment-option, html.ps-socio .eco-practice-item {
+    border: 1px solid var(--ps-borde) !important; border-radius: 10px !important; background: #fff !important; box-shadow: none !important; transition: border-color .2s, background .2s;
+}
+html.ps-socio .service-item:hover, html.ps-socio .payment-option:hover, html.ps-socio .eco-practice-item:hover { border-color: #93c5fd !important; background: var(--ps-azul-claro) !important; }
+html.ps-socio input[type="checkbox"], html.ps-socio input[type="radio"] { accent-color: var(--ps-azul); }
+
+/* Barra de guardar fija abajo */
+html.ps-socio .submit-section, html.ps-socio .form-actions {
+    position: sticky; bottom: 12px; z-index: 30; display: flex !important; justify-content: flex-end; gap: 8px;
+    background: rgba(255,255,255,.96) !important; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    border: 1px solid var(--ps-borde) !important; border-radius: var(--ps-radio) !important;
+    box-shadow: 0 10px 30px rgba(15,23,42,.12) !important; padding: 12px 16px !important; margin: 18px 0 0 !important;
+}
+html.ps-socio .submit-btn, html.ps-socio .form-actions .btn-primary, html.ps-socio .form-actions button[type="submit"] {
+    min-height: 42px; padding: 0 20px !important; border-radius: 10px !important; font-weight: 600 !important; display: inline-flex !important; align-items: center; justify-content: center; gap: 8px; width: auto !important;
+}
+
+/* Páginas de fotos */
+html.ps-socio .hotel-info-card, html.ps-socio .upload-section, html.ps-socio .images-section, html.ps-socio .gallery-section {
+    background: #fff !important; border: 1px solid var(--ps-borde) !important; border-radius: var(--ps-radio) !important; box-shadow: var(--ps-sombra) !important; margin-top: 18px !important;
+}
+html.ps-socio .upload-area { border: 2px dashed #cbd5e1 !important; border-radius: 12px !important; background: var(--ps-fondo) !important; }
+html.ps-socio .upload-area:hover, html.ps-socio .upload-area.dragover { border-color: var(--ps-azul) !important; background: var(--ps-azul-claro) !important; }
+
+@keyframes psSubir { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+@media (max-width: 860px) {
+    html.ps-socio .panel-encabezado-datos { display: none; }
+    .panel-encabezado-link { padding: 8px 10px; }
+}
+@media (max-width: 720px) {
+    html.ps-socio .panel-encabezado-nav { padding: 0 12px; gap: 6px; min-height: 58px; }
+    html.ps-socio .panel-encabezado-logo span { display: none; }
+    html.ps-socio .panel-encabezado-links { margin-left: 0; }
+    html.ps-socio .panel-encabezado-link { font-size: 0; gap: 0; padding: 9px 11px; }
+    html.ps-socio .panel-encabezado-link i { font-size: 1rem; }
+    html.ps-socio .main-content, html.ps-socio main.main { padding: 16px 16px 110px !important; }
+    html.ps-socio .top-bar, html.ps-socio .page-header { padding: 18px !important; }
+    html.ps-socio .page-title { font-size: 1.35rem !important; }
+    .ps-secnav { top: 58px; margin: 10px -16px 0; padding: 10px 16px; }
+    html.ps-socio .form-section { padding: 0 16px 18px !important; }
+    html.ps-socio .section-title { margin: 0 -16px 16px !important; padding: 16px 16px 12px !important; font-size: 1.02rem !important; }
+    html.ps-socio .main-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+    html.ps-socio .main-content select, html.ps-socio .main-content textarea { font-size: 16px !important; }
+    html.ps-socio .submit-section .submit-btn, html.ps-socio .form-actions button[type="submit"] { flex: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+    html.ps-socio .form-section { animation: none; }
+}

@@ -1609,7 +1609,7 @@
                 const data = await response.json();
 
                 if (data.status === 'success' && data.data.cabanas.length > 0) {
-                    const cabana = data.data.cabanas[0];
+                    const cabana = (data.data.cabanas.find(c => c._id === localStorage.getItem('currentCabanaId')) || data.data.cabanas[0]);
                     cabanaId = cabana._id;
                     populateForm(cabana);
                 } else {

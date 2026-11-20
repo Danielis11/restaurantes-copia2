@@ -345,7 +345,8 @@
         async function pintar() {
             const a = actual();
             if (!a) return;
-            try { localStorage.setItem(claveActual, String(a._id)); localStorage.setItem(TIPOS[a.tipo].idLocal, String(a._id)); } catch (e) { /* ignorar */ }
+            // Las demás páginas del panel (editar, fotos) abren este mismo anuncio
+            try { localStorage.setItem(claveActual, String(a._id)); localStorage.setItem('hospPanelTipo', a.tipo); localStorage.setItem(TIPOS[a.tipo].idLocal, String(a._id)); } catch (e) { /* ignorar */ }
             const t = TIPOS[a.tipo];
 
             // Encabezado

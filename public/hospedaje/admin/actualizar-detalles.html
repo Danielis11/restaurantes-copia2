@@ -1653,7 +1653,7 @@
                 const data = await response.json();
 
                 if (data.status === 'success' && data.data.hoteles.length > 0) {
-                    const hotel = data.data.hoteles[0];
+                    const hotel = (data.data.hoteles.find(h => h._id === localStorage.getItem('currentHotelId')) || data.data.hoteles[0]);
                     hotelId = hotel._id;
                     await loadHotelDetails(hotelId);
                 } else {
