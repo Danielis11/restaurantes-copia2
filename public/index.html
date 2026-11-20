@@ -1697,6 +1697,144 @@
         .results-header { align-items: baseline !important; gap: .75rem; margin-bottom: 1.25rem !important; }
         .results-title { font-size: 1.35rem !important; letter-spacing: -.01em; line-height: 1.2; }
         .results-info, #results-count { font-size: .85rem; color: #9ca3af; font-weight: 400; white-space: nowrap; }
+        /* ===== Secciones del inicio: galería, noticias y Conoce Jalpan ===== */
+        .sx { padding: 4.5rem 0 !important; }
+        .sx-cab { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: 1.75rem; }
+        .sx-eti { display: inline-block; font-size: .75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #2563eb; margin-bottom: .4rem; }
+        .sx-titulo { font-size: clamp(1.6rem, 3vw, 2.1rem); font-weight: 700; letter-spacing: -.025em; color: #111827; margin: 0; line-height: 1.15; }
+        .sx-sub { font-size: 1rem; color: #6b7280; margin: .45rem 0 0; max-width: 520px; line-height: 1.5; }
+        .sx-ent { opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s cubic-bezier(.2,.8,.2,1); }
+        .sx-ent.sx-visible { opacity: 1; transform: none; }
+
+        /* Galería */
+        .gv-grid { display: grid; gap: .75rem; }
+        .gv-mosaico { grid-template-columns: repeat(4, 1fr); grid-auto-rows: 200px; }
+        .gv-mosaico .gv-foto:first-child { grid-column: span 2; grid-row: span 2; }
+        .gv-pocas { grid-template-columns: repeat(var(--n), minmax(0, 1fr)); grid-auto-rows: 300px; }
+        .gv-foto { position: relative; overflow: hidden; border: 0; padding: 0; border-radius: 18px; background: #f3f4f6; cursor: zoom-in; text-align: left; font: inherit; animation: sxSube .5s ease both; animation-delay: calc(var(--i, 0) * 60ms); }
+        @keyframes sxSube { from { opacity: 0; transform: translateY(14px); } }
+        .gv-foto img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transform: scale(1.02); transition: opacity .4s, transform .6s cubic-bezier(.2,.8,.2,1); }
+        .gv-foto img.ok { opacity: 1; transform: none; }
+        .gv-foto:hover img.ok { transform: scale(1.05); }
+        .gv-foto::after { content: ''; position: absolute; inset: 45% 0 0; background: linear-gradient(transparent, rgba(17,24,39,.72)); pointer-events: none; }
+        .gv-foto:focus-visible { outline: 3px solid #2563eb; outline-offset: 2px; }
+        .gv-info { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; padding: .9rem 1rem; color: #fff; display: flex; flex-direction: column; gap: .3rem; }
+        .gv-lugar { font-weight: 700; font-size: .98rem; line-height: 1.2; text-shadow: 0 1px 6px rgba(0,0,0,.3); }
+        .gv-mosaico .gv-foto:first-child .gv-lugar { font-size: 1.25rem; }
+        .gv-autor { display: flex; align-items: center; gap: .4rem; font-size: .8rem; color: rgba(255,255,255,.88); }
+        .gv-av { width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,.25); backdrop-filter: blur(4px); display: inline-flex; align-items: center; justify-content: center; font-size: .7rem; font-weight: 700; }
+        .gv-est { margin-left: auto; font-weight: 600; background: rgba(255,255,255,.18); backdrop-filter: blur(4px); padding: .1rem .45rem; border-radius: 99px; }
+        .gv-est i { color: #fbbf24; font-size: .68rem; }
+
+        .gv-visor { position: fixed; inset: 0; z-index: 3000; background: rgba(10,12,20,.94); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity .25s; }
+        .gv-visor.visible { opacity: 1; }
+        .gv-v-fig { margin: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 4.5rem 5rem 6.5rem; }
+        .gv-v-fig img { max-width: 100%; max-height: 100%; border-radius: 14px; object-fit: contain; opacity: 0; transform: scale(.97); transition: opacity .3s, transform .35s cubic-bezier(.2,.8,.2,1); }
+        .gv-v-fig img.ok { opacity: 1; transform: none; }
+        .gv-v-cerrar, .gv-v-nav { position: absolute; border: 0; border-radius: 50%; background: rgba(255,255,255,.1); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .2s; }
+        .gv-v-cerrar:hover, .gv-v-nav:hover { background: rgba(255,255,255,.22); }
+        .gv-v-cerrar { top: 1rem; right: 1rem; width: 42px; height: 42px; }
+        .gv-v-nav { top: 50%; transform: translateY(-50%); width: 46px; height: 46px; }
+        .gv-v-nav.prev { left: 1rem; } .gv-v-nav.next { right: 1rem; }
+        .gv-visor.una .gv-v-nav, .gv-visor.una .gv-v-cont { display: none; }
+        .gv-v-pie { position: absolute; left: 50%; bottom: 1.25rem; transform: translateX(-50%); width: min(560px, calc(100% - 2rem)); display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .75rem .75rem .75rem 1.1rem; border-radius: 16px; background: rgba(255,255,255,.08); backdrop-filter: blur(10px); color: #fff; }
+        .gv-v-datos { display: flex; flex-direction: column; min-width: 0; }
+        .gv-v-lugar { font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .gv-v-autor { font-size: .82rem; color: rgba(255,255,255,.7); }
+        .gv-v-autor i { color: #fbbf24; font-size: .72rem; }
+        .gv-v-ir { flex-shrink: 0; display: inline-flex; align-items: center; gap: .4rem; padding: .55rem .95rem; border-radius: 12px; background: #fff; color: #111827; font-weight: 600; font-size: .88rem; text-decoration: none; transition: background .2s; }
+        .gv-v-ir:hover { background: #e5e7eb; color: #111827; }
+        .gv-v-cont { position: absolute; top: 1.35rem; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,.7); font-size: .85rem; font-weight: 600; }
+
+        /* Noticias */
+        .nt { background: #f8fafc; }
+        .nt-grid { display: grid; grid-template-columns: 1.35fr 1fr; gap: 1.25rem; align-items: start; }
+        .nt-grid.nt-solo { grid-template-columns: 1fr; }
+        .nt-dest { display: flex; flex-direction: column; background: #fff; border-radius: 20px; overflow: hidden; border: 1px solid #eef0f3; cursor: pointer; transition: box-shadow .25s, transform .25s; }
+        .nt-solo .nt-dest { flex-direction: row; }
+        .nt-dest:hover { box-shadow: 0 14px 34px rgba(15,23,42,.09); transform: translateY(-2px); }
+        .nt-dest:focus-visible, .nt-item:focus-visible { outline: 3px solid #2563eb; outline-offset: 2px; }
+        .nt-dest-foto { position: relative; aspect-ratio: 16 / 9; background: #e5e7eb; overflow: hidden; }
+        .nt-solo .nt-dest-foto { flex: 0 0 55%; aspect-ratio: auto; min-height: 320px; }
+        .nt-img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity .4s, transform .6s cubic-bezier(.2,.8,.2,1); }
+        .nt-img.ok { opacity: 1; }
+        .nt-dest:hover .nt-img, .nt-item:hover .nt-img { transform: scale(1.04); }
+        .nt-cal { position: absolute; top: 14px; left: 14px; display: flex; flex-direction: column; align-items: center; min-width: 54px; padding: .35rem .5rem; border-radius: 14px; background: rgba(255,255,255,.95); color: #6b7280; font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; line-height: 1.1; box-shadow: 0 4px 14px rgba(0,0,0,.12); }
+        .nt-cal b { font-size: 1.35rem; color: #111827; letter-spacing: 0; }
+        .nt-dest-txt { padding: 1.35rem 1.5rem 1.5rem; display: flex; flex-direction: column; gap: .45rem; }
+        .nt-solo .nt-dest-txt { justify-content: center; padding: 2rem 2.25rem; }
+        .nt-fecha { font-size: .76rem; font-weight: 600; color: #9ca3af; }
+        .nt-dest h3 { font-size: 1.3rem; font-weight: 700; color: #111827; margin: 0; line-height: 1.25; letter-spacing: -.01em; }
+        .nt-dest p { font-size: .95rem; color: #6b7280; margin: 0; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .nt-leer { margin-top: .35rem; display: inline-flex; align-items: center; gap: .4rem; font-size: .9rem; font-weight: 600; color: #111827; }
+        .nt-leer i { font-size: .75rem; transition: transform .2s; }
+        .nt-dest:hover .nt-leer { color: #2563eb; }
+        .nt-dest:hover .nt-leer i { transform: translateX(3px); }
+        .nt-lista { display: flex; flex-direction: column; gap: .5rem; }
+        .nt-item { display: flex; align-items: center; gap: .9rem; padding: .6rem; border-radius: 16px; background: #fff; border: 1px solid #eef0f3; cursor: pointer; transition: border-color .2s, box-shadow .2s; animation: sxSube .45s ease both; animation-delay: calc(var(--i, 0) * 70ms); }
+        .nt-item:hover { border-color: #dbe1ea; box-shadow: 0 8px 20px rgba(15,23,42,.06); }
+        .nt-item-foto { width: 84px; height: 72px; flex-shrink: 0; border-radius: 12px; overflow: hidden; background: #e5e7eb; }
+        .nt-item-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: .2rem; }
+        .nt-item h4 { font-size: .95rem; font-weight: 600; color: #111827; margin: 0; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .nt-flecha { color: #d1d5db; font-size: .75rem; margin-right: .35rem; transition: color .2s, transform .2s; }
+        .nt-item:hover .nt-flecha { color: #111827; transform: translateX(2px); }
+
+        /* Conoce Jalpan */
+        .cj { background: #fff; }
+        .cj-wrap { display: grid; grid-template-columns: 1fr 1.1fr; gap: 3.5rem; align-items: center; }
+        .cj-intro { font-size: 1.05rem; color: #4b5563; line-height: 1.6; margin: .8rem 0 1.5rem; max-width: 480px; }
+        .cj-lista { list-style: none; margin: 0 0 1.75rem; padding: 0; display: flex; flex-direction: column; gap: .35rem; }
+        .cj-lista li { display: flex; gap: .9rem; align-items: center; padding: .65rem .75rem .65rem .65rem; margin-left: -.65rem; border-radius: 14px; transition: background .2s; }
+        .cj-lista li:hover { background: #f8fafc; }
+        .cj-ico { width: 42px; height: 42px; flex-shrink: 0; border-radius: 12px; background: #eff6ff; color: #2563eb; display: flex; align-items: center; justify-content: center; transition: transform .25s, background .2s, color .2s; }
+        .cj-lista li:hover .cj-ico { transform: rotate(-6deg) scale(1.05); background: #2563eb; color: #fff; }
+        .cj-lista h3 { font-size: 1rem; font-weight: 600; color: #111827; margin: 0; }
+        .cj-lista p { font-size: .88rem; color: #6b7280; margin: .1rem 0 0; line-height: 1.4; }
+        .cj-btn { display: inline-flex; align-items: center; gap: .55rem; padding: .85rem 1.35rem; border-radius: 14px; background: #111827; color: #fff; font-weight: 600; font-size: .95rem; text-decoration: none; transition: background .2s, transform .2s; }
+        .cj-btn i { font-size: .8rem; transition: transform .2s; }
+        .cj-btn:hover { background: #2563eb; color: #fff; }
+        .cj-btn:hover i { transform: translateX(3px); }
+        .cj-fotos { position: relative; display: grid; grid-template-columns: 1.2fr 1fr; grid-template-rows: 210px 210px; gap: .75rem; }
+        .cj-f { position: relative; margin: 0; border-radius: 20px; overflow: hidden; background: #e5e7eb; }
+        .cj-f1 { grid-row: span 2; }
+        .cj-f img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .7s cubic-bezier(.2,.8,.2,1); }
+        .cj-f:hover img { transform: scale(1.06); }
+        .cj-f figcaption { position: absolute; left: .75rem; bottom: .75rem; padding: .3rem .7rem; border-radius: 99px; background: rgba(255,255,255,.92); backdrop-filter: blur(6px); color: #111827; font-size: .76rem; font-weight: 600; }
+        .cj-sello { position: absolute; left: -1.25rem; top: 1.5rem; display: flex; align-items: center; gap: .65rem; padding: .65rem 1rem .65rem .65rem; border-radius: 16px; background: #fff; box-shadow: 0 12px 30px rgba(15,23,42,.14); animation: cjFlota 5s ease-in-out infinite; }
+        @keyframes cjFlota { 50% { transform: translateY(-6px); } }
+        .cj-sello-ico { width: 36px; height: 36px; border-radius: 10px; background: #fef3c7; color: #b45309; display: flex; align-items: center; justify-content: center; }
+        .cj-sello b { display: block; font-size: .88rem; color: #111827; }
+        .cj-sello span:not(.cj-sello-ico) { font-size: .74rem; color: #6b7280; }
+
+        @media (max-width: 900px) {
+            .nt-grid { grid-template-columns: 1fr; }
+            .cj-wrap { grid-template-columns: 1fr; gap: 2rem; }
+            .cj-fotos { order: -1; }
+            .cj-sello { position: static; grid-column: 1 / -1; animation: none; box-shadow: none; background: #f8fafc; border: 1px solid #eef0f3; }
+        }
+        @media (max-width: 768px) {
+            .sx { padding: 3rem 0 !important; }
+            .sx-cab { margin-bottom: 1.25rem; }
+            .sx-sub { font-size: .92rem; }
+            .gv-mosaico, .gv-pocas { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin: 0 -16px; padding: 0 16px 4px; gap: .65rem; }
+            .gv-mosaico::-webkit-scrollbar, .gv-pocas::-webkit-scrollbar { display: none; }
+            .gv-foto { flex: 0 0 78%; height: 300px; scroll-snap-align: center; }
+            .gv-pocas .gv-foto:only-child { flex-basis: 100%; }
+            .gv-mosaico .gv-foto:first-child .gv-lugar { font-size: .98rem; }
+            .nt-solo .nt-dest { flex-direction: column; }
+            .nt-solo .nt-dest-foto { min-height: 0; aspect-ratio: 16 / 10; }
+            .nt-solo .nt-dest-txt, .nt-dest-txt { padding: 1.1rem 1.15rem 1.25rem; }
+            .nt-dest h3 { font-size: 1.15rem; }
+            .nt-item-foto { width: 72px; height: 64px; }
+            .cj-fotos { grid-template-rows: 150px 150px; gap: .5rem; }
+            .cj-f { border-radius: 16px; }
+            .gv-v-fig { padding: 4rem .5rem 7rem; }
+            .gv-v-nav { display: none; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .sx-ent { opacity: 1; transform: none; transition: none; }
+            .gv-foto, .nt-item, .cj-sello { animation: none; }
+        }
     </style>
 
     }
@@ -2322,95 +2460,86 @@
         </section>
 
         <!-- Galería de Viajeros -->
-        <section id="galeria-viajeros" class="section" style="display: none;">
+        <section id="galeria-viajeros" class="section sx gv" style="display: none;">
             <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title"><i class="fas fa-camera-retro" style="margin-right: 0.5rem; color: var(--primary);"></i> Galería de Viajeros</h2>
-                    <p class="section-subtitle">Fotos compartidas por nuestros visitantes en sus experiencias gastronómicas</p>
+                <div class="sx-cab">
+                    <div>
+                        <span class="sx-eti" data-i18n="home.galeria_eti">Desde las reseñas</span>
+                        <h2 class="sx-titulo" data-i18n="home.galeria_title">Galería de viajeros</h2>
+                        <p class="sx-sub" data-i18n="home.galeria_desc">Fotos reales de quienes ya vinieron a comer.</p>
+                    </div>
                 </div>
-
-                <div id="gallery-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem;"></div>
+                <div id="gallery-grid" class="gv-grid"></div>
             </div>
         </section>
     </main>
-    <!-- Nueva Sección: Noticias y Eventos Locales -->
-    <section id="noticias-eventos" class="section" style="display: none;">
+    <!-- Noticias y Eventos Locales -->
+    <section id="noticias-eventos" class="section sx nt" style="display: none;">
         <div class="container">
-            <div class="section-header">
-                <h2 class="section-title" data-i18n="home.noticias_title">Noticias y Eventos Locales</h2>
-                <p class="section-subtitle" data-i18n="home.noticias_desc">
-                    Entérate de las últimas novedades, eventos gastronómicos y culturales en Jalpan de Serra.
-                </p>
+            <div class="sx-cab">
+                <div>
+                    <span class="sx-eti" data-i18n="home.noticias_eti">Lo nuevo en Jalpan</span>
+                    <h2 class="sx-titulo" data-i18n="home.noticias_title">Noticias y eventos</h2>
+                    <p class="sx-sub" data-i18n="home.noticias_desc">Ferias, eventos y novedades del pueblo.</p>
+                </div>
             </div>
-
-            <div id="noticias-grid" class="noticias-grid">
-                <!-- Las noticias se cargarán dinámicamente aquí mediante JS -->
-            </div>
+            <div id="noticias-grid" class="nt-grid"></div>
         </div>
     </section>
 
-    <!-- Nueva Sección: Sobre Jalpan de Serra -->
-    <section id="sobre-jalpan" class="section section-alt">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title" data-i18n="home.conoce_jalpan">Conoce Jalpan de Serra</h2>
-                <p class="section-subtitle" data-i18n="home.jalpan_desc">
-                    Un pueblo mágico en la Sierra Gorda queretana con una gastronomía única que combina
-                    tradiciones serranas, sabores ancestrales y la hospitalidad característica de la región
-                </p>
+    <!-- Conoce Jalpan de Serra -->
+    <section id="sobre-jalpan" class="section sx cj">
+        <div class="container cj-wrap">
+            <div class="cj-texto">
+                <span class="sx-eti" data-i18n="home.cj_eti">Pueblo Mágico · Sierra Gorda</span>
+                <h2 class="sx-titulo" data-i18n="home.conoce_jalpan">Conoce Jalpan de Serra</h2>
+                <p class="cj-intro" data-i18n="home.cj_intro">Un pueblo de la Sierra Gorda queretana donde la cocina mezcla tradición serrana, ingredientes del monte y herencia de las misiones.</p>
+                <ul class="cj-lista">
+                    <li>
+                        <span class="cj-ico"><i class="fas fa-mountain"></i></span>
+                        <div>
+                            <h3 data-i18n="home.gastro_title">Gastronomía Serrana</h3>
+                            <p data-i18n="home.gastro_corta">Sabores de la sierra con técnicas de siempre.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="cj-ico"><i class="fas fa-leaf"></i></span>
+                        <div>
+                            <h3 data-i18n="home.ingredients_title">Ingredientes Locales</h3>
+                            <p data-i18n="home.ingredients_corta">Quelites, hongos, miel, trucha y hierbas de la región.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="cj-ico"><i class="fas fa-church"></i></span>
+                        <div>
+                            <h3 data-i18n="home.tradition_title">Tradición Franciscana</h3>
+                            <p data-i18n="home.tradition_corta">Recetas que pasan de generación en generación.</p>
+                        </div>
+                    </li>
+                </ul>
+                <a href="/jalpan-de-serra.html" class="cj-btn">
+                    <span data-i18n="home.conoce_jalpan_btn">Conocer más sobre Jalpan</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
             </div>
-
-            <div class="jalpan-features">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-mountain"></i>
-                    </div>
-                    <h3 class="feature-title" data-i18n="home.gastro_title">Gastronomía Serrana</h3>
-                    <p class="feature-description" data-i18n="home.gastro_desc">
-                        La cocina de Jalpan se caracteriza por sus sabores únicos de la sierra,
-                        con ingredientes frescos de la región y técnicas culinarias tradicionales.
-                    </p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-leaf"></i>
-                    </div>
-                    <h3 class="feature-title" data-i18n="home.ingredients_title">Ingredientes Locales</h3>
-                    <p class="feature-description" data-i18n="home.ingredients_desc">
-                        Productos de la Sierra Gorda como quelites, hongos silvestres, miel de abeja,
-                        trucha y una gran variedad de hierbas aromáticas de la región.
-                    </p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-church"></i>
-                    </div>
-                    <h3 class="feature-title" data-i18n="home.tradition_title">Tradición Franciscana</h3>
-                    <p class="feature-description" data-i18n="home.tradition_desc">
-                        La herencia de las misiones franciscanas se refleja en platillos tradicionales
-                        que han pasado de generación en generación por más de 250 años.
-                    </p>
-                </div>
-            </div>
-
-            <div class="cta-banner">
-                <div class="cta-content">
-                    <h3 class="cta-title" data-i18n="home.conoce_jalpan_cta">¿Quieres conocer más sobre nuestra
-                        gastronomía serrana?</h3>
-                    <p class="cta-desc" data-i18n="home.conoce_jalpan_desc_cta">Descubre las recetas tradicionales, los
-                        ingredientes locales y la historia
-                        detrás de los platillos que hacen única a nuestra región.</p>
-                    <a href="/jalpan-de-serra.html" class="btn btn-primary"
-                        style="display:inline-flex; align-items:center; gap:0.5rem;">
-                        <span data-i18n="home.conoce_jalpan_btn">Conocer más sobre Jalpan</span>
-                        <i class="fas fa-arrow-right"></i>
-                    </a>
-                </div>
-                <div class="cta-visual">
-                    <div class="visual-placeholder">
-                        <i class="fas fa-utensils"></i>
+            <div class="cj-fotos">
+                <figure class="cj-f cj-f1">
+                    <img loading="lazy" decoding="async" src="/images/4%20(2).JPG" alt="Fachada de una misión franciscana de la Sierra Gorda">
+                    <figcaption data-i18n="home.cj_f1">Misiones franciscanas</figcaption>
+                </figure>
+                <figure class="cj-f cj-f2">
+                    <img loading="lazy" decoding="async" src="/images/Naranjitos-1722.jpg" alt="Platillo de camarones preparado en sartén">
+                    <figcaption data-i18n="home.cj_f2">Cocina serrana</figcaption>
+                </figure>
+                <figure class="cj-f cj-f3">
+                    <img loading="lazy" decoding="async" src="/images/Kayak%20en%20la%20Presa-118.jpg" alt="Kayak en la presa de Jalpan">
+                    <figcaption data-i18n="home.cj_f3">Presa Jalpan</figcaption>
+                </figure>
+                <div class="cj-sello">
+                    <span class="cj-sello-ico"><i class="fas fa-landmark"></i></span>
+                    <div>
+                        <b data-i18n="home.cj_sello_t">Patrimonio Mundial</b>
+                        <span data-i18n="home.cj_sello_d">Misiones franciscanas · UNESCO</span>
                     </div>
                 </div>
             </div>
@@ -3105,37 +3234,102 @@
                 try {
                     const res = await fetch('/api/reviews/gallery');
                     const data = await res.json();
-
-                    if (!data.success || !data.data || data.data.length === 0) return;
-
+                    const fotos = (data && data.success && Array.isArray(data.data) ? data.data : [])
+                        .filter(f => f.url && f.url.trim() !== '' && f.url !== '/');
                     const section = document.getElementById('galeria-viajeros');
                     const grid = document.getElementById('gallery-grid');
-                    if (!section || !grid) return;
+                    if (!section || !grid || !fotos.length) return;
 
-                    section.style.display = 'block';
+                    // Mosaico: 1 grande + 4 (o + 8) chicas
+                    const n = fotos.length >= 9 ? 9 : fotos.length >= 5 ? 5 : fotos.length;
+                    this.galeriaFotos = fotos.slice(0, n);
+                    const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-                    grid.innerHTML = data.data.map(photo => {
-                        const stars = Array(5).fill(0).map((_, i) =>
-                            `<i class="fas fa-star" style="color: ${i < photo.rating ? '#fbbf24' : '#555'};"></i>`
-                        ).join('');
-
+                    grid.className = 'gv-grid ' + (n >= 5 ? 'gv-mosaico' : 'gv-pocas');
+                    grid.style.setProperty('--n', n);
+                    grid.innerHTML = this.galeriaFotos.map((f, i) => {
+                        const inicial = esc(String(f.author || '?').trim().charAt(0).toUpperCase());
                         return `
-                            <div class="gallery-card" onclick="window.location.href='/restaurante.html?id=${photo.restaurantId}'">
-                                ${(photo.url && photo.url.trim() !== '' && photo.url !== '/') ?
-                                `<img src="${photo.url}" alt="Foto de ${photo.author}" loading="lazy" onerror="this.onerror=null; this.src='/images/PueblosMágicos.svg.png'">` :
-                                `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:var(--gray-200); color:var(--gray-400);"><i class="fas fa-camera fa-2x"></i></div>`
-                                }
-                                <div class="gallery-overlay">
-                                    <div class="gallery-author"><i class="fas fa-user" style="margin-right:4px; font-size:0.65rem;"></i> ${photo.author}</div>
-                                    <div class="gallery-place"><i class="fas fa-map-marker-alt" style="margin-right:4px;"></i> ${photo.place}</div>
-                                    <div class="gallery-stars">${stars}</div>
-                                </div>
-                            </div>
-                        `;
+                            <button type="button" class="gv-foto" data-i="${i}" style="--i:${i}" aria-label="Ver foto de ${esc(f.author)} en ${esc(f.place)}">
+                                <img src="${esc(f.url)}" alt="" loading="lazy" decoding="async" onload="this.classList.add('ok')" onerror="this.closest('.gv-foto').remove()">
+                                <span class="gv-info">
+                                    <span class="gv-lugar">${esc(f.place)}</span>
+                                    <span class="gv-autor"><span class="gv-av">${inicial}</span>${esc(f.author)}${f.rating ? ` <span class="gv-est"><i class="fas fa-star"></i> ${Number(f.rating)}</span>` : ''}</span>
+                                </span>
+                            </button>`;
                     }).join('');
+                    grid.querySelectorAll('.gv-foto').forEach(b => b.addEventListener('click', () => this.abrirVisorGaleria(Number(b.dataset.i))));
+                    section.style.display = 'block';
                 } catch (e) {
                     console.error('Error cargando galería:', e);
                 }
+            }
+
+            // Visor de fotos de la galería
+            abrirVisorGaleria(inicio = 0) {
+                const fotos = this.galeriaFotos || [];
+                if (!fotos.length) return;
+                const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+                const lang = (document.documentElement.lang || 'es').slice(0, 2);
+                const txtVer = lang === 'en' ? 'See place' : lang === 'fr' ? 'Voir le lieu' : 'Ver el lugar';
+                let i = inicio;
+                const visor = document.createElement('div');
+                visor.className = 'gv-visor';
+                visor.setAttribute('role', 'dialog');
+                visor.setAttribute('aria-modal', 'true');
+                visor.innerHTML = `
+                    <button type="button" class="gv-v-cerrar" aria-label="Cerrar"><i class="fas fa-times"></i></button>
+                    <button type="button" class="gv-v-nav prev" aria-label="Anterior"><i class="fas fa-chevron-left"></i></button>
+                    <figure class="gv-v-fig"><img alt=""></figure>
+                    <button type="button" class="gv-v-nav next" aria-label="Siguiente"><i class="fas fa-chevron-right"></i></button>
+                    <div class="gv-v-pie">
+                        <div class="gv-v-datos"><b class="gv-v-lugar"></b><span class="gv-v-autor"></span></div>
+                        <a class="gv-v-ir" href="#"><span>${txtVer}</span> <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <span class="gv-v-cont"></span>`;
+                document.body.appendChild(visor);
+                const img = visor.querySelector('img');
+                const pintar = () => {
+                    const f = fotos[i];
+                    img.classList.remove('ok');
+                    img.onload = () => img.classList.add('ok');
+                    img.src = f.url;
+                    img.alt = `Foto de ${f.author || ''} en ${f.place || ''}`;
+                    visor.querySelector('.gv-v-lugar').textContent = f.place || '';
+                    visor.querySelector('.gv-v-autor').innerHTML = `${esc(f.author)}${f.rating ? ` · <i class="fas fa-star"></i> ${Number(f.rating)}` : ''}`;
+                    visor.querySelector('.gv-v-ir').href = `/restaurante.html?id=${encodeURIComponent(f.restaurantId)}`;
+                    visor.querySelector('.gv-v-cont').textContent = `${i + 1} / ${fotos.length}`;
+                    visor.classList.toggle('una', fotos.length < 2);
+                };
+                const mover = d => { i = (i + d + fotos.length) % fotos.length; pintar(); };
+                const cerrar = () => {
+                    document.removeEventListener('keydown', teclas);
+                    visor.classList.remove('visible');
+                    document.body.style.overflow = '';
+                    setTimeout(() => visor.remove(), 250);
+                };
+                const teclas = e => {
+                    if (e.key === 'Escape') cerrar();
+                    else if (e.key === 'ArrowLeft') mover(-1);
+                    else if (e.key === 'ArrowRight') mover(1);
+                };
+                visor.querySelector('.gv-v-cerrar').addEventListener('click', cerrar);
+                visor.querySelector('.prev').addEventListener('click', () => mover(-1));
+                visor.querySelector('.next').addEventListener('click', () => mover(1));
+                visor.addEventListener('click', e => { if (e.target === visor || e.target.classList.contains('gv-v-fig')) cerrar(); });
+                let x0 = null;
+                visor.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
+                visor.addEventListener('touchend', e => {
+                    if (x0 === null) return;
+                    const dx = e.changedTouches[0].clientX - x0;
+                    if (Math.abs(dx) > 45) mover(dx < 0 ? 1 : -1);
+                    x0 = null;
+                });
+                document.addEventListener('keydown', teclas);
+                document.body.style.overflow = 'hidden';
+                pintar();
+                requestAnimationFrame(() => visor.classList.add('visible'));
+                visor.querySelector('.gv-v-cerrar').focus({ preventScroll: true });
             }
 
             // ===== CARGA DE DATOS =====
@@ -3919,121 +4113,83 @@
             async loadNoticias() {
                 const noticiasGrid = document.getElementById('noticias-grid');
                 const noticiasSection = document.getElementById('noticias-eventos');
-
                 if (!noticiasGrid || !noticiasSection) return;
+                if (this.noticiasInterval) { clearInterval(this.noticiasInterval); this.noticiasInterval = null; }
 
                 try {
                     const lang = localStorage.getItem('appLang') || 'es';
                     const response = await fetch('/api/noticias?limit=6');
                     const data = await response.json();
-
-                    if (data.success && data.data && data.data.length > 0) {
+                    if (data.success && Array.isArray(data.data) && data.data.length > 0) {
                         noticiasSection.style.display = 'block';
                         this.renderNoticias(data.data, lang);
                     } else {
-                        noticiasSection.style.display = 'block';
-                        noticiasGrid.innerHTML = `
-                            <div class="empty-state" style="grid-column: 1 / -1; padding: 3rem; text-align: center; background: var(--gray-50); border-radius: var(--radius-xl);">
-                                <i class="fas fa-newspaper" style="font-size: 3rem; color: var(--gray-400); margin-bottom: 1rem; display: block;"></i>
-                                <h3 style="color: var(--gray-800); font-size: 1.25rem;">${lang === 'en' ? 'No recent news' : lang === 'fr' ? 'Aucune nouvelle récente' : 'No hay noticias recientes'}</h3>
-                                <p style="color: var(--gray-600);">${lang === 'en' ? 'Check back later for updates and local events.' : lang === 'fr' ? 'Revenez plus tard pour des mises à jour et des événements locaux.' : 'Vuelve pronto para enterarte de novedades y eventos locales.'}</p>
-                            </div>
-                        `;
+                        // Sin noticias: la sección no se muestra
+                        noticiasSection.style.display = 'none';
                     }
                 } catch (error) {
                     console.error('Error cargando noticias:', error);
-                    if (noticiasSection && noticiasGrid) {
-                        noticiasSection.style.display = 'block';
-                        noticiasGrid.innerHTML = `
-                            <div class="empty-state" style="grid-column: 1 / -1; padding: 1rem; color: #dc2626; background: #fee2e2; border-radius: var(--radius-md);">
-                                <strong>Error:</strong> ${error.message} <br>
-                                <small>Por favor mira la consola para más detalles.</small>
-                            </div>
-                        `;
-                    }
+                    noticiasSection.style.display = 'none';
                 }
             }
 
             renderNoticias(noticias, currentLang = 'es') {
                 const noticiasGrid = document.getElementById('noticias-grid');
                 if (!noticiasGrid) return;
+                const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+                const loc = currentLang === 'en' ? 'en-US' : currentLang === 'fr' ? 'fr-FR' : 'es-MX';
+                const txt = (o) => (o && (o[currentLang] || o.es)) || '';
+                const leer = currentLang === 'en' ? 'Read more' : currentLang === 'fr' ? 'Lire la suite' : 'Leer más';
+                const sinImg = '/images/Kayak%20en%20la%20Presa-103.jpg';
 
-                const slides = noticias.map(noticia => {
-                    const fechaObj = new Date(noticia.fecha);
-                    const fecha = fechaObj.toLocaleDateString(currentLang === 'es' ? 'es-MX' : currentLang === 'en' ? 'en-US' : 'fr-FR', {
-                        year: 'numeric', month: 'long', day: 'numeric'
-                    });
+                const datos = noticias.map(n => {
+                    const f = new Date(n.fecha);
+                    const valida = !isNaN(f);
+                    return {
+                        n,
+                        titulo: txt(n.titulo),
+                        desc: txt(n.descripcion),
+                        img: (n.imagen && n.imagen.url) || n.imagenUrl || sinImg,
+                        dia: valida ? f.toLocaleDateString(loc, { day: 'numeric', timeZone: 'UTC' }) : '',
+                        mes: valida ? f.toLocaleDateString(loc, { month: 'short', timeZone: 'UTC' }).replace('.', '') : '',
+                        fecha: valida ? f.toLocaleDateString(loc, { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }) : ''
+                    };
+                });
+                this.noticiasData = datos;
+                const [d0, ...resto] = datos;
+                const imgTag = (d, cls) => `<img class="${cls}" loading="lazy" decoding="async" src="${esc(d.img)}" alt="" onload="this.classList.add('ok')" onerror="this.onerror=null;this.src='${sinImg}'">`;
 
-                    const titulo = (noticia.titulo && noticia.titulo[currentLang]) ? noticia.titulo[currentLang] : (noticia.titulo && noticia.titulo['es']) ? noticia.titulo['es'] : '';
-                    const descripcion = (noticia.descripcion && noticia.descripcion[currentLang]) ? noticia.descripcion[currentLang] : (noticia.descripcion && noticia.descripcion['es']) ? noticia.descripcion['es'] : '';
-                    const imagenUrl = (noticia.imagen && noticia.imagen.url) ? noticia.imagen.url : noticia.imagenUrl || 'https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=800&q=80';
-
-                    return `
-                        <div class="noticia-slide">
-                            <div class="noticia-card">
-                                <img loading="lazy" decoding="async" src="${imagenUrl}" alt="${titulo}" class="noticia-imagen" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=800&q=80'">
-                                <div class="noticia-meta-top">${currentLang === 'en' ? 'Local News' : currentLang === 'fr' ? 'Actualité locale' : 'Noticia local'}</div>
-                                <div class="noticia-contenido">
-                                    <div class="noticia-fecha">${fecha}</div>
-                                    <h3 class="noticia-titulo">${titulo}</h3>
-                                    <p class="noticia-descripcion">${descripcion && descripcion.length > 120 ? descripcion.substring(0, 120) + '...' : descripcion}</p>
-                                    <div class="noticias-actions">
-                                        <button class="btn btn-outline" style="align-self: flex-start; background: rgba(255,255,255,0.15); color: #fff; border-color: rgba(255,255,255,0.35);" onclick="if(window.app && window.app.openNoticiaModal) { window.app.openNoticiaModal('${encodeURIComponent(JSON.stringify(noticia))}', '${currentLang}'); }">
-                                            ${currentLang === 'en' ? 'Read More' : currentLang === 'fr' ? 'Lire plus' : 'Leer Más'}
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-
+                noticiasGrid.className = 'nt-grid' + (resto.length ? '' : ' nt-solo');
                 noticiasGrid.innerHTML = `
-                    <div class="noticias-carousel" id="noticias-carousel">
-                        <button class="noticias-nav-btn prev" id="noticias-prev" aria-label="Noticia anterior"><i class="fas fa-chevron-left"></i></button>
-                        <div class="noticias-viewport" id="noticias-viewport">
-                            <div class="noticias-track" id="noticias-track">${slides}</div>
+                    <article class="nt-dest" data-i="0" tabindex="0" role="button">
+                        <div class="nt-dest-foto">${imgTag(d0, 'nt-img')}
+                            ${d0.dia ? `<span class="nt-cal"><b>${esc(d0.dia)}</b>${esc(d0.mes)}</span>` : ''}
                         </div>
-                        <button class="noticias-nav-btn next" id="noticias-next" aria-label="Noticia siguiente"><i class="fas fa-chevron-right"></i></button>
-                    </div>
-                `;
+                        <div class="nt-dest-txt">
+                            ${d0.fecha ? `<span class="nt-fecha">${esc(d0.fecha)}</span>` : ''}
+                            <h3>${esc(d0.titulo)}</h3>
+                            ${d0.desc ? `<p>${esc(d0.desc)}</p>` : ''}
+                            <span class="nt-leer">${leer} <i class="fas fa-arrow-right"></i></span>
+                        </div>
+                    </article>
+                    ${resto.length ? `<div class="nt-lista">${resto.map((d, k) => `
+                        <article class="nt-item" data-i="${k + 1}" tabindex="0" role="button" style="--i:${k}">
+                            <div class="nt-item-foto">${imgTag(d, 'nt-img')}</div>
+                            <div class="nt-item-txt">
+                                ${d.fecha ? `<span class="nt-fecha">${esc(d.fecha)}</span>` : ''}
+                                <h4>${esc(d.titulo)}</h4>
+                            </div>
+                            <i class="fas fa-chevron-right nt-flecha" aria-hidden="true"></i>
+                        </article>`).join('')}</div>` : ''}`;
 
-                this.noticiasIndex = 0;
-                this.setupNoticiasCarousel(noticias.length);
-            }
-
-            setupNoticiasCarousel(totalSlides) {
-                const track = document.getElementById('noticias-track');
-                const viewport = document.getElementById('noticias-viewport');
-                const prevBtn = document.getElementById('noticias-prev');
-                const nextBtn = document.getElementById('noticias-next');
-
-                if (!track || !viewport || totalSlides <= 1) {
-                    if (this.noticiasInterval) {
-                        clearInterval(this.noticiasInterval);
-                        this.noticiasInterval = null;
-                    }
-                    return;
-                }
-
-                prevBtn?.addEventListener('click', () => {
-                    viewport.scrollBy({ left: -Math.max(260, viewport.clientWidth * 0.8), behavior: 'smooth' });
+                noticiasGrid.querySelectorAll('[data-i]').forEach(el => {
+                    const abrir = () => {
+                        const d = this.noticiasData[Number(el.dataset.i)];
+                        if (d) this.openNoticiaModal(encodeURIComponent(JSON.stringify(d.n)), currentLang);
+                    };
+                    el.addEventListener('click', abrir);
+                    el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); abrir(); } });
                 });
-
-                nextBtn?.addEventListener('click', () => {
-                    viewport.scrollBy({ left: Math.max(260, viewport.clientWidth * 0.8), behavior: 'smooth' });
-                });
-
-                if (this.noticiasInterval) {
-                    clearInterval(this.noticiasInterval);
-                }
-                this.noticiasInterval = setInterval(() => {
-                    viewport.scrollBy({ left: Math.max(260, viewport.clientWidth * 0.8), behavior: 'smooth' });
-                    const nearEnd = viewport.scrollLeft + viewport.clientWidth >= viewport.scrollWidth - 8;
-                    if (nearEnd) {
-                        viewport.scrollTo({ left: 0, behavior: 'smooth' });
-                    }
-                }, 5000);
             }
         }
 
@@ -4378,6 +4534,17 @@
             </div>
         </div>
     </footer>
+    <script>
+        (function () {
+            var els = document.querySelectorAll('.sx .sx-cab, .cj-texto, .cj-fotos');
+            if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            els.forEach(function (el) { el.classList.add('sx-ent'); });
+            var io = new IntersectionObserver(function (entradas) {
+                entradas.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('sx-visible'); io.unobserve(e.target); } });
+            }, { rootMargin: '0px 0px -10% 0px' });
+            els.forEach(function (el) { io.observe(el); });
+        })();
+    </script>
 </body>
 
 </html>
