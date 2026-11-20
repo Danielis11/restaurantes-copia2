@@ -149,7 +149,8 @@ body {
     }
 
     /* fa-map */
-    .nav-link[href="/#restaurantes"]::before {
+    .nav-link[href="/#restaurantes"]::before,
+    .nav-link[href="/restaurantes.html"]::before {
         content: "\f2e7";
     }
 

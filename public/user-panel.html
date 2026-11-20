@@ -335,14 +335,14 @@
                     <div class="paso" data-paso="correo"><div class="paso-marca"><i class="fas fa-check"></i></div><div class="paso-txt"><strong>Confirma tu correo</strong><span>Lo necesitas para opinar sobre los lugares.</span></div><button class="btn chico" type="button" data-accion="confirmar">Confirmar</button></div>
                     <div class="paso" data-paso="favorito"><div class="paso-marca"><i class="fas fa-check"></i></div><div class="paso-txt"><strong>Guarda tu primer lugar</strong><span>Toca el <i class="fas fa-heart" style="color:var(--rojo)"></i> en cualquier restaurante, hospedaje o experiencia.</span></div><a class="btn chico" href="/index.html">Explorar</a></div>
                     <div class="paso" data-paso="viaje"><div class="paso-marca"><i class="fas fa-check"></i></div><div class="paso-txt"><strong>Planea tu viaje</strong><span>Crea un itinerario y ve agregando lugares por día.</span></div><button class="btn chico" type="button" data-accion="nuevo-viaje">Crear viaje</button></div>
-                    <div class="paso" data-paso="opinion"><div class="paso-marca"><i class="fas fa-check"></i></div><div class="paso-txt"><strong>Comparte tu experiencia</strong><span>Tu opinión ayuda a otros viajeros a decidir.</span></div><a class="btn chico" href="/index.html#restaurantes">Opinar</a></div>
+                    <div class="paso" data-paso="opinion"><div class="paso-marca"><i class="fas fa-check"></i></div><div class="paso-txt"><strong>Comparte tu experiencia</strong><span>Tu opinión ayuda a otros viajeros a decidir.</span></div><a class="btn chico" href="/restaurantes.html">Opinar</a></div>
                 </div>
             </div>
 
             <div class="bloque">
                 <div class="titulo-fila"><h2>¿Qué quieres hacer hoy?</h2></div>
                 <div class="explorar">
-                    <a class="destino" href="/index.html#restaurantes"><div class="numero-ico" style="background:#fff7ed;color:#c2410c;"><i class="fas fa-utensils"></i></div><strong>Comer</strong><span>Restaurantes, bares y cafés</span></a>
+                    <a class="destino" href="/restaurantes.html"><div class="numero-ico" style="background:#fff7ed;color:#c2410c;"><i class="fas fa-utensils"></i></div><strong>Comer</strong><span>Restaurantes, bares y cafés</span></a>
                     <a class="destino" href="/hospedaje/hospedaje.html"><div class="numero-ico ico-azul"><i class="fas fa-bed"></i></div><strong>Dormir</strong><span>Hoteles y cabañas</span></a>
                     <a class="destino" href="/experiencias.html"><div class="numero-ico ico-verde"><i class="fas fa-hiking"></i></div><strong>Vivir</strong><span>Experiencias y tours</span></a>
                     <a class="destino" href="/mapa.html"><div class="numero-ico ico-morado"><i class="fas fa-map-marked-alt"></i></div><strong>Ubicar</strong><span>Mapa del pueblo</span></a>
@@ -868,7 +868,7 @@
 
         function pintarOpiniones() {
             if (!datos.opiniones.length) {
-                $('listaOpin').innerHTML = vacio('far fa-comment-dots', 'Aún no compartes opiniones', 'Después de visitar un lugar, entra a su página y toca «Escribir opinión». Tu experiencia ayuda a otros viajeros.', '<a class="btn primario" href="/index.html#restaurantes">Buscar un lugar</a>');
+                $('listaOpin').innerHTML = vacio('far fa-comment-dots', 'Aún no compartes opiniones', 'Después de visitar un lugar, entra a su página y toca «Escribir opinión». Tu experiencia ayuda a otros viajeros.', '<a class="btn primario" href="/restaurantes.html">Buscar un lugar</a>');
                 return;
             }
             $('listaOpin').innerHTML = datos.opiniones.map((r, i) => {
