@@ -101,14 +101,16 @@
             background-size: cover;
             background-position: center 40%;
             opacity: 0;
-            transition: opacity 1.8s ease-in-out;
+            z-index: 0;
+            transition: opacity 1.2s ease;
             will-change: opacity, transform;
         }
 
-        .hero-slide.active {
-            opacity: 1;
-            animation: slowKenBurns 14s ease-in-out forwards;
-        }
+        /* La foto anterior se queda visible debajo mientras la nueva aparece encima:
+           así no se ve el fondo oscuro entre una y otra */
+        .hero-slide.prev { opacity: 1; z-index: 1; transition: none; }
+        .hero-slide.active { opacity: 1; z-index: 2; }
+        .hero-slide.active, .hero-slide.prev { animation: slowKenBurns 14s ease-in-out forwards; }
 
         @keyframes slowKenBurns {
             from { transform: scale(1); }
@@ -822,6 +824,92 @@
                 display: none;
             }
         }
+
+        /* ===== Encabezado compacto de Turismo / Directorio ===== */
+        .results { padding: 2.5rem 0 1.5rem; }
+        .exp-cab-txt { flex: 1 1 260px; min-width: 0; }
+        .exp-cab-txt h2 { font-size: 1.6rem; font-weight: 700; color: #0f172a; margin: 0 0 .15rem; letter-spacing: -.3px; }
+        .exp-cab-txt p { font-size: .92rem; color: #6b7280; margin: 0; max-width: 46ch; line-height: 1.45; }
+        .exp-sticky-bar { padding: 0; margin-bottom: 1rem; }
+        .exp-sticky-inner { flex-direction: row !important; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .75rem 1.25rem; }
+        .exp-sticky-inner .exp-tabs { padding: 4px; gap: 2px; }
+        .exp-sticky-inner .exp-tab { padding: .55rem 1rem; font-size: .9rem; }
+        .exp-sticky-search { display: flex; flex: 0 1 260px; min-width: 180px; }
+        .exp-sticky-bar.is-stuck .exp-cab-txt { display: none; }
+        .exp-sticky-bar.is-stuck .exp-sticky-inner { justify-content: center; }
+
+        /* Filtros de dificultad y duración junto al contador */
+        .results-meta { padding-top: .25rem; }
+        .exp-meta-der { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+        .exp-filtros { gap: .5rem; justify-content: flex-end; }
+        .exp-filtros .exp-filter-pill {
+            background: #fff; backdrop-filter: none; border: 1px solid #e5e7eb; color: #374151;
+            padding: .4rem .8rem; font-size: .82rem; font-weight: 600;
+        }
+        .exp-filtros .exp-filter-pill:hover { background: #f9fafb; border-color: #d1d5db; }
+        .exp-filtros .exp-filter-pill i { color: var(--primary, #2563eb); opacity: 1; }
+        .exp-filtros .exp-filter-pill::after { content: '\f107'; font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: .7rem; color: #9ca3af; margin-left: .15rem; }
+        .exp-filtros .dropdown-menu { background: #fff; backdrop-filter: none; border: 1px solid #e5e7eb; box-shadow: 0 10px 25px rgba(15,23,42,.12); left: auto; right: 0; min-width: 160px; }
+        .exp-filtros .dropdown-item { color: #374151; border-bottom-color: #f3f4f6; }
+        .exp-filtros .dropdown-item:hover { background: #f3f4f6; color: #111827; }
+        .exp-filtros .dropdown-item.selected { background: #eff6ff; color: var(--primary, #2563eb); }
+
+        /* Etiqueta en fotos de referencia */
+        .foto-ref { position: absolute; top: .75rem; left: .75rem; background: rgba(15,23,42,.6); color: #fff; font-size: .68rem; font-weight: 600; padding: .2rem .55rem; border-radius: 999px; backdrop-filter: blur(4px); }
+
+        /* ===== Directorio turístico compacto ===== */
+        .dir-sec { padding: 2.5rem 0 3rem; background: #f9fafb; }
+        .dir-cab { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .75rem 1.25rem; margin-bottom: 1.25rem; }
+        .dir-tabs { display: inline-flex; gap: 2px; padding: 4px; background: #eef0f3; border-radius: 999px; }
+        .dir-tab { display: inline-flex; align-items: center; gap: .45rem; padding: .5rem 1rem; border: 0; background: transparent; border-radius: 999px; font-weight: 600; font-size: .88rem; color: #4b5563; cursor: pointer; transition: background .2s, color .2s; }
+        .dir-tab:hover { color: #111827; }
+        .dir-tab.active { background: #fff; color: var(--primary, #2563eb); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+        .dir-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr)); gap: 1rem; }
+        .dir-grid > .loading, .dir-grid > .empty-state, .dir-grid > .error { grid-column: 1 / -1; }
+        .dir-card { display: flex; gap: 1rem; align-items: flex-start; background: #fff; border: 1px solid #eceef2; border-radius: 16px; padding: 1rem; cursor: pointer; transition: border-color .2s, box-shadow .2s, transform .2s; }
+        .dir-card:hover { border-color: #dbe3f0; box-shadow: 0 8px 22px rgba(15,23,42,.07); transform: translateY(-2px); }
+        .dir-foto { flex: 0 0 64px; width: 64px; height: 64px; border-radius: 50%; overflow: hidden; background: #e0e7ff; color: #4338ca; display: grid; place-items: center; font-weight: 700; font-size: 1.15rem; }
+        .dir-foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .dir-card.agencia .dir-foto { border-radius: 14px; background: #f3f4f6; }
+        .dir-card.agencia .dir-foto img { object-fit: contain; padding: 6px; }
+        .dir-cuerpo { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: .35rem; }
+        .dir-fila { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+        .dir-nombre { font-size: .98rem; font-weight: 700; color: #0f172a; margin: 0; line-height: 1.25; text-transform: capitalize; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .dir-cal { flex: 0 0 auto; font-size: .78rem; font-weight: 700; color: #b45309; background: #fffbeb; padding: .15rem .5rem; border-radius: 999px; }
+        .dir-cal.nuevo { color: #047857; background: #ecfdf5; }
+        .dir-tipo { font-size: .75rem; color: #6b7280; display: flex; align-items: center; gap: .3rem; }
+        .dir-tipo i { color: var(--primary, #2563eb); }
+        .dir-bio { font-size: .84rem; color: #4b5563; line-height: 1.45; margin: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .dir-chips { display: flex; flex-wrap: wrap; gap: .3rem; }
+        .dir-chip { font-size: .72rem; font-weight: 600; color: #374151; background: #f3f4f6; padding: .18rem .55rem; border-radius: 999px; display: inline-flex; align-items: center; gap: .3rem; }
+        .dir-acciones { display: flex; gap: .4rem; margin-top: .3rem; }
+        .dir-btn { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: .4rem; padding: .45rem .8rem; border-radius: 10px; border: 0; background: var(--primary, #2563eb); color: #fff; font-size: .8rem; font-weight: 600; cursor: pointer; transition: background .2s; }
+        .dir-btn:hover { background: var(--primary-dark, #1d4ed8); }
+        .dir-wa { flex: 0 0 auto; background: #25D366; padding: .45rem .75rem; }
+        .dir-wa:hover { background: #1db954; }
+
+        .dir-mas { grid-column: 1 / -1; justify-self: center; display: inline-flex; align-items: center; gap: .45rem; padding: .6rem 1.2rem; border-radius: 999px; border: 1px solid #dbe3f0; background: #fff; color: var(--primary, #2563eb); font-weight: 600; font-size: .88rem; cursor: pointer; transition: background .2s; }
+        .dir-mas:hover { background: #eff6ff; }
+
+        /* Créditos */
+        .exp-creditos { padding: 1rem 0 2rem; font-size: .8rem; color: #6b7280; }
+        .exp-creditos summary { cursor: pointer; font-weight: 600; }
+        .exp-creditos ul { margin: .5rem 0 0 1.1rem; display: grid; gap: .2rem; }
+        .exp-creditos a { color: inherit; }
+
+        @media (max-width: 768px) {
+            .results { padding-top: 1.75rem; }
+            .exp-cab-txt h2 { font-size: 1.35rem; }
+            .exp-sticky-inner .exp-tabs { width: 100%; display: flex; }
+            .exp-sticky-inner .exp-tab { flex: 1; padding: .5rem .4rem; font-size: .78rem; }
+            .exp-sticky-search, .exp-sticky-bar.is-stuck .exp-sticky-search { display: flex; flex: 1 1 100%; max-width: none; }
+            .exp-sticky-bar.is-stuck .exp-sticky-search { display: none; }
+            .results-meta { align-items: flex-start; }
+            .dir-grid { grid-template-columns: minmax(0, 1fr); }
+            .dir-nombre { white-space: normal; }
+            .dir-tabs { width: 100%; }
+            .dir-tab { flex: 1; justify-content: center; }
+        }
     </style>
     <main>
         <section class="hero exp-hero">
@@ -848,54 +936,19 @@
                     <!-- La búsqueda por nombre vive en la barra fija de abajo -->
                     <input type="hidden" id="filter-search" value="">
 
-                    <!-- Filtros pill pequeños -->
-                    <div class="exp-filter-pills">
-                        <div class="exp-filter-pill custom-dropdown" data-target="filter-difficulty">
-                            <i class="fas fa-signal"></i>
-                            <span class="dropdown-label" data-i18n="experiencias.dificultad">Dificultad</span>
-                            <input type="hidden" id="filter-difficulty" value="all">
-                            <div class="dropdown-menu">
-                                <div class="dropdown-item" data-value="all" data-i18n="experiencias.todas">Todas</div>
-                                <div class="dropdown-item" data-value="Fácil" data-i18n="experiencias.facil">Fácil</div>
-                                <div class="dropdown-item" data-value="Moderado" data-i18n="experiencias.moderado">
-                                    Moderado</div>
-                                <div class="dropdown-item" data-value="Difícil" data-i18n="experiencias.dificil">Difícil
-                                </div>
-                                <div class="dropdown-item" data-value="Extremo" data-i18n="experiencias.extremo">Extremo
-                                </div>
-                            </div>
-                        </div>
-                        <div class="exp-filter-pill custom-dropdown" data-target="filter-duration">
-                            <i class="fas fa-clock"></i>
-                            <span class="dropdown-label" data-i18n="experiencias.duracion">Duración</span>
-                            <input type="hidden" id="filter-duration" value="all">
-                            <div class="dropdown-menu">
-                                <div class="dropdown-item" data-value="all" data-i18n="experiencias.todas">Todas</div>
-                                <div class="dropdown-item" data-value="short" data-i18n="experiencias.corta">Corta (&lt;
-                                    4h)</div>
-                                <div class="dropdown-item" data-value="medium" data-i18n="experiencias.media">Media
-                                    (4-8h)</div>
-                                <div class="dropdown-item" data-value="long" data-i18n="experiencias.larga">Larga (&gt;
-                                    8h)</div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </section>
 
         <section class="results">
             <div class="container">
-                <div style="text-align: center; margin-bottom: 2rem;">
-                    <h2 data-i18n="experiencias.tipos_turismo_titulo"
-                        style="font-size: 2rem; font-weight: 700; color: #0f172a; margin-bottom: 0.75rem;">Turismo</h2>
-                    <p data-i18n="experiencias.tipos_turismo_subtitulo"
-                        style="font-size: 1.05rem; color: #6b7280; max-width: 600px; margin: 0 auto;">Explora las
-                        diferentes formas de vivir Jalpan de Serra a través de nuestras opciones de turismo.</p>
-                </div>
-                <!-- Sticky tabs + compact search (shown when scrolled) -->
+                <!-- Encabezado compacto + pestañas + búsqueda (se queda fijo al bajar) -->
                 <div id="exp-sticky-bar" class="exp-sticky-bar">
                     <div class="exp-sticky-inner">
+                        <div class="exp-cab-txt">
+                            <h2 data-i18n="experiencias.tipos_turismo_titulo">Turismo</h2>
+                            <p data-i18n="experiencias.tipos_turismo_subtitulo">Explora las diferentes formas de vivir Jalpan de Serra a través de nuestras opciones de turismo.</p>
+                        </div>
                         <div class="exp-tabs">
                             <button class="exp-tab active" onclick="switchExpTab('turismo-convencional', this)">
                                 <i class="fas fa-map-marked-alt"></i> <span
@@ -920,10 +973,44 @@
                 <!-- Results meta: count + clear filters -->
                 <div class="results-meta">
                     <span class="results-count" id="results-count"></span>
-                    <button type="button" class="clear-filters-btn" id="clear-filters-btn" onclick="clearAllFilters()">
-                        <i class="fas fa-times"></i>
-                        <span>Limpiar filtros</span>
-                    </button>
+                    <div class="exp-meta-der">
+                <!-- Filtros de dificultad y duración (junto a los resultados) -->
+                <div class="exp-filter-pills exp-filtros">
+                    <div class="exp-filter-pill custom-dropdown" data-target="filter-difficulty">
+                        <i class="fas fa-signal"></i>
+                        <span class="dropdown-label" data-i18n="experiencias.dificultad">Dificultad</span>
+                        <input type="hidden" id="filter-difficulty" value="all">
+                        <div class="dropdown-menu">
+                            <div class="dropdown-item" data-value="all" data-i18n="experiencias.todas">Todas</div>
+                            <div class="dropdown-item" data-value="Fácil" data-i18n="experiencias.facil">Fácil</div>
+                            <div class="dropdown-item" data-value="Moderado" data-i18n="experiencias.moderado">
+                                Moderado</div>
+                            <div class="dropdown-item" data-value="Difícil" data-i18n="experiencias.dificil">Difícil
+                            </div>
+                            <div class="dropdown-item" data-value="Extremo" data-i18n="experiencias.extremo">Extremo
+                            </div>
+                        </div>
+                    </div>
+                    <div class="exp-filter-pill custom-dropdown" data-target="filter-duration">
+                        <i class="fas fa-clock"></i>
+                        <span class="dropdown-label" data-i18n="experiencias.duracion">Duración</span>
+                        <input type="hidden" id="filter-duration" value="all">
+                        <div class="dropdown-menu">
+                            <div class="dropdown-item" data-value="all" data-i18n="experiencias.todas">Todas</div>
+                            <div class="dropdown-item" data-value="short" data-i18n="experiencias.corta">Corta (&lt;
+                                4h)</div>
+                            <div class="dropdown-item" data-value="medium" data-i18n="experiencias.media">Media
+                                (4-8h)</div>
+                            <div class="dropdown-item" data-value="long" data-i18n="experiencias.larga">Larga (&gt;
+                                8h)</div>
+                        </div>
+                    </div>
+                </div>
+                        <button type="button" class="clear-filters-btn" id="clear-filters-btn" onclick="clearAllFilters()">
+                            <i class="fas fa-times"></i>
+                            <span>Limpiar filtros</span>
+                        </button>
+                    </div>
                 </div>
 
                 <div id="exp-grid" class="results-grid">
@@ -933,53 +1020,56 @@
         </section>
 
         <!-- Directorio Turístico (Guías y Agencias) -->
-        <section id="directorio" class="section" style="padding: 3rem 0; background: #f9fafb;">
+        <section id="directorio" class="section dir-sec">
             <div class="container">
-                <div style="text-align: center; margin-bottom: 2rem;">
-                    <h2 data-i18n="experiencias.directorio_titulo"
-                        style="font-size: 2rem; font-weight: 700; color: #0f172a; margin-bottom: 0.75rem;">Directorio
-                        Turístico</h2>
-                    <p data-i18n="experiencias.directorio_subtitulo"
-                        style="font-size: 1.05rem; color: #6b7280; max-width: 600px; margin: 0 auto;">Encuentra
-                        profesionales y agencias locales para tu próxima aventura.</p>
-                </div>
+                <div class="dir-cab">
+                    <div class="exp-cab-txt">
+                        <h2 data-i18n="experiencias.directorio_titulo">Directorio Turístico</h2>
+                        <p data-i18n="experiencias.directorio_subtitulo">Encuentra profesionales y agencias locales para tu próxima aventura.</p>
+                    </div>
 
                 <!-- Tabs del Directorio -->
                 <style>
-                    .dir-tab.selected-tab-style {
-                        color: var(--primary) !important;
-                        background: #eff6ff !important;
-                        border-color: var(--primary) !important;
-                    }
+                    .dir-tab.selected-tab-style { color: var(--primary); }
                 </style>
-                <div class="dir-tabs"
-                    style="display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
-                    <button class="dir-tab active selected-tab-style" onclick="switchDirTab('guias', this)"
-                        style="padding: 0.75rem 1.5rem; border: 1px solid transparent; background: white; border-radius: 99px; font-weight: 600; color: var(--gray-700); cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 0.5rem;">
+                <div class="dir-tabs">
+                    <button class="dir-tab active selected-tab-style" onclick="switchDirTab('guias', this)">
                         <i class="fas fa-id-badge"></i> <span data-i18n="experiencias.guias_tab">Guías
                             Certificados</span>
                     </button>
-                    <button class="dir-tab" onclick="switchDirTab('agencias', this)"
-                        style="padding: 0.75rem 1.5rem; border: 1px solid transparent; background: white; border-radius: 99px; font-weight: 600; color: var(--gray-700); cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 0.5rem;">
+                    <button class="dir-tab" onclick="switchDirTab('agencias', this)">
                         <i class="fas fa-building"></i> <span data-i18n="experiencias.agencias_tab">Agencias
                             Locales</span>
                     </button>
                 </div>
+                </div>
 
                 <!-- Contenido Guías -->
                 <div id="dir-content-guias" class="dir-content active" style="display: block;">
-                    <div id="guias-grid" class="results-grid">
+                    <div id="guias-grid" class="dir-grid">
                         <div class="loading" data-i18n="experiencias.cargando_guias">Cargando guías...</div>
                     </div>
                 </div>
 
                 <!-- Contenido Agencias -->
                 <div id="dir-content-agencias" class="dir-content" style="display: none;">
-                    <div id="agencias-grid" class="results-grid">
+                    <div id="agencias-grid" class="dir-grid">
                         <div class="loading" data-i18n="experiencias.cargando_agencias">Cargando agencias...</div>
                     </div>
                 </div>
             </div>
+        </section>
+        <section class="container exp-creditos">
+            <details>
+                <summary><i class="fas fa-camera"></i> Créditos de las fotos ilustrativas</summary>
+                <p>Las experiencias sin fotos propias muestran una imagen de referencia de la región. Fotos de Wikimedia Commons con licencia libre:</p>
+                <ul>
+                    <li><a href="https://commons.wikimedia.org/wiki/File:Tancoyol,_Queretaro,_M%C3%A9xico.jpg" target="_blank" rel="noopener">Misión de Tancoyol</a> — AlejandroPZ, <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.es" target="_blank" rel="noopener">CC BY-SA 3.0</a></li>
+                    <li><a href="https://commons.wikimedia.org/wiki/File:Zona_Arqueol%C3%B3gica_Tancama,_Sierra_Gorda,_Quer%C3%A9taro-_Tacama_Arqueologic_Zone_,_Quer%C3%A9taro_(24516055556).jpg" target="_blank" rel="noopener">Zona Arqueológica de Tancama</a> — Comisión Mexicana de Filmaciones, <a href="https://creativecommons.org/licenses/by-sa/2.0/deed.es" target="_blank" rel="noopener">CC BY-SA 2.0</a></li>
+                    <li><a href="https://commons.wikimedia.org/wiki/File:Atardecer_Sierra_Gorda_Queretana.jpg" target="_blank" rel="noopener">Atardecer en la Sierra Gorda</a> — AmparoRF22, <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.es" target="_blank" rel="noopener">CC BY-SA 4.0</a></li>
+                    <li><a href="https://commons.wikimedia.org/wiki/File:Paisaje_nublado_de_la_Sierra_Gorda_-_Pinal_de_Amoles,_Quer%C3%A9taro.jpg" target="_blank" rel="noopener">Paisaje nublado de la Sierra Gorda</a> — Juan Carlos Fonseca Mata, <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.es" target="_blank" rel="noopener">CC BY-SA 4.0</a></li>
+                </ul>
+            </details>
         </section>
     </main>
 
@@ -1119,6 +1209,46 @@
             return CATEGORY_ICONS[key] || 'fa-tag';
         }
 
+        // ===== FOTOS PARA EXPERIENCIAS SIN IMAGEN =====
+        // Primero, la foto de otra ficha del mismo lugar; si no hay, una foto de referencia de la región.
+        const WM = 'https://upload.wikimedia.org/wikipedia/commons/thumb/';
+        const FOTO = {
+            presa: '/images/jalpan/presa-jalpan-960.webp',
+            cueva: '/images/jalpan/cueva-del-agua-960.webp',
+            bici: '/images/jalpan/rutas-bici-960.webp',
+            mision: '/images/jalpan/mision-crepusculo-960.webp',
+            camino: '/images/jalpan/mision-atardecer-960.webp',
+            hacienda: '/images/jalpan/fachada-colonial-960.webp',
+            rio: '/images/_DSC0255.JPG',
+            tancoyol: WM + 'b/b0/Tancoyol%2C_Queretaro%2C_M%C3%A9xico.jpg/960px-Tancoyol%2C_Queretaro%2C_M%C3%A9xico.jpg',
+            tancama: WM + '6/6c/Zona_Arqueol%C3%B3gica_Tancama%2C_Sierra_Gorda%2C_Quer%C3%A9taro-_Tacama_Arqueologic_Zone_%2C_Quer%C3%A9taro_%2824516055556%29.jpg/960px-Zona_Arqueol%C3%B3gica_Tancama%2C_Sierra_Gorda%2C_Quer%C3%A9taro-_Tacama_Arqueologic_Zone_%2C_Quer%C3%A9taro_%2824516055556%29.jpg',
+            mirador: WM + 'd/d0/Atardecer_Sierra_Gorda_Queretana.jpg/960px-Atardecer_Sierra_Gorda_Queretana.jpg',
+            sierra: WM + 'a/aa/Paisaje_nublado_de_la_Sierra_Gorda_-_Pinal_de_Amoles%2C_Quer%C3%A9taro.jpg/960px-Paisaje_nublado_de_la_Sierra_Gorda_-_Pinal_de_Amoles%2C_Quer%C3%A9taro.jpg'
+        };
+        const FOTO_POR_NOMBRE = [
+            [/kayak|presa/, 'presa'], [/cueva|gruta|cachum/, 'cueva'], [/tancoyol/, 'tancoyol'],
+            [/tancama|arqueol/, 'tancama'], [/misi[oó]n|franciscan/, 'mision'], [/camino|santiago|iniciati/, 'camino'],
+            [/hacienda/, 'hacienda'], [/ciclis|bici|mtb|pachol/, 'bici'], [/poza|r[ií]o|agua|cascada/, 'rio'],
+            [/mirador|peña|pena|charcos/, 'mirador']
+        ];
+        const FOTO_POR_CATEGORIA = {
+            'Espeleismo': 'cueva', 'Kayak': 'presa', 'Ruta del Agua': 'rio', 'Ciclismo de Montaña': 'bici', 'MTB y Gravel': 'bici',
+            'Turismo Cultural': 'mision', 'Senderismo': 'mirador', 'Trail Running': 'mirador', 'Aviturismo': 'sierra', 'RZR': 'sierra'
+        };
+        function normalizar(s) { return (s || '').toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim(); }
+        function fotoDeTour(tour) {
+            if (tour.imagenes?.[0]?.url) return { url: tour.imagenes[0].url, ref: false };
+            const nombre = normalizar(getL(tour.nombre) || tour.nombre?.es || tour.nombre);
+            // Otra ficha del mismo lugar con fotos (p. ej. la versión comunitaria)
+            const fuentes = [].concat(todosLosTours || [], ...Object.values(experiencesCache));
+            const gemela = fuentes.find(t => t !== tour && t.imagenes?.[0]?.url && normalizar(getL(t.nombre) || t.nombre?.es || t.nombre) === nombre);
+            if (gemela) return { url: gemela.imagenes[0].url, ref: false };
+            const porNombre = FOTO_POR_NOMBRE.find(([re]) => re.test(nombre));
+            const cat = textoCat(tour.categoria);
+            const clave = porNombre ? porNombre[1] : (FOTO_POR_CATEGORIA[cat] || 'mirador');
+            return { url: FOTO[clave], ref: true };
+        }
+
         // Skeleton loaders function moved to ui-enhancements.js
 
         // ===== HERO ROTATING SLIDES =====
@@ -1142,7 +1272,12 @@
             let intervalId = null;
 
             function goToSlide(idx) {
+                if (idx === current) return;
+                slides.forEach(s => s.classList.remove('prev'));
                 slides[current].classList.remove('active');
+                slides[current].classList.add('prev');
+                const anterior = slides[current];
+                setTimeout(() => anterior.classList.remove('prev'), 1300);
                 current = idx;
                 slides[current].classList.add('active');
                 const dots = dotsContainer?.querySelectorAll('.hero-slide-dot') || [];
@@ -1190,8 +1325,8 @@
         document.addEventListener('DOMContentLoaded', () => {
             startHeroRotation();
             setupStickyBar();
+            pintarCategorias().then(() => { if (experiencesFetched && !categoriaActiva) applyFilters(); });
             loadExperiences('Turismo Convencional');
-            pintarCategorias();
 
             // Preload the other tabs in background for instant switching
             setTimeout(() => {
@@ -1314,62 +1449,49 @@
             }
         }
 
+        function escHtml(s) { return (s == null ? '' : String(s)).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+        function iniciales(nombre) { return (nombre || '?').trim().split(/\s+/).slice(0, 2).map(p => p[0]).join('').toUpperCase(); }
+        function nombreBonito(n) { return (n || '').toLowerCase(); }
+        function fotoDir(url, nombre) {
+            const ini = escHtml(iniciales(nombre));
+            return url
+                ? `<div class="dir-foto"><img loading="lazy" decoding="async" src="${escHtml(url)}" alt="" onerror="this.parentNode.textContent='${ini}'"></div>`
+                : `<div class="dir-foto" aria-hidden="true">${ini}</div>`;
+        }
+        function botonWa(tel) {
+            return tel ? `<button type="button" class="dir-btn dir-wa" title="WhatsApp" aria-label="WhatsApp"
+                onclick="event.stopPropagation(); window.open('https://wa.me/52${String(tel).replace(/\D/g, '')}', '_blank')"><i class="fab fa-whatsapp"></i></button>` : '';
+        }
+
         function renderAgencias(agencias) {
             const grid = document.getElementById('agencias-grid');
             if (!grid) return;
             const lang = localStorage.getItem('appLang') || 'es';
-            const contactarTxt = lang === 'en' ? 'Contact' : 'Contactar';
-            const verDetallesTxt = lang === 'en' ? 'See Details' : 'Ver Detalles';
+            const verDetallesTxt = lang === 'en' ? 'See details' : lang === 'fr' ? 'Voir détails' : 'Ver detalles';
+            const tipoTxt = lang === 'en' ? 'Local agency' : lang === 'fr' ? 'Agence locale' : 'Agencia local';
+            const defaultDesc = lang === 'en' ? 'Local agency dedicated to providing excellent tours.' : lang === 'fr' ? 'Agence locale dédiée à de belles excursions.' : 'Agencia local dedicada a proveer excelentes recorridos turísticos.';
 
-            grid.innerHTML = agencias.map(agencia => {
-                const logoUrl = agencia.logo?.url || '/images/default-agency.jpg';
-                const defaultDesc = lang === 'en' ? 'Local agency dedicated to providing excellent touristic tours.' : 'Agencia local dedicada a proveer excelentes recorridos turísticos.';
-                const descMap = agencia.descripcion || defaultDesc;
-
+            grid.innerHTML = agencias.map(a => {
+                const url = `/agencia.html?id=${a._id}`;
                 return `
-                <div class="restaurant-card agencia-card" data-id="${agencia._id}">
-                    <div class="card-image" onclick="window.location.href='/agencia.html?id=${agencia._id}'" style="cursor: pointer;">
-                        <img loading="lazy" decoding="async" src="${logoUrl}" alt="${agencia.nombre}" onerror="this.src='/images/PueblosMágicos.svg.png'">
-                        ${agencia.rnt ? `<div class="guia-badge" style="background:var(--primary); color:white;"><i class="fas fa-certificate"></i> RNT: ${agencia.rnt}</div>` : ''}
-                    </div>
-                    <div class="card-content">
-                        <div class="card-header">
-                            <div>
-                                <h3 class="card-title">${agencia.nombre}</h3>
-                                <span class="card-type"><i class="fas fa-building"></i> ${lang === 'en' ? 'Local Agency' : 'Agencia Local'}</span>
-                            </div>
+                <article class="dir-card agencia" data-id="${a._id}" onclick="location.href='${url}'">
+                    ${fotoDir(a.logo?.url, a.nombre)}
+                    <div class="dir-cuerpo">
+                        <div class="dir-fila">
+                            <h3 class="dir-nombre" title="${escHtml(a.nombre)}">${escHtml(a.nombre)}</h3>
+                            ${a.rnt ? `<span class="dir-cal nuevo" title="Registro Nacional de Turismo">RNT</span>` : ''}
                         </div>
-                        <p class="card-description">${descMap}</p>
-                        <div class="card-info" style="flex-direction:column; align-items:flex-start; gap:0.25rem;">
-                            ${agencia.telefono ? `<div class="info-item" style="margin:0;"><i class="fas fa-phone"></i><span>${agencia.telefono}</span></div>` : ''}
-                            ${agencia.email ? `<div class="info-item" style="margin:0;"><i class="fas fa-envelope"></i><span>${agencia.email}</span></div>` : ''}
+                        <span class="dir-tipo"><i class="fas fa-building"></i> ${tipoTxt}</span>
+                        <p class="dir-bio">${escHtml(getL(a.descripcion) || a.descripcion || defaultDesc)}</p>
+                        <div class="dir-chips">
+                            ${a.telefono ? `<span class="dir-chip"><i class="fas fa-phone"></i> ${escHtml(a.telefono)}</span>` : ''}
                         </div>
-                        <div class="card-actions" style="display:flex; gap:0.5rem; margin-top:auto; padding-top:0.75rem; border-top:1px solid var(--gray-100);">
-                            <button class="card-detail-btn"
-                               style="flex:1; display:inline-flex; align-items:center; justify-content:center; gap:0.4rem;
-                                      padding:0.55rem 1rem; background:var(--primary); color:white; border-radius:0.5rem;
-                                      font-size:0.85rem; font-weight:600; text-decoration:none;
-                                      transition:all 0.2s ease; border:none; cursor:pointer;"
-                               onmouseover="this.style.background='var(--primary-dark)'; this.style.transform='translateY(-1px)'"
-                               onmouseout="this.style.background='var(--primary)'; this.style.transform='translateY(0)'"
-                               onclick="window.location.href='/agencia.html?id=${agencia._id}'">
-                                <i class="fas fa-eye"></i>
-                                ${verDetallesTxt}
-                            </button>
-                            ${agencia.telefono ? `
-                            <button onclick="window.open('https://wa.me/52${agencia.telefono.replace(/\D/g, '')}', '_blank')"
-                                    title="WhatsApp"
-                                    style="padding:0.55rem 0.9rem; background:#25D366; color:white;
-                                           border:none; border-radius:0.5rem; font-size:0.85rem;
-                                           font-weight:600; cursor:pointer; transition:all 0.2s ease;"
-                                    onmouseover="this.style.background='#1db954'"
-                                    onmouseout="this.style.background='#25D366'">
-                                <i class="fab fa-whatsapp"></i>
-                            </button>` : ''}
+                        <div class="dir-acciones">
+                            <button type="button" class="dir-btn" onclick="event.stopPropagation(); location.href='${url}'"><i class="fas fa-eye"></i> ${verDetallesTxt}</button>
+                            ${botonWa(a.telefono)}
                         </div>
                     </div>
-                </div>
-            `;
+                </article>`;
             }).join('');
         }
 
@@ -1552,7 +1674,9 @@
 
             grid.innerHTML = items.reduce((acc, tour) => {
                 try {
-                    const imageUrl = tour.imagenes?.[0]?.url || 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=600&h=400&fit=crop';
+                    const foto = fotoDeTour(tour);
+                    const imageUrl = foto.url;
+                    const refTxt = lang === 'en' ? 'Reference photo' : lang === 'fr' ? 'Photo de référence' : 'Foto de referencia';
                     const categoriaStr = typeof tour.categoria === 'string' ? tour.categoria : (tour.categoria?.es || '');
                     const categoriaLabel = typeof tour.categoria === 'string' ? translateCategoria(tour.categoria) : getL(tour.categoria);
                     const catIcon = getCategoryIcon(categoriaStr);
@@ -1571,7 +1695,8 @@
                     const output = `
                     <div class="restaurant-card tour-card" data-id="${tour._id}">
                         <div class="card-image" onclick="window.location.href='/experiencia.html?id=${tour._id}'" style="cursor: pointer;">
-                            <img src="${imageUrl}" alt="${tour.nombre}" loading="lazy" onerror="this.style.display='none'">
+                            <img src="${imageUrl}" alt="${getL(tour.nombre)}" loading="lazy" decoding="async" onerror="this.style.display='none'">
+                            ${foto.ref ? `<span class="foto-ref" title="${refTxt}"><i class="fas fa-image"></i> ${refTxt}</span>` : ''}
                             <div class="tour-price-badge">
                                 <span class="tour-price-label">${desdeText}</span>
                                 <span class="tour-price-amount">$${tour.precio.amount} <span style="font-size:0.7rem; font-weight:600; color:#6b7280;">${tour.precio.moneda}</span></span>
@@ -1672,54 +1797,43 @@
             const grid = document.getElementById('guias-grid');
             if (!grid) return;
             const lang = localStorage.getItem('appLang') || 'es';
-            const guiaCertificadoTxt = lang === 'en' ? 'Certified Guide' : 'Guía Certificado';
-            const contactarTxt = lang === 'en' ? 'Contact' : 'Contactar';
-            const verDetallesTxt = lang === 'en' ? 'View Profile' : 'Ver Perfil';
+            const tipoTxt = lang === 'en' ? 'Certified guide' : lang === 'fr' ? 'Guide certifié' : 'Guía certificado';
+            const verTxt = lang === 'en' ? 'View profile' : lang === 'fr' ? 'Voir le profil' : 'Ver perfil';
+            const nuevoTxt = lang === 'en' ? 'New' : lang === 'fr' ? 'Nouveau' : 'Nuevo';
+            const bioDef = lang === 'en' ? 'Local guide passionate about sharing the wonders of Jalpan de Serra.' : lang === 'fr' ? 'Guide local passionné par les merveilles de Jalpan de Serra.' : 'Guía local apasionado por compartir las maravillas de Jalpan de Serra.';
 
-            grid.innerHTML = guias.map(guia => `
-                <div class="restaurant-card guia-card" data-id="${guia._id}">
-                    <div class="card-image" onclick="window.location.href='/guia.html?id=${guia._id}'" style="cursor: pointer;">
-                        <img loading="lazy" decoding="async" src="${guia.fotoPerfil?.url || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=70&w=600&auto=format'}" alt="${guia.nombreCompleto}" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=70&w=600&auto=format'">
-                        <div class="guia-badge"><i class="fas fa-star"></i> ${parseFloat(guia.calificacionPromedio).toFixed(1) || 'Nuevo'}</div>
-                    </div>
-                    <div class="card-content">
-                        <div class="card-header">
-                            <div>
-                                <h3 class="card-title">${guia.nombreCompleto}</h3>
-                                <span class="card-type"><i class="fas fa-user-check"></i> ${guiaCertificadoTxt}</span>
-                            </div>
+            const LIMITE = 6;
+            const visibles = (window.verTodosGuias || guias.length <= LIMITE + 2) ? guias : guias.slice(0, LIMITE);
+            const masTxt = lang === 'en' ? `See all ${guias.length} guides` : lang === 'fr' ? `Voir les ${guias.length} guides` : `Ver los ${guias.length} guías`;
+            const masBtn = visibles.length < guias.length
+                ? `<button type="button" class="dir-mas" onclick="window.verTodosGuias = true; renderGuias(allGuias)"><i class="fas fa-chevron-down"></i> ${masTxt}</button>` : '';
+
+            grid.innerHTML = visibles.map(g => {
+                const url = `/guia.html?id=${g._id}`;
+                const cal = parseFloat(g.calificacionPromedio);
+                const calHtml = cal > 0
+                    ? `<span class="dir-cal"><i class="fas fa-star"></i> ${cal.toFixed(1)}</span>`
+                    : `<span class="dir-cal nuevo">${nuevoTxt}</span>`;
+                const esp = (g.especialidades || []).slice(0, 3).map(e => `<span class="dir-chip"><i class="fas fa-hiking"></i> ${escHtml(e)}</span>`).join('');
+                const idi = (g.idiomas || []).slice(0, 3).map(e => `<span class="dir-chip"><i class="fas fa-language"></i> ${escHtml(e)}</span>`).join('');
+                return `
+                <article class="dir-card" data-id="${g._id}" onclick="location.href='${url}'">
+                    ${fotoDir(g.fotoPerfil?.url, g.nombreCompleto)}
+                    <div class="dir-cuerpo">
+                        <div class="dir-fila">
+                            <h3 class="dir-nombre" title="${escHtml(g.nombreCompleto)}">${escHtml(nombreBonito(g.nombreCompleto))}</h3>
+                            ${calHtml}
                         </div>
-                        <p class="card-description">${guia.biografia ? getL(guia.biografia) : (lang === 'en' ? 'Passionate expert local guide dedicated to sharing the wonders of Jalpan de Serra.' : lang === 'fr' ? 'Guide local expert passionné par le partage des merveilles de Jalpan de Serra.' : 'Guía local experto apasionado por compartir las maravillas de Jalpan de Serra.')}</p>
-                        <div class="card-info">
-                            <div class="info-item"><i class="fas fa-hiking"></i><span>${(guia.especialidades || []).slice(0, 2).join(', ') || 'General'}</span></div>
-                            <div class="info-item"><i class="fas fa-language"></i><span>${(guia.idiomas || []).join(', ') || (lang === 'en' ? 'Spanish' : lang === 'fr' ? 'Espagnol' : 'Español')}</span></div>
-                        </div>
-                        <div class="card-actions" style="display:flex; gap:0.5rem; margin-top:auto; padding-top:0.75rem; border-top:1px solid var(--gray-100);">
-                            <button class="card-detail-btn"
-                               style="flex:1; display:inline-flex; align-items:center; justify-content:center; gap:0.4rem;
-                                      padding:0.55rem 1rem; background:var(--primary); color:white; border-radius:0.5rem;
-                                      font-size:0.85rem; font-weight:600; text-decoration:none;
-                                      transition:all 0.2s ease; border:none; cursor:pointer;"
-                               onmouseover="this.style.background='var(--primary-dark)'; this.style.transform='translateY(-1px)'"
-                               onmouseout="this.style.background='var(--primary)'; this.style.transform='translateY(0)'"
-                               onclick="window.location.href='/guia.html?id=${guia._id}'">
-                                <i class="fas fa-eye"></i>
-                                ${verDetallesTxt || 'Ver Perfil'}
-                            </button>
-                            ${guia.telefono ? `
-                            <button onclick="window.open('https://wa.me/52${guia.telefono.replace(/\D/g, '')}', '_blank')"
-                                    title="WhatsApp"
-                                    style="padding:0.55rem 0.9rem; background:#25D366; color:white;
-                                           border:none; border-radius:0.5rem; font-size:0.85rem;
-                                           font-weight:600; cursor:pointer; transition:all 0.2s ease;"
-                                    onmouseover="this.style.background='#1db954'"
-                                    onmouseout="this.style.background='#25D366'">
-                                <i class="fab fa-whatsapp"></i>
-                            </button>` : ''}
+                        <span class="dir-tipo"><i class="fas fa-user-check"></i> ${tipoTxt}</span>
+                        <p class="dir-bio">${escHtml(g.biografia ? getL(g.biografia) : bioDef)}</p>
+                        <div class="dir-chips">${esp}${idi}</div>
+                        <div class="dir-acciones">
+                            <button type="button" class="dir-btn" onclick="event.stopPropagation(); location.href='${url}'"><i class="fas fa-eye"></i> ${verTxt}</button>
+                            ${botonWa(g.telefono)}
                         </div>
                     </div>
-                </div>
-            `).join('');
+                </article>`;
+            }).join('') + masBtn;
         }
 
         // ===== LÓGICA DE CUSTOM DROPDOWNS =====
