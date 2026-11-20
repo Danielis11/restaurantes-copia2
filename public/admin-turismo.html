@@ -6,8 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Administración de Turismo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js'></script>
-    <link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' rel='stylesheet' />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -183,8 +182,8 @@
         /* ===== STATS GRID ===== */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1.25rem;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 1rem;
             margin-bottom: 2.5rem;
         }
 
@@ -197,6 +196,12 @@
             transition: transform 0.2s, box-shadow 0.2s;
         }
 
+        .stat-boton { text-align: left; font: inherit; color: inherit; cursor: pointer; width: 100%; }
+        .stat-boton.activa { border-color: #fca5a5; box-shadow: 0 0 0 3px rgba(239, 68, 68, .12); }
+        .stat-ayuda { font-size: .75rem; color: var(--gray-400); margin-top: .25rem; }
+        .stat-icon.red { background: #fef2f2; color: #ef4444; }
+        .aviso-fotos { margin-top: 4px; display: inline-flex; align-items: center; gap: 4px; font: inherit; font-size: .72rem; font-weight: 600; color: #b91c1c; background: #fef2f2; border: 1px solid #fecaca; border-radius: 999px; padding: 2px 8px; cursor: pointer; white-space: nowrap; }
+        .aviso-fotos:hover { background: #fee2e2; }
         .stat-card:hover {
             transform: translateY(-2px);
             box-shadow: var(--shadow);
@@ -704,6 +709,9 @@
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
+            .txt-ver-sitio, .user-info { display: none; }
+            .btn-ver-sitio { margin-right: .5rem !important; padding: .55rem .7rem; }
+
             .nav {
                 padding: 0 1rem;
                 height: 60px;
@@ -718,7 +726,8 @@
             }
 
             .stats-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: .75rem;
             }
 
             .list-header {
@@ -766,8 +775,8 @@
                 <div class="logo-text">Turismo <span>Admin</span></div>
             </a>
             <div class="user-section">
-                <a href="/experiencias.html" class="btn btn-outline" style="margin-right: 1rem; border-color: var(--primary); color: var(--primary);">
-                    <i class="fas fa-external-link-alt"></i> Ver Experiencias
+                <a href="/experiencias.html" class="btn btn-outline btn-ver-sitio" title="Ver experiencias" style="margin-right: 1rem; border-color: var(--primary); color: var(--primary);">
+                    <i class="fas fa-external-link-alt"></i> <span class="txt-ver-sitio">Ver Experiencias</span>
                 </a>
                 <div class="user-info">
                     <div class="user-name" id="user-name">Admin</div>
@@ -810,6 +819,14 @@
                 </div>
                 <div class="stat-value" id="total-categorias">0</div>
             </div>
+            <button type="button" class="stat-card stat-boton" id="card-sin-fotos" onclick="filtrarSinFotos()" title="Ver solo los tours sin fotos">
+                <div class="stat-header">
+                    <div class="stat-title">Tours sin fotos</div>
+                    <div class="stat-icon red"><i class="fas fa-camera"></i></div>
+                </div>
+                <div class="stat-value" id="total-sin-fotos">0</div>
+                <div class="stat-ayuda">Toca para verlos</div>
+            </button>
         </div>
 
         <!-- Tabs -->
@@ -972,7 +989,7 @@
                     <div class="form-group full">
                         <label class="form-label">Imágenes del Tour</label>
                         <div class="image-upload-wrapper">
-                            <input type="file" id="tour-imagenes" accept="image/jpeg, image/png" multiple class="form-input">
+                            <input type="file" id="tour-imagenes" accept="image/jpeg, image/png, image/webp" multiple class="form-input">
                             <p style="font-size:12px;color:var(--gray-500);margin-top:4px;">Nota: Puedes seleccionar
                                 múltiples fotos simultáneamente (Solo JPG/PNG, máx 5MB). La primera se usará como portada.</p>
 
@@ -1217,7 +1234,7 @@
                     <div class="form-group full">
                         <label class="form-label">Foto de Perfil</label>
                         <div class="image-upload-wrapper">
-                            <input type="file" id="guia-fotoperfil" accept="image/jpeg, image/png" class="form-input">
+                            <input type="file" id="guia-fotoperfil" accept="image/jpeg, image/png, image/webp" class="form-input">
                             <p style="font-size:12px;color:var(--gray-500);margin-top:4px;">Solo JPG/PNG, máx 5MB.</p>
                             <div id="guia-foto-preview" style="margin-top:10px;"></div>
                         </div>
@@ -1274,7 +1291,7 @@
                         <label class="form-label"><i class="fas fa-images" style="color:var(--primary);"></i> Galería de
                             Fotos <small style="color:var(--gray-400); font-weight:400;">(máx. 5)</small></label>
                         <div class="image-upload-wrapper">
-                            <input type="file" id="guia-galeria" accept="image/jpeg, image/png" multiple class="form-input">
+                            <input type="file" id="guia-galeria" accept="image/jpeg, image/png, image/webp" multiple class="form-input">
                             <p style="font-size:12px;color:var(--gray-500);margin-top:4px;">Selecciona hasta 5 fotos
                                 para mostrar en el perfil del guía (Solo JPG/PNG, máx 5MB).</p>
                             <div id="guia-galeria-preview"
@@ -1377,7 +1394,7 @@
                     <div class="form-group full">
                         <label class="form-label">Logo de la Agencia</label>
                         <div class="image-upload-wrapper">
-                            <input type="file" id="agencia-logo" accept="image/jpeg, image/png" class="form-input">
+                            <input type="file" id="agencia-logo" accept="image/jpeg, image/png, image/webp" class="form-input">
                             <p style="font-size:12px;color:var(--gray-500);margin-top:4px;">Solo JPG/PNG, máx 5MB.</p>
                             <div id="agencia-foto-preview" style="margin-top:10px;"></div>
                         </div>
@@ -1420,7 +1437,7 @@
                         <label class="form-label"><i class="fas fa-images" style="color:var(--primary);"></i> Galería de
                             Fotos <small style="color:var(--gray-400); font-weight:400;">(máx. 5)</small></label>
                         <div class="image-upload-wrapper">
-                            <input type="file" id="agencia-galeria" accept="image/jpeg, image/png" multiple class="form-input">
+                            <input type="file" id="agencia-galeria" accept="image/jpeg, image/png, image/webp" multiple class="form-input">
                             <p style="font-size:12px;color:var(--gray-500);margin-top:4px;">Selecciona hasta 5 fotos
                                 para mostrar en el perfil de la agencia (Solo JPG/PNG, máx 5MB).</p>
                             <div id="agencia-galeria-preview"

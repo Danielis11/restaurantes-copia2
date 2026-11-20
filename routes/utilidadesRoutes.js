@@ -32,7 +32,10 @@ router.get('/api/img-proxy', async (req, res) => {
 
     // Optimización automática: formato moderno (WebP/AVIF), calidad automática y ancho máx. 1600px.
     // Solo si la URL aún no trae transformaciones propias (ej. w_300,c_fill).
-    imageUrl = imageUrl.replace(/\/image\/upload\/(?![a-z]{1,3}_[^/]*\/)/, '/image/upload/f_auto,q_auto,c_limit,w_1600/');
+    // ?w= pide una versión más chica (miniaturas del panel, tarjetas); solo anchos fijos para aprovechar la caché
+    const ANCHOS = [96, 160, 320, 480, 640, 960, 1280];
+    const w = ANCHOS.includes(parseInt(req.query.w, 10)) ? parseInt(req.query.w, 10) : 1600;
+    imageUrl = imageUrl.replace(/\/image\/upload\/(?![a-z]{1,3}_[^/]*\/)/, `/image/upload/f_auto,q_auto,c_limit,w_${w}/`);
 
     const https = require('https');
     const reqOpts = {

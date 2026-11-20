@@ -32,6 +32,39 @@ document.addEventListener('DOMContentLoaded', () => {
     loadDashboardData();
 });
 
+// ===== IMÁGENES: miniaturas y URL original =====
+// Las URLs llegan como /api/img-proxy?url=...; con &w= el servidor entrega una versión ligera.
+function mini(url, w) {
+    if (!url) return url;
+    return url.startsWith('/api/img-proxy') && !/[?&]w=/.test(url) ? `${url}&w=${w}` : url;
+}
+// Quita el proxy para guardar en la BD la URL real de Cloudinary
+function sinProxy(url) {
+    if (!url || !url.startsWith('/api/img-proxy')) return url;
+    const m = /[?&]url=([^&]+)/.exec(url);
+    return m ? decodeURIComponent(m[1]) : url;
+}
+
+// ===== TEXTOS TRADUCIDOS =====
+// Si el texto en español no cambió, se conservan el inglés y el francés que ya existen.
+// Así el servidor no vuelve a traducir todo en cada guardado (más rápido y no pisa correcciones).
+// Una traducción solo cuenta si existe y no es una copia del español
+const traducido = (prev, es) => prev && (prev.es || '') === es && prev.en && prev.fr && (prev.en !== es || prev.fr !== es);
+function bil(campo, es) {
+    const prev = window.currentEditingTour?.[campo];
+    return traducido(prev, es) ? { es, en: prev.en, fr: prev.fr } : { es, en: '', fr: '' };
+}
+function bilLista(tipo) {
+    const prev = window.currentEditingTour?.[tipo] || [];
+    return tourInfoItems[tipo].map(es => {
+        const p = prev.find(x => x && typeof x === 'object' && x.es === es);
+        return traducido(p, es) ? { es, en: p.en, fr: p.fr } : { es };
+    });
+}
+function bilObj(prev, es) {
+    return traducido(prev, es) ? { es, en: prev.en, fr: prev.fr } : { es, en: '', fr: '' };
+}
+
 // ===== AUTH HELPERS =====
 function getHeaders() {
     return {
@@ -74,6 +107,9 @@ async function loadDashboardData() {
             // Contar categorías únicas
             const cats = new Set(allTours.map(t => t.categoria).filter(Boolean));
             document.getElementById('total-categorias').textContent = cats.size;
+            const sinFotos = allTours.filter(t => !(t.imagenes && t.imagenes.length)).length;
+            const elSin = document.getElementById('total-sin-fotos');
+            if (elSin) elSin.textContent = sinFotos;
         }
 
         if (guiasData.success) {
@@ -109,11 +145,12 @@ function renderToursTable(tours) {
             <td>
                 <div style="display:flex;align-items:center;gap:1.5rem;">
                     <div style="width:48px;height:48px;border-radius:8px;overflow:hidden;flex-shrink:0;border:1px solid var(--gray-200);display:flex;align-items:center;justify-content:center;background:var(--gray-100);">
-                        ${principalImg ? `<img src="${principalImg}" alt="Tour" style="width:100%;height:100%;object-fit:cover;">` : `<i class="fas fa-image" style="color:var(--gray-400);font-size:1.2rem;"></i>`}
+                        ${principalImg ? `<img src="${mini(principalImg, 160)}" alt="" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;">` : `<i class="fas fa-image" style="color:var(--gray-400);font-size:1.2rem;"></i>`}
                     </div>
                     <div>
                         <strong style="font-size:1.05rem;color:var(--gray-800);">${tour.nombre?.es || 'Sin nombre'}</strong>
                         ${tour.nombre?.en ? `<div style="font-size:0.75rem;color:var(--gray-400);margin-top:2px;">${tour.nombre.en}</div>` : ''}
+                        ${principalImg ? '' : `<button type="button" class="aviso-fotos" title="Agregar fotos" onclick="openTourModal('${tour._id}', true)"><i class="fas fa-camera"></i> Sin fotos</button>`}
                     </div>
                 </div>
             </td>
@@ -146,7 +183,7 @@ function renderGuiasTable(guias) {
             <td>
                 <div style="display:flex;align-items:center;gap:1rem;">
                     <div style="position:relative;width:40px;height:40px;border-radius:50%;overflow:hidden;flex-shrink:0;border:1px solid var(--gray-200);background:var(--accent-light);display:flex;align-items:center;justify-content:center;color:var(--accent);font-weight:600;">
-                        ${profilImg ? `<img src="${profilImg}" style="width:100%;height:100%;object-fit:cover;">` : (guia.nombreCompleto || 'G').charAt(0).toUpperCase()}
+                        ${profilImg ? `<img src="${mini(profilImg, 96)}" alt="" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;">` : (guia.nombreCompleto || 'G').charAt(0).toUpperCase()}
                     </div>
                     <strong>${guia.nombreCompleto || 'Sin nombre'}</strong>
                 </div>
@@ -185,7 +222,7 @@ function renderAgenciasTable(agencias) {
             <td>
                 <div style="display:flex;align-items:center;gap:1rem;">
                     <div style="position:relative;width:40px;height:40px;border-radius:8px;overflow:hidden;flex-shrink:0;border:1px solid var(--gray-200);background:var(--accent-light);display:flex;align-items:center;justify-content:center;color:var(--accent);font-weight:600;">
-                        ${logoImg ? `<img src="${logoImg}" style="width:100%;height:100%;object-fit:cover;">` : (agencia.nombre || 'A').charAt(0).toUpperCase()}
+                        ${logoImg ? `<img src="${mini(logoImg, 96)}" alt="" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;">` : (agencia.nombre || 'A').charAt(0).toUpperCase()}
                     </div>
                     <strong>${agencia.nombre || 'Sin nombre'}</strong>
                 </div>
@@ -242,11 +279,11 @@ function renderInfoItems(type) {
 
 // ===== VALIDACIÓN DE IMÁGENES =====
 function validateImageFile(file) {
-    const validTypes = ['image/jpeg', 'image/png'];
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
     const maxSize = 5 * 1024 * 1024; // 5MB
 
     if (!validTypes.includes(file.type)) {
-        showNotification(`El archivo ${file.name} no es válido. Solo se permiten formatos JPG o PNG.`, 'error');
+        showNotification(`El archivo ${file.name} no es válido. Usa fotos JPG, PNG o WebP.`, 'error');
         return false;
     }
     if (file.size > maxSize) {
@@ -294,7 +331,7 @@ function renderTourImagesPreview() {
         imgContainer.addEventListener('dragend', handleDragEnd);
 
         imgContainer.innerHTML = `
-            <img src="${imgState.url}" style="width:100%;height:100%;object-fit:cover; pointer-events:none;">
+            <img src="${imgState.isNew ? imgState.url : mini(imgState.url, 320)}" alt="" decoding="async" style="width:100%;height:100%;object-fit:cover; pointer-events:none;">
             <button type="button" onclick="eliminarImagenTourPreview('${imgState.id}')" style="position:absolute;top:4px;right:4px;background:var(--danger);color:white;border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:11px; z-index:10;">
                 <i class="fas fa-times"></i>
             </button>
@@ -370,12 +407,24 @@ function handleDragEnd(e) {
 }
 
 // ===== SEARCH/FILTER =====
+let soloSinFotos = false;
+function filtrarSinFotos() {
+    soloSinFotos = !soloSinFotos;
+    document.getElementById('card-sin-fotos')?.classList.toggle('activa', soloSinFotos);
+    const btn = document.querySelector('.tab-btn');
+    if (btn) switchTab('tours', btn);
+    filterTable('tours');
+    document.getElementById('tours-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 function filterTable(type) {
     const query = document.getElementById(`search-${type}`).value.toLowerCase();
     if (type === 'tours') {
         const filtered = allTours.filter(t =>
-            (t.nombre?.es || '').toLowerCase().includes(query) ||
-            (t.categoria || '').toLowerCase().includes(query)
+            ((t.nombre?.es || '').toLowerCase().includes(query) ||
+            (t.categoria || '').toLowerCase().includes(query) ||
+            (t.tipo || '').toLowerCase().includes(query)) &&
+            (!soloSinFotos || !(t.imagenes && t.imagenes.length))
         );
         renderToursTable(filtered);
     } else if (type === 'guias') {
@@ -415,7 +464,7 @@ document.addEventListener('click', (e) => {
 });
 
 // ===== TOUR MODAL =====
-function openTourModal(tourId) {
+function openTourModal(tourId, irAFotos) {
     const isEdit = !!tourId;
     document.getElementById('tour-modal-title').textContent = isEdit ? 'Editar Tour' : 'Nuevo Tour';
     document.getElementById('tour-edit-id').value = tourId || '';
@@ -503,10 +552,12 @@ function openTourModal(tourId) {
             id: `ruta-existente-${i}`,
             titulo: r.titulo?.es || '',
             descripcion: r.descripcion?.es || '',
+            tituloPrev: r.titulo || null,
+            descripcionPrev: r.descripcion || null,
             dificultad: r.dificultad || 'Moderado',
             duracion: r.duracion || '',
             kilometros: r.kilometros || '',
-            imagenObj: r.imagen || null,
+            imagenObj: r.imagen ? { ...r.imagen, url: sinProxy(r.imagen.url), path: sinProxy(r.imagen.path) } : null,
             nuevaImagenFile: null,
             nuevaImagenUrl: null
         }));
@@ -536,6 +587,7 @@ function openTourModal(tourId) {
     }
 
     openModal('tour-modal');
+    if (irAFotos) setTimeout(() => document.getElementById('tour-imagenes')?.closest('.form-group, div')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 250);
 }
 
 // ===== SAVE TOUR =====
@@ -573,22 +625,13 @@ async function saveTour() {
     }
 
     const formData = new FormData();
-    formData.append('nombre', JSON.stringify({
-        es: nombreEs,
-        en: ''
-    }));
-    formData.append('descripcionCorta', JSON.stringify({
-        es: descCortaEs,
-        en: ''
-    }));
-    formData.append('descripcion', JSON.stringify({
-        es: descEs,
-        en: ''
-    }));
-    formData.append('itinerarioBasico', JSON.stringify({ es: itinerarioEs, en: '' }));
-    formData.append('puntoEncuentro', JSON.stringify({ es: puntoEncuentroEs, en: '' }));
-    formData.append('restricciones', JSON.stringify({ es: restriccionesEs, en: '' }));
-    formData.append('politicasCancelacion', JSON.stringify({ es: politicasEs, en: '' }));
+    formData.append('nombre', JSON.stringify(bil('nombre', nombreEs)));
+    formData.append('descripcionCorta', JSON.stringify(bil('descripcionCorta', descCortaEs)));
+    formData.append('descripcion', JSON.stringify(bil('descripcion', descEs)));
+    formData.append('itinerarioBasico', JSON.stringify(bil('itinerarioBasico', itinerarioEs)));
+    formData.append('puntoEncuentro', JSON.stringify(bil('puntoEncuentro', puntoEncuentroEs)));
+    formData.append('restricciones', JSON.stringify(bil('restricciones', restriccionesEs)));
+    formData.append('politicasCancelacion', JSON.stringify(bil('politicasCancelacion', politicasEs)));
     
     const tipo = document.getElementById('tour-tipo').value;
     if (!tipo) {
@@ -633,10 +676,10 @@ async function saveTour() {
     });
 
     // Información Útil
-    formData.append('incluye', JSON.stringify(tourInfoItems.incluye.map(i => ({ es: i }))));
-    formData.append('noIncluye', JSON.stringify(tourInfoItems.noIncluye.map(i => ({ es: i }))));
-    formData.append('queTraer', JSON.stringify(tourInfoItems.queTraer.map(i => ({ es: i }))));
-    formData.append('requisitos', JSON.stringify(tourInfoItems.requisitos.map(i => ({ es: i }))));
+    formData.append('incluye', JSON.stringify(bilLista('incluye')));
+    formData.append('noIncluye', JSON.stringify(bilLista('noIncluye')));
+    formData.append('queTraer', JSON.stringify(bilLista('queTraer')));
+    formData.append('requisitos', JSON.stringify(bilLista('requisitos')));
 
     // Guías Asignados
     const selectedGuias = [];
@@ -666,8 +709,8 @@ async function saveTour() {
     // ===== RUTAS ADICIONALES =====
     const rutasFinales = tourRutasAdicionales.map((ruta, index) => {
         const rutaData = {
-            titulo: { es: ruta.titulo, en: '', fr: '' },
-            descripcion: { es: ruta.descripcion, en: '', fr: '' },
+            titulo: bilObj(ruta.tituloPrev, ruta.titulo),
+            descripcion: bilObj(ruta.descripcionPrev, ruta.descripcion),
             dificultad: ruta.dificultad,
             duracion: ruta.duracion,
             kilometros: ruta.kilometros
@@ -1386,6 +1429,25 @@ let agenciaAdminMarker = null;
 const JALPAN_LAT = 21.2163;
 const JALPAN_LNG = -99.4752;
 
+// Mapbox pesa ~1 MB: se descarga solo cuando se abre el mapa de una agencia
+let mapboxPromesa = null;
+function cargarMapbox() {
+    if (window.mapboxgl) return Promise.resolve();
+    if (mapboxPromesa) return mapboxPromesa;
+    mapboxPromesa = new Promise((ok, mal) => {
+        const css = document.createElement('link');
+        css.rel = 'stylesheet';
+        css.href = 'https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css';
+        document.head.appendChild(css);
+        const js = document.createElement('script');
+        js.src = 'https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js';
+        js.onload = ok;
+        js.onerror = () => { mapboxPromesa = null; mal(new Error('No se pudo cargar el mapa')); };
+        document.head.appendChild(js);
+    });
+    return mapboxPromesa;
+}
+
 function initAgenciaMap(lat, lng) {
     const existingLat = lat || JALPAN_LAT;
     const existingLng = lng || JALPAN_LNG;
@@ -1400,6 +1462,7 @@ function initAgenciaMap(lat, lng) {
     // Wait for modal DOM to be visible before Mapbox measures the container
     setTimeout(async () => {
         try {
+            await cargarMapbox();
             const res = await fetch('/api/config/mapbox');
             const data = await res.json();
             if (data.success && data.token) mapboxgl.accessToken = data.token;

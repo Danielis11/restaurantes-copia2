@@ -227,11 +227,16 @@ function renderExperience(tour) {
         : [{ url: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1200&h=600&fit=crop' }];
     currentTourImageIndex = 0;
 
-    const heroItems = currentTourImages.map((img, index) => `
+    const heroItems = currentTourImages.map((img, index) => {
+        const credito = creditoFoto(img.url);
+        return `
         <div class="tour-carousel-item ${index === 0 ? 'active' : ''}" id="tour-slide-${index}">
-            <img loading="lazy" decoding="async" src="${img.url}" alt="${getL(tour.nombre) || xpTxt}" onclick="openTourLightbox('${img.url}')">
-        </div>
-    `).join('');
+            <img ${index === 0 ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async" src="${img.url}" alt="${getL(tour.nombre) || xpTxt}" onclick="openTourLightbox('${img.url}')">
+            ${credito ? `<a class="tour-foto-credito" href="${credito.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()"
+                style="position:absolute; left:.6rem; bottom:.6rem; z-index:3; background:rgba(15,23,42,.6); color:#fff; font-size:.7rem; padding:.2rem .55rem; border-radius:999px; text-decoration:none;">
+                <i class="fas fa-camera"></i> ${credito.autor} · ${credito.lic}</a>` : ''}
+        </div>`;
+    }).join('');
     document.getElementById('hero-carousel-items').innerHTML = heroItems;
 
     if (currentTourImages.length > 1) {
@@ -261,6 +266,22 @@ function renderExperience(tour) {
 
     // Guardar referencia del tour para re-renderizar al cambiar idioma
     window._currentTourData = tour;
+}
+
+// Créditos de fotos de Wikimedia Commons guardadas en Cloudinary (public_id "commons_...")
+const CREDITOS_FOTOS = {
+    commons_mision_landa: { autor: 'A01329582-Daniel', lic: 'CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:Fachada_de_la_Misi%C3%B3n_en_Landa.jpg' },
+    commons_mision_tancoyol_2: { autor: 'AlejandroLinaresGarcia', lic: 'CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:MissionTanyocol2.JPG' },
+    commons_mision_tancoyol: { autor: 'AlejandroPZ', lic: 'CC BY-SA 3.0', url: 'https://commons.wikimedia.org/wiki/File:Tancoyol,_Queretaro,_M%C3%A9xico.jpg' },
+    commons_mision_conca: { autor: 'A01701165', lic: 'CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:Foto_Vertical_de_la_Misi%C3%B3n_de_San_Miguel_de_Conc%C3%A1,_Arroyo_Seco_-_Conc%C3%A1,_Qro_-_Mx.jpg' },
+    commons_mision_tilaco: { autor: 'Alexialef', lic: 'CC BY-SA 3.0', url: 'https://commons.wikimedia.org/wiki/File:Misi%C3%B3n_de_Tilaco.JPG' },
+    commons_tancama_2: { autor: 'Andreadcv', lic: 'CC BY-SA 3.0', url: 'https://commons.wikimedia.org/wiki/File:Ruinas_de_Tancama.JPG' },
+    commons_tancama: { autor: 'Comisión Mexicana de Filmaciones', lic: 'CC BY-SA 2.0', url: 'https://commons.wikimedia.org/wiki/File:Zona_Arqueol%C3%B3gica_Tancama,_Sierra_Gorda,_Quer%C3%A9taro-_Tacama_Arqueologic_Zone_,_Quer%C3%A9taro_(24516055556).jpg' }
+};
+function creditoFoto(url) {
+    const u = decodeURIComponent(url || '');
+    const m = u.match(/\/(commons_[a-z0-9_]+)\./);
+    return m ? CREDITOS_FOTOS[m[1]] : null;
 }
 
 // ===== EXPERIENCIA GUIDES =====
