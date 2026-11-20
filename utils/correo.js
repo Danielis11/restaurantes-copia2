@@ -78,4 +78,34 @@ async function enviarAvisoNuevaResena({ para, nombre, lugar, rating, comentario,
   }
 }
 
-module.exports = { enviarCodigoVerificacion, enviarAvisoNuevaResena, obtenerTransporte };
+// Acceso para el responsable de un hospedaje dado de alta desde el panel central
+async function enviarAccesoSocio({ para, nombre, lugar, clave }) {
+  const t = obtenerTransporte();
+  if (!t || !para) return false;
+  const enlace = (process.env.SITIO_URL || '') + '/hospedaje/login.html';
+  try {
+    await t.sendMail({
+      from: `"Turismo Jalpan de Serra" <${process.env.EMAIL_USER}>`,
+      to: para,
+      subject: `Tu acceso para administrar ${lugar}`,
+      text: `Hola ${nombre || ''}:\n\nDimos de alta ${lugar} en el sitio de turismo de Jalpan de Serra.\n\nEntra en ${enlace}\nCorreo: ${para}\nContraseña temporal: ${clave}\n\nTe recomendamos cambiarla al entrar. Este enlace es solo para ti; no lo compartas.`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 520px; margin: 0 auto; padding: 24px; color: #111827;">
+          <h2 style="margin: 0 0 8px; color: #2563eb;">Bienvenido, ${esc(nombre || '')}</h2>
+          <p style="color: #4b5563;">Dimos de alta <strong>${esc(lugar)}</strong> en el sitio de turismo de Jalpan de Serra. Desde tu panel puedes subir fotos, actualizar precios y contestar opiniones.</p>
+          <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; margin: 16px 0;">
+            <p style="margin: 0 0 6px;">Correo: <strong>${esc(para)}</strong></p>
+            <p style="margin: 0;">Contraseña temporal: <strong style="font-family: monospace; font-size: 16px;">${esc(clave)}</strong></p>
+          </div>
+          <a href="${esc(enlace)}" style="display: inline-block; background: #2563eb; color: #fff; text-decoration: none; padding: 12px 20px; border-radius: 8px; font-weight: bold;">Entrar a mi panel</a>
+          <p style="color: #6b7280; font-size: 14px; margin-top: 16px;">Te recomendamos cambiar la contraseña al entrar. Este enlace es solo para ti; no lo compartas.</p>
+        </div>`
+    });
+    return true;
+  } catch (e) {
+    console.error('No se pudo enviar el acceso del socio:', e.message);
+    return false;
+  }
+}
+
+module.exports = { enviarCodigoVerificacion, enviarAvisoNuevaResena, enviarAccesoSocio, obtenerTransporte };

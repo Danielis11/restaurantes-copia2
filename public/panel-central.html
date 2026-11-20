@@ -133,6 +133,35 @@
 
         .cargando { color: var(--gris); padding: 32px; text-align: center; }
 
+        /* Alta de hospedaje */
+        [hidden] { display: none !important; }
+        .btn.principal { background: var(--azul); border-color: var(--azul); color: #fff; }
+        .btn.principal:hover { background: var(--azul-osc); border-color: var(--azul-osc); }
+        .modal { border: none; border-radius: 16px; padding: 0; width: min(560px, calc(100% - 24px)); max-height: calc(100vh - 24px); box-shadow: 0 20px 50px rgba(0,0,0,.2); color: var(--tinta); }
+        .modal::backdrop { background: rgba(17,24,39,.45); }
+        .modal-cab { display: flex; justify-content: space-between; align-items: center; padding: 18px 22px; border-bottom: 1px solid var(--borde-suave); position: sticky; top: 0; background: var(--blanco); z-index: 1; }
+        .modal-cab h2 { margin: 0; font-size: 1.15rem; }
+        .modal-cuerpo { padding: 20px 22px; }
+        .modal-pie { display: flex; justify-content: flex-end; gap: 8px; padding: 14px 22px; border-top: 1px solid var(--borde-suave); position: sticky; bottom: 0; background: var(--blanco); }
+        .campos { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .campo { display: flex; flex-direction: column; gap: 6px; }
+        .campo.ancho { grid-column: 1 / -1; }
+        .campo label { font-size: .85rem; font-weight: 500; color: var(--texto); }
+        .campo label small { color: var(--gris-claro); font-weight: 400; }
+        .campo input, .campo textarea, .campo select { width: 100%; padding: 10px 12px; border: 1px solid var(--borde); border-radius: 10px; background: var(--blanco); font: inherit; color: var(--tinta); }
+        .campo textarea { resize: vertical; min-height: 84px; }
+        .campo input:focus, .campo textarea:focus, .campo select:focus { outline: none; border-color: var(--azul); box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
+        .separador { grid-column: 1 / -1; font-size: .8rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--gris); margin: 8px 0 -4px; }
+        .error-form { background: var(--rojo-claro); color: var(--rojo); border-radius: 10px; padding: 10px 12px; font-size: .9rem; margin-bottom: 14px; }
+        .error-form:empty { display: none; }
+        .resultado { text-align: center; padding: 8px 0; }
+        .resultado-ico { width: 52px; height: 52px; border-radius: 50%; background: var(--verde-claro); color: var(--verde); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin: 0 auto 12px; }
+        .resultado h3 { margin: 0 0 6px; }
+        .resultado p { color: var(--texto); margin: 0 0 10px; }
+        .clave { display: flex; gap: 8px; align-items: center; justify-content: center; background: var(--fondo); border: 1px dashed var(--borde); border-radius: 10px; padding: 12px; margin: 12px 0; }
+        .clave code { font-size: 1.15rem; font-weight: 600; letter-spacing: .06em; overflow-wrap: anywhere; }
+        .nota { font-size: .85rem; color: var(--gris); }
+
         @media (max-width: 860px) {
             .numeros { grid-template-columns: repeat(2, 1fr); }
             .cajas { grid-template-columns: 1fr; }
@@ -148,6 +177,10 @@
             .estado-txt { display: none; }
             .fila-barra { grid-template-columns: 90px 1fr 32px; }
             .resena-acciones .btn { flex: 1; justify-content: center; }
+            #btnNuevoHospedaje { width: 100%; justify-content: center; }
+            .campos { grid-template-columns: 1fr; }
+            .modal-cab, .modal-cuerpo, .modal-pie { padding-left: 16px; padding-right: 16px; }
+            .modal-pie .btn { flex: 1; justify-content: center; white-space: nowrap; padding-left: 10px; padding-right: 10px; }
         }
     </style>
 </head>
@@ -221,6 +254,7 @@
                     <button class="chip" data-valor="guia">Guías</button>
                     <button class="chip" data-valor="operadora">Operadoras</button>
                 </div>
+                <button class="btn principal" id="btnNuevoHospedaje" type="button"><i class="fas fa-plus"></i> Nuevo hospedaje</button>
             </div>
             <p class="contador" id="contHospedaje"></p>
             <div class="lista" id="listaHospedaje"><div class="cargando">Cargando…</div></div>
@@ -268,6 +302,57 @@
     </main>
 
     <div class="aviso" id="aviso" role="status"></div>
+
+    <dialog class="modal" id="modalHospedaje" aria-labelledby="tituloModal">
+        <form id="formHospedaje" novalidate>
+            <div class="modal-cab">
+                <h2 id="tituloModal">Nuevo hospedaje</h2>
+                <button type="button" class="icono-btn" data-cerrar aria-label="Cerrar"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-cuerpo" id="cuerpoForm">
+                <div class="error-form" id="errorForm" role="alert"></div>
+                <div class="campos">
+                    <div class="campo ancho">
+                        <label>Tipo</label>
+                        <div class="chips" id="tipoAlta">
+                            <button type="button" class="chip activa" data-valor="hotel">Hotel</button>
+                            <button type="button" class="chip" data-valor="cabana">Cabaña</button>
+                            <button type="button" class="chip" data-valor="airbnb">Airbnb</button>
+                        </div>
+                    </div>
+                    <div class="campo ancho"><label for="fNombre">Nombre</label><input id="fNombre" name="nombre" maxlength="100" required></div>
+                    <div class="campo ancho"><label for="fDescripcion">Descripción <small>(mínimo 20 caracteres)</small></label><textarea id="fDescripcion" name="descripcion" maxlength="2000" required></textarea></div>
+                    <div class="campo"><label for="fPrecio">Precio por noche (MXN)</label><input id="fPrecio" name="precio" type="number" min="0" step="1" inputmode="numeric" required></div>
+                    <div class="campo"><label for="fTelefono">Teléfono <small>(opcional)</small></label><input id="fTelefono" name="telefono" type="tel" inputmode="numeric" maxlength="14" placeholder="10 dígitos"></div>
+                    <div class="campo ancho"><label for="fDireccion">Dirección <small>(opcional)</small></label><input id="fDireccion" name="direccion" maxlength="200"></div>
+                    <div class="campo"><label for="fHuespedes">Huéspedes <small id="optHuespedes">(opcional)</small></label><input id="fHuespedes" name="huespedes" type="number" min="1" step="1" inputmode="numeric"></div>
+                    <div class="campo"><label for="fHabitaciones">Habitaciones <small id="optHabitaciones">(opcional)</small></label><input id="fHabitaciones" name="habitaciones" type="number" min="1" step="1" inputmode="numeric"></div>
+                    <div class="campo ancho" id="campoPropiedad" hidden>
+                        <label for="fPropiedad">Tipo de propiedad</label>
+                        <select id="fPropiedad" name="tipoPropiedad">
+                            <option value="">Elige una opción</option>
+                            <option value="casa">Casa</option>
+                            <option value="cabaña">Cabaña</option>
+                            <option value="zona_camping">Zona de camping</option>
+                        </select>
+                    </div>
+                    <div class="separador">Responsable</div>
+                    <div class="campo"><label for="fDueno">Nombre</label><input id="fDueno" name="duenoNombre" maxlength="50" required autocomplete="off"></div>
+                    <div class="campo"><label for="fCorreo">Correo</label><input id="fCorreo" name="duenoCorreo" type="email" maxlength="120" required autocomplete="off"></div>
+                    <p class="nota campo ancho" style="margin:0">Si el correo ya tiene cuenta de hospedaje, el lugar se agrega a esa cuenta. Si no, se crea una con contraseña temporal.</p>
+                </div>
+            </div>
+            <div class="modal-cuerpo" id="cuerpoResultado" hidden></div>
+            <div class="modal-pie" id="pieForm">
+                <button type="button" class="btn" data-cerrar>Cancelar</button>
+                <button type="submit" class="btn principal" id="btnGuardarHospedaje"><i class="fas fa-check"></i> Crear hospedaje</button>
+            </div>
+            <div class="modal-pie" id="pieResultado" hidden>
+                <button type="button" class="btn" id="btnOtroHospedaje">Crear otro</button>
+                <button type="button" class="btn principal" data-cerrar>Listo</button>
+            </div>
+        </form>
+    </dialog>
 
     <script>
     (function () {
@@ -554,6 +639,114 @@
                 if (err.message !== 'sin permiso') avisar(err.message || 'No se pudo guardar', true);
             }
         });
+
+        // ---------- alta de hospedaje ----------
+        const modal = $('modalHospedaje');
+        const form = $('formHospedaje');
+        let tipoAlta = 'hotel';
+
+        function ajustarTipo() {
+            const esHotel = tipoAlta === 'hotel';
+            $('optHuespedes').textContent = esHotel ? '(opcional)' : '';
+            $('optHabitaciones').textContent = tipoAlta === 'cabana' ? '' : '(opcional)';
+            $('campoPropiedad').hidden = tipoAlta !== 'airbnb';
+        }
+        function vistaFormulario(limpiar) {
+            if (limpiar) { form.reset(); tipoAlta = 'hotel'; $('tipoAlta').querySelectorAll('.chip').forEach((c) => c.classList.toggle('activa', c.dataset.valor === 'hotel')); }
+            ajustarTipo();
+            $('errorForm').textContent = '';
+            $('cuerpoForm').hidden = false; $('pieForm').hidden = false;
+            $('cuerpoResultado').hidden = true; $('pieResultado').hidden = true;
+            $('cuerpoResultado').innerHTML = '';
+            $('tituloModal').textContent = 'Nuevo hospedaje';
+        }
+        $('btnNuevoHospedaje').addEventListener('click', () => {
+            vistaFormulario(true);
+            modal.showModal();
+            setTimeout(() => $('fNombre').focus(), 50);
+        });
+        modal.addEventListener('click', (e) => {
+            if (e.target.closest('[data-cerrar]') || e.target === modal) modal.close();
+        });
+        modal.addEventListener('close', () => { $('cuerpoResultado').innerHTML = ''; }); // la contraseña no se queda en la página
+        $('tipoAlta').addEventListener('click', (e) => {
+            const chip = e.target.closest('.chip');
+            if (!chip) return;
+            tipoAlta = chip.dataset.valor;
+            $('tipoAlta').querySelectorAll('.chip').forEach((c) => c.classList.toggle('activa', c === chip));
+            ajustarTipo();
+        });
+        $('btnOtroHospedaje').addEventListener('click', () => { vistaFormulario(true); $('fNombre').focus(); });
+
+        function validarAlta(d) {
+            if (d.nombre.length < 3) return ['fNombre', 'Escribe el nombre del hospedaje'];
+            if (d.descripcion.length < 20) return ['fDescripcion', 'La descripción debe tener al menos 20 caracteres'];
+            if (d.precio === '' || !(Number(d.precio) >= 0)) return ['fPrecio', 'Escribe un precio válido'];
+            if (d.telefono && d.telefono.length !== 10) return ['fTelefono', 'El teléfono debe tener 10 dígitos'];
+            if (d.tipo !== 'hotel' && !(Number(d.huespedes) >= 1)) return ['fHuespedes', 'Indica cuántos huéspedes caben'];
+            if (d.tipo === 'cabana' && !(Number(d.habitaciones) >= 1)) return ['fHabitaciones', 'Indica cuántas habitaciones tiene'];
+            if (d.tipo === 'airbnb' && !d.tipoPropiedad) return ['fPropiedad', 'Elige el tipo de propiedad'];
+            if (d.duenoNombre.length < 2) return ['fDueno', 'Escribe el nombre del responsable'];
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.duenoCorreo)) return ['fCorreo', 'Escribe un correo válido para el responsable'];
+            return null;
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const v = (id) => $(id).value.trim();
+            const datos = {
+                tipo: tipoAlta, nombre: v('fNombre'), descripcion: v('fDescripcion'), precio: v('fPrecio'),
+                telefono: v('fTelefono').replace(/\D/g, ''), direccion: v('fDireccion'),
+                huespedes: v('fHuespedes'), habitaciones: v('fHabitaciones'),
+                tipoPropiedad: tipoAlta === 'airbnb' ? $('fPropiedad').value : '',
+                duenoNombre: v('fDueno'), duenoCorreo: v('fCorreo').toLowerCase()
+            };
+            const fallo = validarAlta(datos);
+            if (fallo) { $('errorForm').textContent = fallo[1]; $(fallo[0]).focus(); return; }
+            $('errorForm').textContent = '';
+            const btn = $('btnGuardarHospedaje');
+            btn.disabled = true;
+            try {
+                const r = await api('/hospedaje', { method: 'POST', body: JSON.stringify(datos) });
+                mostrarResultado(r);
+                estado.cargado.hospedaje = false;
+                cargarLista('hospedaje');
+                cargarResumen();
+            } catch (err) {
+                if (err.message !== 'sin permiso') $('errorForm').textContent = err.message || 'No se pudo crear el hospedaje';
+                $('cuerpoForm').scrollTop = 0;
+            }
+            btn.disabled = false;
+        });
+
+        function mostrarResultado(r) {
+            const c = r.cuenta || {};
+            const lugar = esc(r.hospedaje && r.hospedaje.nombre);
+            let html = '<div class="resultado"><div class="resultado-ico"><i class="fas fa-check"></i></div>' +
+                '<h3>' + lugar + ' ya está en el sitio</h3>';
+            if (c.nueva && c.claveTemporal) {
+                html += '<p>Se creó la cuenta de <strong>' + esc(c.nombre) + '</strong> (' + esc(c.email) + ').</p>' +
+                    '<p class="nota">Contraseña temporal. Solo se muestra esta vez:</p>' +
+                    '<div class="clave"><code id="claveTemporal">' + esc(c.claveTemporal) + '</code>' +
+                    '<button type="button" class="btn" id="btnCopiarClave"><i class="far fa-copy"></i> Copiar</button></div>' +
+                    '<p class="nota">' + (c.correoEnviado
+                        ? '<i class="fas fa-envelope"></i> También se la enviamos por correo.'
+                        : '<i class="fas fa-exclamation-triangle" style="color:var(--ambar)"></i> No se pudo enviar por correo: compártela tú con el responsable.') + '</p>';
+            } else {
+                html += '<p>Se agregó a la cuenta de <strong>' + esc(c.nombre) + '</strong> (' + esc(c.email) + '). Puede verlo en su panel con su contraseña de siempre.</p>';
+            }
+            html += '</div>';
+            $('cuerpoResultado').innerHTML = html;
+            $('cuerpoForm').hidden = true; $('pieForm').hidden = true;
+            $('cuerpoResultado').hidden = false; $('pieResultado').hidden = false;
+            $('tituloModal').textContent = 'Hospedaje creado';
+            const copiar = $('btnCopiarClave');
+            if (copiar) copiar.addEventListener('click', async () => {
+                try { await navigator.clipboard.writeText(c.claveTemporal); copiar.innerHTML = '<i class="fas fa-check"></i> Copiada'; }
+                catch (err) { avisar('Selecciona la contraseña y cópiala a mano', true); }
+            });
+            avisar('Hospedaje creado');
+        }
 
         // ---------- arranque ----------
         verificar().then((ok) => {

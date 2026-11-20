@@ -23,7 +23,8 @@ const hosp = {
 const ResenaHospedaje = () => require('../modules/hospedaje/models/Review');
 const Socio = () => require('../modules/hospedaje/models/User');
 const { aplicarAEmbebida, modeloDe } = require('../modules/hospedaje/utils/moderacionResenas');
-const { enviarAvisoNuevaResena } = require('../utils/correo');
+const { enviarAvisoNuevaResena, enviarAccesoSocio } = require('../utils/correo');
+const crypto = require('crypto');
 
 const ETIQUETA_HOSP = { hotel: 'Hotel', cabana: 'Cabaña', airbnb: 'Airbnb', guia: 'Guía turística', operadora: 'Tour operadora' };
 const ESTADOS = ['pendiente', 'aprobada', 'rechazada'];
@@ -151,6 +152,102 @@ router.patch('/hospedaje/:tipo/:id/activo', async (req, res) => {
     }, { strict: false });
     res.json({ success: true, activo });
   } catch (e) { fallo(res, e, 'Error al cambiar el estado'); }
+});
+
+// Alta de hotel, cabaña o airbnb. Si el dueño ya tiene cuenta de socio se le agrega;
+// si no, se le crea una con contraseña temporal (se muestra una vez y se le manda por correo).
+const TIPO_NEGOCIO = { hotel: 'hotel', cabana: 'cabana', airbnb: 'ayb' };
+const PROPIEDAD_AIRBNB = ['cabaña', 'casa', 'zona_camping'];
+const contrasenaTemporal = () => {
+  const letras = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+  return Array.from(crypto.randomBytes(10), (b) => letras[b % letras.length]).join('');
+};
+
+router.post('/hospedaje', async (req, res) => {
+  const b = req.body || {};
+  const texto = (v, max) => String(v == null ? '' : v).trim().slice(0, max);
+  const tipo = b.tipo;
+  const datos = {
+    nombre: texto(b.nombre, 100),
+    descripcion: texto(b.descripcion, 2000),
+    precio: Number(b.precio),
+    direccion: texto(b.direccion, 200),
+    telefono: String(b.telefono || '').replace(/\D/g, ''),
+    huespedes: parseInt(b.huespedes, 10),
+    habitaciones: parseInt(b.habitaciones, 10),
+    tipoPropiedad: texto(b.tipoPropiedad, 20),
+    dueno: texto(b.duenoNombre, 50),
+    correo: texto(b.duenoCorreo, 120).toLowerCase()
+  };
+
+  const error = !TIPO_NEGOCIO[tipo] ? 'Elige hotel, cabaña o airbnb'
+    : datos.nombre.length < 3 ? 'Escribe el nombre del hospedaje'
+    : datos.descripcion.length < 20 ? 'La descripción debe tener al menos 20 caracteres'
+    : !(datos.precio >= 0) ? 'Escribe un precio válido'
+    : datos.telefono && datos.telefono.length !== 10 ? 'El teléfono debe tener 10 dígitos'
+    : tipo !== 'hotel' && !(datos.huespedes >= 1) ? 'Indica cuántos huéspedes caben'
+    : tipo === 'cabana' && !(datos.habitaciones >= 1) ? 'Indica cuántas habitaciones tiene'
+    : tipo === 'airbnb' && !PROPIEDAD_AIRBNB.includes(datos.tipoPropiedad) ? 'Elige el tipo de propiedad'
+    : datos.dueno.length < 2 ? 'Escribe el nombre del responsable'
+    : !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(datos.correo) ? 'Escribe un correo válido para el responsable'
+    : null;
+  if (error) return res.status(400).json({ success: false, message: error });
+
+  try {
+    const SocioModelo = Socio();
+    let socio = await SocioModelo.findOne({ email: datos.correo });
+    let clave = null;
+    if (socio) {
+      if (socio.role !== 'admin' || socio.isSuperAdmin || socio.email === CORREO_JEFE_HOSPEDAJE) {
+        return res.status(400).json({ success: false, message: 'Ese correo ya pertenece a otro tipo de cuenta. Usa otro correo para el responsable.' });
+      }
+    } else {
+      clave = contrasenaTemporal();
+      socio = await SocioModelo.create({
+        nombre: datos.dueno, email: datos.correo, password: clave,
+        role: 'admin', tipoNegocio: TIPO_NEGOCIO[tipo], activo: true
+      });
+    }
+
+    const doc = {
+      nombre: datos.nombre,
+      descripcion: datos.descripcion,
+      precio: datos.precio,
+      propietario: socio._id,
+      activo: true,
+      ubicacion: { direccion: datos.direccion, ciudad: 'Jalpan de Serra', estado: 'Querétaro' },
+      contacto: { email: datos.correo, ...(datos.telefono ? { telefono: datos.telefono } : {}) }
+    };
+    if (tipo === 'hotel') {
+      if (datos.habitaciones >= 1) doc.capacidad = { habitaciones: datos.habitaciones, personasMax: datos.huespedes >= 1 ? datos.huespedes : undefined };
+    } else if (tipo === 'cabana') {
+      doc.capacidad = { huespedes: datos.huespedes, habitaciones: datos.habitaciones };
+    } else {
+      doc.capacidad = { huespedes: datos.huespedes, ...(datos.habitaciones >= 1 ? { habitaciones: datos.habitaciones } : {}) };
+      doc.tipoPropiedad = datos.tipoPropiedad;
+    }
+
+    let nuevo;
+    try {
+      nuevo = await hosp[tipo]().create(doc);
+    } catch (e) {
+      if (clave) await SocioModelo.deleteOne({ _id: socio._id }); // no dejar una cuenta huérfana
+      const detalle = e.errors ? Object.values(e.errors)[0].message : null;
+      return res.status(400).json({ success: false, message: detalle || 'No se pudo crear el hospedaje' });
+    }
+
+    let correoEnviado = false;
+    if (clave) {
+      correoEnviado = await enviarAccesoSocio({ para: socio.email, nombre: socio.nombre, lugar: nuevo.nombre, clave });
+    }
+    res.status(201).json({
+      success: true,
+      data: {
+        hospedaje: { _id: nuevo._id, tipo, nombre: nuevo.nombre },
+        cuenta: { nombre: socio.nombre, email: socio.email, nueva: !!clave, claveTemporal: clave, correoEnviado }
+      }
+    });
+  } catch (e) { fallo(res, e, 'Error al crear el hospedaje'); }
 });
 
 // ---------- Reseñas (moderación de alimentos y hospedaje juntas) ----------
