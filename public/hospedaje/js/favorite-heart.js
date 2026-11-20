@@ -5,7 +5,7 @@
  */
 (function () {
     document.addEventListener('DOMContentLoaded', function () {
-        const token = localStorage.getItem('hospAuthToken');
+        const token = localStorage.getItem('hospAuthToken') || localStorage.getItem('authToken');
         const favContainer = document.getElementById('favBtnContainer');
         const favCheckbox = document.getElementById('favCheckbox');
 

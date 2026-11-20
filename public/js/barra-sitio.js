@@ -52,8 +52,8 @@
     function enlacesSitio(rol) {
         if (rol === 'turista') {
             return '<a href="/user-panel.html" class="profile-dropdown-link"><i class="fas fa-th-large"></i> Mi Panel</a>' +
-                '<a href="/user-panel.html#favoritos" class="profile-dropdown-link"><i class="fas fa-heart"></i> Mis Favoritos</a>' +
-                '<a href="/user-panel.html#opiniones" class="profile-dropdown-link"><i class="fas fa-star"></i> Mis Opiniones</a>';
+                '<a href="/user-panel.html#favoritos-section" class="profile-dropdown-link"><i class="fas fa-heart"></i> Mis Favoritos</a>' +
+                '<a href="/user-panel.html#opiniones-section" class="profile-dropdown-link"><i class="fas fa-star"></i> Mis Opiniones</a>';
         }
         var paneles = {
             'super-admin': ['/super-admin.html', 'fa-crown', 'Panel Super Admin'],
@@ -67,8 +67,8 @@
 
     function enlacesSocio(socio) {
         if (!socio.role || socio.role === 'user') {
-            return '<a href="/hospedaje/panel-turista.html" class="profile-dropdown-link"><i class="fas fa-th-large"></i> Mi Panel</a>' +
-                '<a href="/hospedaje/panel-turista.html#favoritos" class="profile-dropdown-link"><i class="fas fa-heart"></i> Mis Favoritos</a>';
+            return '<a href="/user-panel.html" class="profile-dropdown-link"><i class="fas fa-th-large"></i> Mi Panel</a>' +
+                '<a href="/user-panel.html#favoritos-section" class="profile-dropdown-link"><i class="fas fa-heart"></i> Mis Favoritos</a>';
         }
         var jefe = socio.isSuperAdmin === true || socio.isSuperAdmin === 'true';
         return jefe
@@ -147,6 +147,8 @@
         }
         if (menu && menu.classList.contains('show') && !e.target.closest('.profile-menu-container')) menu.classList.remove('show');
     });
+
+    window.BarraSitio = { pintarSesion: pintarSesion };
 
     function iniciar() {
         prepararMenuMovil();

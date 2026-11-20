@@ -44,16 +44,16 @@
                         </div>
                     </div>
                     <div class="user-dropdown-divider"></div>
-                    <a href="${isSuperAdmin ? '/hospedaje/admin/super-admin-dashboard.html' : isTurista ? '/hospedaje/panel-turista.html' : '/hospedaje/admin/dashboard.html'}" class="user-dropdown-item">
+                    <a href="${isSuperAdmin ? '/hospedaje/admin/super-admin-dashboard.html' : isTurista ? '/user-panel.html' : '/hospedaje/admin/dashboard.html'}" class="user-dropdown-item">
                         <i class="fas fa-th-large"></i>
                         Mi Panel
                     </a>
                     ${isTurista ? `
-                    <a href="/hospedaje/panel-turista.html#favoritos" class="user-dropdown-item">
+                    <a href="/user-panel.html#favoritos-section" class="user-dropdown-item">
                         <i class="fas fa-heart"></i>
                         Mis Favoritos
                     </a>
-                    <a href="/hospedaje/panel-turista.html#opiniones" class="user-dropdown-item">
+                    <a href="/user-panel.html#opiniones-section" class="user-dropdown-item">
                         <i class="fas fa-star"></i>
                         Mis Opiniones
                     </a>

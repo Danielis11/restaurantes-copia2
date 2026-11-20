@@ -916,7 +916,14 @@
 
                 const favRestaurantes = json.data.restaurantes || [];
                 const favExperiencias = json.data.experiencias || [];
-                const totalFavs = favRestaurantes.length + favExperiencias.length;
+                // Hoteles, cabañas y airbnb guardados desde la sección de hospedaje
+                let favHospedajes = [];
+                try {
+                    const rh = await fetch(`${API_BASE}/hospedaje/user/favorites`, { headers: { 'Authorization': `Bearer ${token}` } });
+                    const jh = await rh.json();
+                    if (jh.success && jh.data) favHospedajes = jh.data.hospedajes || [];
+                } catch (e) { console.warn('Favoritos de hospedaje no disponibles:', e.message); }
+                const totalFavs = favRestaurantes.length + favExperiencias.length + favHospedajes.length;
 
                 document.getElementById('total-favorites').textContent = totalFavs;
 
@@ -973,9 +980,62 @@
                     }).join('');
                 }
 
+                // Hospedajes
+                if (favHospedajes.length > 0) {
+                    html += favHospedajes.map(fav => {
+                        const cfg = TIPOS_HOSPEDAJE[fav.tipoHospedaje] || TIPOS_HOSPEDAJE.hotel;
+                        const id = escaparTexto(fav.hospedajeId?._id || fav.hospedajeId);
+                        const url = `/hospedaje/hospedaje-detalle.html?tipo=${encodeURIComponent(fav.tipoHospedaje || 'hotel')}&id=${id}`;
+                        const nombre = escaparTexto(fav.nombreHospedaje || cfg.label);
+                        return `
+                            <div class="stat-card" style="padding: 1rem; cursor: pointer; position: relative;" onclick="window.location.href='${url}'">
+                                <div style="width: 100%; height: 120px; border-radius: var(--radius-md); margin-bottom: 1rem; background: ${cfg.color}15; display:flex; align-items:center; justify-content:center;">
+                                    <i class="fas ${cfg.icon}" style="font-size: 2.5rem; color: ${cfg.color};"></i>
+                                </div>
+                                <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--gray-800);">${nombre}</h3>
+                                <p style="font-size: 0.9rem; color: var(--gray-500); margin-bottom: 0.5rem;"><i class="fas fa-map-marker-alt"></i> Jalpan</p>
+                                <span style="display:inline-block; font-size: 0.8rem; background: ${cfg.color}; color: white; padding: 0.2rem 0.6rem; border-radius:1rem;"><i class="fas ${cfg.icon}"></i> ${cfg.label}</span>
+                                <div class="card-action-overlay">
+                                    <button class="card-action-btn" title="Ver hospedaje" onclick="event.stopPropagation(); window.location.href='${url}'"><i class="fas fa-eye"></i></button>
+                                    <button class="card-action-btn" title="Quitar de favoritos" onclick="event.stopPropagation(); quitarFavoritoHospedaje('${id}')"><i class="fas fa-heart-broken"></i></button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+
                 grid.innerHTML = html;
             } catch (error) {
                 console.error('Error:', error);
+            }
+        }
+
+        const TIPOS_HOSPEDAJE = {
+            hotel: { icon: 'fa-hotel', color: '#2563eb', label: 'Hotel' },
+            cabana: { icon: 'fa-home', color: '#8b6914', label: 'Cabaña' },
+            airbnb: { icon: 'fa-building', color: '#ff5a5f', label: 'Airbnb' }
+        };
+
+        function escaparTexto(t) {
+            return String(t == null ? '' : t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        }
+
+        async function quitarFavoritoHospedaje(id) {
+            if (!confirm('¿Quitar este hospedaje de tus favoritos?')) return;
+            try {
+                const res = await fetch(`${API_BASE}/hospedaje/user/favorites/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
+                });
+                const json = await res.json().catch(() => ({}));
+                if (res.ok && json.success !== false) {
+                    showNotification('Eliminado de favoritos', 'success');
+                    loadFavorites();
+                } else {
+                    showNotification(json.message || 'No se pudo quitar de favoritos', 'error');
+                }
+            } catch (e) {
+                showNotification('No se pudo quitar de favoritos', 'error');
             }
         }
 
@@ -993,7 +1053,16 @@
                     return;
                 }
 
-                const reviews = json.data;
+                let reviews = json.data;
+                // Reseñas de hoteles, cabañas y airbnb
+                try {
+                    const rh = await fetch(`${API_BASE}/hospedaje/user/reviews`, { headers: { 'Authorization': `Bearer ${token}` } });
+                    const jh = await rh.json();
+                    if (jh.success && Array.isArray(jh.data)) {
+                        reviews = reviews.concat(jh.data.filter(r => r.origen === 'local'));
+                        reviews.sort((a, b) => new Date(b.fechaCreacion) - new Date(a.fechaCreacion));
+                    }
+                } catch (e) { console.warn('Reseñas de hospedaje no disponibles:', e.message); }
                 document.getElementById('total-reviews').textContent = reviews.length;
 
                 if (reviews.length === 0) {
@@ -1019,6 +1088,10 @@
                     } else if (r.tipoLugar === 'Agencia') {
                         badgeColor = '#0ea5e9';
                         badgeIcon = 'fa-briefcase';
+                    } else if (r.origen === 'local') { // Hotel, Cabaña o Airbnb
+                        const cfg = Object.values(TIPOS_HOSPEDAJE).find(c => c.label === r.tipoLugar) || TIPOS_HOSPEDAJE.hotel;
+                        badgeColor = cfg.color;
+                        badgeIcon = cfg.icon;
                     } else { // Experiencia o Tour
                         badgeColor = '#10b981';
                         badgeIcon = 'fa-map-marked-alt';
@@ -1038,7 +1111,9 @@
                     }
 
                     let deleteData = '';
-                    if (r.tipoLugar === 'Restaurante') {
+                    if (r.origen === 'local') {
+                        deleteData = `data-tipo="hospedaje" data-id="${r._id}"`;
+                    } else if (r.tipoLugar === 'Restaurante') {
                         deleteData = `data-tipo="restaurante" data-id="${r._id}"`;
                     } else if (r.tipoLugar === 'Agencia') {
                         deleteData = `data-tipo="agencia" data-agencia-id="${r.agenciaId}" data-id="${r._id}"`;
@@ -1087,7 +1162,9 @@
 
             const token = localStorage.getItem('authToken');
             let url = '';
-            if (tipo === 'restaurante') {
+            if (tipo === 'hospedaje') {
+                url = `${API_BASE}/hospedaje/user/reviews/hospedaje/${id}`;
+            } else if (tipo === 'restaurante') {
                 url = `${API_BASE}/user/reviews/restaurante/${id}`;
             } else if (tipo === 'agencia') {
                 url = `${API_BASE}/user/reviews/agencia/${agenciaId}/review/${id}`;

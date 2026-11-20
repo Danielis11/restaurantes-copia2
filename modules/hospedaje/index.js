@@ -50,6 +50,8 @@ function montar(app) {
   app.get(['/hospedaje/admin', '/hospedaje/admin/'], (req, res) => res.redirect('/hospedaje/admin/dashboard.html'));
   // Su portada vieja ya no se usa: la sección empieza en hospedaje.html y el inicio es el del sitio
   app.get(['/hospedaje', '/hospedaje/', '/hospedaje/index.html'], (req, res) => res.redirect(301, '/hospedaje/hospedaje.html'));
+  // El turista usa el panel del sitio (favoritos y reseñas de hospedaje incluidos)
+  app.get('/hospedaje/panel-turista.html', (req, res) => res.redirect(301, '/user-panel.html'));
 }
 
 module.exports = { montar, api };
