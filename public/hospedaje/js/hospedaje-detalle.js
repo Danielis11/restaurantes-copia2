@@ -784,132 +784,212 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowRight') changeSlide(1);
 });
 
-// ====== LÓGICA DE RESEÑAS ======
+// ====== LÓGICA DE RESEÑAS (mismo sistema que el resto del sitio) ======
+// Solo viajeros con cuenta del sitio pueden opinar; una opinión por lugar.
+// Si no hay sesión, se invita a iniciar sesión o crear cuenta (AccesoResena).
+let resenasActuales = [];
+let resenaDestino = null; // { tipo, itemId }
+
+function escHtml(t) {
+    return String(t == null ? '' : t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function usuarioViajero() {
+    try { return JSON.parse(localStorage.getItem('currentUser') || 'null'); } catch (e) { return null; }
+}
+
+function yaOpine() {
+    const u = usuarioViajero();
+    if (!u || !localStorage.getItem('authToken')) return false;
+    const id = String(u.id || u._id || '');
+    return !!id && resenasActuales.some(r => String(r.user?._id || r.user || r.userId || '') === id);
+}
+
 function renderReviews(reviews) {
+    resenasActuales = reviews || [];
     const list = document.getElementById('reviewsList');
-    if (!reviews || reviews.length === 0) {
-        list.innerHTML = '<p style="color:#666; font-style:italic; padding: 20px; background: #f9f9f9; border-radius: 8px; text-align: center;">Aún no hay reseñas para este lugar. ¡Sé el primero en opinar!</p>';
+    const resumen = document.getElementById('resumenResenas');
+
+    if (resenasActuales.length === 0) {
+        if (resumen) resumen.innerHTML = '';
+        list.innerHTML = '<p class="resena-vacia"><i class="far fa-comment-dots"></i> Aún no hay opiniones de este lugar. ¡Sé el primero en contar cómo te fue!</p>';
+        actualizarBotonResena();
         return;
     }
 
-    // Ordenar de más reciente a más antigua
-    const sortedReviews = [...reviews].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+    // Resumen: promedio y barras por estrellas (como en restaurantes)
+    const total = resenasActuales.length;
+    const promedio = resenasActuales.reduce((a, r) => a + (Number(r.rating) || 0), 0) / total;
+    if (resumen) {
+        const barras = [5, 4, 3, 2, 1].map(n => {
+            const cuantos = resenasActuales.filter(r => Math.round(r.rating) === n).length;
+            const pct = Math.round((cuantos / total) * 100);
+            return `<div class="resena-barra"><span>${n}</span><div class="resena-barra-fondo"><div style="width:${pct}%"></div></div><span>${cuantos}</span></div>`;
+        }).join('');
+        resumen.innerHTML = `
+            <div class="resena-resumen">
+                <div class="resena-promedio">
+                    <strong>${promedio.toFixed(1)}</strong>
+                    <div class="resena-estrellas">${estrellasHtml(Math.round(promedio))}</div>
+                    <span>${total} opinion${total !== 1 ? 'es' : ''}</span>
+                </div>
+                <div class="resena-barras">${barras}</div>
+            </div>`;
+    }
 
-    let html = '';
-    sortedReviews.forEach(r => {
-        const date = new Date(r.fecha).toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' });
-        html += `
-        <div class="review-card" style="border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <div style="font-weight: 600; color: #333;"><i class="fas fa-user-circle" style="color:#aaa; font-size:1.2em; margin-right:5px; vertical-align:middle;"></i> ${r.nombreUsuario}</div>
-                <div style="color: #888; font-size: 0.85em;">${date}</div>
+    const ordenadas = [...resenasActuales].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+    list.innerHTML = ordenadas.map(r => {
+        const nombre = escHtml(r.nombreUsuario || 'Viajero');
+        const inicial = escHtml((r.nombreUsuario || 'V').trim().charAt(0).toUpperCase());
+        const fecha = r.fecha ? new Date(r.fecha).toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' }) : '';
+        return `
+        <div class="resena-tarjeta">
+            <div class="resena-cabecera">
+                <div class="resena-avatar">${inicial}</div>
+                <div>
+                    <div class="resena-nombre">${nombre}</div>
+                    <div class="resena-fecha">${fecha}</div>
+                </div>
+                <div class="resena-estrellas">${estrellasHtml(r.rating)}</div>
             </div>
-            <div style="color: #f39c12; margin-bottom: 10px; font-size: 1.1em;">
-                ${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}
-            </div>
-            <div style="color: #444; line-height: 1.6;">${r.comentario}</div>
+            <p class="resena-texto">${escHtml(r.comentario)}</p>
         </div>`;
-    });
-    list.innerHTML = html;
+    }).join('');
+    actualizarBotonResena();
+}
+
+function estrellasHtml(n) {
+    let html = '';
+    for (let i = 1; i <= 5; i++) html += `<i class="${i <= n ? 'fas' : 'far'} fa-star"></i>`;
+    return html;
+}
+
+function actualizarBotonResena() {
+    const boton = document.getElementById('btnEscribirResena');
+    const invitacion = document.getElementById('loginPromptContainer');
+    const opinado = document.getElementById('resenaYaOpinaste');
+    const viajero = window.AccesoResena ? AccesoResena.esViajero() : !!localStorage.getItem('authToken');
+    const ya = yaOpine();
+    if (boton) boton.style.display = ya ? 'none' : 'inline-flex';
+    if (opinado) opinado.style.display = ya ? 'block' : 'none';
+    if (invitacion) invitacion.style.display = (!viajero && !ya) ? 'block' : 'none';
 }
 
 function checkLoginForReviews(tipo, itemId) {
-    const token = localStorage.getItem('hospAuthToken');
-    if (token) {
-        document.getElementById('reviewFormContainer').style.display = 'block';
-        document.getElementById('loginPromptContainer').style.display = 'none';
-
-        setupReviewForm(tipo, itemId, token);
-    } else {
-        document.getElementById('reviewFormContainer').style.display = 'none';
-        document.getElementById('loginPromptContainer').style.display = 'block';
-    }
+    resenaDestino = { tipo, itemId };
+    const pedirYAbrir = () => {
+        if (window.AccesoResena) AccesoResena.pedir(abrirFormularioResena);
+        else window.location.href = '/login.html';
+    };
+    const boton = document.getElementById('btnEscribirResena');
+    if (boton) boton.onclick = pedirYAbrir;
+    document.querySelectorAll('[data-invitar-resena]').forEach(b => {
+        b.onclick = (e) => {
+            e.preventDefault();
+            if (!window.AccesoResena) { window.location.href = '/login.html'; return; }
+            AccesoResena.pedir(abrirFormularioResena);
+            // Abre directamente la pestaña pedida (entrar / crear)
+            const pestana = document.querySelector(`.acr-pestana[data-modo="${b.dataset.invitarResena}"]`);
+            if (pestana) pestana.click();
+        };
+    });
+    const cancelar = document.getElementById('btnCancelarResena');
+    if (cancelar) cancelar.onclick = cerrarFormularioResena;
+    setupReviewForm();
+    actualizarBotonResena();
 }
 
-function setupReviewForm(tipo, itemId, token) {
-    // Estrellas interactivas
+function abrirFormularioResena() {
+    if (yaOpine()) { actualizarBotonResena(); return; }
+    const cont = document.getElementById('reviewFormContainer');
+    const u = usuarioViajero();
+    const autor = document.getElementById('resenaAutor');
+    if (autor) autor.textContent = (u && u.nombre) || 'Viajero';
+    cont.style.display = 'block';
+    document.getElementById('btnEscribirResena').style.display = 'none';
+    document.getElementById('loginPromptContainer').style.display = 'none';
+    setTimeout(() => {
+        cont.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        document.getElementById('reviewComment').focus({ preventScroll: true });
+    }, 100);
+}
+
+function cerrarFormularioResena() {
+    document.getElementById('reviewFormContainer').style.display = 'none';
+    document.getElementById('reviewError').textContent = '';
+    actualizarBotonResena();
+}
+
+function setupReviewForm() {
     const stars = document.querySelectorAll('#starSelect .fa-star');
     const ratingInput = document.getElementById('reviewRating');
+    const comentario = document.getElementById('reviewComment');
+    const contador = document.getElementById('reviewCount');
+    const error = document.getElementById('reviewError');
 
     stars.forEach(star => {
-        star.style.cursor = 'pointer';
-
-        star.addEventListener('click', () => {
-            const val = parseInt(star.getAttribute('data-val'));
-            ratingInput.value = val;
-            updateStarsDisplay(stars, val);
-        });
-
-        // Hover effects
-        star.addEventListener('mouseover', () => {
-            const val = parseInt(star.getAttribute('data-val'));
-            updateStarsDisplay(stars, val);
-        });
-
-        star.addEventListener('mouseout', () => {
-            updateStarsDisplay(stars, parseInt(ratingInput.value));
-        });
+        const val = parseInt(star.getAttribute('data-val'));
+        star.onclick = () => { ratingInput.value = val; updateStarsDisplay(stars, val); error.textContent = ''; };
+        star.onmouseover = () => updateStarsDisplay(stars, val);
+        star.onmouseout = () => updateStarsDisplay(stars, parseInt(ratingInput.value) || 0);
     });
+    updateStarsDisplay(stars, parseInt(ratingInput.value) || 0);
 
-    // Set default (5)
-    updateStarsDisplay(stars, 5);
+    comentario.oninput = () => { contador.textContent = comentario.value.length; };
 
-    // Form submit
     const form = document.getElementById('reviewForm');
     form.onsubmit = async (e) => {
         e.preventDefault();
-        const btn = form.querySelector('button');
-        const originalText = btn.innerHTML;
+        error.textContent = '';
+        const rating = parseInt(ratingInput.value) || 0;
+        const texto = comentario.value.trim();
+        if (rating < 1) { error.textContent = 'Elige de 1 a 5 estrellas.'; return; }
+        if (texto.length < 10) { error.textContent = 'Cuéntanos un poco más (mínimo 10 caracteres).'; return; }
+
+        const token = localStorage.getItem('authToken');
+        if (!token || !resenaDestino) { AccesoResena.pedir(abrirFormularioResena); return; }
+
+        const btn = form.querySelector('button[type="submit"]');
+        const original = btn.innerHTML;
         btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
-
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Publicando...';
         try {
-            const endpoint = API_MAP[tipo].endpoint;
-            const payload = {
-                rating: parseInt(ratingInput.value),
-                comentario: document.getElementById('reviewComment').value
-            };
-
-            const res = await fetch(`${baseURL}/${endpoint}/${itemId}/reviews`, {
+            const res = await fetch(`${baseURL}/${API_MAP[resenaDestino.tipo].endpoint}/${resenaDestino.itemId}/reviews`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(payload)
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ rating, comentario: texto, sitioWeb: document.getElementById('reviewSitio').value })
             });
-
-            const data = await res.json();
-
-            if (res.ok) {
-                alert('¡Reseña publicada! Gracias por tu opinión.');
-                loadHospedaje(tipo, itemId); // Recargar info y reseñas
-                form.reset();
-                updateStarsDisplay(stars, 5);
-            } else {
-                alert('Error al publicar reseña: ' + data.message);
+            const data = await res.json().catch(() => ({}));
+            if (res.status === 401) {
+                // Sesión vencida o de administrador: volver a pedir acceso de viajero
+                localStorage.removeItem('authToken');
+                AccesoResena.pedir(abrirFormularioResena);
+                return;
             }
-        } catch (error) {
-            console.error('Error submitting review:', error);
-            alert('Error de conexión al enviar reseña.');
+            if (!res.ok) { error.textContent = data.message || 'No se pudo publicar tu opinión.'; return; }
+            form.reset();
+            ratingInput.value = 0;
+            contador.textContent = '0';
+            cerrarFormularioResena();
+            const aviso = document.getElementById('resenaGracias');
+            if (aviso) { aviso.style.display = 'block'; setTimeout(() => { aviso.style.display = 'none'; }, 6000); }
+            loadHospedaje(resenaDestino.tipo, resenaDestino.itemId);
+        } catch (err) {
+            console.error('Error al enviar reseña:', err);
+            error.textContent = 'Error de conexión. Intenta de nuevo.';
         } finally {
             btn.disabled = false;
-            btn.innerHTML = originalText;
+            btn.innerHTML = original;
         }
     };
 }
 
 function updateStarsDisplay(stars, val) {
     stars.forEach(s => {
-        if (parseInt(s.getAttribute('data-val')) <= val) {
-            s.style.color = '#f39c12';
-            s.classList.remove('far');
-            s.classList.add('fas');
-        } else {
-            s.style.color = '#ddd';
-            s.classList.remove('fas');
-            s.classList.add('far');
-        }
+        const activa = parseInt(s.getAttribute('data-val')) <= val;
+        s.classList.toggle('fas', activa);
+        s.classList.toggle('far', !activa);
+        s.style.color = activa ? '#f59e0b' : '#d1d5db';
     });
 }
 

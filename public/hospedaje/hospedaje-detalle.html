@@ -25,6 +25,7 @@
     <!-- AOS CSS -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="/hospedaje/css/tema-sitio.css">
+    <script src="/js/acceso-resena.js" defer></script>
 </head>
 
 <body data-pagina="hospedaje-detalle">
@@ -223,50 +224,57 @@
                     <div class="cabanas-grid" id="cabanasIndividualesContainer"></div>
                 </div>
 
-                <!-- Reviews -->
+                <!-- Reseñas (mismo sistema que el resto del sitio) -->
                 <div class="detail-section" id="reviewsSection" data-aos="fade-up">
-                    <h3 class="section-title"><i class="fas fa-star"></i> Reseñas de Turistas</h3>
+                    <div class="resenas-encabezado">
+                        <h3 class="section-title"><i class="fas fa-star"></i> Opiniones de viajeros</h3>
+                        <button type="button" id="btnEscribirResena" class="resena-boton-escribir"><i class="fas fa-pen"></i> Escribir opinión</button>
+                    </div>
+                    <p id="resenaGracias" class="resena-gracias" style="display:none"><i class="fas fa-check-circle"></i> ¡Gracias! Tu opinión ya está publicada.</p>
+                    <p id="resenaYaOpinaste" class="resena-ya" style="display:none"><i class="fas fa-check-circle"></i> Ya compartiste tu opinión de este lugar. ¡Gracias!</p>
+                    <div id="resumenResenas"></div>
                     <div id="reviewsList" class="reviews-list">
                         <!-- Las reseñas se cargarán aquí -->
                     </div>
 
-                    <!-- Write Review Section -->
-                    <div class="write-review-container"
-                        style="margin-top: 30px; border-top: 1px solid #ddd; padding-top: 20px;">
-                        <div id="reviewFormContainer" style="display:none">
-                            <h4 style="margin-bottom: 15px;">Escribir una Reseña</h4>
-                            <form id="reviewForm">
-                                <div class="rating-input" style="margin-bottom: 15px;">
-                                    <label style="font-weight: bold; margin-right: 10px;">Calificación:</label>
-                                    <div class="stars-select" id="starSelect"
-                                        style="display: inline-block; font-size: 1.2rem;">
-                                        <i class="fas fa-star" data-val="1"></i>
-                                        <i class="fas fa-star" data-val="2"></i>
-                                        <i class="fas fa-star" data-val="3"></i>
-                                        <i class="fas fa-star" data-val="4"></i>
-                                        <i class="fas fa-star" data-val="5"></i>
-                                    </div>
-                                    <input type="hidden" id="reviewRating" value="5" required>
-                                </div>
-                                <div class="form-group">
-                                    <textarea id="reviewComment" rows="3"
-                                        placeholder="Comparte tu experiencia... ¿Qué te gustó más?" required
-                                        style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ccc; font-family: inherit; resize: vertical;"></textarea>
-                                </div>
-                                <button type="submit" class="submit-review-btn"
-                                    style="margin-top: 15px; background-color: #2e8b57; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: background 0.3s;"><i
-                                        class="fas fa-paper-plane"></i> Publicar Reseña</button>
-                            </form>
+                    <!-- Formulario (se abre con «Escribir opinión») -->
+                    <div id="reviewFormContainer" class="resena-form" style="display:none">
+                        <h4>Tu opinión</h4>
+                        <p class="resena-autor">Publicando como <strong id="resenaAutor">Viajero</strong></p>
+                        <form id="reviewForm" novalidate>
+                            <label class="resena-etiqueta">¿Cómo calificarías tu estancia?</label>
+                            <div class="stars-select" id="starSelect" role="radiogroup" aria-label="Calificación">
+                                <i class="far fa-star" data-val="1" title="Malo"></i>
+                                <i class="far fa-star" data-val="2" title="Regular"></i>
+                                <i class="far fa-star" data-val="3" title="Bueno"></i>
+                                <i class="far fa-star" data-val="4" title="Muy bueno"></i>
+                                <i class="far fa-star" data-val="5" title="Excelente"></i>
+                            </div>
+                            <input type="hidden" id="reviewRating" value="0">
+                            <label class="resena-etiqueta" for="reviewComment">Cuéntanos tu experiencia</label>
+                            <textarea id="reviewComment" rows="4" maxlength="1000"
+                                placeholder="¿Qué te gustó? ¿Cómo fue la atención, la limpieza, la ubicación?"></textarea>
+                            <div class="resena-contador"><span id="reviewCount">0</span>/1000</div>
+                            <div class="resena-trampa" aria-hidden="true"><label>Sitio web<input id="reviewSitio" tabindex="-1" autocomplete="off"></label></div>
+                            <p class="resena-reglas"><i class="fas fa-shield-alt"></i> Una opinión por lugar. Sin enlaces, teléfonos ni correos.</p>
+                            <p id="reviewError" class="resena-error" role="alert"></p>
+                            <div class="resena-acciones">
+                                <button type="button" id="btnCancelarResena" class="resena-cancelar">Cancelar</button>
+                                <button type="submit" class="submit-review-btn"><i class="fas fa-paper-plane"></i> Publicar opinión</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Invitación cuando no hay cuenta de viajero -->
+                    <div id="loginPromptContainer" class="resena-invitacion" style="display:none">
+                        <div class="resena-invitacion-icono"><i class="fas fa-comment-dots"></i></div>
+                        <div class="resena-invitacion-texto">
+                            <strong>¿Te hospedaste aquí?</strong>
+                            <span>Inicia sesión o crea tu cuenta gratis para contar cómo te fue. Así mantenemos las opiniones reales.</span>
                         </div>
-                        <div id="loginPromptContainer" class="login-prompt"
-                            style="display:none; text-align: center; padding: 25px; background: #f8f9fa; border-radius: 10px; border: 1px dashed #ccc;">
-                            <i class="fas fa-lock"
-                                style="font-size: 2rem; color: #aaa; margin-bottom: 15px; display: block;"></i>
-                            <p style="margin-bottom: 15px; color: #555;">¿Te hospedaste aquí? Inicia sesión para dejar
-                                tu opinión.</p>
-                            <a href="login.html" class="btn-login"
-                                style="display: inline-block; background: var(--secondary-color, #e67e22); color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-weight: bold;">Iniciar
-                                Sesión</a>
+                        <div class="resena-invitacion-botones">
+                            <a href="/login.html" data-invitar-resena="entrar" class="resena-btn-secundario">Iniciar sesión</a>
+                            <a href="/register.html" data-invitar-resena="crear" class="resena-btn-primario">Crear cuenta</a>
                         </div>
                     </div>
                 </div>

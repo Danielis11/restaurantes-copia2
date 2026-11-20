@@ -145,3 +145,58 @@ body[data-pagina="tourOperadora"] { --portada: url('/images/CUEVA%20DEL%20AGUA%2
 
 /* ---------- Pie de página: el del sitio ---------- */
 footer.footer { margin-top: 4rem; }
+
+/* ---------- Reseñas (mismo formato que restaurantes) ---------- */
+.resenas-encabezado { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.resenas-encabezado .section-title { margin: 0; }
+.resena-boton-escribir { display: inline-flex; align-items: center; gap: .5rem; background: #2563eb; color: #fff; border: none; border-radius: 9999px; padding: .65rem 1.25rem; font: inherit; font-weight: 600; cursor: pointer; }
+.resena-boton-escribir:hover { background: #1e40af; }
+.resena-gracias, .resena-ya { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; border-radius: 8px; padding: .75rem 1rem; margin: 0 0 1rem; }
+.resena-resumen { display: flex; gap: 2rem; align-items: center; background: #f9fafb; border: 1px solid #f3f4f6; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; }
+.resena-promedio { text-align: center; min-width: 110px; }
+.resena-promedio strong { display: block; font-size: 2.5rem; font-weight: 700; color: #111827; line-height: 1; }
+.resena-promedio span { font-size: .85rem; color: #6b7280; }
+.resena-estrellas { color: #f59e0b; font-size: .95rem; letter-spacing: 1px; }
+.resena-barras { flex: 1; display: grid; gap: .35rem; }
+.resena-barra { display: grid; grid-template-columns: 14px 1fr 28px; align-items: center; gap: .5rem; font-size: .8rem; color: #6b7280; }
+.resena-barra-fondo { height: 8px; background: #e5e7eb; border-radius: 9999px; overflow: hidden; }
+.resena-barra-fondo div { height: 100%; background: #f59e0b; border-radius: 9999px; }
+.resena-vacia { color: #6b7280; background: #f9fafb; border: 1px dashed #e5e7eb; border-radius: 12px; padding: 1.25rem; text-align: center; }
+.resena-tarjeta { background: #fff; border: 1px solid #f3f4f6; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: .75rem; box-shadow: 0 1px 2px rgba(0,0,0,.05); }
+.resena-cabecera { display: flex; align-items: center; gap: .75rem; }
+.resena-cabecera .resena-estrellas { margin-left: auto; }
+.resena-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #2563eb, #60a5fa); color: #fff; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.resena-nombre { font-weight: 600; color: #111827; }
+.resena-fecha { font-size: .8rem; color: #6b7280; }
+.resena-texto { margin: .75rem 0 0; color: #374151; line-height: 1.6; white-space: pre-line; overflow-wrap: anywhere; }
+.resena-form { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 1.5rem; margin-top: 1.25rem; }
+.resena-form h4 { margin: 0 0 .25rem; font-size: 1.15rem; color: #111827; }
+.resena-autor { margin: 0 0 1rem; color: #6b7280; font-size: .9rem; }
+.resena-etiqueta { display: block; font-weight: 500; color: #374151; margin: .75rem 0 .4rem; }
+.resena-form .stars-select { font-size: 1.75rem; display: flex; gap: .35rem; }
+.resena-form .stars-select i { cursor: pointer; color: #d1d5db; }
+.resena-form textarea { width: 100%; box-sizing: border-box; padding: .75rem; border: 1px solid #d1d5db; border-radius: 8px; font: inherit; resize: vertical; }
+.resena-form textarea:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,.15); }
+.resena-contador { text-align: right; font-size: .8rem; color: #9ca3af; margin-top: .25rem; }
+.resena-trampa { position: absolute !important; left: -9999px !important; width: 1px; height: 1px; overflow: hidden; }
+.resena-reglas { font-size: .85rem; color: #6b7280; margin: .5rem 0 0; }
+.resena-error { color: #dc2626; font-size: .9rem; margin: .5rem 0 0; min-height: 1em; }
+.resena-acciones { display: flex; justify-content: flex-end; gap: .75rem; margin-top: 1rem; }
+.resena-cancelar { background: #fff; color: #374151; border: 1px solid #d1d5db; border-radius: 8px; padding: .7rem 1.25rem; font: inherit; font-weight: 500; cursor: pointer; }
+.resena-form .submit-review-btn { background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: .7rem 1.4rem; font: inherit; font-weight: 600; cursor: pointer; }
+.resena-form .submit-review-btn:hover { background: #1e40af; }
+.resena-invitacion { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 1.25rem 1.5rem; margin-top: 1.25rem; }
+.resena-invitacion-icono { width: 48px; height: 48px; border-radius: 12px; background: #2563eb; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; }
+.resena-invitacion-texto { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: .2rem; color: #1e3a8a; }
+.resena-invitacion-texto span { color: #374151; font-size: .9rem; }
+.resena-invitacion-botones { display: flex; gap: .5rem; flex-wrap: wrap; }
+.resena-btn-primario, .resena-btn-secundario { display: inline-block; padding: .6rem 1.1rem; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: .9rem; }
+.resena-btn-primario { background: #2563eb; color: #fff; }
+.resena-btn-primario:hover { background: #1e40af; color: #fff; }
+.resena-btn-secundario { background: #fff; color: #2563eb; border: 1px solid #bfdbfe; }
+@media (max-width: 600px) {
+    .resena-resumen { flex-direction: column; align-items: stretch; gap: 1rem; }
+    .resena-invitacion-botones { width: 100%; }
+    .resena-invitacion-botones a { flex: 1; text-align: center; }
+    .resena-boton-escribir { width: 100%; justify-content: center; }
+}

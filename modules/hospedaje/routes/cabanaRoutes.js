@@ -1,4 +1,6 @@
 const express = require('express');
+const { verificarTokenUsuario } = require('../../../middleware/auth');
+const { antispamResenas } = require('../../../middleware/antispamResenas');
 const path = require('path');
 const cabanaController = require('../controllers/cabanaController');
 const authMiddleware = require('../middlewares/authMiddleware');
@@ -472,7 +474,8 @@ router.use((error, req, res, next) => {
 });
 
 // 📝 Crear reseña
-router.post('/:id/reviews', authMiddleware.protect, cabanaController.createReview);
+// Solo viajeros con cuenta del sitio (no socios ni administradores) y con filtro anti-spam
+router.post('/:id/reviews', verificarTokenUsuario, antispamResenas, cabanaController.createReview);
 
 module.exports = router;
 

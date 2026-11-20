@@ -979,10 +979,10 @@ async function loadRecomendaciones(currentTour) {
 
 window.handleEscribirOpinion = function() {
     const token = localStorage.getItem('authToken');
-    if (token) {
+    if (token && (!window.AccesoResena || AccesoResena.esViajero())) {
         openReviewModal();
     } else {
-        window.location.href = '/login.html';
+        AccesoResena.pedir(openReviewModal);
     }
 };
 
