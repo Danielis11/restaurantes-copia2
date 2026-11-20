@@ -369,6 +369,23 @@
         </form>
     </dialog>
 
+    <dialog class="modal" id="modalEditar" aria-labelledby="tituloEditar">
+        <form id="formEditar" novalidate>
+            <div class="modal-cab">
+                <h2 id="tituloEditar">Editar</h2>
+                <button type="button" class="icono-btn" data-cerrar aria-label="Cerrar"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-cuerpo">
+                <div class="error-form" id="errorEditar" role="alert"></div>
+                <div class="campos" id="camposEditar"><div class="cargando campo ancho">Cargando…</div></div>
+            </div>
+            <div class="modal-pie">
+                <button type="button" class="btn" data-cerrar>Cancelar</button>
+                <button type="submit" class="btn principal" id="btnGuardarEditar"><i class="fas fa-check"></i> Guardar cambios</button>
+            </div>
+        </form>
+    </dialog>
+
     <script>
     (function () {
         'use strict';
@@ -584,6 +601,7 @@
                 }
                 return '<div class="fila">' + miniatura(x) +
                     '<div class="fila-datos"><div class="fila-nombre">' + esc(x.nombre) + '</div><div class="fila-meta">' + etiqueta + meta + '</div></div>' +
+                    (nombre === 'hospedaje' ? '<button type="button" class="icono-btn" data-editar="' + esc(x._id) + '" data-tipo="' + esc(x.tipo) + '" title="Editar información" aria-label="Editar ' + esc(x.nombre) + '"><i class="fas fa-pen"></i></button>' : '') +
                     (ver ? '<a class="icono-btn" href="' + esc(ver) + '" target="_blank" rel="noopener" title="Ver en el sitio" aria-label="Ver en el sitio" style="display:flex;align-items:center;justify-content:center"><i class="fas fa-external-link-alt"></i></a>' : '') +
                     interruptor(nombre, x) + '</div>';
             }).join('');
@@ -669,6 +687,81 @@
                 tarjeta.querySelectorAll('button').forEach((b) => { b.disabled = false; });
                 if (err.message !== 'sin permiso') avisar(err.message || 'No se pudo guardar', true);
             }
+        });
+
+        // ---------- edición de hospedaje, guías y operadoras ----------
+        const modalEd = $('modalEditar');
+        let editando = null; // { tipo, id, original: { ruta: valor } }
+        const TIPO_INPUT = { tel: 'tel', email: 'email', url: 'url', numero: 'number' };
+
+        async function abrirEdicion(tipo, id) {
+            editando = { tipo, id, original: {} };
+            $('tituloEditar').textContent = 'Editar';
+            $('errorEditar').textContent = '';
+            $('camposEditar').innerHTML = '<div class="cargando campo ancho">Cargando…</div>';
+            $('btnGuardarEditar').disabled = true;
+            modalEd.showModal();
+            try {
+                const d = await api('/hospedaje/' + tipo + '/' + id);
+                if (!editando || editando.id !== id) return;
+                const nombre = (d.campos[0] && d.campos[0].valor) || '';
+                $('tituloEditar').textContent = 'Editar ' + d.tipoTexto.toLowerCase() + (nombre ? ': ' + nombre : '');
+                $('camposEditar').innerHTML = d.campos.map((c, i) => {
+                    editando.original[c.ruta] = String(c.valor);
+                    const idc = 'ed' + i;
+                    const etiqueta = '<label for="' + idc + '">' + esc(c.etiqueta) + (c.obligatorio ? '' : ' <small>(opcional)</small>') + '</label>';
+                    const comunes = ' id="' + idc + '" name="' + esc(c.ruta) + '"' + (c.obligatorio ? ' required' : '');
+                    const control = c.clase === 'area'
+                        ? '<textarea' + comunes + ' maxlength="3000">' + esc(c.valor) + '</textarea>'
+                        : '<input' + comunes + ' type="' + (TIPO_INPUT[c.clase] || 'text') + '"' + (c.clase === 'numero' ? ' min="0" step="any" inputmode="decimal"' : '') + ' value="' + esc(c.valor) + '" maxlength="300">';
+                    const ancho = c.clase === 'area' || c.clase === 'lista' || /direcci|nombre/i.test(c.etiqueta);
+                    return '<div class="campo' + (ancho ? ' ancho' : '') + '">' + etiqueta + control + '</div>';
+                }).join('');
+                $('btnGuardarEditar').disabled = false;
+                const primero = $('camposEditar').querySelector('input, textarea');
+                if (primero) primero.focus();
+            } catch (err) {
+                if (err.message !== 'sin permiso') $('camposEditar').innerHTML = '<div class="vacio campo ancho"><i class="fas fa-exclamation-circle"></i>' + esc(err.message || 'No se pudo cargar') + '</div>';
+            }
+        }
+
+        $('listaHospedaje').addEventListener('click', (e) => {
+            const b = e.target.closest('[data-editar]');
+            if (b) abrirEdicion(b.dataset.tipo, b.dataset.editar);
+        });
+        modalEd.addEventListener('click', (e) => {
+            if (e.target.closest('[data-cerrar]') || e.target === modalEd) modalEd.close();
+        });
+        modalEd.addEventListener('close', () => { editando = null; });
+
+        $('formEditar').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!editando) return;
+            const cambios = {};
+            let faltante = null;
+            $('camposEditar').querySelectorAll('input, textarea').forEach((el) => {
+                const v = el.value.trim();
+                if (el.required && !v && !faltante) faltante = el;
+                if (v !== editando.original[el.name]) cambios[el.name] = v;
+            });
+            if (faltante) { $('errorEditar').textContent = 'Completa los campos obligatorios'; faltante.focus(); return; }
+            if (!Object.keys(cambios).length) { modalEd.close(); avisar('Sin cambios'); return; }
+            $('errorEditar').textContent = '';
+            const btn = $('btnGuardarEditar');
+            btn.disabled = true;
+            const { tipo, id } = editando;
+            try {
+                const r = await api('/hospedaje/' + tipo + '/' + id, { method: 'PUT', body: JSON.stringify(cambios) });
+                const x = estado.hospedaje.find((i) => String(i._id) === String(id) && i.tipo === tipo);
+                if (x && r.nombre) x.nombre = r.nombre;
+                pintar('hospedaje');
+                modalEd.close();
+                avisar('Cambios guardados');
+            } catch (err) {
+                if (err.message !== 'sin permiso') $('errorEditar').textContent = err.message || 'No se pudieron guardar los cambios';
+                modalEd.querySelector('.modal-cuerpo').scrollTop = 0;
+            }
+            btn.disabled = false;
         });
 
         // ---------- alta de hospedaje ----------

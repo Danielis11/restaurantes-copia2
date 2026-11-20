@@ -20,6 +20,22 @@ const hosp = {
   guia: () => require('../modules/hospedaje/models/GuiaTuristica'),
   operadora: () => require('../modules/hospedaje/models/TourOperadora')
 };
+// Guías y operadoras: se usan los del sitio actual (los que lleva el admin turístico y se ven en
+// guia.html / agencia.html), no los del módulo de hospedaje anterior.
+const ACTUAL = {
+  guia: () => require('../models/Guia'),
+  operadora: () => require('../models/Agencia')
+};
+const modeloDe_ = (tipo) => (ACTUAL[tipo] || hosp[tipo])();
+// Cuándo se ve en el sitio cada tipo
+const FILTRO_VISIBLE = {
+  guia: { activo: true, estado: 'activo' },
+  operadora: { estado: { $ne: 'inactivo' } }
+};
+const filtroVisible = (tipo) => FILTRO_VISIBLE[tipo] || { activo: { $ne: false } };
+const esVisible = (tipo, d) => tipo === 'guia' ? d.activo !== false && d.estado === 'activo'
+  : tipo === 'operadora' ? d.estado !== 'inactivo'
+    : d.activo !== false;
 const ResenaHospedaje = () => require('../modules/hospedaje/models/Review');
 const Socio = () => require('../modules/hospedaje/models/User');
 const { aplicarAEmbebida, modeloDe } = require('../modules/hospedaje/utils/moderacionResenas');
@@ -42,13 +58,13 @@ const fallo = (res, e, msg) => {
 // ---------- Resumen ----------
 router.get('/resumen', async (req, res) => {
   try {
-    const conteo = async (Modelo) => {
-      const [total, activos] = await Promise.all([Modelo.countDocuments(), Modelo.countDocuments({ activo: { $ne: false } })]);
+    const conteo = async (Modelo, visible) => {
+      const [total, activos] = await Promise.all([Modelo.countDocuments(), Modelo.countDocuments(visible || { activo: { $ne: false } })]);
       return { total, activos };
     };
     const tiposComida = await Restaurant.aggregate([{ $group: { _id: '$tipo', total: { $sum: 1 } } }]);
     const hospedaje = {};
-    for (const tipo of Object.keys(hosp)) hospedaje[tipo] = await conteo(hosp[tipo]());
+    for (const tipo of Object.keys(hosp)) hospedaje[tipo] = await conteo(modeloDe_(tipo), filtroVisible(tipo));
 
     const [pendRest, pendHosp, admins, socios, viajeros] = await Promise.all([
       Review.countDocuments({ estado: 'pendiente' }),
@@ -145,6 +161,26 @@ router.get('/hospedaje', async (req, res) => {
     const tipos = req.query.tipo && hosp[req.query.tipo] ? [req.query.tipo] : Object.keys(hosp);
     const datos = [];
     for (const tipo of tipos) {
+      if (ACTUAL[tipo]) {
+        const lista = await ACTUAL[tipo]().find({})
+          .select('nombre nombreCompleto activo estado email telefono fotoPerfil logo galeria calificacionPromedio')
+          .lean();
+        for (const g of lista) {
+          datos.push({
+            _id: g._id,
+            tipo,
+            tipoTexto: ETIQUETA_HOSP[tipo],
+            nombre: g.nombreCompleto || g.nombre || '',
+            activo: esVisible(tipo, g),
+            responsable: g.email || g.telefono || '',
+            correo: g.email || '',
+            calificacion: g.calificacionPromedio || 0,
+            imagen: g.fotoPerfil?.url || g.logo?.url || g.galeria?.[0]?.url || '',
+            url: `/${tipo === 'guia' ? 'guia' : 'agencia'}.html?id=${g._id}`
+          });
+        }
+        continue;
+      }
       const lista = await hosp[tipo]().find({})
         .select('nombre apellidos activo propietario calificacion imagenes foto contacto.email')
         .populate('propietario', 'nombre email')
@@ -161,9 +197,7 @@ router.get('/hospedaje', async (req, res) => {
           correo: h.propietario?.email || h.contacto?.email || '',
           calificacion: promedioDe(h.calificacion),
           imagen: img,
-          url: ['hotel', 'cabana', 'airbnb'].includes(tipo)
-            ? `/hospedaje/hospedaje-detalle.html?tipo=${tipo}&id=${h._id}`
-            : tipo === 'guia' ? '/hospedaje/guias.html' : '/hospedaje/tourOperadora.html'
+          url: `/hospedaje/hospedaje-detalle.html?tipo=${tipo}&id=${h._id}`
         });
       }
     }
@@ -176,6 +210,15 @@ router.patch('/hospedaje/:tipo/:id/activo', async (req, res) => {
   try {
     const { tipo, id } = req.params;
     if (!hosp[tipo] || !esId(id)) return res.status(400).json({ success: false, message: 'Datos inválidos' });
+    if (ACTUAL[tipo]) {
+      const Modelo = ACTUAL[tipo]();
+      const d = await Modelo.findById(id).select('activo estado').lean();
+      if (!d) return res.status(404).json({ success: false, message: 'No encontrado' });
+      const activo = !esVisible(tipo, d);
+      const cambio = tipo === 'guia' ? { activo, estado: activo ? 'activo' : 'inactivo' } : { estado: activo ? 'activo' : 'inactivo' };
+      await Modelo.updateOne({ _id: id }, { $set: cambio });
+      return res.json({ success: true, activo });
+    }
     const Modelo = hosp[tipo]();
     const h = await Modelo.findById(id).select('activo');
     if (!h) return res.status(404).json({ success: false, message: 'No encontrado' });
@@ -186,6 +229,91 @@ router.patch('/hospedaje/:tipo/:id/activo', async (req, res) => {
     }, { strict: false });
     res.json({ success: true, activo });
   } catch (e) { fallo(res, e, 'Error al cambiar el estado'); }
+});
+
+// ---------- Edición básica de cualquier hospedaje, guía u operadora ----------
+// Campos editables por tipo: [ruta en el documento, etiqueta, tipo de campo, obligatorio]
+const C = (ruta, etiqueta, clase = 'texto', obligatorio = false) => ({ ruta, etiqueta, clase, obligatorio });
+const CONTACTO_HOSP = [C('ubicacion.direccion', 'Dirección'), C('contacto.telefono', 'Teléfono', 'tel'), C('contacto.email', 'Correo', 'email'), C('contacto.sitioWeb', 'Sitio web', 'url'),
+  C('contacto.redesSociales.facebook', 'Facebook', 'url'), C('contacto.redesSociales.instagram', 'Instagram', 'url')];
+const CAMPOS_EDITABLES = {
+  hotel: [C('nombre', 'Nombre', 'texto', true), C('descripcion', 'Descripción', 'area', true), C('precio', 'Precio por noche (MXN)', 'numero'),
+    C('capacidad.habitaciones', 'Habitaciones', 'numero'), C('capacidad.personasMax', 'Huéspedes máximo', 'numero'), ...CONTACTO_HOSP],
+  cabana: [C('nombre', 'Nombre', 'texto', true), C('descripcion', 'Descripción', 'area', true), C('precio', 'Precio por noche (MXN)', 'numero'),
+    C('capacidad.huespedes', 'Huéspedes', 'numero'), C('capacidad.habitaciones', 'Habitaciones', 'numero'), ...CONTACTO_HOSP],
+  airbnb: [C('nombre', 'Nombre', 'texto', true), C('descripcion', 'Descripción', 'area', true), C('precioPorNoche', 'Precio por noche (MXN)', 'numero'),
+    C('capacidad.huespedes', 'Huéspedes', 'numero'), C('capacidad.habitaciones', 'Habitaciones', 'numero'), ...CONTACTO_HOSP],
+  guia: [C('nombreCompleto', 'Nombre completo', 'texto', true), C('telefono', 'Teléfono', 'tel', true), C('email', 'Correo', 'email'),
+    C('credencialSECTUR', 'Credencial SECTUR', 'texto', true), C('autorizacionCONANP', 'Autorización CONANP'), C('rnt', 'RNT'),
+    C('aniosExperiencia', 'Años de experiencia', 'numero'), C('biografia.es', 'Biografía', 'area'),
+    C('idiomas', 'Idiomas (separados por coma)', 'lista'), C('zonasOperacion', 'Zonas donde opera (separadas por coma)', 'lista'),
+    C('redesSociales.facebook', 'Facebook', 'url'), C('redesSociales.instagram', 'Instagram', 'url')],
+  operadora: [C('nombre', 'Nombre', 'texto', true), C('telefono', 'Teléfono', 'tel', true), C('email', 'Correo', 'email'),
+    C('rnt', 'RNT', 'texto', true), C('direccion', 'Dirección'), C('descripcion', 'Descripción', 'area'),
+    C('horariosAtencion', 'Horario de atención'), C('paginaWeb', 'Página web', 'url'),
+    C('idiomas', 'Idiomas (separados por coma)', 'lista'), C('especialidades', 'Especialidades (separadas por coma)', 'lista'),
+    C('redesSociales.facebook', 'Facebook', 'url'), C('redesSociales.instagram', 'Instagram', 'url')]
+};
+const leerRuta = (obj, ruta) => ruta.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj);
+
+router.get('/hospedaje/:tipo/:id', async (req, res) => {
+  try {
+    const { tipo, id } = req.params;
+    if (!CAMPOS_EDITABLES[tipo] || !esId(id)) return res.status(400).json({ success: false, message: 'Datos inválidos' });
+    const d = await modeloDe_(tipo).findById(id).lean();
+    if (!d) return res.status(404).json({ success: false, message: 'No encontrado' });
+    res.json({
+      success: true,
+      data: {
+        tipo, tipoTexto: ETIQUETA_HOSP[tipo],
+        campos: CAMPOS_EDITABLES[tipo].map((c) => {
+          const v = leerRuta(d, c.ruta);
+          return { ...c, valor: c.clase === 'lista' ? (Array.isArray(v) ? v.join(', ') : '') : (v == null ? '' : v) };
+        })
+      }
+    });
+  } catch (e) { fallo(res, e, 'Error al cargar los datos'); }
+});
+
+router.put('/hospedaje/:tipo/:id', async (req, res) => {
+  try {
+    const { tipo, id } = req.params;
+    if (!CAMPOS_EDITABLES[tipo] || !esId(id)) return res.status(400).json({ success: false, message: 'Datos inválidos' });
+    const b = req.body || {};
+    const set = {};
+    const unset = {};
+    for (const c of CAMPOS_EDITABLES[tipo]) {
+      if (!(c.ruta in b)) continue;
+      const crudo = b[c.ruta];
+      let v;
+      if (c.clase === 'lista') {
+        v = String(crudo || '').split(',').map((s) => s.trim()).filter(Boolean).slice(0, 30);
+      } else if (c.clase === 'numero') {
+        if (crudo === '' || crudo == null) { unset[c.ruta] = ''; continue; }
+        v = Number(crudo);
+        if (!Number.isFinite(v) || v < 0) return res.status(400).json({ success: false, message: `${c.etiqueta}: escribe un número válido` });
+      } else {
+        v = String(crudo == null ? '' : crudo).trim().slice(0, c.clase === 'area' ? 3000 : 300);
+        if (c.clase === 'email' && v && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) return res.status(400).json({ success: false, message: 'Escribe un correo válido' });
+        if (c.clase === 'email') v = v.toLowerCase();
+      }
+      if (c.obligatorio && (v === '' || (Array.isArray(v) && !v.length))) return res.status(400).json({ success: false, message: `${c.etiqueta} es obligatorio` });
+      set[c.ruta] = v;
+    }
+    if (tipo !== 'guia' && tipo !== 'operadora' && set.descripcion !== undefined && set.descripcion.length < 20) {
+      return res.status(400).json({ success: false, message: 'La descripción debe tener al menos 20 caracteres' });
+    }
+    if (!Object.keys(set).length && !Object.keys(unset).length) return res.status(400).json({ success: false, message: 'No hay cambios' });
+    const Modelo = modeloDe_(tipo);
+    const r = await Modelo.updateOne({ _id: id }, { ...(Object.keys(set).length ? { $set: set } : {}), ...(Object.keys(unset).length ? { $unset: unset } : {}) }, { runValidators: true });
+    if (!r.matchedCount) return res.status(404).json({ success: false, message: 'No encontrado' });
+    const d = await Modelo.findById(id).select('nombre nombreCompleto apellidos').lean();
+    res.json({ success: true, data: { _id: id, tipo, nombre: tipo === 'guia' ? d.nombreCompleto : [d.nombre, d.apellidos].filter(Boolean).join(' ') } });
+  } catch (e) {
+    if (e.code === 11000) return res.status(400).json({ success: false, message: 'Ese dato ya lo usa otro registro (por ejemplo, la credencial SECTUR)' });
+    if (e.name === 'ValidationError' || e.name === 'CastError') return res.status(400).json({ success: false, message: e.errors ? Object.values(e.errors)[0].message : e.message });
+    fallo(res, e, 'Error al guardar los cambios');
+  }
 });
 
 // Alta de hotel, cabaña o airbnb. Si el dueño ya tiene cuenta de socio se le agrega;
