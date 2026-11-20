@@ -45,7 +45,7 @@ const HotelSchema = new mongoose.Schema({
     },
     email: {
       type: String,
-      match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Email inválido']
+      match: [/^[\w.+-]+@[\w-]+(\.[\w-]+)*\.[a-zA-Z]{2,}$/, 'Email inválido']
     },
     sitioWeb: String,
     redesSociales: {

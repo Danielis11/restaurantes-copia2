@@ -2,7 +2,7 @@
 
 // Validar formato de email
 const validarEmail = (email) => {
-  const regex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+  const regex = /^[\w.+-]+@[\w-]+(\.[\w-]+)*\.[a-zA-Z]{2,}$/;
   return regex.test(email);
 };
 
