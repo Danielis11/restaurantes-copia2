@@ -273,9 +273,15 @@
         @keyframes introLetras { to { opacity: 1; transform: none; } }
         @keyframes introSale { to { transform: translateY(100%); visibility: hidden; } }
         @keyframes introSub { to { opacity: .8; transform: none; } }
-        /* Mientras se ve la entrada, la portada espera para animarse después */
-        html.intro-activa .ij-eti-hero, html.intro-activa .ij-hero h1, html.intro-activa .ij-hero-txt > p,
-        html.intro-activa .ij-hero-fila, html.intro-activa .ij-acceso { animation-play-state: paused; }
+        /* La única animación de entrada es esta: la portada ya no repite la suya
+           (texto que subía) ni antes ni después de la cortina. */
+        .ij-eti-hero, .ij-hero h1, .ij-hero-txt > p, .ij-hero-fila, .ij-acceso { animation: none !important; }
+        /* En la app instalada el sistema ya muestra el logo sobre blanco al abrir:
+           la entrada arranca con el logo puesto para que se vea como una sola animación. */
+        @media (display-mode: standalone) {
+            .intro-logo { opacity: 1; transform: none; animation: none; }
+            .intro-capa { animation-delay: .25s; }
+        }
         @media (prefers-reduced-motion: reduce) {
             .intro { animation: introSale .01s linear 1.2s forwards; }
             .intro-capa { animation: none; clip-path: none; }

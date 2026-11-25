@@ -99,19 +99,21 @@ function renderPage(tipo) {
     // Hero images
     allImages = d.imagenes || [];
     const heroImg = document.getElementById('heroImage');
-    const heroGallery = document.querySelector('.hero-gallery');
-
-    const initialImg = allImages.length > 0 ? getImgUrl(allImages[0]) : 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&q=80';
-    heroImg.src = initialImg;
-    if (heroGallery) heroGallery.style.backgroundImage = `url(${initialImg})`;
-
+    const heroBg = document.getElementById('heroImageBg');
+    const fallback = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&q=80';
+    heroImg.alt = d.nombre || 'Foto del hospedaje';
+    heroImg.onload = () => heroImg.classList.add('lista');
+    if (heroBg) heroBg.onload = () => heroBg.classList.add('lista');
     heroImg.onerror = () => {
-        const fallback = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&q=80';
+        if (heroImg.dataset.fallo) return;
+        heroImg.dataset.fallo = '1';
         heroImg.src = fallback;
-        if (heroGallery) heroGallery.style.backgroundImage = `url(${fallback})`;
+        if (heroBg) heroBg.src = fallback;
     };
+    ponerFotoHero(allImages.length > 0 ? getImgUrl(allImages[0]) : fallback, false);
     renderThumbnails();
     updateHeroCounter();
+    renderGaleria();
 
     // Info card
     document.getElementById('tipoBadge').innerHTML = `<i class="${config.icon}"></i> ${config.label}`;
@@ -127,22 +129,28 @@ function renderPage(tipo) {
     if (tel) metaHTML += `<span style="font-weight: 600; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-phone-alt" style="color: #666;"></i> ${tel}</span>`;
     if (rating > 0) metaHTML += `<span class="rating-stars">${'★'.repeat(Math.round(rating))}${'☆'.repeat(5 - Math.round(rating))} <span class="count">${rating.toFixed(1)} (${reviews})</span></span>`;
     
-    // Social / Contact Buttons in Header
-    let socialHTML = `<div style="display: flex; gap: 8px; margin-left: 10px;">`;
-    if (d.reservaciones?.whatsapp || (d.contacto?.whatsapp)) {
-        const waNumber = (d.reservaciones?.whatsapp || d.contacto?.whatsapp).replace(/\D/g, '');
-        socialHTML += `<a href="https://wa.me/${waNumber}" target="_blank" style="width: 32px; height: 32px; border-radius: 50%; background: #25D366; color: white; display: flex; align-items: center; justify-content: center; text-decoration: none;"><i class="fab fa-whatsapp"></i></a>`;
-    }
-    if (d.contacto?.redesSociales?.facebook) {
-        socialHTML += `<a href="${d.contacto.redesSociales.facebook}" target="_blank" style="width: 32px; height: 32px; border-radius: 50%; background: #1877F2; color: white; display: flex; align-items: center; justify-content: center; text-decoration: none;"><i class="fab fa-facebook-f"></i></a>`;
-    }
-    if (d.contacto?.sitioWeb) {
-        socialHTML += `<a href="${d.contacto.sitioWeb}" target="_blank" style="width: 32px; height: 32px; border-radius: 50%; background: #e5e7eb; color: #4b5563; display: flex; align-items: center; justify-content: center; text-decoration: none;"><i class="fas fa-link"></i></a>`;
-    }
-    socialHTML += `</div>`;
-    
+    // Compartir (igual que en la ficha de restaurantes; la página de Facebook del lugar está en Contacto)
+    const socialHTML = `<span class="hd-compartir">
+        <button type="button" class="wa" data-compartir="wa" title="Compartir en WhatsApp" aria-label="Compartir en WhatsApp"><i class="fab fa-whatsapp"></i></button>
+        <button type="button" class="fb" data-compartir="fb" title="Compartir en Facebook" aria-label="Compartir en Facebook"><i class="fab fa-facebook-f"></i></button>
+        <button type="button" class="copiar" data-compartir="copiar" title="Copiar enlace" aria-label="Copiar enlace"><i class="fas fa-link"></i></button>
+    </span>`;
     metaHTML += socialHTML;
     meta.innerHTML = metaHTML;
+    meta.querySelectorAll('[data-compartir]').forEach(btn => btn.addEventListener('click', () => {
+        const url = location.href;
+        const texto = `${d.nombre || 'Hospedaje'} en Jalpan de Serra`;
+        const accion = btn.dataset.compartir;
+        if (accion === 'wa') window.open(`https://wa.me/?text=${encodeURIComponent(texto + ' ' + url)}`, '_blank', 'noopener');
+        else if (accion === 'fb') window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank', 'noopener');
+        else {
+            const listo = () => {
+                btn.classList.add('copiado'); btn.innerHTML = '<i class="fas fa-check"></i>';
+                setTimeout(() => { btn.classList.remove('copiado'); btn.innerHTML = '<i class="fas fa-link"></i>'; }, 1800);
+            };
+            if (navigator.clipboard) navigator.clipboard.writeText(url).then(listo).catch(() => {}); else listo();
+        }
+    }));
 
     // About
     document.getElementById('aboutText').textContent = d.descripcion || 'Sin descripción disponible.';
@@ -670,7 +678,7 @@ function getImgUrl(url) {
 function renderThumbnails() {
     const container = document.getElementById('heroThumbnails');
     if (!container || allImages.length <= 1) { if (container) container.style.display = 'none'; return; }
-    container.innerHTML = allImages.slice(0, 5).map((img, i) =>
+    container.innerHTML = allImages.map((img, i) =>
         `<div class="hero-thumb ${i === 0 ? 'active' : ''}" onclick="goToSlide(${i})"><img src="${getImgUrl(img)}" alt="Miniatura ${i + 1}"></div>`
     ).join('');
 }
@@ -681,25 +689,91 @@ function updateHeroCounter() {
     else if (counter) counter.style.display = 'none';
 }
 
+// Cambia la foto principal con un fundido suave (como en la ficha de restaurantes)
+function ponerFotoHero(url, conFundido = true) {
+    const img = document.getElementById('heroImage');
+    const bg = document.getElementById('heroImageBg');
+    if (!img) return;
+    const cambiar = () => { delete img.dataset.fallo; img.src = url; if (bg) bg.src = url; };
+    if (!conFundido) { cambiar(); return; }
+    img.classList.remove('lista');
+    if (bg) bg.classList.remove('lista');
+    setTimeout(cambiar, 220);
+}
+
 function changeSlide(dir) {
     if (allImages.length <= 1) return;
-    currentImageIndex = (currentImageIndex + dir + allImages.length) % allImages.length;
-    const imgUrl = getImgUrl(allImages[currentImageIndex]);
-    document.getElementById('heroImage').src = imgUrl;
-    const heroGallery = document.querySelector('.hero-gallery');
-    if (heroGallery) heroGallery.style.backgroundImage = `url(${imgUrl})`;
-    updateHeroCounter();
-    document.querySelectorAll('.hero-thumb').forEach((t, i) => t.classList.toggle('active', i === currentImageIndex));
+    goToSlide((currentImageIndex + dir + allImages.length) % allImages.length);
 }
 
 function goToSlide(i) {
     currentImageIndex = i;
-    const imgUrl = getImgUrl(allImages[i]);
-    document.getElementById('heroImage').src = imgUrl;
-    const heroGallery = document.querySelector('.hero-gallery');
-    if (heroGallery) heroGallery.style.backgroundImage = `url(${imgUrl})`;
+    ponerFotoHero(getImgUrl(allImages[i]));
     updateHeroCounter();
-    document.querySelectorAll('.hero-thumb').forEach((t, idx) => t.classList.toggle('active', idx === i));
+    const miniaturas = document.querySelectorAll('.hero-thumb');
+    miniaturas.forEach((t, idx) => t.classList.toggle('active', idx === i));
+    const activa = miniaturas[i];
+    if (activa && activa.parentElement) {
+        const caja = activa.parentElement;
+        const izq = activa.offsetLeft - caja.clientWidth / 2 + activa.clientWidth / 2;
+        caja.scrollTo({ left: izq, behavior: 'smooth' });
+    }
+}
+
+// Galería de fotos en cuadrícula + visor a pantalla completa
+let visorIndice = 0;
+function renderGaleria() {
+    const sec = document.getElementById('galeriaSection');
+    const grid = document.getElementById('galeriaGrid');
+    if (!sec || !grid || allImages.length < 2) { if (sec) sec.style.display = 'none'; return; }
+    document.getElementById('galeriaCuenta').textContent = `${allImages.length} fotos`;
+    grid.innerHTML = allImages.map((img, i) =>
+        `<button type="button" data-i="${i}" aria-label="Ver foto ${i + 1}"><img loading="lazy" decoding="async" src="${getImgUrl(img)}" alt="" onerror="this.parentElement.remove()"></button>`
+    ).join('');
+    grid.querySelectorAll('button').forEach(b => b.addEventListener('click', () => abrirVisor(+b.dataset.i)));
+    sec.style.display = '';
+}
+
+function abrirVisor(i) {
+    const visor = document.getElementById('hdVisor');
+    if (!visor) return;
+    visorIndice = i;
+    mostrarEnVisor();
+    visor.hidden = false;
+    document.body.style.overflow = 'hidden';
+    if (visor.dataset.listo) return;
+    visor.dataset.listo = '1';
+    visor.querySelector('.hd-visor-cerrar').addEventListener('click', cerrarVisor);
+    visor.querySelector('.hd-visor-prev').addEventListener('click', e => { e.stopPropagation(); moverVisor(-1); });
+    visor.querySelector('.hd-visor-next').addEventListener('click', e => { e.stopPropagation(); moverVisor(1); });
+    visor.addEventListener('click', e => { if (e.target === visor) cerrarVisor(); });
+    document.addEventListener('keydown', e => {
+        if (visor.hidden) return;
+        if (e.key === 'Escape') cerrarVisor();
+        else if (e.key === 'ArrowRight') moverVisor(1);
+        else if (e.key === 'ArrowLeft') moverVisor(-1);
+    });
+    let x0 = 0;
+    visor.addEventListener('touchstart', e => { x0 = e.changedTouches[0].screenX; }, { passive: true });
+    visor.addEventListener('touchend', e => {
+        const dx = e.changedTouches[0].screenX - x0;
+        if (Math.abs(dx) > 50) moverVisor(dx < 0 ? 1 : -1);
+    }, { passive: true });
+}
+
+function moverVisor(dir) {
+    visorIndice = (visorIndice + dir + allImages.length) % allImages.length;
+    mostrarEnVisor();
+}
+
+function mostrarEnVisor() {
+    document.getElementById('hdVisorImg').src = getImgUrl(allImages[visorIndice]);
+    document.getElementById('hdVisorCuenta').textContent = `${visorIndice + 1} / ${allImages.length}`;
+}
+
+function cerrarVisor() {
+    document.getElementById('hdVisor').hidden = true;
+    document.body.style.overflow = '';
 }
 
 // Touch support for swipeable gallery

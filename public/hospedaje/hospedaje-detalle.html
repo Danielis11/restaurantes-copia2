@@ -25,6 +25,7 @@
     <!-- AOS CSS -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="/hospedaje/css/tema-sitio.css">
+    <link rel="stylesheet" href="/hospedaje/css/detalle-como-restaurante.css">
     <script src="/js/acceso-resena.js" defer></script>
 </head>
 
@@ -86,11 +87,12 @@
     <!-- Main Content -->
     <div id="mainContent" style="display:none">
 
-        <!-- Header Info Layout -->
-        <div class="header-info-section" data-aos="fade-down" style="max-width: 1200px; margin: 90px auto 20px; padding: 0 2rem;">
-            <div class="tipo-badge" id="tipoBadge" style="margin-bottom: 10px;"></div>
-            <div class="hospedaje-name-row" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
-                <h1 id="hospedajeName" style="font-size: 2.2rem; font-weight: 800; color: #1a1a2e; margin: 0;"></h1>
+        <!-- Encabezado (igual que la ficha de restaurantes) -->
+        <div class="hd-cab">
+            <a id="backBtn" href="hospedaje.html" class="hd-volver"><i class="fas fa-arrow-left"></i> Volver al listado</a>
+            <div class="tipo-badge" id="tipoBadge"></div>
+            <div class="hospedaje-name-row">
+                <h1 id="hospedajeName"></h1>
                 <div class="con-like" id="favBtnContainer" style="display:none" title="Agregar a favoritos">
                     <input class="like" type="checkbox" id="favCheckbox" title="like">
                     <div class="checkmark">
@@ -111,46 +113,29 @@
                     </div>
                 </div>
             </div>
-            <div class="info-meta" id="infoMeta" style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap; font-size: 0.95rem; color: #555;">
-            </div>
+            <div class="info-meta" id="infoMeta"></div>
         </div>
 
-        <!-- Gallery Section -->
-        <section class="gallery-section" data-aos="fade-in" data-aos-duration="1200" style="max-width: 1200px; margin: 0 auto 30px; padding: 0 2rem;">
-            <div class="hero-gallery" style="border-radius: 16px; overflow: hidden; position: relative; height: 500px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);">
-                <img id="heroImage" class="hero-image" src="" alt="Imagen principal" style="width: 100%; height: 100%; object-fit: cover;">
-                <div class="hero-overlay" style="background: linear-gradient(to top, rgba(0,0,0,0.5), transparent); position: absolute; inset: 0; pointer-events: none;"></div>
-                <button class="hero-nav-btn hero-prev" onclick="changeSlide(-1)"><i class="fas fa-chevron-left"></i></button>
-                <button class="hero-nav-btn hero-next" onclick="changeSlide(1)"><i class="fas fa-chevron-right"></i></button>
-                <div class="hero-counter" id="heroCounter" style="position: absolute; bottom: 20px; left: 20px; background: rgba(0,0,0,0.6); color: white; padding: 5px 12px; border-radius: 15px; font-size: 0.9rem;"></div>
-                <div class="hero-thumbnails" id="heroThumbnails" style="position: absolute; bottom: 20px; right: 20px; display: flex; gap: 10px;"></div>
+        <!-- Fotos: la foto completa sobre un fondo desenfocado de sí misma -->
+        <section class="hd-hero" id="heroSection">
+            <div class="hero-gallery">
+                <img id="heroImageBg" class="hero-img-bg" src="" alt="" aria-hidden="true">
+                <img id="heroImage" class="hero-image" src="" alt="Imagen principal">
+                <button class="hero-nav-btn hero-prev" onclick="changeSlide(-1)" aria-label="Foto anterior"><i class="fas fa-chevron-left"></i></button>
+                <button class="hero-nav-btn hero-next" onclick="changeSlide(1)" aria-label="Foto siguiente"><i class="fas fa-chevron-right"></i></button>
+                <div class="hero-counter" id="heroCounter"></div>
+                <div class="hero-thumbnails" id="heroThumbnails"></div>
             </div>
         </section>
-
-        <!-- Two-column Header Grid for About and Contact -->
-        <div class="top-cards-grid" data-aos="fade-up" style="max-width: 1200px; margin: 0 auto 30px; padding: 0 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
-            <!-- About Card -->
-            <div class="detail-section" style="margin-bottom: 0;">
-                <h3 class="section-title"><i class="fas fa-info-circle" style="color: #3b82f6;"></i> Sobre el establecimiento</h3>
-                <p class="about-text" id="aboutText"></p>
-            </div>
-            <!-- Contact Card -->
-            <div class="detail-section" style="margin-bottom: 0;">
-                <h3 class="section-title"><i class="fas fa-id-card-alt" style="color: #3b82f6;"></i> Contacto</h3>
-                <div id="topContactContainer"></div>
-            </div>
-        </div>
-
-        <!-- Back Bar -->
-        <div class="back-bar" style="margin-top: 0; padding-top: 0;">
-            <a id="backBtn" href="hoteles.html" class="back-btn"><i class="fas fa-arrow-left"></i> Volver al listado</a>
-        </div>
 
         <!-- Content Grid -->
         <div class="detail-container">
             <!-- Main Column -->
             <div class="main-column">
-                <!-- Removed About since it was moved above -->
+                <div class="detail-section">
+                    <h3 class="section-title"><i class="fas fa-info-circle"></i> Sobre el establecimiento</h3>
+                    <p class="about-text" id="aboutText"></p>
+                </div>
 
                 <!-- Check-in / Check-out -->
                 <div class="detail-section" data-aos="fade-up" data-aos-delay="100">
@@ -224,6 +209,15 @@
                     <div class="cabanas-grid" id="cabanasIndividualesContainer"></div>
                 </div>
 
+                <!-- Galería de fotos (como en restaurantes) -->
+                <div class="detail-section" id="galeriaSection" style="display:none">
+                    <div class="hd-titulo-fila">
+                        <h3 class="section-title"><i class="fas fa-images"></i> Galería de fotos</h3>
+                        <span class="hd-cuenta" id="galeriaCuenta"></span>
+                    </div>
+                    <div class="hd-galeria" id="galeriaGrid"></div>
+                </div>
+
                 <!-- Reseñas (mismo sistema que el resto del sitio) -->
                 <div class="detail-section" id="reviewsSection" data-aos="fade-up">
                     <div class="resenas-encabezado">
@@ -295,7 +289,12 @@
             </div>
 
             <!-- Sidebar -->
-            <div class="sidebar" data-aos="fade-left" data-aos-delay="200">
+            <div class="sidebar">
+                <div class="sidebar-card">
+                    <h3 class="section-title"><i class="fas fa-address-book"></i> Contacto</h3>
+                    <div id="topContactContainer"></div>
+                </div>
+
                 <!-- Additional Info -->
                 <div class="sidebar-card">
                     <h3 class="section-title"><i class="fas fa-info-circle"></i> Información Adicional</h3>
@@ -361,6 +360,15 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Visor de fotos -->
+    <div class="hd-visor" id="hdVisor" hidden>
+        <button class="hd-visor-cerrar" type="button" aria-label="Cerrar"><i class="fas fa-times"></i></button>
+        <button class="hd-visor-flecha hd-visor-prev" type="button" aria-label="Foto anterior"><i class="fas fa-chevron-left"></i></button>
+        <img id="hdVisorImg" src="" alt="">
+        <button class="hd-visor-flecha hd-visor-next" type="button" aria-label="Foto siguiente"><i class="fas fa-chevron-right"></i></button>
+        <span class="hd-visor-cuenta" id="hdVisorCuenta"></span>
     </div>
 
     <!-- Footer -->
