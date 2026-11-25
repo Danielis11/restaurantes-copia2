@@ -1830,6 +1830,7 @@
         }
     </style>
     <link rel="stylesheet" href="/hospedaje/css/tema-sitio.css">
+    <link rel="stylesheet" href="/hospedaje/css/lista-como-restaurante.css">
     <link rel="stylesheet" href="/css/barra-vidrio.css">
 </head>
 
@@ -1885,37 +1886,36 @@
     </section>
 
 
-    <!-- Categories Filter -->
-    <section class="filters-section" style="max-width: 1200px; margin: 0 auto; padding: 0 2rem 1rem;">
-        <div class="category-filters" id="categoryFilters">
-            <button class="filter-btn active" data-filter="all">
-                <i class="fas fa-th-large"></i> Todos
-            </button>
-            <button class="filter-btn hotel" data-filter="hotel">
-                <i class="fas fa-hotel"></i> Hoteles
-            </button>
-            <button class="filter-btn cabana" data-filter="cabana">
-                <i class="fas fa-tree"></i> Cabañas
-            </button>
-            <button class="filter-btn airbnb" data-filter="airbnb">
-                <i class="fab fa-airbnb"></i> Airbnbs
-            </button>
+    <!-- Filtros (como en Restaurantes) -->
+    <section class="hc-filtros" aria-label="Filtrar alojamientos">
+        <div class="hc-fila">
+            <div class="hc-tabs" id="categoryFilters" role="group" aria-label="Tipo de alojamiento">
+                <button type="button" class="filter-btn hc-tab active" data-filter="all" aria-pressed="true">Todos <span class="hc-n" data-n="all"></span></button>
+                <button type="button" class="filter-btn hc-tab" data-filter="hotel" aria-pressed="false">Hoteles <span class="hc-n" data-n="hotel"></span></button>
+                <button type="button" class="filter-btn hc-tab" data-filter="cabana" aria-pressed="false">Cabañas <span class="hc-n" data-n="cabana"></span></button>
+                <button type="button" class="filter-btn hc-tab" data-filter="airbnb" aria-pressed="false">Airbnb <span class="hc-n" data-n="airbnb"></span></button>
+            </div>
+            <label class="hc-orden" title="Ordenar">
+                <i class="fas fa-arrow-down-wide-short" aria-hidden="true"></i>
+                <span class="hc-sr">Ordenar</span>
+                <select id="sortBy" aria-label="Ordenar alojamientos">
+                    <option value="newest">Recientes</option>
+                    <option value="price-low">Más baratos</option>
+                    <option value="price-high">Más caros</option>
+                    <option value="capacity">Más huéspedes</option>
+                    <option value="rating">Mejor calificados</option>
+                    <option value="name">Nombre A-Z</option>
+                </select>
+            </label>
         </div>
+        <div class="hc-chips" id="hcChips" role="group" aria-label="Lo que buscas"></div>
     </section>
 
     <!-- Accommodations Section -->
     <section class="cabanas-section">
-        <div class="section-header">
-            <div class="results-info" id="resultsInfo">
-                Cargando alojamientos...
-            </div>
-            <select class="sort-dropdown" id="sortBy">
-                <option value="newest">Más recientes</option>
-                <option value="price-low">Precio: menor a mayor</option>
-                <option value="price-high">Precio: mayor a menor</option>
-                <option value="capacity">Capacidad</option>
-                <option value="name">Nombre A-Z</option>
-            </select>
+        <div class="section-header hc-cab-lista">
+            <h2>Alojamientos</h2>
+            <div class="results-info" id="resultsInfo">Cargando…</div>
         </div>
 
         <!-- Loading State -->
@@ -2015,7 +2015,8 @@
         <div class="empty-state" id="emptyState" style="display: none;">
             <i class="fas fa-search"></i>
             <h3>No se encontraron alojamientos</h3>
-            <p>Intenta ajustar tus filtros de búsqueda</p>
+            <p>Prueba quitando algún filtro.</p>
+            <button type="button" class="hc-limpiar" id="hcLimpiar">Quitar filtros</button>
         </div>
     </section>
 
