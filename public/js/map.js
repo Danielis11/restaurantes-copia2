@@ -335,6 +335,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         panel.classList.remove('oculto');
     }
 
+    // Mapbox revisa «'duration' in opciones»: si la clave existe aunque valga undefined,
+    // la duración queda en NaN, la cámara se rompe y el mapa se congela en blanco.
+    // Por eso solo se pone la duración cuando el usuario pidió menos movimiento.
+    function volar(opciones) {
+        const o = { ...opciones, essential: true };
+        if (reduceMotion) o.duration = 0;
+        map.flyTo(o);
+    }
+
     // Abrir un lugar: zoom suave hacia él y su ficha
     function seleccionar(e) {
         if (seleccion === e) return;
@@ -356,7 +365,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // En celular sin inclinación: el mapa plano se arrastra con un dedo sin sorpresas
-        map.flyTo({ center: [e.lng, e.lat], zoom: Math.max(map.getZoom(), 16.5), pitch: movil ? 0 : 50, offset: desfase(), speed: 1.1, curve: 1.4, essential: true, duration: reduceMotion ? 0 : undefined });
+        volar({ center: [e.lng, e.lat], zoom: Math.max(map.getZoom(), 16.5), pitch: movil ? 0 : 50, offset: desfase(), speed: 1.1, curve: 1.4 });
 
         if (!movil) {
             popupActual = new mapboxgl.Popup({ anchor: 'bottom', offset: 26, closeButton: true, closeOnClick: true, maxWidth: 'none', focusAfterOpen: false })
@@ -384,7 +393,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         btnVolver.classList.remove('visible');
         panel.classList.remove('mini');
         if (vistaPrevia) {
-            map.flyTo({ ...vistaPrevia, speed: 1.2, curve: 1.4, essential: true, duration: reduceMotion ? 0 : undefined });
+            volar({ ...vistaPrevia, speed: 1.2, curve: 1.4 });
             vistaPrevia = null;
         }
     }
