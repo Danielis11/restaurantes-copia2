@@ -9,7 +9,7 @@
     <!-- Misma tipografía que el resto del sitio (sin ella la barra cambiaba de letra al entrar) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/responsive.css">
     <link rel="stylesheet" href="/css/ui-enhancements.css">
     <script src="/js/ui-enhancements.js" defer></script>
@@ -25,6 +25,8 @@
     <meta name="apple-mobile-web-app-title" content="Jalpan">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <script src="/js/pwa.js" defer></script>
+    <link rel="stylesheet" href="/css/barra-vidrio.css">
+    <script src="/js/barra-vidrio.js" defer></script>
 </head>
 
 <body>
@@ -169,6 +171,17 @@
             font-size: 3.5rem;
             font-weight: 700;
             letter-spacing: -1px;
+        }
+
+        /* Mismo título que «Dónde comer en Jalpan» */
+        .hero.exp-hero .hero-title.hero-marca {
+            font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+            font-size: clamp(3rem, 9vw, 6rem);
+            font-weight: 700;
+            line-height: .95;
+            letter-spacing: .005em;
+            margin-bottom: 14px;
+            text-shadow: 0 6px 30px rgba(0, 0, 0, .45);
         }
 
         .hero.exp-hero .hero-subtitle {
@@ -926,10 +939,8 @@
             <div class="hero-container">
                 <div class="hero-content">
                     <span class="exp-eyebrow" data-i18n="experiencias.hero_eyebrow">Sierra Gorda · Jalpan de Serra</span>
-                    <h1 class="hero-title" data-i18n="experiencias.hero_title">Experiencias</h1>
-                    <p class="hero-subtitle" data-i18n="experiencias.hero_subtitle">Descubre el turismo comunitario y
-                        los tesoros ocultos de Jalpan de Serra.
-                    </p>
+                    <h1 class="hero-title hero-marca" data-i18n="experiencias.hero_title">Qué hacer en Jalpan</h1>
+                    <p class="hero-subtitle" data-i18n="experiencias.hero_subtitle">Senderos, ríos, cuevas y comunidades de la Sierra Gorda, con guías locales.</p>
 
                     <!-- ¿Qué quieres vivir? (categorías reales de los tours) -->
                     <p class="exp-pregunta" data-i18n="experiencias.que_vivir">¿Qué quieres vivir?</p>

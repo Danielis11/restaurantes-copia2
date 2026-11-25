@@ -37,7 +37,7 @@
             '.pwa-banner .pwa-btn{background:#2563eb;color:#fff;border:0;border-radius:10px;padding:.6rem .9rem;font:inherit;font-weight:600;font-size:.85rem;cursor:pointer;white-space:nowrap;}' +
             '.pwa-banner .pwa-x{background:none;border:0;color:#94a3b8;font-size:1.4rem;line-height:1;cursor:pointer;padding:4px 6px;}' +
             '.pwa-ios-icon{display:inline-block;vertical-align:-3px;width:16px;height:16px;}' +
-            '@media (max-width:768px){.pwa-banner{bottom:calc(env(safe-area-inset-bottom,0px) + 84px);}}' +
+            '@media (max-width:768px){.pwa-banner{bottom:calc(env(safe-area-inset-bottom,0px) + 96px);}}' +
             '@media (prefers-color-scheme:dark){.pwa-banner{background:#1e293b;color:#e2e8f0;}.pwa-banner .pwa-txt span{color:#94a3b8;}}';
         var s = document.createElement('style');
         s.id = 'pwa-estilos';

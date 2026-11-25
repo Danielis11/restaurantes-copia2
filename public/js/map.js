@@ -243,7 +243,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function ajustarNav() {
         const nav = document.getElementById('nav-menu');
         const fija = nav && getComputedStyle(nav).position === 'fixed' && nav.getBoundingClientRect().top > innerHeight / 2;
-        altoNav = fija ? nav.offsetHeight : 0;
+        altoNav = fija ? Math.round(innerHeight - nav.getBoundingClientRect().top) : 0;
         envoltura.style.setProperty('--mp-nav', altoNav + 'px');
     }
 

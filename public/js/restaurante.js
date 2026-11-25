@@ -233,7 +233,7 @@ function renderAccionesMovil(r) {
     const ajustar = () => {
         const nav = document.getElementById('nav-menu');
         const fija = nav && getComputedStyle(nav).position === 'fixed' && nav.getBoundingClientRect().top > innerHeight / 2;
-        document.documentElement.style.setProperty('--rs-nav-alto', fija ? nav.offsetHeight + 'px' : '0px');
+        document.documentElement.style.setProperty('--rs-nav-alto', fija ? Math.round(innerHeight - nav.getBoundingClientRect().top) + 'px' : '0px');
     };
     ajustar();
     window.addEventListener('resize', ajustar);

@@ -33,6 +33,8 @@
     "home": {
         "rest_hero_title": "Where to eat in Jalpan",
         "rest_hero_tagline": "Restaurants, bars and cafés of the Sierra Gorda, with menus, hours and reviews.",
+        "hosp_hero_title": "Where to stay in Jalpan",
+        "hosp_hero_tagline": "Hotels, cabins and homes in the Sierra Gorda, with photos, prices and reviews.",
         "cj_sello_d": "Franciscan missions · UNESCO",
         "cj_sello_t": "World Heritage",
         "cj_f3": "Jalpan Dam",
@@ -135,8 +137,8 @@
     "experiencias": {
         "hero_eyebrow": "Sierra Gorda · Jalpan de Serra",
         "que_vivir": "What do you want to experience?",
-        "hero_title": "Experiences",
-        "hero_subtitle": "Discover community tourism and the hidden treasures of Jalpan de Serra.",
+        "hero_title": "Things to do in Jalpan",
+        "hero_subtitle": "Trails, rivers, caves and communities of the Sierra Gorda, with local guides.",
         "search_placeholder": "Search experience...",
         "dificultad": "Difficulty",
         "duracion": "Duration",
