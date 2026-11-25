@@ -48,6 +48,7 @@ h1, h2, h3, h4, h5, h6, .section-title {
         var(--portada, url('/images/Kayak%20en%20la%20Presa-103.jpg')) center 45% / cover no-repeat !important;
     padding: 9rem 0 5rem !important;
 }
+body[data-pagina="hospedaje"] { --portada: url('/images/jalpan/calle-centro-1920.webp'); }
 body[data-pagina="hoteles"] { --portada: url('/images/_DSC0255.JPG'); }
 body[data-pagina="cabanas"] { --portada: url('/images/Naranjitos-1722.jpg'); }
 body[data-pagina="airbnb"] { --portada: url('/images/Turismo%20-%20Rey.JPG'); }
