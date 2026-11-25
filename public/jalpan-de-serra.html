@@ -4,440 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jalpan de Serra, Pueblo Mágico — Historia y lugares para visitar</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Gastronomía de Jalpan de Serra — Qué comer y dónde probarlo</title>
+    <meta name="description" content="Cecina serrana, enchiladas, zacahuil, bocoles, acamayas, pan de pulque y atoles: la cocina de Jalpan de Serra, Pueblo Mágico de la Sierra Gorda, y los lugares donde probarla.">
+    <meta property="og:title" content="Gastronomía de Jalpan de Serra">
+    <meta property="og:description" content="Qué comer en Jalpan de Serra y dónde probarlo.">
+    <meta property="og:image" content="/images/gastronomia/mercado-jalpan-1200.webp">
+    <link rel="icon" type="image/x-icon" href="/icons/favicon.ico">
+    <link rel="preload" as="image" href="/images/gastronomia/mercado-jalpan-1200.webp" imagesrcset="/images/gastronomia/mercado-jalpan-640.webp 640w, /images/gastronomia/mercado-jalpan-1200.webp 1200w" imagesizes="100vw" fetchpriority="high">
     <link rel="stylesheet" href="/css/style.css">
-    <!-- Misma tipografía que el resto del sitio (sin ella la barra cambiaba de letra al entrar) -->
+    <link rel="stylesheet" href="/css/responsive.css">
+    <script src="/js/i18n.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
-    <style>
-        /* Variables CSS Locales para retrocompatibilidad */
-        :root {
-            --primary-color: var(--primary);
-            --primary-dark: var(--color-primary-dark);
-            --secondary-color: var(--restaurant);
-            --text-dark: var(--gray-900);
-            --text-light: var(--gray-600);
-            --background: var(--gray-50);
-            --surface: var(--white);
-            --accent-color: var(--primary-light);
-            --shadow: var(--shadow-sm);
-            --shadow-lg: var(--shadow-lg);
-            --border-radius: var(--radius-xl);
-            --transition: all 0.3s ease;
-        }
-
-        /* Reset y base */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: var(--text-dark);
-            background-color: var(--background);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* Header y navegación */
-        .header {
-            background: var(--background);
-            box-shadow: var(--shadow);
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-        }
-
-        .nav {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1rem 0;
-        }
-
-        .nav-brand {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            text-decoration: none;
-            color: var(--primary-color);
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        .nav-menu {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
-        }
-
-        .nav-link {
-            text-decoration: none;
-            color: var(--text-dark);
-            font-weight: 500;
-            transition: var(--transition);
-            padding: 0.5rem 0;
-        }
-
-        .nav-link:hover {
-            color: var(--primary-color);
-        }
-
-        /* Main content */
-        .main {
-            margin-top: 80px;
-        }
-
-        /* Hero Section */
-        .hero-jalpan {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-            color: white;
-            padding: 6rem 0;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-jalpan::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-            opacity: 0.3;
-        }
-
-        .hero-content-jalpan {
-            position: relative;
-            z-index: 2;
-        }
-
-        .hero-title-jalpan {
-            font-size: 3.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .hero-subtitle-jalpan {
-            font-size: 1.3rem;
-            margin-bottom: 2rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            opacity: 0.95;
-        }
-
-        /* Sections */
-        .section {
-            padding: 4rem 0;
-        }
-
-        .section-alt {
-            background-color: var(--surface);
-        }
-
-        .section-title {
-            font-size: 2.5rem;
-            text-align: center;
-            margin-bottom: 3rem;
-            color: var(--text-dark);
-            position: relative;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            border-radius: 2px;
-        }
-
-        /* Historia Section */
-        .historia-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-            align-items: center;
-        }
-
-        .historia-text {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            color: var(--text-light);
-        }
-
-        .historia-image {
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: var(--shadow-lg);
-        }
-
-        .historia-image img {
-            width: 100%;
-            height: 300px;
-            object-fit: cover;
-        }
-
-        /* Platillos Grid */
-        .platillos-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-
-        .platillo-card {
-            background: var(--background);
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-        }
-
-        .platillo-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .platillo-image {
-            width: 100%;
-            height: 200px;
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 3rem;
-        }
-
-        .platillo-content {
-            padding: 1.5rem;
-        }
-
-        .platillo-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--text-dark);
-        }
-
-        .platillo-description {
-            color: var(--text-light);
-            line-height: 1.6;
-        }
-
-        /* Ingredientes Grid */
-        .ingredientes-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .ingrediente-card {
-            background: var(--background);
-            padding: 2rem;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            text-align: center;
-            transition: var(--transition);
-        }
-
-        .ingrediente-card:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .ingrediente-icon {
-            font-size: 2.5rem;
-            color: var(--primary-color);
-            margin-bottom: 1rem;
-        }
-
-        .ingrediente-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--text-dark);
-        }
-
-        .ingrediente-description {
-            color: var(--text-light);
-            font-size: 0.95rem;
-        }
-
-        /* Tradiciones Section */
-        .tradiciones-features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-
-        .tradicion-feature {
-            text-align: center;
-            padding: 2rem;
-        }
-
-        .tradicion-icon {
-            font-size: 3rem;
-            color: var(--secondary-color);
-            margin-bottom: 1rem;
-        }
-
-        .tradicion-feature h3 {
-            font-size: 1.3rem;
-            margin-bottom: 1rem;
-            color: var(--text-dark);
-        }
-
-        .tradicion-feature p {
-            color: var(--text-light);
-            line-height: 1.6;
-        }
-
-        /* CTA Section */
-        .cta-section {
-            background: linear-gradient(135deg, var(--accent-color) 0%, var(--primary-color) 100%);
-            color: white;
-            padding: 4rem 0;
-            text-align: center;
-        }
-
-        .cta-title {
-            font-size: 2.2rem;
-            margin-bottom: 1rem;
-        }
-
-        .cta-text {
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 12px 24px;
-            background: var(--primary-color);
-            color: white;
-            text-decoration: none;
-            border-radius: var(--border-radius);
-            font-weight: 500;
-            transition: var(--transition);
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-
-        .btn-light {
-            background: white;
-            color: var(--primary-color);
-        }
-
-        .btn-light:hover {
-            background: var(--surface);
-            color: var(--primary-dark);
-        }
-
-        /* Footer */
-        .footer {
-            background: var(--text-dark);
-            color: white;
-            padding: 3rem 0 1rem;
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .footer-title {
-            font-size: 1.3rem;
-            margin-bottom: 1rem;
-            color: var(--primary-color);
-        }
-
-        .footer-text,
-        .footer-link {
-            color: #bdc3c7;
-            line-height: 1.6;
-        }
-
-        .footer-link {
-            text-decoration: none;
-            transition: var(--transition);
-        }
-
-        .footer-link:hover {
-            color: var(--primary-color);
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 2rem;
-            border-top: 1px solid #34495e;
-            color: #95a5a6;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .nav-menu {
-                display: none;
-            }
-
-            .hero-title-jalpan {
-                font-size: 2.5rem;
-            }
-
-            .hero-subtitle-jalpan {
-                font-size: 1.1rem;
-            }
-
-            .section-title {
-                font-size: 2rem;
-            }
-
-            .historia-content {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-
-            .platillos-grid,
-            .ingredientes-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .tradiciones-features {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
     <!-- PWA: app instalable -->
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#2563eb">
@@ -447,33 +27,200 @@
     <meta name="apple-mobile-web-app-title" content="Jalpan">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <script src="/js/pwa.js" defer></script>
+    <style>
+        body { background: #fff; }
+        .gs { overflow-x: clip; color: #111827; }
+        .gs-sec { padding: 4.5rem 0 0; }
+        .gs-eti { display: inline-block; font-size: .75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #b45309; margin-bottom: .4rem; }
+        .gs h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 700; letter-spacing: -.025em; color: #111827; margin: 0; line-height: 1.15; }
+        .gs-cab { margin-bottom: 1.75rem; max-width: 680px; }
+        .gs-cab p { color: #4b5563; font-size: 1.02rem; line-height: 1.6; margin: .7rem 0 0; }
+        .gs-btn { display: inline-flex; align-items: center; gap: .55rem; padding: .85rem 1.35rem; border-radius: 14px; font-weight: 600; font-size: .95rem; text-decoration: none; transition: background .2s, color .2s, transform .2s, border-color .2s; border: 1px solid transparent; }
+        .gs-btn:active { transform: scale(.97); }
+        .gs-btn-osc { background: #111827; color: #fff; }
+        .gs-btn-osc:hover { background: #b45309; color: #fff; }
+        .gs-btn-linea { border-color: #e5e7eb; color: #111827; background: #fff; }
+        .gs-btn-linea:hover { border-color: #111827; color: #111827; }
+        .gs-btn-vidrio { background: rgba(255,255,255,.14); color: #fff; border-color: rgba(255,255,255,.3); backdrop-filter: blur(6px); }
+        .gs-btn-vidrio:hover { background: rgba(255,255,255,.26); color: #fff; }
+        .gs-rev { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.8,.2,1); }
+        .gs-rev.visto { opacity: 1; transform: none; }
+
+        /* Portada */
+        .gs-hero { position: relative; height: min(78vh, 680px); min-height: 480px; margin-top: 70px; color: #fff; overflow: hidden; background: #1f2937; }
+        .gs-hero > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; animation: gsZoom 14s ease-out both; }
+        @keyframes gsZoom { from { transform: scale(1.12); } }
+        .gs-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(20,12,4,.5) 0%, rgba(20,12,4,.1) 40%, rgba(20,12,4,.85) 100%); }
+        .gs-hero-txt { position: absolute; left: 0; right: 0; bottom: 3.5rem; z-index: 2; }
+        .gs-hero-eti { display: inline-flex; align-items: center; gap: .45rem; padding: .4rem .85rem; border-radius: 99px; background: rgba(255,255,255,.16); backdrop-filter: blur(8px); font-size: .8rem; font-weight: 600; animation: gsSube .8s .1s both; }
+        .gs-hero-eti i { color: #fbbf24; }
+        .gs-hero h1 { font-size: clamp(2.5rem, 7vw, 4.8rem); font-weight: 800; letter-spacing: -.04em; line-height: .98; margin: .9rem 0 .7rem; color: #fff; text-shadow: 0 4px 30px rgba(0,0,0,.3); animation: gsSube .9s .2s both; }
+        .gs-hero-txt > .container > p { font-size: clamp(1.02rem, 2vw, 1.25rem); max-width: 600px; color: rgba(255,255,255,.92); margin: 0 0 1.5rem; line-height: 1.5; animation: gsSube .9s .32s both; }
+        .gs-hero-fila { display: flex; gap: .6rem; flex-wrap: wrap; animation: gsSube .9s .44s both; }
+        @keyframes gsSube { from { opacity: 0; transform: translateY(22px); } }
+
+        /* Índice rápido */
+        .gs-indice { position: relative; z-index: 3; margin-top: -1.6rem; display: flex; gap: .5rem; overflow-x: auto; scrollbar-width: none; padding-bottom: .3rem; }
+        .gs-indice::-webkit-scrollbar { display: none; }
+        .gs-indice a { flex: 0 0 auto; display: inline-flex; align-items: center; gap: .5rem; padding: .75rem 1.05rem; border-radius: 14px; background: #fff; border: 1px solid #eef0f3; box-shadow: 0 10px 28px rgba(15,23,42,.08); color: #111827; text-decoration: none; font-weight: 600; font-size: .92rem; transition: transform .2s, box-shadow .2s; }
+        .gs-indice a:hover { transform: translateY(-3px); box-shadow: 0 14px 32px rgba(15,23,42,.12); color: #111827; }
+        .gs-indice i { color: #b45309; }
+
+        /* Introducción */
+        .gs-intro { display: grid; grid-template-columns: 1.1fr 1fr; gap: 3rem; align-items: center; }
+        .gs-intro p { color: #4b5563; line-height: 1.7; font-size: 1.02rem; }
+        .gs-intro-fotos { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+        .gs-intro-fotos img { width: 100%; height: 100%; object-fit: cover; border-radius: 18px; display: block; aspect-ratio: 3/4; }
+        .gs-intro-fotos img:first-child { margin-top: 2rem; }
+        .gs-datos { display: flex; gap: 1.6rem; margin-top: 1.4rem; flex-wrap: wrap; }
+        .gs-datos b { display: block; font-size: 1.7rem; font-weight: 800; letter-spacing: -.03em; }
+        .gs-datos span { font-size: .85rem; color: #6b7280; }
+
+        /* Platillos */
+        .gs-platos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; }
+        .gs-plato { display: flex; flex-direction: column; background: #fff; border: 1px solid #eef0f3; border-radius: 22px; overflow: hidden; transition: transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s; }
+        .gs-plato:hover { transform: translateY(-5px); box-shadow: 0 18px 40px rgba(15,23,42,.1); }
+        .gs-plato-foto { position: relative; aspect-ratio: 4/3; overflow: hidden; background: #f3f4f6; }
+        .gs-plato-foto img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .8s cubic-bezier(.2,.8,.2,1); }
+        .gs-plato:hover .gs-plato-foto img { transform: scale(1.06); }
+        .gs-sello { position: absolute; top: .8rem; left: .8rem; font-size: .7rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding: .3rem .65rem; border-radius: 99px; background: rgba(255,255,255,.92); color: #92400e; }
+        .gs-plato-txt { padding: 1.2rem 1.3rem 1.35rem; display: flex; flex-direction: column; flex: 1; }
+        .gs-plato h3 { font-size: 1.2rem; font-weight: 700; margin: 0 0 .45rem; }
+        .gs-plato p { color: #4b5563; font-size: .93rem; line-height: 1.55; margin: 0; }
+        .gs-donde { margin-top: auto; padding-top: .9rem; font-size: .85rem; color: #92400e; font-weight: 600; display: flex; gap: .45rem; align-items: baseline; }
+        .gs-plato-grande { grid-column: span 2; flex-direction: row; }
+        .gs-plato-grande .gs-plato-foto { flex: 1.25; aspect-ratio: auto; min-height: 340px; }
+        .gs-plato-grande .gs-plato-txt { flex: 1; padding: 1.8rem; justify-content: center; }
+        .gs-plato-grande h3 { font-size: 1.6rem; }
+        .gs-plato-grande .gs-donde { margin-top: 1rem; }
+
+        /* Del monte */
+        .gs-monte { display: grid; grid-template-columns: 1fr 1.2fr; gap: 1.1rem; }
+        .gs-monte-foto { position: relative; border-radius: 22px; overflow: hidden; min-height: 380px; }
+        .gs-monte-foto img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+        .gs-monte-foto figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 2.5rem 1.3rem 1.2rem; color: #fff; background: linear-gradient(transparent, rgba(0,0,0,.7)); }
+        .gs-monte-foto b { font-size: 1.25rem; display: block; }
+        .gs-monte-foto span { font-size: .9rem; opacity: .9; }
+        .gs-lista { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+        .gs-item { display: flex; gap: .85rem; padding: 1.1rem; border-radius: 18px; background: #fffbeb; border: 1px solid #fef3c7; }
+        .gs-item i { width: 42px; height: 42px; flex-shrink: 0; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: #fff; color: #b45309; }
+        .gs-item b { display: block; margin-bottom: .2rem; }
+        .gs-item span { font-size: .88rem; color: #57534e; line-height: 1.5; }
+
+        /* Bebidas */
+        .gs-bebidas { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.1rem; }
+        .gs-bebida { display: grid; grid-template-columns: 180px 1fr; border-radius: 22px; overflow: hidden; background: #fff; border: 1px solid #eef0f3; }
+        .gs-bebida img { width: 100%; height: 100%; object-fit: cover; min-height: 220px; display: block; }
+        .gs-bebida div { padding: 1.3rem 1.4rem; }
+        .gs-bebida h3 { font-size: 1.15rem; margin: 0 0 .5rem; }
+        .gs-bebida p { color: #4b5563; font-size: .92rem; line-height: 1.55; margin: 0 0 .5rem; }
+        .gs-bebida ul { margin: .3rem 0 0; padding-left: 1.1rem; color: #4b5563; font-size: .9rem; line-height: 1.6; }
+
+        /* Dónde comer */
+        .gs-sitios { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; }
+        .gs-sitio { position: relative; display: flex; flex-direction: column; border-radius: 22px; overflow: hidden; background: #111827; color: #fff; min-height: 380px; }
+        .gs-sitio > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .55; transition: transform .8s cubic-bezier(.2,.8,.2,1); }
+        .gs-sitio:hover > img { transform: scale(1.05); }
+        .gs-sitio-txt { position: relative; margin-top: auto; padding: 1.4rem; background: linear-gradient(transparent, rgba(10,8,4,.85) 35%); }
+        .gs-sitio .gs-sello { position: static; display: inline-block; margin-bottom: .6rem; }
+        .gs-sitio h3 { color: #fff; font-size: 1.3rem; margin: 0 0 .4rem; }
+        .gs-sitio p { color: rgba(255,255,255,.88); font-size: .9rem; line-height: 1.5; margin: 0 0 .7rem; }
+        .gs-sitio address { font-style: normal; font-size: .85rem; color: rgba(255,255,255,.8); margin-bottom: .9rem; }
+        .gs-sitio .gs-btn { padding: .6rem 1rem; font-size: .85rem; align-self: flex-start; }
+        .gs-sub { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; margin: 3rem 0 1.2rem; flex-wrap: wrap; }
+        .gs-sub h3 { font-size: 1.35rem; margin: 0; }
+        .gs-sub p { margin: .3rem 0 0; color: #6b7280; font-size: .92rem; }
+        .gs-filtros { display: flex; gap: .4rem; flex-wrap: wrap; }
+        .gs-filtro { border: 1px solid #e5e7eb; background: #fff; color: #374151; padding: .5rem .9rem; border-radius: 99px; font: inherit; font-size: .85rem; font-weight: 600; cursor: pointer; transition: background .2s, color .2s, border-color .2s; }
+        .gs-filtro.activo, .gs-filtro:hover { background: #111827; color: #fff; border-color: #111827; }
+        .gs-rests { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+        .gs-rest { display: flex; flex-direction: column; border-radius: 18px; overflow: hidden; border: 1px solid #eef0f3; background: #fff; text-decoration: none; color: #111827; transition: transform .25s, box-shadow .25s; }
+        .gs-rest:hover { transform: translateY(-4px); box-shadow: 0 14px 30px rgba(15,23,42,.1); color: #111827; }
+        .gs-rest-foto { aspect-ratio: 16/11; background: #f3f4f6 center/cover; display: flex; align-items: center; justify-content: center; color: #d1d5db; font-size: 1.8rem; overflow: hidden; }
+        .gs-rest-foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .gs-rest-txt { padding: .9rem 1rem 1rem; }
+        .gs-rest b { display: block; font-size: 1rem; line-height: 1.25; }
+        .gs-rest small { display: block; color: #92400e; font-weight: 600; font-size: .8rem; margin-top: .3rem; }
+        .gs-rest span { display: block; color: #6b7280; font-size: .8rem; margin-top: .3rem; line-height: 1.4; }
+        .gs-rest-esq { border-radius: 18px; background: #f3f4f6; min-height: 230px; animation: gsLatido 1.2s ease-in-out infinite alternate; }
+        @keyframes gsLatido { to { opacity: .5; } }
+        .gs-aviso { font-size: .85rem; color: #6b7280; margin-top: 1rem; }
+        .gs-consejo { display: flex; gap: 1rem; align-items: center; margin-top: 1.4rem; padding: 1.1rem 1.3rem; border-radius: 18px; background: #f0f9ff; border: 1px solid #e0f2fe; color: #0c4a6e; font-size: .93rem; line-height: 1.5; }
+        .gs-consejo i { font-size: 1.3rem; color: #0284c7; }
+
+        /* Fiestas */
+        .gs-fiesta { position: relative; border-radius: 26px; overflow: hidden; color: #fff; min-height: 360px; display: flex; align-items: flex-end; }
+        .gs-fiesta img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+        .gs-fiesta::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(15,10,5,.88), rgba(15,10,5,.35)); }
+        .gs-fiesta-txt { position: relative; z-index: 1; padding: 2.5rem; max-width: 640px; }
+        .gs-fiesta .gs-eti { color: #fbbf24; }
+        .gs-fiesta h2 { color: #fff; }
+        .gs-fiesta p { color: rgba(255,255,255,.88); line-height: 1.6; margin: .8rem 0 0; }
+
+        /* Créditos */
+        .gs-creditos { margin: 3.5rem 0 4rem; font-size: .82rem; color: #6b7280; }
+        .gs-creditos summary { cursor: pointer; font-weight: 600; color: #374151; }
+        .gs-creditos ul { margin: .8rem 0 0; padding-left: 1.1rem; line-height: 1.7; }
+        .gs-creditos a { color: #2563eb; }
+
+        @media (max-width: 1024px) {
+            .gs-rests { grid-template-columns: repeat(3, 1fr); }
+            .gs-sitios { grid-template-columns: 1fr 1fr; }
+            .gs-bebidas { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 860px) {
+            .gs-intro, .gs-monte { grid-template-columns: 1fr; gap: 1.6rem; }
+            .gs-platos { grid-template-columns: 1fr 1fr; }
+            .gs-plato-grande { grid-column: 1 / -1; flex-direction: column; }
+            .gs-plato-grande .gs-plato-foto { min-height: 0; aspect-ratio: 16/10; flex: none; }
+            .gs-plato-grande .gs-plato-txt { padding: 1.3rem; }
+            .gs-monte-foto { min-height: 300px; }
+        }
+        @media (max-width: 640px) {
+            .gs-sec { padding-top: 3.2rem; }
+            .gs-hero { min-height: 520px; }
+            .gs-hero-txt { bottom: 2.8rem; }
+            .gs-platos, .gs-lista, .gs-sitios { grid-template-columns: 1fr; }
+            .gs-rests { grid-template-columns: 1fr 1fr; gap: .7rem; }
+            .gs-bebida { grid-template-columns: 1fr; }
+            .gs-bebida img { min-height: 0; aspect-ratio: 16/9; }
+            .gs-sitio { min-height: 340px; }
+            .gs-fiesta-txt { padding: 1.6rem; }
+            .gs-intro-fotos img:first-child { margin-top: 1.2rem; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .gs-hero > img, .gs-hero-eti, .gs-hero h1, .gs-hero-txt > .container > p, .gs-hero-fila, .gs-rest-esq { animation: none; }
+            .gs-rev { opacity: 1; transform: none; transition: none; }
+            .gs-plato, .gs-plato-foto img, .gs-sitio > img { transition: none; }
+        }
+    </style>
 </head>
 
 <body>
-    <!-- Header -->
-    <header class="header global-nav">
-        <nav class="nav">
-            <div class="nav-container">
-                <div class="nav-brand">
-                    <a href="/index.html" class="logo">
-                        <img src="/images/PueblosMágicos.svg.png" alt="Logo Turismo" class="logo-image">
-                        <span>Dirección de Turismo</span>
-                    </a>
-                </div>
-
-                <div class="nav-menu" id="nav-menu">
-                    <a href="/index.html" class="nav-link">Inicio</a>
-                    <a href="/mapa.html" class="nav-link">Mapa</a>
-                    <a href="/restaurantes.html" class="nav-link">Restaurantes</a>
-                    <a href="/restaurantes.html" class="nav-link">Hospedaje</a>
-                    <a href="/Contactos.html" class="nav-link">Contacto</a>
-                </div>
-
-                <div class="nav-actions">
-                    <a href="/login.html" class="btn btn-login">
-                        <i class="fas fa-user-circle"></i>
-                        <span>Iniciar Sesión</span>
-                    </a>
+    <header class="global-nav">
+        <nav class="nav-container">
+            <a href="/" class="logo">
+                <img src="/images/PueblosMágicos.svg.png" alt="Logo">
+                Jalpan de Serra
+            </a>
+            <div class="nav-menu" id="nav-menu">
+                <a href="/" class="nav-link" data-i18n="navbar.inicio">Inicio</a>
+                <a href="/mapa.html" class="nav-link" data-i18n="navbar.mapa">Mapa</a>
+                <a href="/restaurantes.html" class="nav-link" data-i18n="navbar.guia">Restaurantes</a>
+                <a href="/hospedaje/hospedaje.html" class="nav-link" data-i18n="navbar.hospedaje">Hospedaje</a>
+                <a href="/experiencias.html" class="nav-link" data-i18n="navbar.tours">Experiencias</a>
+                <a href="/Contactos.html" class="nav-link" data-i18n="footer.contacto">Contacto</a>
+            </div>
+            <div class="nav-actions-wrapper" style="display: flex; align-items: center;">
+                <select id="language-selector" aria-label="Idioma"
+                    style="margin-right: 15px; padding: 5px; border-radius: 5px; border: 1px solid #ddd; background: white; font-family: var(--font-family);">
+                    <option value="es" data-i18n="lang.switch_es">Español</option>
+                    <option value="en" data-i18n="lang.switch_en">Inglés</option>
+                    <option value="fr" data-i18n="lang.switch_fr">Français</option>
+                </select>
+                <div class="nav-actions" id="navbar-actions" style="display: flex; align-items: center;">
+                    <a href="/login.html" class="btn-login" title="Iniciar sesión"><i class="far fa-user"></i> <span
+                            data-i18n="navbar.iniciar_sesion">Iniciar Sesión</span></a>
                     <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú">
                         <i class="fas fa-bars"></i>
                     </button>
@@ -482,332 +229,430 @@
         </nav>
     </header>
 
-    <!-- Main Content -->
-    <main class="main">
-        <!-- Hero Section -->
-        <section class="hero-jalpan">
-            <div class="container">
-                <div class="hero-content-jalpan">
-                    <h1 class="hero-title-jalpan">Jalpan de Serra</h1>
-                    <p class="hero-subtitle-jalpan">
-                        Descubre la riqueza gastronómica del corazón de la Sierra Gorda queretana,
-                        donde la tradición franciscana se encuentra con los sabores serranos
-                    </p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Historia Culinaria -->
-        <section id="historia" class="section">
-            <div class="container">
-                <h2 class="section-title">Historia Culinaria</h2>
-                <div class="historia-content">
-                    <div class="historia-text">
-                        <p>
-                            Jalpan de Serra, ubicado en el corazón de la Sierra Gorda queretana,
-                            posee una tradición culinaria que se remonta a la época prehispánica
-                            cuando los grupos chichimecas habitaban estas tierras montañosas.
-                        </p>
-                        <p>
-                            La llegada de los franciscanos en el siglo XVIII, liderados por
-                            Fray Junípero Serra, marcó un punto de inflexión en la gastronomía local,
-                            fusionando las técnicas culinarias europeas con los ingredientes autóctonos de la sierra.
-                        </p>
-                        <p>
-                            Hoy en día, Jalpan de Serra es reconocido como Pueblo Mágico y parte
-                            de la Reserva de la Biosfera Sierra Gorda, manteniendo vivas sus tradiciones
-                            gastronómicas mientras abraza nuevas propuestas culinarias.
-                        </p>
-                    </div>
-                    <div class="historia-image">
-                        <img loading="lazy" decoding="async" src="images/Naranjitos-1722.jpg" alt="Historia Culinaria de Jalpan de Serra">
+    <main class="gs">
+        <!-- Portada -->
+        <section class="gs-hero">
+            <img src="/images/gastronomia/mercado-jalpan-1200.webp"
+                srcset="/images/gastronomia/mercado-jalpan-640.webp 640w, /images/gastronomia/mercado-jalpan-1200.webp 1200w"
+                sizes="100vw" alt="Puesto de frutas y verduras en el Mercado de Jalpan de Serra" fetchpriority="high">
+            <div class="gs-hero-txt">
+                <div class="container">
+                    <span class="gs-hero-eti"><i class="fas fa-utensils"></i> Cocina de la Sierra Gorda</span>
+                    <h1>Sabores de Jalpan</h1>
+                    <p>Cecina marinada en naranja agria, zacahuil cocido toda la noche en horno de leña, acamayas de río y
+                        atoles de maíz. Esto es lo que se come en Jalpan de Serra y dónde probarlo.</p>
+                    <div class="gs-hero-fila">
+                        <a href="#platillos" class="gs-btn gs-btn-vidrio"><i class="fas fa-arrow-down"></i> Ver platillos</a>
+                        <a href="#donde" class="gs-btn gs-btn-vidrio"><i class="fas fa-location-dot"></i> Dónde comer</a>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Platillos Tradicionales -->
-        <section id="platillos" class="section section-alt">
+        <div class="container">
+            <nav class="gs-indice" aria-label="Secciones">
+                <a href="#platillos"><i class="fas fa-bowl-food"></i> Platillos</a>
+                <a href="#monte"><i class="fas fa-seedling"></i> Del monte</a>
+                <a href="#bebidas"><i class="fas fa-mug-hot"></i> Para beber</a>
+                <a href="#donde"><i class="fas fa-store"></i> Dónde comer</a>
+                <a href="#fiestas"><i class="fas fa-calendar-day"></i> Fiestas</a>
+            </nav>
+        </div>
+
+        <!-- Introducción -->
+        <section class="gs-sec">
+            <div class="container gs-intro">
+                <div class="gs-rev">
+                    <span class="gs-eti">Entre la sierra y la huasteca</span>
+                    <h2>Una cocina de maíz, leña y río</h2>
+                    <p>Jalpan está en la puerta de la Sierra Gorda, donde la sierra queretana baja hacia la Huasteca. Por eso
+                        en su mesa conviven platillos serranos, como la cecina y las enchiladas, con clásicos huastecos como
+                        los bocoles y el zacahuil.</p>
+                    <p>Casi todo empieza en el maíz, sigue en el comal o el horno de leña y se acompaña con lo que da el monte:
+                        flor de izote, tunas de nopal y el pequeño tomate silvestre llamado coyol. Los ríos de la región ponen
+                        las acamayas.</p>
+                    <div class="gs-datos">
+                        <div><b>$150–350</b><span>por persona en fondas y mercado</span></div>
+                        <div><b>Neblinas</b><span>café orgánico de la sierra</span></div>
+                    </div>
+                </div>
+                <div class="gs-intro-fotos gs-rev">
+                    <img loading="lazy" decoding="async" src="/images/gastronomia/gorditas-horno-640.webp" alt="Cocinera horneando gorditas en horno de leña">
+                    <img loading="lazy" decoding="async" src="/images/gastronomia/zacahuil-640.webp" alt="Zacahuil envuelto en hojas antes de hornear">
+                </div>
+            </div>
+        </section>
+
+        <!-- Platillos -->
+        <section class="gs-sec" id="platillos">
             <div class="container">
-                <h2 class="section-title">Platillos Tradicionales de la Sierra</h2>
-                <div class="platillos-grid">
-                    <div class="platillo-card">
-                        <div class="platillo-image">
-                            <i class="fas fa-fish"></i>
+                <div class="gs-cab gs-rev">
+                    <span class="gs-eti">Qué comer</span>
+                    <h2>Platillos que tienes que probar</h2>
+                    <p>Los más mencionados por las guías del estado y por quienes cocinan en Jalpan.</p>
+                </div>
+                <div class="gs-platos">
+                    <article class="gs-plato gs-plato-grande gs-rev">
+                        <div class="gs-plato-foto">
+                            <img loading="lazy" decoding="async" src="/images/gastronomia/enchiladas-cecina-1200.webp"
+                                srcset="/images/gastronomia/enchiladas-cecina-640.webp 640w, /images/gastronomia/enchiladas-cecina-1200.webp 1200w"
+                                sizes="(max-width: 860px) 100vw, 640px" alt="Enchiladas con cecina, cebolla y crema">
+                            <span class="gs-sello">El emblema</span>
                         </div>
-                        <div class="platillo-content">
-                            <h3 class="platillo-title">Truchas de la Sierra</h3>
-                            <p class="platillo-description">
-                                Truchas frescas de los ríos serranos, preparadas al horno o a la plancha
-                                con hierbas aromáticas locales y acompañadas de quelites de la región.
-                            </p>
+                        <div class="gs-plato-txt">
+                            <h3>Cecina serrana con enchiladas</h3>
+                            <p>Carne de res en tiras delgadas, marinada con naranja agria y sal y secada al aire. Se asa al
+                                comal y se sirve con enchiladas de maíz rojo. Las cocineras de la Placita del Sabor dicen que el
+                                secreto está en la mezcla de cítricos del marinado.</p>
+                            <span class="gs-donde"><i class="fas fa-location-dot"></i> Placita del Sabor · Tapanco's · fondas del centro</span>
                         </div>
-                    </div>
+                    </article>
+                    <article class="gs-plato gs-rev">
+                        <div class="gs-plato-foto">
+                            <img loading="lazy" decoding="async" src="/images/gastronomia/zacahuil-640.webp" alt="Zacahuil envuelto en hoja antes de hornear">
+                            <span class="gs-sello">Para compartir</span>
+                        </div>
+                        <div class="gs-plato-txt">
+                            <h3>Zacahuil</h3>
+                            <p>Un tamal enorme de maíz martajado, chiles y carne de cerdo o pollo, envuelto en hoja de plátano
+                                y cocido toda la noche en horno de leña.</p>
+                            <span class="gs-donde"><i class="fas fa-location-dot"></i> Mercado Municipal y fondas tradicionales</span>
+                        </div>
+                    </article>
+                    <article class="gs-plato gs-rev">
+                        <div class="gs-plato-foto">
+                            <img loading="lazy" decoding="async" src="/images/gastronomia/bocoles-640.webp" alt="Dos bocoles con salsa verde y roja y queso">
+                            <span class="gs-sello">Huasteco</span>
+                        </div>
+                        <div class="gs-plato-txt">
+                            <h3>Bocoles</h3>
+                            <p>Gorditas gruesas de masa con manteca, típicas de la Huasteca. Se rellenan de frijol y se sirven
+                                con salsa roja o verde, queso y cebolla.</p>
+                            <span class="gs-donde"><i class="fas fa-location-dot"></i> Fondas y puestos de almuerzo</span>
+                        </div>
+                    </article>
+                    <article class="gs-plato gs-rev">
+                        <div class="gs-plato-foto">
+                            <img loading="lazy" decoding="async" src="/images/gastronomia/acamayas-640.webp" alt="Acamayas o camarones de río frescos">
+                            <span class="gs-sello">Del río</span>
+                        </div>
+                        <div class="gs-plato-txt">
+                            <h3>Acamayas</h3>
+                            <p>Camarones de río grandes que se pescan en algunos ríos de la región. Se preparan al mojo de ajo o
+                                a la diabla.</p>
+                            <span class="gs-donde"><i class="fas fa-location-dot"></i> Restaurantes de pescados y mariscos</span>
+                        </div>
+                    </article>
+                    <article class="gs-plato gs-rev">
+                        <div class="gs-plato-foto">
+                            <img loading="lazy" decoding="async" src="/images/gastronomia/enchiladas-serranas-640.webp" alt="Enchiladas verdes y rojas con queso">
+                        </div>
+                        <div class="gs-plato-txt">
+                            <h3>Enchiladas serranas</h3>
+                            <p>Tortillas de maíz pasadas por salsa de chile, con queso fresco y cebolla. Muchas veces llegan
+                                acompañando la cecina o un bistec recién hecho al comal.</p>
+                            <span class="gs-donde"><i class="fas fa-location-dot"></i> Placita del Sabor · fondas</span>
+                        </div>
+                    </article>
+                    <article class="gs-plato gs-rev">
+                        <div class="gs-plato-foto">
+                            <img loading="lazy" decoding="async" src="/images/gastronomia/pan-de-pulque-640.webp" alt="Panadera sacando pan del horno de leña">
+                            <span class="gs-sello">De horno</span>
+                        </div>
+                        <div class="gs-plato-txt">
+                            <h3>Pan de pulque y gorditas de horno</h3>
+                            <p>Pan de la sierra que se levanta con pulque y se hornea en horno de leña, igual que las gorditas
+                                de horno, dulces y esponjosas.</p>
+                            <span class="gs-donde"><i class="fas fa-location-dot"></i> Panadería Doña Rufi · panaderías del centro</span>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
 
-                    <div class="platillo-card">
-                        <div class="platillo-image">
-                            <i class="fas fa-seedling"></i>
-                        </div>
-                        <div class="platillo-content">
-                            <h3 class="platillo-title">Quelites Serranos</h3>
-                            <p class="platillo-description">
-                                Verduras silvestres recolectadas en la sierra, como verdolagas, quintoniles
-                                y huauzontles, guisados con técnicas tradicionales franciscanas.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="platillo-card">
-                        <div class="platillo-image">
-                            <i class="fas fa-cookie-bite"></i>
-                        </div>
-                        <div class="platillo-content">
-                            <h3 class="platillo-title">Hongos de Temporal</h3>
-                            <p class="platillo-description">
-                                Hongos silvestres recolectados durante la temporada de lluvias,
-                                preparados en quesadillas o guisados con epazote y chile serrano.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="platillo-card">
-                        <div class="platillo-image">
-                            <i class="fas fa-bread-slice"></i>
-                        </div>
-                        <div class="platillo-content">
-                            <h3 class="platillo-title">Pan Franciscano</h3>
-                            <p class="platillo-description">
-                                Pan tradicional elaborado siguiendo recetas franciscanas del siglo XVIII,
-                                horneado en hornos de barro y endulzado con miel de abeja local.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="platillo-card">
-                        <div class="platillo-image">
-                            <i class="fas fa-coffee"></i>
-                        </div>
-                        <div class="platillo-content">
-                            <h3 class="platillo-title">Café de Olla Serrano</h3>
-                            <p class="platillo-description">
-                                Café cultivado en las laderas de la sierra, preparado en olla de barro
-                                con canela de Ceilán y endulzado con piloncillo artesanal.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="platillo-card">
-                        <div class="platillo-image">
-                            <i class="fas fa-apple-alt"></i>
-                        </div>
-                        <div class="platillo-content">
-                            <h3 class="platillo-title">Dulces de Frutas Serranas</h3>
-                            <p class="platillo-description">
-                                Conservas y dulces elaborados con frutas de la región como guayabas,
-                                tejocotes y capulines, siguiendo recetas ancestrales.
-                            </p>
-                        </div>
+        <!-- Del monte -->
+        <section class="gs-sec" id="monte">
+            <div class="container">
+                <div class="gs-cab gs-rev">
+                    <span class="gs-eti">Ingredientes</span>
+                    <h2>Lo que da el monte</h2>
+                    <p>Ingredientes silvestres y de temporada que aparecen en los guisos caseros.</p>
+                </div>
+                <div class="gs-monte">
+                    <figure class="gs-monte-foto gs-rev" style="margin:0">
+                        <img loading="lazy" decoding="async" src="/images/gastronomia/flor-de-izote-640.webp" alt="Racimo de flores blancas de izote">
+                        <figcaption><b>Flor de izote</b><span>Florece en primavera; se guisa con huevo o en salsa.</span></figcaption>
+                    </figure>
+                    <div class="gs-lista">
+                        <div class="gs-item gs-rev"><i class="fas fa-seedling"></i><div><b>Tunas de nopal</b><span>Se cocinan en guisos, igual que la flor de izote.</span></div></div>
+                        <div class="gs-item gs-rev"><i class="fas fa-pepper-hot"></i><div><b>Salsa de coyol</b><span>Hecha con un tomate rojo silvestre muy pequeño. Acompaña los huevos al comal.</span></div></div>
+                        <div class="gs-item gs-rev"><i class="fas fa-egg"></i><div><b>Huevos al comal</b><span>Revueltos o cocidos directo en el comal, un almuerzo serrano de todos los días.</span></div></div>
+                        <div class="gs-item gs-rev"><i class="fas fa-wheat-awn"></i><div><b>Maíz criollo</b><span>Base de tortillas, gorditas de frijol, bocoles, tamales y atoles.</span></div></div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Ingredientes Locales -->
-        <section id="ingredientes" class="section">
+        <!-- Bebidas -->
+        <section class="gs-sec" id="bebidas">
             <div class="container">
-                <h2 class="section-title">Ingredientes de la Sierra Gorda</h2>
-                <div class="ingredientes-grid">
-                    <div class="ingrediente-card">
-                        <div class="ingrediente-icon">
-                            <i class="fas fa-leaf"></i>
+                <div class="gs-cab gs-rev">
+                    <span class="gs-eti">Para beber</span>
+                    <h2>Atoles y café de la sierra</h2>
+                </div>
+                <div class="gs-bebidas">
+                    <article class="gs-bebida gs-rev">
+                        <img loading="lazy" decoding="async" src="/images/gastronomia/atole-guayaba-640.webp" alt="Atole rosado servido en taza de barro">
+                        <div>
+                            <h3>Atoles serranos</h3>
+                            <p>Calientes y espesos, para el desayuno o la tarde fresca:</p>
+                            <ul>
+                                <li><b>Maíz de teja</b>, con semilla de girasol.</li>
+                                <li><b>Guayabilla</b>, una guayaba silvestre del monte.</li>
+                                <li><b>Puzcua</b>, de maíz con piloncillo.</li>
+                            </ul>
                         </div>
-                        <h3 class="ingrediente-title">Quelites Silvestres</h3>
-                        <p class="ingrediente-description">
-                            Verduras que crecen de forma natural en la sierra,
-                            ricas en vitaminas y minerales.
-                        </p>
-                    </div>
-
-                    <div class="ingrediente-card">
-                        <div class="ingrediente-icon">
-                            <i class="fas fa-tint"></i>
+                    </article>
+                    <article class="gs-bebida gs-rev">
+                        <img loading="lazy" decoding="async" src="/images/gastronomia/cafe-de-olla-640.webp" alt="Café de olla en jarrito de barro">
+                        <div>
+                            <h3>Café de Neblinas</h3>
+                            <p>En la comunidad de Neblinas, en el vecino municipio de Landa de Matamoros, se cultiva un café
+                                orgánico de altura. Pruébalo solo o como café de olla, con canela y piloncillo.</p>
                         </div>
-                        <h3 class="ingrediente-title">Miel de Abeja</h3>
-                        <p class="ingrediente-description">
-                            Miel pura extraída de las colmenas serranas,
-                            con propiedades medicinales únicas.
-                        </p>
-                    </div>
-
-                    <div class="ingrediente-card">
-                        <div class="ingrediente-icon">
-                            <i class="fas fa-mountain"></i>
-                        </div>
-                        <h3 class="ingrediente-title">Hierbas Aromáticas</h3>
-                        <p class="ingrediente-description">
-                            Hierbas como el orégano serrano, tomillo y hierba santa
-                            que crecen en las laderas montañosas.
-                        </p>
-                    </div>
-
-                    <div class="ingrediente-card">
-                        <div class="ingrediente-icon">
-                            <i class="fas fa-fish"></i>
-                        </div>
-                        <h3 class="ingrediente-title">Truchas de Río</h3>
-                        <p class="ingrediente-description">
-                            Peces de agua dulce criados en los ríos cristalinos
-                            de la Sierra Gorda queretana.
-                        </p>
-                    </div>
+                    </article>
                 </div>
             </div>
         </section>
 
-        <!-- Tradiciones -->
-        <section id="tradiciones" class="section section-alt">
+        <!-- Dónde comer -->
+        <section class="gs-sec" id="donde">
             <div class="container">
-                <h2 class="section-title">Tradiciones y Cultura Alimentaria</h2>
-                <div class="tradiciones-features">
-                    <div class="tradicion-feature">
-                        <div class="tradicion-icon">
-                            <i class="fas fa-users"></i>
+                <div class="gs-cab gs-rev">
+                    <span class="gs-eti">Dónde comer</span>
+                    <h2>Dónde probar la cocina de Jalpan</h2>
+                    <p>Tres paradas clásicas en el centro y las fondas y restaurantes registrados en esta guía.</p>
+                </div>
+                <div class="gs-sitios">
+                    <article class="gs-sitio gs-rev">
+                        <img loading="lazy" decoding="async" src="/images/gastronomia/enchiladas-cecina-640.webp" alt="">
+                        <div class="gs-sitio-txt">
+                            <span class="gs-sello">Ruta del Sabor</span>
+                            <h3>La Placita del Sabor</h3>
+                            <p>Puestos a unos pasos de la misión: enchiladas con cecina de Doña Regis, tostadas, guajolotes y
+                                las taquerías Cache y Don Goyo.</p>
+                            <address><i class="fas fa-location-dot"></i> Miguel Hidalgo 79, Centro</address>
+                            <a class="gs-btn gs-btn-vidrio" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Placita+del+Sabor+Miguel+Hidalgo+79+Jalpan+de+Serra"><i class="fas fa-diamond-turn-right"></i> Cómo llegar</a>
                         </div>
-                        <h3>Cocina Comunitaria</h3>
-                        <p>
-                            La preparación de alimentos es una actividad comunitaria que
-                            fortalece los lazos sociales y preserva las recetas ancestrales.
-                        </p>
-                    </div>
+                    </article>
+                    <article class="gs-sitio gs-rev">
+                        <img loading="lazy" decoding="async" src="/images/gastronomia/mercado-jalpan-fuera-640.webp" alt="">
+                        <div class="gs-sitio-txt">
+                            <span class="gs-sello">Mercado</span>
+                            <h3>Mercado Municipal</h3>
+                            <p>Zacahuil y tamales, fruta y verdura de la región y, entre puestos, canastas de mimbre
+                                hechas a mano.</p>
+                            <address><i class="fas fa-location-dot"></i> Centro de Jalpan</address>
+                            <a class="gs-btn gs-btn-vidrio" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Mercado+Municipal+Jalpan+de+Serra"><i class="fas fa-diamond-turn-right"></i> Cómo llegar</a>
+                        </div>
+                    </article>
+                    <article class="gs-sitio gs-rev">
+                        <img loading="lazy" decoding="async" src="/images/gastronomia/pan-de-pulque-640.webp" alt="">
+                        <div class="gs-sitio-txt">
+                            <span class="gs-sello">Más de 50 años</span>
+                            <h3>Panadería Doña Rufi</h3>
+                            <p>Una panadería con más de cinco décadas de tradición, famosa por su pan «mestizo». Parada
+                                obligada para llevar pan de regreso.</p>
+                            <address><i class="fas fa-location-dot"></i> Abasolo 6, Centro</address>
+                            <a class="gs-btn gs-btn-vidrio" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Panader%C3%ADa+Do%C3%B1a+Rufi+Abasolo+6+Jalpan+de+Serra"><i class="fas fa-diamond-turn-right"></i> Cómo llegar</a>
+                        </div>
+                    </article>
+                </div>
 
-                    <div class="tradicion-feature">
-                        <div class="tradicion-icon">
-                            <i class="fas fa-calendar-alt"></i>
-                        </div>
-                        <h3>Festivales Gastronómicos</h3>
-                        <p>
-                            Durante las festividades religiosas y cívicas se preparan
-                            platillos especiales que han pasado de generación en generación.
-                        </p>
+                <div class="gs-sub gs-rev">
+                    <div>
+                        <h3>Fondas y restaurantes de cocina regional</h3>
+                        <p>Registrados en la guía. Toca uno para ver su menú, horario y ubicación.</p>
                     </div>
-
-                    <div class="tradicion-feature">
-                        <div class="tradicion-icon">
-                            <i class="fas fa-hands"></i>
-                        </div>
-                        <h3>Técnicas Artesanales</h3>
-                        <p>
-                            La elaboración de alimentos sigue métodos tradicionales como
-                            el uso de metates, comales de barro y hornos de adobe.
-                        </p>
+                    <div class="gs-filtros" role="group" aria-label="Filtrar">
+                        <button type="button" class="gs-filtro activo" data-f="todos">Todos</button>
+                        <button type="button" class="gs-filtro" data-f="fonda">Fondas</button>
+                        <button type="button" class="gs-filtro" data-f="rest">Restaurantes</button>
+                        <button type="button" class="gs-filtro" data-f="mar">Río y mar</button>
                     </div>
+                </div>
+                <div class="gs-rests" id="gs-rests" aria-live="polite">
+                    <div class="gs-rest-esq"></div><div class="gs-rest-esq"></div><div class="gs-rest-esq"></div><div class="gs-rest-esq"></div>
+                </div>
+                <div class="gs-consejo gs-rev">
+                    <i class="fas fa-lightbulb"></i>
+                    <span>Consejo: en fondas y mercado la comida de todos los días cuesta entre $150 y $350 por persona. Ve
+                        temprano: los almuerzos serranos se sirven desde la mañana.</span>
+                </div>
+                <div style="display:flex; gap:.6rem; flex-wrap:wrap; margin-top:1.4rem">
+                    <a href="/restaurantes.html" class="gs-btn gs-btn-osc"><i class="fas fa-utensils"></i> Ver todos los restaurantes</a>
+                    <a href="/mapa.html" class="gs-btn gs-btn-linea"><i class="fas fa-map-location-dot"></i> Verlos en el mapa</a>
                 </div>
             </div>
         </section>
 
-        <!-- CTA Section -->
-        <section class="cta-section">
+        <!-- Fiestas -->
+        <section class="gs-sec" id="fiestas">
             <div class="container">
-                <h2 class="cta-title">¿Listo para explorar los sabores de Jalpan de Serra?</h2>
-                <p class="cta-text">
-                    Descubre los mejores restaurantes y lugares gastronómicos de nuestro Pueblo Mágico
-                </p>
-                <a href="/restaurantes.html" class="btn btn-light">
-                    <i class="fas fa-search"></i>
-                    Explorar Restaurantes
-                </a>
+                <div class="gs-fiesta gs-rev">
+                    <img loading="lazy" decoding="async" src="/images/jalpan/mision-noche-960.webp" alt="Misión de Jalpan iluminada de noche">
+                    <div class="gs-fiesta-txt">
+                        <span class="gs-eti">Fiestas y comida</span>
+                        <h2>La mejor época para comer en Jalpan</h2>
+                        <p>En el aniversario de Pueblo Mágico, a mediados de octubre, el Jardín Principal se llena con un
+                            corredor gastronómico y artesanal. En 2025 el Festival de la Huasteca se dedicó al maíz con el lema
+                            «Cuerpos de maíz», y en abril la Feria Jalpan trae antojitos a la plaza.</p>
+                        <div style="margin-top:1.3rem"><a href="/#noticias" class="gs-btn gs-btn-vidrio"><i class="fas fa-newspaper"></i> Noticias y eventos</a></div>
+                    </div>
+                </div>
+
+                <details class="gs-creditos">
+                    <summary>Créditos de las fotos y fuentes</summary>
+                    <ul>
+                        <li>Mercado de Jalpan de Serra: A01610383 DanielAmador, <a href="https://commons.wikimedia.org/wiki/File:Mercado_de_Jalpan_de_Serra.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>, CC BY-SA 4.0</li>
+                        <li>Mercado de Jalpan (fuera): A01610326 Jorge, <a href="https://commons.wikimedia.org/wiki/File:Mercado_Jalpan_(Fuera).jpg" target="_blank" rel="noopener">Wikimedia Commons</a>, CC BY-SA 4.0</li>
+                        <li>Enchiladas con cecina: Fer.goiba, <a href="https://commons.wikimedia.org/wiki/File:Feria_Gastronomica_de_la_Enchilada_86.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>, CC BY-SA 4.0</li>
+                        <li>Enchiladas: Tekyta, <a href="https://commons.wikimedia.org/wiki/File:EnchiladasHuastecas.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>, CC BY-SA 4.0</li>
+                        <li>Zacahuil: Elizabethcasasola, <a href="https://commons.wikimedia.org/wiki/File:Zacahuil_antes_de_hornear.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>, CC BY-SA 4.0</li>
+                        <li>Bocoles, acamayas y flor de izote: Koffermejia, Wikimedia Commons (<a href="https://commons.wikimedia.org/wiki/File:Bocoles_con_salsa_verde_y_roja.jpg" target="_blank" rel="noopener">1</a>, <a href="https://commons.wikimedia.org/wiki/File:Camarones_de_rio.jpg" target="_blank" rel="noopener">2</a>, <a href="https://commons.wikimedia.org/wiki/File:Detalle_Flor_de_izote.jpg" target="_blank" rel="noopener">3</a>), CC BY-SA 4.0</li>
+                        <li>Pan de pulque en Tolimán: Asomarte, <a href="https://commons.wikimedia.org/wiki/File:Pan_de_pulque_en_Tolim%C3%A1n.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>, CC BY-SA 4.0</li>
+                        <li>Gorditas de horno: Miguel Angel Herrera Domínguez, <a href="https://commons.wikimedia.org/wiki/File:Gorditas_de_Horno_1.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>, CC BY-SA 4.0</li>
+                        <li>Atole de guayaba: Pequeño mar, <a href="https://commons.wikimedia.org/wiki/File:Atole_de_guayaba.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>, CC BY-SA 4.0</li>
+                        <li>Café de olla: Luisalvaz, <a href="https://commons.wikimedia.org/wiki/File:Caf%C3%A9_de_olla_en_un_negocio_poblano.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>, CC BY-SA 4.0</li>
+                    </ul>
+                    <p>Fotos redimensionadas. Licencia: <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.es" target="_blank" rel="noopener">CC BY-SA 4.0</a>.
+                        Información: jalpan.travel, queretaro.travel y México Desconocido.</p>
+                </details>
             </div>
         </section>
     </main>
 
-    <!-- Footer -->
     <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div>
-                    <h3 class="footer-title">
-                        <i class="fas fa-utensils"></i>
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="/" class="logo">
+                        <img loading="lazy" decoding="async" src="/images/PueblosMágicos.svg.png" alt="Logo">
                         Jalpan de Serra
-                    </h3>
-                    <p class="footer-text">
-                        Conectamos a Jalpan de Serra con su riqueza gastronómica,
-                        preservando tradiciones y promoviendo nuevas experiencias culinarias.
-                    </p>
+                    </a>
+                    <p>La plataforma líder que conecta a locales y turistas con la mejor oferta gastronómica del Corazón
+                        de la Sierra Gorda.</p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    </div>
                 </div>
 
-                <div>
-                    <h4 class="footer-title">Enlaces</h4>
-                    <ul style="list-style: none;">
-                        <li><a href="index.html" class="footer-link">Inicio</a></li>
-                        <li><a href="/restaurantes.html" class="footer-link">Establecimientos</a></li>
-                        <li><a href="#historia" class="footer-link">Historia</a></li>
-                        <li><a href="#platillos" class="footer-link">Platillos Tradicionales</a></li>
+                <div class="footer-section">
+                    <h4 class="footer-title">Navegación</h4>
+                    <ul class="footer-links">
+                        <li><a href="/">Inicio</a></li>
+                        <li><a href="/restaurantes.html">Restaurantes</a></li>
+                        <li><a href="/mapa.html">Mapa</a></li>
+                        <li><a href="/Contactos.html">Contacto</a></li>
+                        <li><a href="/login.html">Panel Admin</a></li>
                     </ul>
                 </div>
 
-                <div>
+                <div class="footer-section">
+                    <h4 class="footer-title">Soporte</h4>
+                    <ul class="footer-links">
+                        <li><a href="/Contactos.html#faq">Preguntas Frecuentes</a></li>
+                        <li><a href="mailto:restaurantesturismo57@gmail.com">Soporte Técnico</a></li>
+                        <li><a href="#">Guía de Uso</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
                     <h4 class="footer-title">Contacto</h4>
-                    <p class="footer-text">
-                        <i class="fas fa-envelope"></i>
-                        info@restauranteweb.com
-                    </p>
-                    <p class="footer-text">
-                        <i class="fas fa-phone"></i>
-                        +52 (444) 123-4567
-                    </p>
-                    <p class="footer-text">
-                        <i class="fas fa-map-marker-alt"></i>
-                        Jalpan de Serra, Querétaro
-                    </p>
+                    <div class="footer-contact">
+                        <p><i class="fas fa-envelope"></i> restaurantesturismo57@gmail.com</p>
+                        <p><i class="fas fa-phone"></i> +52 (441) 296-0285</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Independencia No. 12, Jalpan de Serra, Qro.</p>
+                    </div>
                 </div>
             </div>
 
             <div class="footer-bottom">
                 <p>&copy; 2025 Jalpan de Serra, Pueblo Mágico. Todos los derechos reservados.</p>
-                <div class="footer-developed-by" style="margin-top: 1rem;">
+                <div class="footer-meta">
+                    <a href="/privacidad.html">Privacidad</a>
+                    <a href="/terminos.html">Términos</a>
                     <span class="footer-credito"><i class="fas fa-code"></i> <span data-i18n="footer.desarrollado">Creado por</span> <a href="https://www.instagram.com/isaac.gsoria/" target="_blank" rel="noopener"><i class="fab fa-instagram"></i> Isaac Soria</a> <span data-i18n="footer.y">y</span> <a href="https://www.instagram.com/jennifer_munoz_22/" target="_blank" rel="noopener"><i class="fab fa-instagram"></i> Jennifer Muñoz</a></span>
                 </div>
             </div>
         </div>
     </footer>
 
+    <script src="/js/barra-sitio.js"></script>
     <script>
-        // Navegación suave
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
+    (function () {
+        'use strict';
+        const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+        // Aparición al hacer scroll
+        const io = 'IntersectionObserver' in window ? new IntersectionObserver((es) => {
+            es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visto'); io.unobserve(e.target); } });
+        }, { rootMargin: '0px 0px -60px 0px', threshold: .08 }) : null;
+        const revelar = (raiz) => (raiz || document).querySelectorAll('.gs-rev:not(.visto)').forEach(el => io ? io.observe(el) : el.classList.add('visto'));
+        revelar();
+
+        // Fondas y restaurantes de cocina regional registrados en la guía.
+        // Se buscan por nombre; si alguno se da de baja simplemente no aparece.
+        const SELECCION = [
+            { re: /tapanco/i, g: 'rest', nota: 'Cecina con tortillas hechas a mano' },
+            { re: /carretas/i, g: 'rest', nota: 'Cocina regional' },
+            { re: /karina/i, g: 'rest', nota: 'Cocina regional' },
+            { re: /mes[oó]n de caporales/i, g: 'rest', nota: 'Cocina regional' },
+            { re: /naranjito/i, g: 'rest', nota: 'Cocina regional' },
+            { re: /vicky/i, g: 'rest', nota: 'Comida casera' },
+            { re: /do[ñn]a chila/i, g: 'fonda', nota: 'Fonda · comida casera' },
+            { re: /do[ñn]a chole/i, g: 'fonda', nota: 'Fonda · comida casera' },
+            { re: /comedor conchita/i, g: 'fonda', nota: 'Comedor · comida corrida' },
+            { re: /comedor meztli/i, g: 'fonda', nota: 'Comedor · comida corrida' },
+            { re: /gus gus/i, g: 'fonda', nota: 'Antojitos: gorditas, enchiladas' },
+            { re: /sierra y mar/i, g: 'mar', nota: 'Pescados y mariscos' },
+            { re: /richard/i, g: 'mar', nota: 'Pescados y mariscos' },
+            { re: /palapa la presa/i, g: 'mar', nota: 'Junto a la presa' }
+        ];
+        const caja = document.getElementById('gs-rests');
+        let lista = [];
+
+        function pintar(filtro) {
+            const ver = lista.filter(x => filtro === 'todos' || x.g === filtro);
+            caja.innerHTML = ver.map(x => `
+                <a class="gs-rest" href="/restaurante.html?id=${encodeURIComponent(x.id)}">
+                    <div class="gs-rest-foto">${x.img ? `<img loading="lazy" decoding="async" src="${esc(x.img)}" alt="" onerror="this.remove()">` : ''}<i class="fas fa-utensils"></i></div>
+                    <div class="gs-rest-txt"><b>${esc(x.nombre)}</b><small>${esc(x.nota)}</small>${x.dir ? `<span><i class="fas fa-location-dot"></i> ${esc(x.dir)}</span>` : ''}</div>
+                </a>`).join('') || '<p class="gs-aviso">No hay lugares en esta categoría por ahora.</p>';
+            caja.querySelectorAll('.gs-rest-foto img').forEach(im => { const ico = im.nextElementSibling; if (ico) ico.style.display = 'none'; im.addEventListener('error', () => { if (ico) ico.style.display = ''; }); });
+        }
+
+        document.querySelectorAll('.gs-filtro').forEach(b => b.addEventListener('click', () => {
+            document.querySelectorAll('.gs-filtro').forEach(o => o.classList.toggle('activo', o === b));
+            pintar(b.dataset.f);
+        }));
+
+        fetch('/api/restaurants?limite=200&compact=true').then(r => r.json()).then(j => {
+            const todos = (j && j.data && j.data.restaurantes) || [];
+            SELECCION.forEach(s => {
+                const r = todos.find(x => s.re.test(x.nombre || '') && x.tipo === 'restaurante');
+                if (!r) return;
+                const calle = r.direccion && r.direccion.calle ? String(r.direccion.calle).split(',')[0] : '';
+                lista.push({ id: r.id || r._id, nombre: r.nombre, img: r.imagenPrincipal && r.imagenPrincipal.url, dir: calle, g: s.g, nota: s.nota });
             });
+            if (!lista.length) throw new Error('sin datos');
+            pintar('todos');
+        }).catch(() => {
+            caja.innerHTML = '<p class="gs-aviso">No se pudo cargar la lista ahora. Puedes verlos todos en <a href="/restaurantes.html">Restaurantes</a>.</p>';
         });
-
-        // Efecto de aparición al hacer scroll
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
-
-        // Aplicar efecto a las tarjetas
-        document.querySelectorAll('.platillo-card, .ingrediente-card, .tradicion-feature').forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(20px)';
-            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-            observer.observe(el);
-        });
+    })();
     </script>
 </body>
 
