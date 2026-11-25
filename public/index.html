@@ -249,10 +249,73 @@
             .ij-eti-hero, .ij-hero h1, .ij-hero-txt > p, .ij-hero-fila, .ij-acceso { animation: none; }
             .ij-punto.activo::after { animation: none; transform: scaleX(1); }
         }
+
+        /* ===== Animación de entrada (una vez por visita) =====
+           1) aparece el logo  2) el azul crece desde el logo hasta llenar la pantalla
+           3) el nombre se desliza junto al logo  4) la capa baja y descubre la página */
+        .intro { position: fixed; inset: 0; z-index: 99999; background: #fff; overflow: hidden; cursor: pointer;
+                 animation: introSale .7s cubic-bezier(.7,0,.25,1) 2.05s forwards; }
+        .intro-capa { position: absolute; inset: 0; background: radial-gradient(120% 90% at 50% 40%, #2f6df0 0%, #2563eb 45%, #1d4ed8 100%);
+                      clip-path: circle(0% at 50% 50%); animation: introCrece .65s cubic-bezier(.7,0,.2,1) .5s forwards; }
+        .intro-marca { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+        .intro-logo { width: 76px; height: 76px; flex-shrink: 0; border-radius: 22px; background: #fff; display: flex; align-items: center; justify-content: center;
+                      box-shadow: 0 10px 30px rgba(15,23,42,.18); opacity: 0; transform: scale(.4);
+                      animation: introLogo .55s cubic-bezier(.34,1.56,.64,1) .05s forwards; }
+        .intro-logo img { width: 52px; height: 52px; object-fit: contain; }
+        .intro-texto { max-width: 0; margin-left: 0; overflow: hidden; white-space: nowrap; color: #fff;
+                       animation: introAbre .6s cubic-bezier(.65,0,.25,1) 1.15s forwards; }
+        .intro-texto b, .intro-texto span { display: block; opacity: 0; transform: translateX(-24px); animation: introLetras .5s cubic-bezier(.2,.8,.2,1) 1.3s forwards; }
+        .intro-texto b { font-family: 'Outfit', system-ui, sans-serif; font-size: 1.6rem; font-weight: 700; letter-spacing: -.02em; line-height: 1.1; }
+        .intro-texto span { font-size: .82rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; animation-name: introSub; animation-delay: 1.42s; }
+        @keyframes introLogo { to { opacity: 1; transform: scale(1); } }
+        @keyframes introCrece { to { clip-path: circle(150% at 50% 50%); } }
+        @keyframes introAbre { to { max-width: 260px; margin-left: 16px; } }
+        @keyframes introLetras { to { opacity: 1; transform: none; } }
+        @keyframes introSale { to { transform: translateY(100%); visibility: hidden; } }
+        @keyframes introSub { to { opacity: .8; transform: none; } }
+        /* Mientras se ve la entrada, la portada espera para animarse después */
+        html.intro-activa .ij-eti-hero, html.intro-activa .ij-hero h1, html.intro-activa .ij-hero-txt > p,
+        html.intro-activa .ij-hero-fila, html.intro-activa .ij-acceso { animation-play-state: paused; }
+        @media (prefers-reduced-motion: reduce) {
+            .intro { animation: introSale .01s linear 1.2s forwards; }
+            .intro-capa { animation: none; clip-path: none; }
+            .intro-logo, .intro-texto b, .intro-texto span { animation: none; opacity: 1; transform: none; }
+            .intro-texto { animation: none; max-width: 260px; margin-left: 16px; }
+        }
     </style>
 </head>
 
 <body>
+    <div class="intro" id="intro" aria-hidden="true">
+        <div class="intro-capa"></div>
+        <div class="intro-marca">
+            <div class="intro-logo"><img src="/images/PueblosMágicos.svg.png" alt=""></div>
+            <div class="intro-texto"><b>Jalpan de Serra</b><span>Pueblo Mágico</span></div>
+        </div>
+    </div>
+    <script>
+        // Solo la primera vez en cada visita (al volver al inicio ya no se repite). Tocar la pantalla la salta.
+        (function () {
+            var intro = document.getElementById('intro');
+            var vista = false;
+            try { vista = sessionStorage.getItem('intro-vista') === '1'; sessionStorage.setItem('intro-vista', '1'); } catch (e) {}
+            if (vista) { intro.remove(); return; }
+            var raiz = document.documentElement;
+            var reducido = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+            raiz.classList.add('intro-activa');
+            raiz.style.overflow = 'hidden';
+            var hecho = false;
+            function soltar() { raiz.classList.remove('intro-activa'); raiz.style.overflow = ''; }
+            function quitar() { if (hecho) return; hecho = true; soltar(); intro.remove(); }
+            var tSoltar = setTimeout(soltar, reducido ? 1200 : 2050);
+            var tQuitar = setTimeout(quitar, reducido ? 1300 : 2800);
+            intro.addEventListener('click', function () {
+                clearTimeout(tSoltar); clearTimeout(tQuitar); soltar();
+                intro.style.animation = 'introSale .45s cubic-bezier(.7,0,.25,1) forwards';
+                setTimeout(quitar, 480);
+            });
+        })();
+    </script>
     <header class="global-nav">
         <nav class="nav-container">
             <a href="/" class="logo">

@@ -210,10 +210,34 @@
             .mp-buscar { margin: .55rem 0 .5rem; }
             .mp-buscar input { font-size: 16px; padding-top: .55rem; padding-bottom: .55rem; }
             .mp-chips { padding-bottom: .6rem; }
-            .mapboxgl-popup-content { width: 240px; }
-            .popup-header { height: 100px; }
             .mp-volver { top: 12px; }
+            /* Con un lugar abierto, la lista se esconde y la ficha queda abajo: el mapa queda libre para moverse */
+            .map-sidebar.oculto { transform: translateY(calc(100% + 20px)); pointer-events: none; transition: transform .3s cubic-bezier(.2,.8,.2,1); }
         }
+
+        /* Ficha del lugar en celular (en vez del globo sobre el mapa) */
+        .mp-ficha {
+            position: absolute; left: 10px; right: 10px; z-index: 12;
+            bottom: calc(var(--mp-nav, 0px) + 10px);
+            display: flex; gap: .75rem; padding: .7rem; padding-right: 2.4rem;
+            background: #fff; border-radius: 18px;
+            box-shadow: 0 12px 36px rgba(15,23,42,.24);
+            animation: mpFicha .32s cubic-bezier(.2,.8,.2,1);
+        }
+        .mp-ficha[hidden] { display: none; }
+        @keyframes mpFicha { from { opacity: 0; transform: translateY(24px); } }
+        .mp-ficha-foto { width: 92px; flex-shrink: 0; align-self: stretch; min-height: 92px; border-radius: 12px; overflow: hidden; background: #f3f4f6; }
+        .mp-ficha-foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .mp-ficha-foto img.logo { object-fit: contain; background: #fff; padding: .5rem; }
+        .mp-ficha-info { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+        .mp-ficha-tipo { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+        .mp-ficha-info h3 { font-size: 1rem; font-weight: 700; color: #111827; margin: .05rem 0 .1rem; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .mp-ficha-info .popup-rating { margin-bottom: .1rem; }
+        .mp-ficha-dir { font-size: .78rem; color: #6b7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: .5rem; }
+        .mp-ficha .popup-acciones { margin-top: auto; }
+        .mp-ficha .popup-btn { padding: .5rem .5rem; font-size: .85rem; }
+        .mp-ficha-cerrar { position: absolute; top: 8px; right: 8px; width: 28px; height: 28px; border: 0; border-radius: 50%; background: #f3f4f6; color: #374151; font-size: .8rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        @media (prefers-reduced-motion: reduce) { .mp-ficha { animation: none; } }
     </style>
     <!-- PWA: app instalable -->
     <link rel="manifest" href="/manifest.json">
@@ -265,6 +289,7 @@
     <main class="map-section">
         <div class="map-wrapper">
             <div id="public-map"></div>
+            <div class="mp-ficha" id="mp-ficha" role="dialog" aria-live="polite" hidden></div>
             <button type="button" class="mp-volver" id="mp-volver"><i class="fas fa-expand-arrows-alt"></i> <span data-i18n="mapa.volver">Ver todo el mapa</span></button>
 
             <aside class="map-sidebar" id="map-panel" aria-label="Explorar lugares">
@@ -306,7 +331,7 @@
 
     <!-- Removed duplicate inline footer in favor of the full footer at EOF -->
 
-    <script src="/js/map.js?v=2"></script>
+    <script src="/js/map.js?v=3"></script>
     <script>
         async function renderAuthNavbar() {
             const nav = document.getElementById('navbar-actions');

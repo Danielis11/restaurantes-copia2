@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         style: 'mapbox://styles/mapbox/streets-v11',
         center: [-99.4752, 21.2185], // Jalpan de Serra
         zoom: 13,
-        pitch: 45
+        pitch: window.innerWidth <= 768 ? 0 : 45 // en celular plano: más fácil de mover con un dedo
     });
 
     // Añadir controles de navegación
@@ -217,6 +217,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const btnCerca = document.getElementById('mp-cerca');
     const btnVolver = document.getElementById('mp-volver');
     const totalEl = document.getElementById('mp-total');
+    const ficha = document.getElementById('mp-ficha');
 
     const estado = { cat: 'all', q: '', cerca: false };
     let entradas = [];          // { item, style, lng, lat, cat, texto, marker, el, li }
@@ -236,10 +237,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Altura de la barra de navegación inferior (solo celular)
+    // (se guarda en el contenedor para que la usen tanto la lista como la ficha)
+    const envoltura = panel.parentElement;
+    let altoNav = 0;
     function ajustarNav() {
         const nav = document.getElementById('nav-menu');
         const fija = nav && getComputedStyle(nav).position === 'fixed' && nav.getBoundingClientRect().top > innerHeight / 2;
-        panel.style.setProperty('--mp-nav', fija ? nav.offsetHeight + 'px' : '0px');
+        altoNav = fija ? nav.offsetHeight : 0;
+        envoltura.style.setProperty('--mp-nav', altoNav + 'px');
     }
 
     function vistaActual() {
@@ -249,11 +254,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Desplazamiento para que el lugar quede visible junto al panel y con espacio para la ficha
     function desfase() {
         if (esMovil()) {
-            // El panel se reduce a 150px: el lugar queda justo encima y su ficha arriba de él
+            // El lugar queda centrado en el espacio libre que hay arriba de la ficha
             const caja = map.getContainer().getBoundingClientRect();
-            const nav = parseFloat(panel.style.getPropertyValue('--mp-nav')) || 0;
-            const yPin = innerHeight - nav - 150 - 24;
-            return [0, Math.round(yPin - (caja.top + caja.height / 2))];
+            const techo = Math.max(caja.top, 0) + 50; // debajo del botón «Ver todo el mapa»
+            const piso = innerHeight - altoNav - (ficha.offsetHeight || 130) - 20;
+            return [0, Math.round((techo + piso) / 2 - (caja.top + caja.height / 2))];
         }
         return [Math.round((panel.offsetWidth + 16) / 2), 110];
     }
@@ -299,6 +304,37 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    // Ficha compacta para celular: va abajo, fuera del mapa, para que el mapa se pueda seguir moviendo
+    function fichaHTML(e) {
+        const { item, style } = e;
+        const rating = getRating(item);
+        const address = getAddress(item);
+        const detailUrl = getDetailUrl(item);
+        const img = getImage(item);
+        const esLogo = item._itemType === 'agencia' || img === '/images/PueblosMágicos.svg.png';
+        return `
+            <div class="mp-ficha-foto"><img src="${esc(img)}" alt="" class="${esLogo ? 'logo' : ''}" onerror="this.onerror=null;this.src='/images/PueblosMágicos.svg.png';this.className='logo';"></div>
+            <div class="mp-ficha-info">
+                <span class="mp-ficha-tipo" style="color:${style.color}">${esc(t().tipos[e.cat] || style.label || '')}</span>
+                <h3>${esc(item.nombre)}</h3>
+                ${rating.score > 0
+                    ? `<div class="popup-rating"><i class="fas fa-star"></i><b>${rating.score.toFixed(1)}</b>${rating.count ? `<span>(${rating.count})</span>` : ''}</div>`
+                    : `<div class="popup-rating"><span style="color:#059669;font-weight:600">${t().nuevo}</span></div>`}
+                ${address ? `<div class="mp-ficha-dir">${esc(address)}</div>` : ''}
+                <div class="popup-acciones">
+                    ${detailUrl ? `<a href="${esc(detailUrl)}" class="popup-btn" style="background:${style.color}">${t().detalles} <i class="fas fa-arrow-right"></i></a>` : ''}
+                    <a href="${urlComoLlegar(e)}" target="_blank" rel="noopener" class="popup-btn sec" title="${t().llegar}" aria-label="${t().llegar}"><i class="fas fa-directions"></i></a>
+                </div>
+            </div>
+            <button type="button" class="mp-ficha-cerrar" aria-label="Cerrar"><i class="fas fa-times"></i></button>`;
+    }
+
+    function cerrarFicha() {
+        ficha.hidden = true;
+        ficha.innerHTML = '';
+        panel.classList.remove('oculto');
+    }
+
     // Abrir un lugar: zoom suave hacia él y su ficha
     function seleccionar(e) {
         if (seleccion === e) return;
@@ -307,26 +343,39 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (popupActual) { cambiando = true; popupActual.remove(); cambiando = false; }
         seleccion = e;
         marcarActivo(e);
-        if (esMovil()) { panel.classList.remove('abierto'); panel.classList.add('mini'); }
+        const movil = esMovil();
 
-        map.flyTo({ center: [e.lng, e.lat], zoom: Math.max(map.getZoom(), 16.5), pitch: 50, offset: desfase(), speed: 1.1, curve: 1.4, essential: true, duration: reduceMotion ? 0 : undefined });
+        if (movil) {
+            // En celular la ficha va abajo (no encima del mapa) y la lista se esconde
+            panel.classList.remove('abierto', 'mini');
+            panel.classList.add('oculto');
+            ficha.innerHTML = fichaHTML(e);
+            ficha.hidden = false;
+            ficha.querySelector('.mp-ficha-cerrar').addEventListener('click', () => deseleccionar());
+        }
 
-        popupActual = new mapboxgl.Popup({ anchor: 'bottom', offset: 26, closeButton: true, closeOnClick: true, maxWidth: 'none', focusAfterOpen: false })
-            .setLngLat([e.lng, e.lat])
-            .setHTML(popupHTML(e))
-            .addTo(map);
-        popupActual.on('close', () => {
-            popupActual = null;
-            if (cambiando) return;
-            deseleccionar();
-        });
+        // En celular sin inclinación: el mapa plano se arrastra con un dedo sin sorpresas
+        map.flyTo({ center: [e.lng, e.lat], zoom: Math.max(map.getZoom(), 16.5), pitch: movil ? 0 : 50, offset: desfase(), speed: 1.1, curve: 1.4, essential: true, duration: reduceMotion ? 0 : undefined });
+
+        if (!movil) {
+            popupActual = new mapboxgl.Popup({ anchor: 'bottom', offset: 26, closeButton: true, closeOnClick: true, maxWidth: 'none', focusAfterOpen: false })
+                .setLngLat([e.lng, e.lat])
+                .setHTML(popupHTML(e))
+                .addTo(map);
+            popupActual.on('close', () => {
+                popupActual = null;
+                if (cambiando) return;
+                deseleccionar();
+            });
+            if (e.li) e.li.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
+        }
         btnVolver.classList.add('visible');
-        if (e.li) e.li.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
     }
 
-    // Cerrar la ficha: regresar a la vista que se tenía antes
+    // Cerrar la ficha: regresar a la vista que se tenía antes (si el usuario no movió el mapa por su cuenta)
     function deseleccionar() {
         if (popupActual) { const p = popupActual; popupActual = null; cambiando = true; p.remove(); cambiando = false; }
+        cerrarFicha();
         seleccion = null;
         marcarActivo(null);
         btnVolver.classList.remove('visible');
@@ -336,7 +385,22 @@ document.addEventListener('DOMContentLoaded', async () => {
             vistaPrevia = null;
         }
     }
-    btnVolver.addEventListener('click', deseleccionar);
+    btnVolver.addEventListener('click', () => {
+        const habiaVista = !!vistaPrevia;
+        deseleccionar();
+        if (!habiaVista) encuadrar(entradas.filter(x => x.enMapa));
+    });
+
+    // Si el usuario mueve el mapa con un lugar abierto, no lo regresamos de golpe al cerrar
+    map.on('dragstart', () => { if (seleccion) vistaPrevia = null; });
+
+    // En celular, tocar el mapa fuera de un pin cierra la ficha
+    map.on('click', ev => {
+        if (!seleccion || !esMovil()) return;
+        const destino = ev.originalEvent && ev.originalEvent.target;
+        if (destino && destino.closest && destino.closest('.marker-wrapper')) return;
+        deseleccionar();
+    });
     document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && seleccion) deseleccionar(); });
 
     // Crear los pines una sola vez
@@ -460,7 +524,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const bounds = new mapboxgl.LngLatBounds();
         lista.forEach(e => bounds.extend([e.lng, e.lat]));
         const movil = esMovil();
-        const abajo = movil ? panel.getBoundingClientRect().height + (parseFloat(panel.style.getPropertyValue('--mp-nav')) || 0) + 30 : 50;
+        const abajo = movil ? panel.getBoundingClientRect().height + altoNav + 30 : 50;
         map.fitBounds(bounds, { padding: { top: 60, bottom: abajo, left: movil ? 40 : panel.offsetWidth + 50, right: 60 }, maxZoom: 15, duration: reduceMotion ? 0 : 900 });
     }
 
