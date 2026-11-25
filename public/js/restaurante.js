@@ -979,7 +979,7 @@ async function renderAuthNavbar() {
     } else {
         // No está logueado
         buttonHtml = `
-            <a href="/login.html" class="btn-login"><i class="fas fa-user-circle"></i> Iniciar Sesión</a>
+            <a href="/login.html" class="btn-login"><i class="far fa-user"></i> Iniciar Sesión</a>
         `;
     }
 

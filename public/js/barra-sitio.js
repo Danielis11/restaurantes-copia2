@@ -94,7 +94,7 @@
         if (!caja) return;
         var boton = document.getElementById('nav-toggle');
         var botonHtml = boton ? boton.outerHTML : '<button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú"><i class="fas fa-bars"></i></button>';
-        var html = '<a href="/login.html" class="btn-login"><i class="fas fa-user-circle"></i> Iniciar Sesión</a>';
+        var html = '<a href="/login.html" class="btn-login"><i class="far fa-user"></i> Iniciar Sesión</a>';
 
         var token = leer('authToken');
         var usuario = leerJSON('currentUser');
