@@ -117,7 +117,7 @@
         .filter-btn.active b { color: rgba(255,255,255,.8); }
         .filter-btn.vacio { display: none; }
 
-        .mp-lista { flex: 1; overflow-y: auto; margin: 0 -1.15rem; padding: .6rem .6rem 1rem; display: flex; flex-direction: column; gap: 2px; scrollbar-width: thin; }
+        .mp-lista { flex: 1; overflow-y: auto; overscroll-behavior: contain;margin: 0 -1.15rem; padding: .6rem .6rem 1rem; display: flex; flex-direction: column; gap: 2px; scrollbar-width: thin; }
         .mp-seccion { font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: #9ca3af; padding: .35rem .55rem .25rem; }
         .list-item { display: flex; align-items: center; gap: .75rem; padding: .55rem; border-radius: 14px; cursor: pointer; transition: background .2s; animation: mpItem .35s ease both; animation-delay: calc(var(--i, 0) * 30ms); position: relative; flex-shrink: 0; }
         @keyframes mpItem { from { opacity: 0; transform: translateY(6px); } }
@@ -202,9 +202,17 @@
                 animation-name: mpSube;
             }
             @keyframes mpSube { from { transform: translateY(30px); opacity: 0; } }
-            .map-sidebar.abierto { height: calc(100% - 12px); }
+            /* La página no se desplaza: el mapa ocupa justo la pantalla (dvh = alto real en celular y en la app instalada) */
+            html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
+            body { padding-bottom: 0 !important; }
+            .map-section { flex: none; height: calc(100vh - 70px); height: calc(100dvh - 70px); }
+            .map-wrapper { min-height: 0; height: 100%; }
+            /* Abierta deja una franja de mapa arriba: tocarla o deslizar hacia abajo la cierra */
+            .map-sidebar.abierto { height: calc(100% - var(--mp-nav, 0px) - 96px); }
             .map-sidebar.mini { height: 150px; }
-            .mp-asa { display: flex; justify-content: center; width: 100%; padding: .4rem 0 .5rem; border: 0; background: none; cursor: pointer; flex-shrink: 0; }
+            .map-sidebar.arrastrando { transition: none; }
+            .mp-asa { display: flex; justify-content: center; width: 100%; padding: .55rem 0 .6rem; border: 0; background: none; cursor: grab; flex-shrink: 0; touch-action: none; }
+            .mp-cab { touch-action: none; }
             .mp-asa span { width: 40px; height: 4px; border-radius: 4px; background: #d1d5db; }
             .map-sidebar h2 { font-size: 1.05rem; }
             .mp-buscar { margin: .55rem 0 .5rem; }
@@ -331,7 +339,7 @@
 
     <!-- Removed duplicate inline footer in favor of the full footer at EOF -->
 
-    <script src="/js/map.js?v=3"></script>
+    <script src="/js/map.js?v=4"></script>
     <script>
         async function renderAuthNavbar() {
             const nav = document.getElementById('navbar-actions');

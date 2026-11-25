@@ -352,6 +352,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             ficha.innerHTML = fichaHTML(e);
             ficha.hidden = false;
             ficha.querySelector('.mp-ficha-cerrar').addEventListener('click', () => deseleccionar());
+            empujarHistorial();
         }
 
         // En celular sin inclinación: el mapa plano se arrastra con un dedo sin sorpresas
@@ -373,8 +374,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Cerrar la ficha: regresar a la vista que se tenía antes (si el usuario no movió el mapa por su cuenta)
-    function deseleccionar() {
+    // desdeAtras: lo cerró el botón «atrás» del teléfono (ya no hay que regresar el historial)
+    function deseleccionar(desdeAtras) {
         if (popupActual) { const p = popupActual; popupActual = null; cambiando = true; p.remove(); cambiando = false; }
+        if (desdeAtras !== true) soltarHistorial();
         cerrarFicha();
         seleccion = null;
         marcarActivo(null);
@@ -575,7 +578,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (primero) seleccionar(primero);
         }
     });
-    inputQ.addEventListener('focus', () => { if (esMovil()) { panel.classList.remove('mini'); panel.classList.add('abierto'); } });
+    inputQ.addEventListener('focus', () => { if (esMovil() && !panel.classList.contains('abierto')) abrirLista(true); });
     btnLimpiar.addEventListener('click', () => { inputQ.value = ''; btnLimpiar.hidden = true; estado.q = ''; aplicar(false); inputQ.focus(); });
 
     // Cerca de mí
@@ -593,12 +596,74 @@ document.addEventListener('DOMContentLoaded', async () => {
         btnCerca.title = t().sinUbic;
     });
 
-    // Hoja inferior en celular
-    document.getElementById('mp-asa').addEventListener('click', () => {
-        const abierto = panel.classList.contains('abierto');
+    // Hoja inferior en celular: tocar la barrita alterna; deslizar arriba/abajo abre o cierra
+    const asa = document.getElementById('mp-asa');
+    function abrirLista(abrir) {
         panel.classList.remove('mini');
-        panel.classList.toggle('abierto', !abierto);
-        document.getElementById('mp-asa').setAttribute('aria-expanded', String(!abierto));
+        panel.classList.toggle('abierto', abrir);
+        asa.setAttribute('aria-expanded', String(abrir));
+        if (abrir) empujarHistorial(); else if (!seleccion) soltarHistorial();
+    }
+    asa.addEventListener('click', ev => {
+        if (asa.dataset.arrastro) { delete asa.dataset.arrastro; return; }
+        abrirLista(!panel.classList.contains('abierto'));
+    });
+    let inicioY = null, altoInicial = 0;
+    function empezarArrastre(ev) {
+        if (!esMovil() || ev.target.closest('button:not(.mp-asa), a, input')) return;
+        inicioY = ev.clientY; altoInicial = panel.offsetHeight;
+        panel.classList.add('arrastrando');
+    }
+    function moverArrastre(ev) {
+        if (inicioY === null) return;
+        const dy = ev.clientY - inicioY;
+        const max = envoltura.clientHeight - altoNav - 96;
+        panel.style.height = Math.max(120, Math.min(max, altoInicial - dy)) + 'px';
+    }
+    function terminarArrastre(ev) {
+        if (inicioY === null) return;
+        const dy = ev.clientY - inicioY;
+        inicioY = null;
+        panel.classList.remove('arrastrando');
+        panel.style.height = '';
+        if (Math.abs(dy) < 8) return; // fue un toque, lo maneja el clic
+        asa.dataset.arrastro = '1';
+        setTimeout(() => { delete asa.dataset.arrastro; }, 350);
+        const abierto = panel.classList.contains('abierto');
+        if (dy < -40) abrirLista(true);
+        else if (dy > 40) {
+            if (abierto) abrirLista(false);
+            else { panel.classList.add('mini'); }
+        }
+    }
+    [asa, panel.querySelector('.mp-cab')].forEach(zona => {
+        zona.addEventListener('pointerdown', ev => { empezarArrastre(ev); if (inicioY !== null) zona.setPointerCapture(ev.pointerId); });
+        zona.addEventListener('pointermove', moverArrastre);
+        zona.addEventListener('pointerup', terminarArrastre);
+        zona.addEventListener('pointercancel', terminarArrastre);
+    });
+
+    // Con la lista abierta, tocar el mapa la cierra
+    map.on('click', () => { if (esMovil() && !seleccion && panel.classList.contains('abierto')) abrirLista(false); });
+    map.on('dragstart', () => { if (esMovil() && panel.classList.contains('abierto')) abrirLista(false); });
+
+    // Botón «atrás» del teléfono: cierra la ficha o la lista en vez de salir del mapa
+    // (en la app instalada no existe el botón atrás del navegador)
+    let enHistorial = false;
+    function empujarHistorial() {
+        if (enHistorial || !esMovil()) return;
+        try { history.pushState({ mapa: 1 }, ''); enHistorial = true; } catch (e) { /* sin historial */ }
+    }
+    function soltarHistorial() {
+        if (!enHistorial) return;
+        enHistorial = false;
+        history.back();
+    }
+    window.addEventListener('popstate', () => {
+        if (!enHistorial) return;
+        enHistorial = false;
+        if (seleccion) deseleccionar(true);
+        else if (panel.classList.contains('abierto')) { panel.classList.remove('abierto'); asa.setAttribute('aria-expanded', 'false'); }
     });
 
     document.addEventListener('languageChanged', () => {

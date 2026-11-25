@@ -529,7 +529,8 @@
             z-index: 40;
             background: transparent;
             padding: 1rem 0;
-            transition: background 0.3s ease, box-shadow 0.3s ease, padding 0.3s ease;
+            /* sin transición de padding: el alto debe cambiar de golpe para compensarlo sin brincos */
+            transition: background 0.3s ease, box-shadow 0.3s ease;
             margin-bottom: 1.25rem;
         }
 
@@ -1301,24 +1302,43 @@
         }
 
         // ===== STICKY FILTERS BAR =====
+        // La barra se pega debajo del encabezado fijo. Al pegarse se vuelve más baja
+        // (se esconde el título); para que el contenido de abajo no brinque, el
+        // espacio que deja se compensa con margen. Se decide con un marcador que
+        // está antes de la barra, así su cambio de tamaño no la despega de nuevo.
         function setupStickyBar() {
             const bar = document.getElementById('exp-sticky-bar');
             if (!bar) return;
+            const header = document.querySelector('.global-nav');
+            const marca = document.createElement('div');
+            marca.setAttribute('aria-hidden', 'true');
+            marca.style.cssText = 'height:1px;margin-bottom:-1px;pointer-events:none;';
+            bar.parentNode.insertBefore(marca, bar);
+
+            let altoHeader = 0;
+            const margenBase = parseFloat(getComputedStyle(bar).marginBottom) || 0;
+            const ajustarTop = () => {
+                altoHeader = header && getComputedStyle(header).position === 'fixed' ? header.offsetHeight : 0;
+                bar.style.top = altoHeader + 'px';
+            };
+
+            const fijar = (pegada) => {
+                if (pegada === bar.classList.contains('is-stuck')) return;
+                const antes = bar.offsetHeight;
+                bar.classList.toggle('is-stuck', pegada);
+                bar.style.marginBottom = pegada ? (margenBase + Math.max(0, antes - bar.offsetHeight)) + 'px' : '';
+            };
 
             let ticking = false;
             const check = () => {
-                const rect = bar.getBoundingClientRect();
-                // When the bar's natural top reaches the viewport top, mark as stuck
-                bar.classList.toggle('is-stuck', rect.top <= 0);
                 ticking = false;
+                fijar(marca.getBoundingClientRect().top < altoHeader);
             };
-
             window.addEventListener('scroll', () => {
-                if (!ticking) {
-                    requestAnimationFrame(check);
-                    ticking = true;
-                }
+                if (!ticking) { ticking = true; requestAnimationFrame(check); }
             }, { passive: true });
+            window.addEventListener('resize', () => { fijar(false); ajustarTop(); check(); });
+            ajustarTop();
             check();
         }
 

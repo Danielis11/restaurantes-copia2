@@ -9,7 +9,10 @@ html,
 body {
     width: 100%;
     overflow-x: hidden;
-    /* Evita scroll horizontal */
+    /* Evita scroll horizontal. «clip» hace lo mismo sin convertir html/body en
+       contenedores de desplazamiento: con «hidden» las barras position:sticky
+       no se quedaban fijas y la página brincaba al bajar. */
+    overflow-x: clip;
     margin: 0;
     padding: 0;
 }
@@ -176,10 +179,7 @@ body {
     body {
         padding-bottom: 70px !important;
     }
-
-    .footer-container {
-        padding-bottom: 70px !important;
-    }
+    /* (el pie ya no suma otros 70px: el body ya deja ese espacio) */
 }
 
 /* ===== MARCA "Jalpan de Serra" EN UNA SOLA LÍNEA ===== */
