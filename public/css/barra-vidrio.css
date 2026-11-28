@@ -1,5 +1,5 @@
 /* ===== Barras de vidrio (arriba en todas las pantallas, abajo en celular) =====
-   Efecto «vidrio líquido»: fondo translúcido con desenfoque y un brillo en el borde.
+   Fondo de color sólido (sin transparencia).
    Un solo color: claro, u oscuro cuando el navegador o el teléfono
    están en modo oscuro.
 
@@ -22,11 +22,7 @@
     inset: 0;
     z-index: -1;
     pointer-events: none;
-    background:
-        linear-gradient(180deg, rgba(255, 255, 255, .5), rgba(255, 255, 255, 0) 60%),
-        rgba(255, 255, 255, .74);
-    backdrop-filter: blur(24px) saturate(180%);
-    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    background: #ffffff;
     transition: background-color .35s ease;
 }
 
@@ -45,9 +41,7 @@
     }
 
     .global-nav::before {
-        background:
-            linear-gradient(180deg, rgba(255, 255, 255, .1), rgba(255, 255, 255, 0) 60%),
-            rgba(15, 20, 32, .86);
+        background: #111827;
     }
 
     .global-nav .logo { color: #fff !important; }
@@ -81,17 +75,13 @@
         gap: 2px !important;
         justify-content: space-between !important;
         border-radius: 26px !important;
-        background:
-            linear-gradient(180deg, rgba(255, 255, 255, .55), rgba(255, 255, 255, .2)),
-            rgba(255, 255, 255, .7) !important;
-        backdrop-filter: blur(26px) saturate(190%);
-        -webkit-backdrop-filter: blur(26px) saturate(190%);
-        border: 1px solid rgba(255, 255, 255, .7) !important;
+        background: #ffffff !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        border: 1px solid #e5e7eb !important;
         box-shadow:
-            inset 0 1px 0 rgba(255, 255, 255, .9),
-            inset 0 -1px 0 rgba(255, 255, 255, .25),
-            0 12px 32px rgba(15, 23, 42, .18),
-            0 2px 6px rgba(15, 23, 42, .08) !important;
+            0 10px 28px rgba(15, 23, 42, .14),
+            0 2px 6px rgba(15, 23, 42, .06) !important;
         transition: background-color .35s ease, border-color .35s ease, box-shadow .35s ease !important;
     }
 
@@ -123,8 +113,8 @@
     .global-nav .nav-menu .nav-link.active {
         color: #1d4ed8 !important;
         font-weight: 700 !important;
-        background: linear-gradient(180deg, rgba(255, 255, 255, .95), rgba(255, 255, 255, .6)) !important;
-        box-shadow: inset 0 1px 0 #fff, 0 4px 14px rgba(37, 99, 235, .18), 0 0 0 1px rgba(37, 99, 235, .1);
+        background: #eff6ff !important;
+        box-shadow: none;
     }
 
     .global-nav .nav-menu .nav-link.active::before { transform: translateY(-1px) scale(1.1); }
@@ -134,21 +124,17 @@
         .global-nav .btn-login,
         .global-nav .btn-login i { color: #fff !important; }
         .global-nav .nav-menu {
-            background:
-                linear-gradient(180deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, 0)),
-                rgba(15, 20, 32, .84) !important;
-            border-color: rgba(255, 255, 255, .16) !important;
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, .18),
-                0 12px 32px rgba(0, 0, 0, .35) !important;
+            background: #111827 !important;
+            border-color: #1f2937 !important;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, .4) !important;
         }
 
         .global-nav .nav-menu .nav-link { color: rgba(255, 255, 255, .8) !important; }
 
         .global-nav .nav-menu .nav-link.active {
             color: #fff !important;
-            background: rgba(255, 255, 255, .2) !important;
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3), 0 4px 14px rgba(0, 0, 0, .2);
+            background: #1f2937 !important;
+            box-shadow: none;
         }
     }
 
@@ -176,16 +162,6 @@
 }
 @media (max-width: 340px) {
     .global-nav .nav-menu .nav-link { font-size: .5rem !important; letter-spacing: -.02em; }
-}
-
-/* Navegadores sin desenfoque: fondos sólidos */
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    .global-nav::before { background: rgba(255, 255, 255, .97); }
-    @media (prefers-color-scheme: dark) { .global-nav::before { background: rgba(15, 20, 32, .94); } }
-    @media (max-width: 768px) {
-        .global-nav .nav-menu { background: rgba(255, 255, 255, .97) !important; }
-        @media (prefers-color-scheme: dark) { .global-nav .nav-menu { background: rgba(15, 20, 32, .94) !important; } }
-    }
 }
 
 @media (prefers-reduced-motion: reduce) {

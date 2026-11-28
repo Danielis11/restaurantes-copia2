@@ -5,7 +5,7 @@
 //  - Imágenes ............ copia guardada primero (máx. 120, las más viejas se borran)
 //  - API pública (GET) ... red primero → última respuesta guardada (para ver datos sin señal)
 //  - API privada / POST .. nunca se guarda (datos de sesión, paneles de admin)
-const VERSION = 'v9';
+const VERSION = 'v10';
 const CACHE_CORE = `rw-core-${VERSION}`;
 const CACHE_PAGES = `rw-pages-${VERSION}`;
 const CACHE_ASSETS = `rw-assets-${VERSION}`;

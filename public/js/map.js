@@ -185,14 +185,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Obtener imagen según el tipo
     function getImage(item) {
         const fallback = '/images/PueblosMágicos.svg.png';
-        if (item._itemType === 'agencia') return item.logo?.url || fallback;
-        if (item._itemType === 'hospedaje') {
-            return item.imagenes && item.imagenes.length > 0 ? item.imagenes[0].url : fallback;
-        }
+        // Las fotos pueden venir como texto (hospedajes) o como objeto con .url (restaurantes)
+        const url = f => (typeof f === 'string' ? f : f?.url || '').trim();
+        if (item._itemType === 'agencia') return url(item.logo) || fallback;
         // Restaurantes: compact API devuelve 'imagenPrincipal', full API devuelve 'imagenes'
-        if (item.imagenPrincipal) return item.imagenPrincipal.url || fallback;
-        if (item.imagenes && item.imagenes.length > 0) return item.imagenes[0].url || fallback;
-        return fallback;
+        const primera = url(item.imagenPrincipal) || (Array.isArray(item.imagenes) ? item.imagenes.map(url).find(Boolean) : '');
+        return primera || fallback;
     }
 
     // Cargar todo y renderizar
